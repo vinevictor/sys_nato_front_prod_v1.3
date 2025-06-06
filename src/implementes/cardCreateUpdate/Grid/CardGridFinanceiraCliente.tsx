@@ -3,7 +3,7 @@ import DropFinanceiro from "../dropdow/dropFinanceiro";
 import SelectFinanceiro from "../dropdow/selectfinanceiro";
 
 interface CardGridFinanceiraProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: solictacao.SolicitacaoGetType | any;
   user: any;
 }
 

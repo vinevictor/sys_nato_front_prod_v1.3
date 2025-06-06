@@ -3,7 +3,7 @@ import SelectCorretor from "../dropdow/selectCorretor";
 import DropCorretor from "../dropdow/dropCorretor";
 
 interface CardGridCorretorProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: solictacao.SolicitacaoGetType | any;
   user: any;
 }
 
@@ -14,8 +14,8 @@ export default async function CardGridCorretor({
 }: CardGridCorretorProps) {
   const Hierarquia = user.hierarquia;
   return (
-    <>{
-      Hierarquia === "ADM" && (
+    <>
+      {Hierarquia === "ADM" && (
         <Box {...props}>
           <FormLabel fontSize="sm" fontWeight="md" m={0}>
             Corretor

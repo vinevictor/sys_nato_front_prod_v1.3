@@ -2,7 +2,7 @@ import { DadoCompomentList } from "@/components/direto/lista";
 import { UserCompomentInfo } from "@/components/direto/user";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionClient, GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
@@ -25,8 +25,8 @@ const GetListaDados = async (
     cache: "no-store",
   });
   const data = await user.json();
-  // console.log(data); OK  
-  
+  // console.log(data); OK
+
   if (!user.ok) {
     console.error("GetListaDados status:", data.message);
     return null;
@@ -35,8 +35,9 @@ const GetListaDados = async (
 };
 
 export default async function DiretoPage() {
-  const session = await GetSessionServer();
-  const ListDados = await GetListaDados(session);
+  const teste = await GetSessionServer();
+  const session = await GetSessionClient();
+  const ListDados = await GetListaDados(teste);
 
   return (
     <>
@@ -51,11 +52,10 @@ export default async function DiretoPage() {
           <ModalPrimeAsses session={session} />
           <ModalTermos session={session} />
 
-          <UserCompomentInfo session={session} />
-          <DadoCompomentList dados={ListDados} session={session} />
+          <UserCompomentInfo session={teste} />
+          <DadoCompomentList dados={ListDados} session={teste} />
         </Flex>
       </HomeProvider>
     </>
   );
 }
-

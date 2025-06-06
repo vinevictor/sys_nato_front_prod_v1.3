@@ -3,7 +3,7 @@ import { Box, BoxProps, FormLabel, Input, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 interface CardGridDateNascimento extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: any;
   readonly?: boolean;
 }
 

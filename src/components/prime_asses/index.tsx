@@ -18,7 +18,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { SenhaComponent } from "../Senha";
 
 interface Props {
-  session: SessionNext.Client;
+  session: SessionNext.Client | null;
 }
 
 export default function ModalPrimeAsses({ session }: Props) {
@@ -27,8 +27,8 @@ export default function ModalPrimeAsses({ session }: Props) {
   const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const primeiro_asseso = session.reset_password;
-  const ID = session.id;
+  const primeiro_asseso = session?.reset_password;
+  const ID = session?.id;
 
   useEffect(() => {
     if (primeiro_asseso) {
@@ -64,7 +64,7 @@ export default function ModalPrimeAsses({ session }: Props) {
       password: Senha,
     };
 
-    const ID = session.id;
+    const ID = session?.id;
 
     const request = await fetch(`/api/reset_password/${ID}`, {
       method: "PUT",
