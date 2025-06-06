@@ -1,7 +1,7 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 
 interface CardGridUpdateCnhProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType | any;
+  DataSolicitacao: solictacao.SolicitacaoGetType;
 }
 
 export default function CardGridAndamento({

@@ -107,7 +107,7 @@ export default async function perfilPage({
               p={4}
             >
               <AlertProvider>
-                <CardUpdateDireto params={params} setDadosCard={data!} user={user as any} />
+                <CardUpdateDireto params={params} setDadosCard={data!} user={user} />
                 <CardListAlertCliente
                   Id={Number(id)}
                   DataAlert={dataAlert ?? []}

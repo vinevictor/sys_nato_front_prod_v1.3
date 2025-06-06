@@ -5,7 +5,7 @@ import { Input, InputProps } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 
 export interface InputConstrutoraEmailProps extends InputProps {
-  setValueEmail?: string ;
+  setValueEmail?: string;
 }
 
 export default function InputConstrutoraEmail({ setValueEmail, ...props }: InputConstrutoraEmailProps) {

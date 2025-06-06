@@ -56,7 +56,7 @@ export const BugReport = () => {
             style={{ marginRight: "1rem" }}
           />
           <AlertTitle>Alerta</AlertTitle>
-          <AlertDescription>{bug.message}</AlertDescription>
+          <AlertDescription>{bug.descricao}</AlertDescription>
         </Alert>
       </>
     );

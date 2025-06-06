@@ -1,77 +1,44 @@
-"use client"
-
 import UserCompraProvider from "@/provider/UserCompra";
-import { Alert, AlertIcon, Box, Button, Divider, Flex, FormControl, FormLabel, Grid, Input } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Input,
+} from "@chakra-ui/react";
+import { UpdateSolicitacao } from "@/actions/solicitacao/service/update";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import { ResendSms } from "@/implementes/cardCreateUpdate/butons/resendSms";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
+
 import { AuthUser } from "@/types/session";
 import { BtCreateAlertCliente } from "../botoes/bt_create_alert_cliente";
 import CreateChamado from "../botoes/btn_chamado";
 import BtnIniciarAtendimento from "../botoes/btn_iniciar_atendimento";
 import BotaoReativarSolicitacao from "../botoes/btn_reativar_solicitacao";
 import { CriarFcweb } from "../botoes/criarFcweb";
+import BtnAlertNow from "../btn_alerta_now";
 import DistratoAlertPrint from "../Distrato_alert_print";
 import BotaoPausar from "../botoes/btn_pausar";
-import { useEffect, useState } from "react";
-import { UpdateSolicitacaoDireto } from "@/actions/direto/update/update";
-import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
+import BotaoSisapp from "../botoes/bt_sisapp";
+import { cpf } from "cpf-cnpj-validator";
+import { FaNapster } from "react-icons/fa";
 
+import { SessionClient } from "@/types/session";
 
 type Props = {
   setDadosCard: solictacao.SolicitacaoObjectCompleteType;
   user: AuthUser;
-  params: { id: string };
 };
 
-interface DadosApi {
-  id: number;
-  nome: string;
-  cpf: string;
-  telefone: string;
-  email: string;
-  dt_nascimento: string;
-  createdAt: string;
-  updatedAt: string;
-  imagemQrcode: string;
-  pixCopiaECola: string;
-  qrcode: string;
-  txid: string;
-  valor: number;
-  status_pgto: string;
-}
-
-
-export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
+export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
   const HierarquiaUser = user?.hierarquia;
   const readonly = HierarquiaUser === "ADM" ? false : true;
-  const id = params.id;
-  const [dadosUser, setDadosUser] = useState<DadosApi | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  async function fetchDados() {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/direto/getone/${id}`);
-      if (!response.ok) throw new Error("Erro ao carregar dados");
-      const data: DadosApi = await response.json();
-      setDadosUser(data);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (id) {
-      fetchDados();
-    }
-    console.log(setDadosCard);
-  }, [id]);
-
-
+  const { construtora } = setDadosCard;
 
   return (
     <>
@@ -79,11 +46,15 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
         <CardCreateUpdate.Headers SetDados={setDadosCard} />
         <Divider borderColor="#00713D" my={4} />
 
-        <CardCreateUpdate.Form action={UpdateSolicitacaoDireto}>
+        <CardCreateUpdate.Form action={UpdateSolicitacao}>
           <UserCompraProvider>
             <Box hidden>
               <Input value={setDadosCard.id} name="id_cliente" readOnly />
-              <Input value={String(setDadosCard.ativo)} name="ativo" readOnly />
+              <Input
+                value={setDadosCard.ativo.toString()}
+                name="ativo"
+                readOnly
+              />
             </Box>
             <Flex flexDir={"column"} gap={6} w={"100%"} h={"100%"} py={10}>
               <Flex
@@ -142,7 +113,13 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
                   w={{ base: "100%", md: "10rem" }}
                   readonly={readonly}
                 />
-
+                {construtora && (
+                  <CardCreateUpdate.GridConstrutora
+                    user={user}
+                    DataSolicitacao={setDadosCard}
+                    w={{ base: "100%", md: "12rem" }}
+                  />
+                )}
               </Flex>
               <Flex
                 flexDir={{ base: "column", md: "row" }}
@@ -218,7 +195,26 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
                   Hierarquia={!HierarquiaUser ? "USER" : HierarquiaUser}
                 />
               </Flex>
-
+              {construtora?.id === 5 && (
+                <Box>
+                  <Alert
+                    justifyContent="space-between"
+                    status="warning"
+                    variant="left-accent"
+                  >
+                    <AlertIcon />
+                    Apenas para clientes presentes no Plantão de Venda.
+                    <BtnAlertNow
+                      id={setDadosCard.id}
+                      andamento={setDadosCard.andamento}
+                      ativo={setDadosCard.ativo}
+                      distrato={setDadosCard.distrato}
+                      construtora={setDadosCard.construtora}
+                      alertanow={setDadosCard.alertanow}
+                    />
+                  </Alert>
+                </Box>
+              )}
               <Flex
                 flexDir={{ base: "column", md: "row" }}
                 gap={10}
@@ -230,7 +226,6 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
                   UsuarioLogado={user}
                   w="100%"
                 />
-
               </Flex>
               <Flex w={"100%"}>
                 {setDadosCard.distrato && setDadosCard.ativo && (
@@ -291,7 +286,6 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
             py={3}
             wrap={"wrap"}
           >
-
             <BotaoPausar
               id={setDadosCard.id}
               statusPause={setDadosCard.pause}

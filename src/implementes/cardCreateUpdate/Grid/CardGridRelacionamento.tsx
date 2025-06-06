@@ -2,7 +2,7 @@ import { Box, BoxProps, FormLabel } from "@chakra-ui/react";
 import { InputRelacionamento } from "../imputs/inputRelacionamento";
 
 interface CardGridRelacionamentoProps extends BoxProps {
-  DataSolicitacao: any;
+  DataSolicitacao: solictacao.SolicitacaoGetType;
 }
 
 export default function CardGridRelacionamento({
