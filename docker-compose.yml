@@ -1,0 +1,35 @@
+version: '3.8'
+
+##############
+#
+# https://sisnato.redebrasilrp.com.br/
+#
+#############
+
+services:
+  web:
+    # image: crm_nato_dev:0.0.27
+    image: teste:latest
+    build:
+      context: .
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - NEXT_API_WHATSAPP_KEY=60de0c8bb0012f1e6ac5546b
+      - NEXT_API_WHATSAPP_URL=https://api.inovstar.com/core/v2/api
+      - NEXT_PUBLIC_STRAPI_API_URL=http://189.5.194.55:3031
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          # cpus: "1"
+          memory: 250M
