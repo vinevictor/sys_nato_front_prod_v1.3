@@ -3,7 +3,7 @@ import SelectCorretor from "../dropdow/selectCorretor";
 import DropCorretor from "../dropdow/dropCorretor";
 
 interface CardGridCorretorProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: solictacao.SolicitacaoGetType | any;
   user: any;
 }
 
