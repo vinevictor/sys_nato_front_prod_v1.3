@@ -1,7 +1,7 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 import InputEmail from "../imputs/inpuEmail";
 interface CardGridRegisterEmailProps extends BoxProps {
-  email?: string ;
+  email?: string;
   type?: "register" | "confirm";
   readonly?: boolean;
 }

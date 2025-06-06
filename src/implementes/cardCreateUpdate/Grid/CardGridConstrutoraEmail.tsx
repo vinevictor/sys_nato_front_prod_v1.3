@@ -3,7 +3,7 @@ import React from "react";
 import InputConstrutoraEmail from "../imputs/inputConstrutoraEmail";
 
 interface CardGridConstrutoraEmailProps extends BoxProps {
-  DataSolicitacao?: solictacao.SolicitacaoGetType | any;
+  DataSolicitacao?: solictacao.SolicitacaoGetType;
   type?: string;
 }
 

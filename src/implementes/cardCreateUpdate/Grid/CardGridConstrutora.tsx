@@ -4,7 +4,7 @@ import SelectConstrutora from "../dropdow/selectConstrutora";
 
 
 interface CardGridConstrutoraProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType | any;
+  DataSolicitacao: solictacao.SolicitacaoGetType;
   user: any;
 }
 

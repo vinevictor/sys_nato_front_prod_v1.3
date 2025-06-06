@@ -3,7 +3,7 @@ import DropEmpreendimento from "../dropdow/dropEmpreendimento";
 import SelectEmpreedimento from "../dropdow/selectEmpreedimento";
 
 interface CardGridEmpreedimentoProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType | any;
+  DataSolicitacao: solictacao.SolicitacaoGetType;
   user: any;
 }
 

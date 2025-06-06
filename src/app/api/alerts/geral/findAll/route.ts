@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     if (!session.user?.role?.alert) {
       return NextResponse.json([], { status: 200 });
     }
-    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert/geral/alerts/list/bug`;
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert`;
     const get = await fetch(url, {
       method: "GET",
       headers: {
@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       cache: "force-cache",
       next: {
         tags: ["alert-geral-all"],
+        revalidate: 300,// 5 minutos
       },
     });
     const data = await get.json();

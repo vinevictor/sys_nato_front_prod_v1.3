@@ -30,7 +30,7 @@ export default function BtnAlertList({ session }: BtnAlertListProps) {
 
   const ConstTotalAlertas = async () => {
     if (session.role?.alert) {
-      const url = "/api/alerts/geral/const";
+      const url = "/api/alerts/geral/cont";
       const req = await fetch(url);
       const res = await req.json();
       if (req.ok) {

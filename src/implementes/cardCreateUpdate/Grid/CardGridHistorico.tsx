@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 interface CardGridUpdateCnhProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType | any;
+  DataSolicitacao: solictacao.SolicitacaoGetType;
   user: any;
 }
 
@@ -20,7 +20,7 @@ export default async function CardGridHistorico({
   ...props
 }: CardGridUpdateCnhProps) {
   const Hierarquia = user?.hierarquia;
-  const log: string[] = DataSolicitacao.logDelete.split("\n");
+  const log = DataSolicitacao.logDelete.split("\n");
   return (
     <>
       {Hierarquia === "ADM" && DataSolicitacao.logDelete && (

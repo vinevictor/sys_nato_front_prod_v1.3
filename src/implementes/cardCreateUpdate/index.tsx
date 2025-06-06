@@ -99,7 +99,7 @@ export const CardCreateUpdate = {
   GridRegisterTel: CardGridRegisterTel,
   GridTel: CardGridTel,
   GridEmail: CardGridRegisterEmail,
-  // GridConstrutora: CardGridConstrutora,
+  GridConstrutora: CardGridConstrutora,
   GridEmpreedimentoCL: CardGridEmpreedimentoCliente,
   GridFinanceiraCl: CardGridFinanceiraCliente,
   GridUpdateDocument: CardGridUpdateDocument,

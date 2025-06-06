@@ -18,7 +18,7 @@ import { FiFileText } from "react-icons/fi";
 import { useToast } from "@chakra-ui/react";
 
 interface Props {
-  session: SessionNext.Client | null;
+  session: SessionNext.Client;
 }
 
 export default function ModalTermos({ session }: Props) {
@@ -26,8 +26,8 @@ export default function ModalTermos({ session }: Props) {
   const [check, setCheck] = useState(false);
   const toast = useToast();
 
-  const termosAceitos = session?.termos;
-  const idUser = Number(session?.id);
+  const termosAceitos = session.termos;
+  const idUser = Number(session.id);
 
   useEffect(() => {
     if (session) {
