@@ -1,7 +1,18 @@
-"use client"
+"use client";
 
 import UserCompraProvider from "@/provider/UserCompra";
-import { Alert, AlertIcon, Box, Button, Divider, Flex, FormControl, FormLabel, Grid, Input } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Grid,
+  Input,
+} from "@chakra-ui/react";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import { ResendSms } from "@/implementes/cardCreateUpdate/butons/resendSms";
 import { AuthUser } from "@/types/session";
@@ -16,11 +27,9 @@ import { useEffect, useState } from "react";
 import { UpdateSolicitacaoDireto } from "@/actions/direto/update/update";
 import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
-
-
 type Props = {
   setDadosCard: solictacao.SolicitacaoObjectCompleteType;
-  user: AuthUser;
+  user: AuthUser ;
   params: { id: string };
 };
 
@@ -40,7 +49,6 @@ interface DadosApi {
   valor: number;
   status_pgto: string;
 }
-
 
 export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
   const HierarquiaUser = user?.hierarquia;
@@ -70,8 +78,6 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
     }
     console.log(setDadosCard);
   }, [id]);
-
-
 
   return (
     <>
@@ -126,23 +132,22 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
               >
                 <CardCreateUpdate.GridEmail
                   type="register"
-                  email={setDadosCard.email}
+                  email={setDadosCard.email as any}
                   w={{ base: "100%", md: "25rem" }}
                   readonly={readonly}
                 />
                 <CardCreateUpdate.GridTel
                   index={1}
-                  DataSolicitacao={setDadosCard.telefone}
+                  DataSolicitacao={setDadosCard.telefone as any}
                   w={{ base: "100%", md: "10rem" }}
                   readonly={readonly}
                 />
                 <CardCreateUpdate.GridTel
                   index={2}
-                  DataSolicitacao={setDadosCard.telefone2}
+                  DataSolicitacao={setDadosCard.telefone2 as any}
                   w={{ base: "100%", md: "10rem" }}
                   readonly={readonly}
                 />
-
               </Flex>
               <Flex
                 flexDir={{ base: "column", md: "row" }}
@@ -205,15 +210,15 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
               >
                 <CardCreateUpdate.GridUpdateDocument
                   tag="CNH"
-                  suspenso={setDadosCard.docSuspenso}
-                  Url={setDadosCard.uploadCnh}
+                  suspenso={setDadosCard.docSuspenso as any}
+                  Url={setDadosCard.uploadCnh as any}
                   w={{ base: "100%", md: "19rem" }}
                   Hierarquia={!HierarquiaUser ? "USER" : HierarquiaUser}
                 />
                 <CardCreateUpdate.GridUpdateDocument
                   tag="RG"
-                  suspenso={setDadosCard.docSuspenso}
-                  Url={setDadosCard.uploadRg}
+                  suspenso={setDadosCard.docSuspenso as any}
+                  Url={setDadosCard.uploadRg as any}
                   w={{ base: "100%", md: "19rem" }}
                   Hierarquia={!HierarquiaUser ? "USER" : HierarquiaUser}
                 />
@@ -226,17 +231,16 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
                 justifyContent={{ base: "center", md: "space-between" }}
               >
                 <CardCreateUpdate.GridObs
-                  DataSolicitacao={setDadosCard}
+                  DataSolicitacao={setDadosCard as any}
                   UsuarioLogado={user}
                   w="100%"
                 />
-
               </Flex>
               <Flex w={"100%"}>
                 {setDadosCard.distrato && setDadosCard.ativo && (
                   <DistratoAlertPrint
-                    userId={setDadosCard.distrato_id}
-                    userDateTime={setDadosCard.distrato_dt}
+                    userId={setDadosCard.distrato_id as any}
+                    userDateTime={setDadosCard.distrato_dt as any}
                   />
                 )}
                 {!setDadosCard.ativo && (
@@ -250,7 +254,7 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
                 {setDadosCard.logDelete && (
                   <CardCreateUpdate.GridHistorico
                     user={user}
-                    DataSolicitacao={setDadosCard}
+                    DataSolicitacao={setDadosCard as any}
                     w={"100%"}
                   />
                 )}
@@ -291,7 +295,6 @@ export function CardUpdateDireto({ setDadosCard, user, params }: Props) {
             py={3}
             wrap={"wrap"}
           >
-
             <BotaoPausar
               id={setDadosCard.id}
               statusPause={setDadosCard.pause}

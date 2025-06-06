@@ -2,7 +2,7 @@ import { Box, BoxProps, Flex, FormLabel } from "@chakra-ui/react";
 import DropMultiLink from "../dropdow/dropMultiLink";
 
 interface CardGridUpdateCnhProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: solictacao.SolicitacaoGetType | any;
 }
 
 export default function CardGridMultLink({

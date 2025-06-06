@@ -3,7 +3,7 @@
 import { FiltroComponent } from "../filtro_geral";
 import { Box, CircularProgress, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { TabelaDireto } from "../../tabelaDireto";
+// import { TabelaDireto } from "../../tabelaDireto";
 import { SessionServer } from "@/types/session";
 
 interface FiltroData {
@@ -33,13 +33,12 @@ export const FilterRouteDireto = ({ session }: Props) => {
       const req = await fetch("/api/direto/get", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
       });
       console.log(req);
       const data = await req.json();
       console.log(data);
-
     })();
   }, []);
 
@@ -48,7 +47,6 @@ export const FilterRouteDireto = ({ session }: Props) => {
   };
 
   useEffect(() => {
-    
     (async () => {
       setLoad(true);
       let Filter = "";
@@ -70,16 +68,14 @@ export const FilterRouteDireto = ({ session }: Props) => {
       if (PagAtual > 0) {
         Filter += `pagina=${PagAtual}&`;
       }
-      const Url = Filter
-        ? `/api/direto/get?${Filter}`
-        : `/api/direto/get`;
+      const Url = Filter ? `/api/direto/get?${Filter}` : `/api/direto/get`;
 
       const req = await fetch(Url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        cache: "no-store"
+        cache: "no-store",
       });
       const data = await req.json();
       if (req.ok) {
@@ -117,13 +113,13 @@ export const FilterRouteDireto = ({ session }: Props) => {
         <FiltroComponent onData={handleFilter} session={session} />
       </Box>
       <Flex justifyContent="center" alignItems="center">
-        <TabelaDireto
+        {/* <TabelaDireto
           ClientData={Dados}
           AtualPage={PagAtual}
           SetVewPage={NewPageFunction}
           total={Total}
           session={session}
-        />
+        /> */}
       </Flex>
     </>
   );
