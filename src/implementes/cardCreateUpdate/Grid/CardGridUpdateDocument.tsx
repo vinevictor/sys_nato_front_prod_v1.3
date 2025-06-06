@@ -1,10 +1,4 @@
-import {
-  Box,
-  BoxProps,
-  Flex,
-  FormLabel,
-  Text,
-} from "@chakra-ui/react";
+import { Box, BoxProps, Flex, FormLabel, Text } from "@chakra-ui/react";
 import InputUpdateCnh from "../imputs/inputUpdateCnh";
 import { ButtonsDownloadsCnh } from "../butons/butonsDowloadsCnh";
 
@@ -12,7 +6,7 @@ interface CardGridUpdateCnhProps extends BoxProps {
   Url: string;
   tag: string;
   Hierarquia: string;
-  suspenso: string;
+  suspenso: boolean;
 }
 
 export default async function CardGridUpdateDocument({
@@ -22,15 +16,17 @@ export default async function CardGridUpdateDocument({
   suspenso,
   ...props
 }: CardGridUpdateCnhProps) {
-
   return (
     <>
       <Box {...props}>
         <FormLabel fontSize="sm" fontWeight="md" m={0}>
           <Flex>
-          {tag} {Url && (
-            <Text ms={3} color={"green.400"} fontSize={"0.7rem"}>{tag} ja esta adicionado</Text>
-          )}
+            {tag}{" "}
+            {Url && (
+              <Text ms={3} color={"green.400"} fontSize={"0.7rem"}>
+                {tag} ja esta adicionado
+              </Text>
+            )}
           </Flex>
         </FormLabel>
         <InputUpdateCnh
@@ -40,8 +36,13 @@ export default async function CardGridUpdateDocument({
           bg={"gray.100"}
           borderColor={"gray.400"}
         />
-        {Hierarquia !== "USER" && (suspenso ? <Text color={'red'}>{suspenso}</Text> : <ButtonsDownloadsCnh url={Url} />)}
+        {Hierarquia !== "USER" &&
+          (suspenso ? (
+            <Text color={"red"}>{suspenso}</Text>
+          ) : (
+            <ButtonsDownloadsCnh url={Url} />
+          ))}
       </Box>
-    </>       
+    </>
   );
 }

@@ -25,8 +25,8 @@ const GetListaDados = async (
     cache: "no-store",
   });
   const data = await user.json();
-  // console.log(data); OK  
-  
+  // console.log(data); OK
+
   if (!user.ok) {
     console.error("GetListaDados status:", data.message);
     return null;
@@ -48,8 +48,8 @@ export default async function DiretoPage() {
           overflowY="auto"
           overflowX="hidden"
         >
-          <ModalPrimeAsses session={session} />
-          <ModalTermos session={session} />
+          <ModalPrimeAsses session={session as any} />
+          <ModalTermos session={session as any} />
 
           <UserCompomentInfo session={session} />
           <DadoCompomentList dados={ListDados} session={session} />
@@ -58,4 +58,3 @@ export default async function DiretoPage() {
     </>
   );
 }
-

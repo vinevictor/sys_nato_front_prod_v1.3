@@ -2,7 +2,7 @@ import { Box, BoxProps, FormLabel } from "@chakra-ui/react";
 import { InputTel2 } from "../imputs/inputTel2";
 
 interface CardGridTel1Props extends BoxProps {
-  DataSolicitacao: string;
+  DataSolicitacao: string ;
   index: number;
   readonly?: boolean
 }

@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 interface CardGridUpdateCnhProps extends BoxProps {
-  DataSolicitacao: solictacao.SolicitacaoGetType;
+  DataSolicitacao: solictacao.SolicitacaoGetType | any;
   user: any;
 }
 
@@ -36,7 +36,7 @@ export default async function CardGridHistorico({
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                {log.map((item, index) => (
+                {log.map((item: any, index: number) => (
                   <Text key={index}>{item}</Text>
                 ))}
               </AccordionPanel>

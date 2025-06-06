@@ -103,13 +103,13 @@ export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
                 />
                 <CardCreateUpdate.GridTel
                   index={1}
-                  DataSolicitacao={setDadosCard.telefone}
+                  DataSolicitacao={setDadosCard.telefone ?? ""}
                   w={{ base: "100%", md: "10rem" }}
                   readonly={readonly}
                 />
                 <CardCreateUpdate.GridTel
                   index={2}
-                  DataSolicitacao={setDadosCard.telefone2}
+                  DataSolicitacao={setDadosCard.telefone2 ?? ""}
                   w={{ base: "100%", md: "10rem" }}
                   readonly={readonly}
                 />
@@ -182,15 +182,15 @@ export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
               >
                 <CardCreateUpdate.GridUpdateDocument
                   tag="CNH"
-                  suspenso={setDadosCard.docSuspenso}
-                  Url={setDadosCard.uploadCnh}
+                  suspenso={setDadosCard.docSuspenso ?? false}
+                  Url={setDadosCard.uploadCnh ?? ""}
                   w={{ base: "100%", md: "19rem" }}
                   Hierarquia={!HierarquiaUser ? "USER" : HierarquiaUser}
                 />
                 <CardCreateUpdate.GridUpdateDocument
                   tag="RG"
-                  suspenso={setDadosCard.docSuspenso}
-                  Url={setDadosCard.uploadRg}
+                  suspenso={setDadosCard.docSuspenso ?? false}
+                  Url={setDadosCard.uploadRg ?? ""}
                   w={{ base: "100%", md: "19rem" }}
                   Hierarquia={!HierarquiaUser ? "USER" : HierarquiaUser}
                 />
@@ -208,7 +208,7 @@ export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
                       id={setDadosCard.id}
                       andamento={setDadosCard.andamento}
                       ativo={setDadosCard.ativo}
-                      distrato={setDadosCard.distrato}
+                      distrato={setDadosCard.distrato ?? false}
                       construtora={setDadosCard.construtora}
                       alertanow={setDadosCard.alertanow}
                     />
@@ -222,7 +222,7 @@ export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
                 justifyContent={{ base: "center", md: "space-between" }}
               >
                 <CardCreateUpdate.GridObs
-                  DataSolicitacao={setDadosCard}
+                  DataSolicitacao={setDadosCard as any}
                   UsuarioLogado={user}
                   w="100%"
                 />
@@ -230,8 +230,8 @@ export function CardUpdateSolicitacao({ setDadosCard, user }: Props) {
               <Flex w={"100%"}>
                 {setDadosCard.distrato && setDadosCard.ativo && (
                   <DistratoAlertPrint
-                    userId={setDadosCard.distrato_id}
-                    userDateTime={setDadosCard.distrato_dt}
+                    userId={setDadosCard.distrato_id ?? 0}
+                    userDateTime={setDadosCard.distrato_dt ?? ""}
                   />
                 )}
                 {!setDadosCard.ativo && (

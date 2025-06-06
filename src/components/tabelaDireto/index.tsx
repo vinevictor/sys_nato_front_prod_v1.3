@@ -35,7 +35,7 @@ import { BotoesFunction } from "../botoes/bt_group_function";
 import { BotoesFunctionDireto } from "../botoes/bt_group_functionDireto";
 import { SessionServer } from "@/types/session";
 interface TabelaProps {
-  ClientData: solictacao.SolicitacaoGetType[];
+  ClientData: any;
   total: number | null;
   AtualPage: number;
   SetVewPage: (page: number) => any;
@@ -64,7 +64,7 @@ export function TabelaDireto({
     setSelectPage(AtualPage);
   }, [AtualPage]);
 
-  const downTimeInDays = (item: solictacao.SolicitacaoGetType) => {
+  const downTimeInDays = (item: any) => {
     if (!item || !item.createdAt) return null;
 
     if (item.distrato || !item.ativo) {
@@ -93,9 +93,7 @@ export function TabelaDireto({
     return `${diffInDays} dias`;
   };
 
-  const tabela = ClientData.map((item) => {
-    
-
+  const tabela = ClientData.map((item: any) => {
     const ano = item.dt_agendamento?.split("-")[0];
     const mes = item.dt_agendamento?.split("-")[1];
     const diaBruto = item.dt_agendamento?.split("-")[2];
@@ -137,7 +135,6 @@ export function TabelaDireto({
         ? "white"
         : "black";
 
-   
     return (
       <Tr key={item.id} bg={colors} color={fontColor}>
         <Td>
@@ -167,7 +164,9 @@ export function TabelaDireto({
                         <PopoverHeader>Atenção</PopoverHeader>
                         <PopoverCloseButton />
                         <PopoverBody>
-                          {item.tag.map((item) => item.descricao).join(",\n")}
+                          {item.tag
+                            .map((item: any) => item.descricao)
+                            .join(",\n")}
                         </PopoverBody>
                         <PopoverFooter></PopoverFooter>
                       </PopoverContent>
@@ -249,7 +248,6 @@ export function TabelaDireto({
           </Tooltip>
         </Td>
         <Td>{item.ativo && downTimeInDays(item)}</Td>
-    
       </Tr>
     );
   });

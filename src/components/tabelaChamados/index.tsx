@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { IoIosArrowBack, IoIosArrowForward, IoIosTrash } from "react-icons/io";
 import { useState, useEffect } from "react";
-import { ChamadoOptions } from "@/data/chamado";
+// import { ChamadoOptions } from "@/data/chamado";
 import { IoOpenOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation"; // Import useRouter
 import Link from "next/link";
@@ -59,8 +59,8 @@ export function TabelaChamados({
   };
 
   const getStatusLabel = (status: number | undefined) => {
-    const encontrado = ChamadoOptions.find((option) => option.id === status);
-    return encontrado ? encontrado.Label : "Status desconhecido";
+    // const encontrado = ChamadoOptions.find((option) => option.id === status);
+    // return encontrado ? encontrado.Label : "Status desconhecido";
   };
 
   async function DeleteChamado(id: number) {
@@ -163,7 +163,7 @@ export function TabelaChamados({
         <Td>{chamado.solicitacaoId ?? "Não informado"}</Td>
         <Td>
           <Badge variant={"outline"} colorScheme={colorBadge}>
-            {getStatusLabel(chamado.status)}
+            {/* {getStatusLabel(chamado.status)} */}
           </Badge>
         </Td>
       </Tr>

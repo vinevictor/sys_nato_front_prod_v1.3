@@ -4,7 +4,7 @@ import { Textarea } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
 interface imputTextObsProps {
-  DataSolicitacao?: solictacao.SolicitacaoGetType;
+  DataSolicitacao?: solictacao.SolicitacaoGetType | any;
   UsuarioLogado: AuthUser;
 }
 
