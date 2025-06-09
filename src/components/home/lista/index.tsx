@@ -5,6 +5,12 @@ import { SessionServer } from "@/types/session";
 import {
   Box,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   FormLabel,
   Select,
@@ -13,6 +19,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImClock } from "react-icons/im";
@@ -122,6 +129,8 @@ export const DadoCompomentList = ({
   const [Pagina, setPagina] = useState<number | null>(null);
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
+  const [PagAtual, setPagAtual] = useState<number>(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { data } = useHomeContex();
 
@@ -231,108 +240,126 @@ export const DadoCompomentList = ({
         px={4}
         py={3}
       >
-        <Box display={{ base: "block", xl: "none" }}>
-          <BugReport />
-        </Box>
-        <Flex
-          w="full"
-          display={{ base: "flex", xl: "none" }}
-          gap={2}
-          flexDir="column"
-        >
-          {session?.user.role?.now && <BtnListNow session={session.user} />}
-          {session?.user.role?.alert && <BtnAlertList session={session.user} />}
-          <Button
-            w={"full"}
-            color="white"
-            textAlign="center"
-            p={"8px"}
-            bg="blue.500"
-            fontWeight="bold"
-            borderRadius="md"
-            fontSize={"1rem"}
-            _hover={{ bg: "blue.600" }}
-            onClick={() => router.push("/chamado")}
-          >
-            Chamados
-          </Button>
-        </Flex>
+
+        <Button display={{ base: "block", xl: "none" }} onClick={onOpen} m={2}>
+          Chamados - Alertas - Now
+        </Button>
+
+
+        <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Chamados - Alertas - Now</DrawerHeader>
+            <DrawerBody>
+              <Box mb={4}>
+                <BugReport />
+              </Box>
+              <Flex w="full" gap={2} flexDir="column">
+                {session?.user.role?.now && <BtnListNow session={session.user} />}
+                {session?.user.role?.alert && <BtnAlertList session={session.user} />}
+                <Button
+                  w="full"
+                  color="white"
+                  textAlign="center"
+                  p="8px"
+                  bg="blue.500"
+                  fontWeight="bold"
+                  borderRadius="md"
+                  fontSize="1rem"
+                  _hover={{ bg: "blue.600" }}
+                  onClick={() => {
+                    router.push("/chamado");
+                    onClose();
+                  }}
+                >
+                  Chamados
+                </Button>
+              </Flex>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
         <Flex
           flexDir={{ base: "column", xl: "row" }}
           justifyContent="center"
           alignItems="flex-end"
           gap={{ base: 2, xl: 4 }}
         >
-          <Box w={{ base: "100%", xl: "5rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>Id</FormLabel>
-            <InputComponentFilterHome
-              textAlign={"center"}
-              type="number"
-              value={Id ?? 0}
-              onChange={(e) => setId(Number(e.target.value))}
-            />
-          </Box>
-          <Box w={{ base: "100%", xl: "20rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>
-              Nome
-            </FormLabel>
-            <InputComponentFilterHome
-              type="text"
-              value={Nome ?? ""}
-              onChange={(e) => setNome(e.target.value)}
-            />
-          </Box>
-          <Box w={{ base: "100%", xl: "10rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>
-              Andamento
-            </FormLabel>
-            <Select
-              textColor={"#00713D"}
-              _hover={{ borderColor: "#00613C" }}
-              borderColor={"#00713D"}
-              placeholder="Andamento"
-              size="sm"
-              borderRadius="1rem"
-              value={Andamento ?? ""}
-              onChange={(e) => setAndamento(e.target.value)}
-            >
-              <option value="">VAZIO</option>
-              <option value="INICIADO">INICIADO</option>
-              <option value="APROVADO">APROVADO</option>
-              <option value="EMITIDO">EMITIDO</option>
-              <option value="REVOGADO">REVOGADO</option>
-            </Select>
-          </Box>
-          <Box w={{ base: "100%", xl: "13rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>
-              Construtora
-            </FormLabel>
-            <SelectComponentFilterHome
-              Data={DataConstrutora}
-              value={Construtora?.toString() ?? ""}
-              onChange={(e) => setConstrutora(Number(e.target.value))}
-            />
-          </Box>
-          <Box w={{ base: "100%", xl: "15rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>
-              Empreendimento
-            </FormLabel>
-            <SelectComponentFilterHome
-              Data={DataEmpreendimento}
-              value={Empreendimento?.toString() ?? ""}
-              onChange={(e) => setEmpreendimento(Number(e.target.value))}
-            />
-          </Box>
-          <Box w={{ base: "100%", xl: "15rem" }}>
-            <FormLabel textAlign={{ base: "left", xl: "center" }}>
-              Financeiro
-            </FormLabel>
-            <SelectComponentFilterHome
-              Data={DataFinanceiro}
-              value={Financeiro?.toString() ?? ""}
-              onChange={(e) => setFinanceiro(Number(e.target.value))}
-            />
-          </Box>
+          <Flex
+            flexWrap="wrap"
+            gap={4}
+            justifyContent="flex-start"
+            w="full"
+          >
+            <Box w={{ base: "48%", md: "20%", xl: "5rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Id</FormLabel>
+              <InputComponentFilterHome
+                textAlign={"center"}
+                type="number"
+                value={Id ?? 0}
+                onChange={(e) => setId(Number(e.target.value))}
+              />
+            </Box>
+
+            <Box w={{ base: "48%", md: "40%", xl: "20rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Nome</FormLabel>
+              <InputComponentFilterHome
+                type="text"
+                value={Nome ?? ""}
+                onChange={(e) => setNome(e.target.value)}
+              />
+            </Box>
+
+            <Box w={{ base: "48%", md: "20%", xl: "10rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Andamento</FormLabel>
+              <Select
+                textColor={"#00713D"}
+                _hover={{ borderColor: "#00613C" }}
+                borderColor={"#00713D"}
+                placeholder="Andamento"
+                size="sm"
+                borderRadius="1rem"
+                value={Andamento ?? ""}
+                onChange={(e) => setAndamento(e.target.value)}
+              >
+                <option></option>
+                <option value="VAZIO">VAZIO</option>
+                <option value="INICIADO">INICIADO</option>
+                <option value="APROVADO">APROVADO</option>
+                <option value="EMITIDO">EMITIDO</option>
+                <option value="REVOGADO">REVOGADO</option>
+              </Select>
+            </Box>
+
+            <Box w={{ base: "48%", md: "30%", xl: "13rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Construtora</FormLabel>
+              <SelectComponentFilterHome
+                Data={DataConstrutora}
+                value={Construtora?.toString() ?? ""}
+                onChange={(e) => setConstrutora(Number(e.target.value))}
+              />
+            </Box>
+
+            <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Empreendimento</FormLabel>
+              <SelectComponentFilterHome
+                Data={DataEmpreendimento}
+                value={Empreendimento?.toString() ?? ""}
+                onChange={(e) => setEmpreendimento(Number(e.target.value))}
+              />
+            </Box>
+
+            <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
+              <FormLabel textAlign={{ base: "left", xl: "center" }}>Financeiro</FormLabel>
+              <SelectComponentFilterHome
+                Data={DataFinanceiro}
+                value={Financeiro?.toString() ?? ""}
+                onChange={(e) => setFinanceiro(Number(e.target.value))}
+              />
+            </Box>
+          </Flex>
+
+
           <Box w={{ base: "100%", xl: "auto" }}>
             <Button
               bg="#00713D"
@@ -360,136 +387,139 @@ export const DadoCompomentList = ({
             </Button>
           </Box>
         </Flex>
-        {ListaDados && (
+        {ListaDados?.length === 0 && MesageError && (
           <>
             <Flex
-              w={"full"}
-              bg={"gray.50"}
-              shadow={"lg"}
-              borderRadius={"15px"}
-              p={{ base: "10px", xl: "20px" }}
-              alignContent={"center"}
-              justifyContent={"space-evenly"}
-              flexDir={"column"}
-              display={{ base: "none", xl: "flex" }}
-              border={"1px solid"}
-              borderColor={"gray.200"}
+              justifyContent="center"
+              alignItems="center"
+              w="100%"
+              h="78vh"
+              gap={8}
+              p={4}
             >
-              <Table
-                variant="simple"
-                size="sm"
-                bg={"gray.100"}
-                borderRadius={"15px"}
+              <Text>{MesageError}</Text>
+              <Button
+                w={{ base: "100%", xl: "auto" }}
+                size="lg"
+                colorScheme="green"
+                onClick={filtroSecundario}
               >
-                <Thead>
-                  <Tr>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      w={"17rem"}
-                      textAlign="center"
-                    >
-                      FUNÇÕES
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      w={"5rem"}
-                    >
-                      ID
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                    >
-                      NOME
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      w={"13rem"}
-                    >
-                      AGENDAMENTO
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      w={"8rem"}
-                    >
-                      Andamento
-                    </Th>
-                    <Th
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      w={"5rem"}
-                      fontSize={"22px"}
-                    >
-                      <Flex justifyContent="center">
-                        <ImClock />
-                      </Flex>
-                    </Th>
-                    {session?.user?.hierarquia === "ADM" && (
-                      <Th
-                        fontSize={"lg"}
-                        p={"0.8rem"}
-                        borderBottomColor={"gray.300"}
-                        w={"15rem"}
-                      >
-                        CONSTRUTORA
-                      </Th>
-                    )}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {ListaDados?.map((item) => (
-                    <TableComponent
-                      key={item.id}
-                      dados={item}
-                      session={session ?? null}
-                    />
-                  ))}
-                </Tbody>
-              </Table>
-              <Flex
-                w={"full"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                pt={3}
-              >
-                <Box>Total de registros: {Total}</Box>
-                <Flex gap={2}>
-                  paginas:
-                  <SelectPgComponent
-                    total={Total || 0}
-                    ClientQtd={dados?.data.length || 0}
-                    SelectPage={Pagina || 1}
-                    setSelectPage={setPagina}
-                    SetVewPage={NextPage}
-                  />
-                </Flex>
-              </Flex>
+                Busca Avançada
+              </Button>
             </Flex>
-            <Flex
-              display={{ base: "flex", xl: "none" }}
-              w={"full"}
-              flexDir={"column"}
-              gap={3}
-            >
+          </>
+        )}
+        <Flex
+          w={"full"}
+          bg={"gray.50"}
+          shadow={"lg"}
+          borderRadius={"15px"}
+          p={{ base: "10px", xl: "20px" }}
+          alignContent={"center"}
+          justifyContent={"space-evenly"}
+          flexDir={"column"}
+          border={"1px solid"}
+          borderColor={"gray.200"}
+        >
+          <Table
+            variant="simple"
+            size="sm"
+            bg={"gray.100"}
+            borderRadius={"15px"}
+          >
+            <Thead>
+              <Tr>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"17rem"}
+                  textAlign="center"
+                >
+                  FUNÇÕES
+                </Th>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"5rem"}
+                >
+                  ID
+                </Th>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                >
+                  NOME
+                </Th>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"13rem"}
+                >
+                  AGENDAMENTO
+                </Th>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"8rem"}
+                >
+                  Andamento
+                </Th>
+                <Th
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"5rem"}
+                  fontSize={"22px"}
+                >
+                  <Flex justifyContent="center">
+                    <ImClock />
+                  </Flex>
+                </Th>
+                {session?.user?.hierarquia === "ADM" && (
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"15rem"}
+                  >
+                    CONSTRUTORA
+                  </Th>
+                )}
+              </Tr>
+            </Thead>
+            <Tbody>
               {ListaDados?.map((item) => (
-                <CardComponentHome
+                <TableComponent
                   key={item.id}
                   dados={item}
                   session={session ?? null}
                 />
               ))}
+            </Tbody>
+          </Table>
+          <Flex
+            w={"full"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            pt={3}
+          >
+            <Box>Total de registros: {Total}</Box>
+            <Flex gap={2}>
+              paginas:
+              <SelectPgComponent
+                total={Total || 0}
+                ClientQtd={dados?.data.length || 0}
+                SelectPage={PagAtual}
+                setSelectPage={setPagina}
+                SetVewPage={NextPage}
+              />
             </Flex>
-          </>
-        )}
+          </Flex>
+        </Flex>
       </Box>
     </>
   );
