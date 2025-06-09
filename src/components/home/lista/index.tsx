@@ -122,7 +122,6 @@ export const DadoCompomentList = ({
   const [Pagina, setPagina] = useState<number | null>(null);
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
-  const [PagAtual, setPagAtual] = useState<number>(0);
 
   const { data } = useHomeContex();
 
@@ -130,13 +129,11 @@ export const DadoCompomentList = ({
     if (dados) {
       setListaDados(dados.data);
       setTotal(dados.total);
-      setPagAtual(dados.pagina);
     }
     if (data) {
       if (data.data?.length > 0) {
         setListaDados(data.data);
         setTotal(data.total);
-        setPagAtual(data.pagina);
       }
     }
     if (session?.user) {
@@ -220,7 +217,7 @@ export const DadoCompomentList = ({
         session
       )
     );
-    setPagAtual(Pagina);
+    setPagina(Pagina);
   };
 
   return (
