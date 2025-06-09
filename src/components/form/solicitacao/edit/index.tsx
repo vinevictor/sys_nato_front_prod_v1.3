@@ -577,7 +577,7 @@ export default function FormSolicitacaoEdit({
         </Flex>
         <Box>
           <Text fontWeight="bold" fontSize="md" mb={2}>
-            DOCUMENTOS A SER ASSINADOS
+            DOCUMENTOS:
           </Text>
 
           <Flex
