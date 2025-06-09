@@ -49,13 +49,15 @@ export async function GetSessionClient(): Promise<SessionNext.Client | null> {
       return null;
     }
     const data = await OpenSessionToken(token.value);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`
+    );
     const retorno = await response.json();
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
     data.user.status = retorno.status || false;
-    data.user.hierarquia = retorno.hierarquia || 'USER';
+    data.user.hierarquia = retorno.hierarquia || "USER";
     data.user.construtora = retorno.construtora || [];
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
@@ -72,15 +74,24 @@ export async function GetSessionServer(): Promise<SessionNext.Server | null> {
     if (!token) {
       return null;
     }
-  
+
     const data: any = await OpenSessionToken(token.value);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token.value}`,
+        },
+      }
+    );
     const retorno = await response.json();
+    console.log("🚀 ~ GetSessionServer ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
     data.user.status = retorno.status || false;
-    data.user.hierarquia = retorno.hierarquia || 'USER';
+    data.user.hierarquia = retorno.hierarquia || "USER";
     data.user.construtora = retorno.construtora || [];
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
@@ -90,7 +101,6 @@ export async function GetSessionServer(): Promise<SessionNext.Server | null> {
     console.log(error);
     return null;
   }
-  
 }
 
 export async function DeleteSession() {
