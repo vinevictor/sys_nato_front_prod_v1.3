@@ -7,11 +7,9 @@ import {
   Button,
   Flex,
   FormLabel,
-  Link,
   Select,
   Table,
   Tbody,
-  Text,
   Th,
   Thead,
   Tr,
@@ -36,7 +34,7 @@ interface FirlterDataProps {
   nome: string | null;
   andamento: string | null;
   construtora: number | null;
-  empreedimento: number | null;
+  empreendimento: number | null;
   financeiro: number | null;
   id: number | null;
   pagina: number | null;
@@ -47,7 +45,7 @@ const FirlterData = async (
     nome,
     andamento,
     construtora,
-    empreedimento,
+    empreendimento,
     financeiro,
     id,
     pagina,
@@ -59,7 +57,7 @@ const FirlterData = async (
   nome && filter.push(`nome=${nome}`);
   andamento && filter.push(`andamento=${andamento}`);
   Number(construtora) > 0 && filter.push(`construtora=${construtora}`);
-  Number(empreedimento) > 0 && filter.push(`empreedimento=${empreedimento}`);
+  Number(empreendimento) > 0 && filter.push(`empreendimento=${empreendimento}`);
   Number(financeiro) > 0 && filter.push(`financeiro=${financeiro}`);
   Number(id) > 0 && filter.push(`id=${id}`);
   Number(pagina) > 0 && filter.push(`pagina=${pagina}`);
@@ -77,13 +75,13 @@ const FirlterData = async (
     },
     cache: "no-store",
   });
+  const data = await user.json();
 
   if (!user.ok) {
     console.error("FirlterData status:", user.status);
     return null;
   }
-  const data = await user.json();
-  return data;
+  return data.data;
 };
 
 const fetchConstrutoraAll = async () => {
@@ -129,7 +127,6 @@ export const DadoCompomentList = ({
   const { data } = useHomeContex();
 
   useEffect(() => {
-    // console.log("data", dados);
     if (dados) {
       setListaDados(dados.data);
       setTotal(dados.total);
@@ -162,43 +159,23 @@ export const DadoCompomentList = ({
 
   const filtroPrimario = async () => {
     if (!ListaDados) return;
-    const filtro = ListaDados.filter((item) => {
-      item.nome.toLowerCase().includes(Nome?.toLowerCase() || "") &&
-        item.andamento
-          ?.toLowerCase()
-          .includes(Andamento?.toLowerCase() || "") &&
-        item.construtora?.id === Construtora &&
-        item.empreendimento.id === Empreendimento &&
-        item.financeiro.id === Financeiro &&
-        item.id === Id;
-    });
-    if (filtro?.length !== 0) {
-      setListaDados(filtro);
-    } else {
-      setListaDados(null);
-      setMesageError("Nenhum dado encontrado");
-    }
-  };
-
-  const filtroSecundario = async () => {
     const filtro = await FirlterData(
       {
         nome: Nome,
         andamento: Andamento,
         construtora: Construtora,
-        empreedimento: Empreendimento,
+        empreendimento: Empreendimento,
         financeiro: Financeiro,
         id: Id,
         pagina: Pagina,
       },
       session
     );
-
     if (filtro?.length !== 0) {
       setListaDados(filtro);
     } else {
       setListaDados(null);
-      setMesageError("Nenhum dado encontrado no banco de dados");
+      setMesageError("Nenhum dado encontrado");
     }
   };
 
@@ -216,7 +193,7 @@ export const DadoCompomentList = ({
           nome: null,
           andamento: null,
           construtora: null,
-          empreedimento: null,
+          empreendimento: null,
           financeiro: null,
           id: null,
           pagina: null,
@@ -235,7 +212,7 @@ export const DadoCompomentList = ({
           nome: null,
           andamento: null,
           construtora: null,
-          empreedimento: null,
+          empreendimento: null,
           financeiro: null,
           id: null,
           pagina: Pagina,
@@ -243,6 +220,7 @@ export const DadoCompomentList = ({
         session
       )
     );
+    setPagAtual(Pagina);
   };
 
   return (
@@ -259,7 +237,12 @@ export const DadoCompomentList = ({
         <Box display={{ base: "block", xl: "none" }}>
           <BugReport />
         </Box>
-        <Flex w="full" display={{ base: "flex", xl: "none" }} gap={2} flexDir="column">
+        <Flex
+          w="full"
+          display={{ base: "flex", xl: "none" }}
+          gap={2}
+          flexDir="column"
+        >
           {session?.user.role?.now && <BtnListNow session={session.user} />}
           {session?.user.role?.alert && <BtnAlertList session={session.user} />}
           <Button
@@ -316,8 +299,7 @@ export const DadoCompomentList = ({
               value={Andamento ?? ""}
               onChange={(e) => setAndamento(e.target.value)}
             >
-              <option></option>
-              <option value="VAZIO">VAZIO</option>
+              <option value="">VAZIO</option>
               <option value="INICIADO">INICIADO</option>
               <option value="APROVADO">APROVADO</option>
               <option value="EMITIDO">EMITIDO</option>
@@ -381,28 +363,6 @@ export const DadoCompomentList = ({
             </Button>
           </Box>
         </Flex>
-        {ListaDados?.length === 0 && MesageError && (
-          <>
-            <Flex
-              justifyContent="center"
-              alignItems="center"
-              w="100%"
-              h="78vh"
-              gap={8}
-              p={4}
-            >
-              <Text>{MesageError}</Text>
-              <Button
-                w={{ base: "100%", xl: "auto" }}
-                size="lg"
-                colorScheme="green"
-                onClick={filtroSecundario}
-              >
-                Busca Avançada
-              </Button>
-            </Flex>
-          </>
-        )}
         {ListaDados && (
           <>
             <Flex
@@ -510,7 +470,7 @@ export const DadoCompomentList = ({
                   <SelectPgComponent
                     total={Total || 0}
                     ClientQtd={dados?.data.length || 0}
-                    SelectPage={PagAtual}
+                    SelectPage={Pagina || 1}
                     setSelectPage={setPagina}
                     SetVewPage={NextPage}
                   />
