@@ -4,12 +4,6 @@ import { FormLogin } from "@/components/login_form";
 import { Stack, Text, Box, Button, Link, Image } from "@chakra-ui/react";
 
 export default function LoginPage() {
-  const handleClick = () => {
-    window.open(
-      "https://arredebrasilrp.acsoluti.com.br/site/verificar-situacao-de-emissao",
-      "_blank"
-    );
-  };
   return (
     <Stack
       height="100vh"
@@ -55,32 +49,6 @@ export default function LoginPage() {
             <Link href="/termos/privacidade"> Política de Privacidade.</Link>
           </Text>
         </Box>
-      </Box>
-
-      {/* Bloco de Verificar Status do Certificado */}
-      <Box
-        border="3px solid #E8E8E8"
-        borderRadius="8px"
-        padding="32px"
-        width={{ base: "90%", sm: "80%", md: "70%", lg: "50%", xl: "35em" }} // Largura responsiva
-        textAlign="center"
-        maxWidth="100%"
-        bg={"#ffffff"}
-        boxShadow="lg"
-      >
-        <Button
-          variant="outline"
-          width={{ base: "100%", sm: "400px" }} // Largura responsiva
-          height="50px"
-          onClick={handleClick}
-          border="1px solid #b8b8b8cc"
-          maxWidth="100%"
-          color="black"
-          whiteSpace="normal" // Permite quebra de linha
-          textAlign="center" // Centraliza o texto
-        >
-          VERIFICAR STATUS DO CERTIFICADO
-        </Button>
       </Box>
     </Stack>
   );
