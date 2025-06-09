@@ -8,7 +8,7 @@ export const InputComponentFilterHome = ({ ...props }: InputComponentProps) => {
       textColor={"#00713D"}
       _hover={{ borderColor: "#00613C" }}
       borderColor={"#00713D"}
-      placeholder="id"
+      placeholder="Nome"
       size="sm"
       borderRadius="1rem"
       {...props}

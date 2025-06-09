@@ -25,7 +25,6 @@ const GetListaDados = async (
     cache: "no-store",
   });
   const data = await user.json();
-  // console.log(data);
   if (!user.ok) {
     console.error("GetListaDados status:", data.message);
     return null;
@@ -36,7 +35,8 @@ const GetListaDados = async (
 export default async function HomePage() {
   const session = await GetSessionServer();
   const ListDados = await GetListaDados(session);
-  
+  console.log("🚀 ~ HomePage ~ ListDados:", ListDados);
+
   return (
     <>
       <HomeProvider>
