@@ -288,13 +288,13 @@ export default function FormSolicitacaoEdit({
   };
 
   const Msg =
-    form.andamento !== "EMITIDO" &&
-    form.andamento !== "APROVADO" &&
-    form.dt_agendamento
-      ? `Atendido em ${form.dt_agendamento} as ${form.hr_agendamento}`
-      : !form.andamento
+    form?.andamento !== "EMITIDO" &&
+    form?.andamento !== "APROVADO" &&
+    form?.dt_agendamento
+      ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
+      : !form?.andamento
       ? ""
-      : form.andamento;
+      : form?.andamento;
 
   return (
     <Flex
@@ -319,29 +319,31 @@ export default function FormSolicitacaoEdit({
           <Text fontSize={"md"}>
             Criado Em:
             {` ${
-              form.createdAt &&
-              form.createdAt.split("T")[0].split("-").reverse().join("/")
-            }, ${form.createdAt && form.createdAt.split("T")[1].split(".")[0]}`}
+              form?.createdAt &&
+              form?.createdAt.split("T")[0].split("-").reverse().join("/")
+            }, ${
+              form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
+            }`}
           </Text>
-          {form.updatedAt && (
+          {form?.updatedAt && (
             <Text fontSize={"md"}>
               Atualizado Em:
               {` ${
-                form.updatedAt &&
-                form.updatedAt.split("T")[0].split("-").reverse().join("/")
+                form?.updatedAt &&
+                form?.updatedAt.split("T")[0].split("-").reverse().join("/")
               }, ${
-                form.updatedAt && form.updatedAt.split("T")[1].split(".")[0]
+                form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
               }`}
             </Text>
           )}
-          <Text fontSize={{ base: "sm", md: "md" }}>Id: {form.id}</Text>
+          <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
         </Flex>
         <Flex flexDir={"column"}>
           <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
           <Text fontSize={{ base: "md", md: "md" }}>
             Corretor:{" "}
-            {form.corretor?.nome
-              ? form.corretor.nome
+            {form?.corretor?.nome
+              ? form?.corretor.nome
               : "Corretor Não Cadastrado"}
           </Text>
           <Text fontSize={{ base: "md", md: "md" }}>Andamento: {Msg}</Text>
@@ -363,7 +365,7 @@ export default function FormSolicitacaoEdit({
             label="CPF"
             type="text"
             mask="999.999.999-99"
-            value={form.cpf || ""}
+            value={form?.cpf || ""}
             onvalue={(value) => handleChange("cpf", value)}
             required
             Disable
@@ -372,7 +374,7 @@ export default function FormSolicitacaoEdit({
             id="nome"
             type="text"
             label="Nome"
-            value={form.nome || ""}
+            value={form?.nome || ""}
             onvalue={(value) => handleChange("nome", value)}
             required
             isReadOnly={!isAdmin}
@@ -382,7 +384,7 @@ export default function FormSolicitacaoEdit({
             id="dt_nascimento"
             type="date"
             label="Data de Nascimento"
-            value={form.dt_nascimento ? form.dt_nascimento.split("T")[0] : ""}
+            value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
             onvalue={(value) => handleChange("dt_nascimento", value)}
             required
             isReadOnly={!isAdmin}
@@ -393,7 +395,7 @@ export default function FormSolicitacaoEdit({
             id="email"
             type="email"
             label="Email"
-            value={form.email || ""}
+            value={form?.email || ""}
             onvalue={(value) => handleChange("email", value)}
             required
             isReadOnly={!isAdmin}
@@ -403,7 +405,7 @@ export default function FormSolicitacaoEdit({
             label="Whatsapp Com DDD"
             type="text"
             mask="(99) 99999-9999"
-            value={form.telefone || ""}
+            value={form?.telefone || ""}
             onvalue={(value) => handleChange("telefone", value)}
             required
             isWhatsapp
@@ -414,7 +416,7 @@ export default function FormSolicitacaoEdit({
             label="Whatsapp Com DDD 2"
             type="text"
             mask="(99) 99999-9999"
-            value={form.telefone2 || ""}
+            value={form?.telefone2 || ""}
             onvalue={(value) => handleChange("telefone2", value)}
             isWhatsapp
           />
@@ -424,7 +426,7 @@ export default function FormSolicitacaoEdit({
             label="Construtora"
             id="construtora"
             onvalue={(value) => handleSelectConstrutora(value)}
-            value={form.construtora ? form.construtora.id : ""}
+            value={form?.construtora ? form?.construtora.id : ""}
             required
             options={
               isAdmin
@@ -443,7 +445,7 @@ export default function FormSolicitacaoEdit({
 
           {isAdmin ? (
             options
-              .filter((c) => c.id === form.construtora?.id)
+              .filter((c) => c.id === form?.construtora?.id)
               .map((c) => (
                 <SelectBasic
                   label="Empreendimento"
@@ -452,9 +454,9 @@ export default function FormSolicitacaoEdit({
                     handleChange("empreendimento", Number(value));
                     handleChange("empreendimentoId", +value);
                   }}
-                  value={form.empreendimento ? form.empreendimento.id : ""}
+                  value={form?.empreendimento ? form?.empreendimento.id : ""}
                   required
-                  isDisabled={!form.construtora}
+                  isDisabled={!form?.construtora}
                   options={c.empreendimentos.map((e) => ({
                     id: e.id!,
                     fantasia: e.nome!,
@@ -469,9 +471,9 @@ export default function FormSolicitacaoEdit({
                 handleChange("empreendimento", value);
                 handleChange("empreendimentoId", +value);
               }}
-              value={form.empreendimento ? form.empreendimento.id : ""}
+              value={form?.empreendimento ? form?.empreendimento.id : ""}
               required
-              isDisabled={!form.construtora}
+              isDisabled={!form?.construtora}
               options={
                 session?.empreendimento
                   ? session.empreendimento.map((e) => ({
@@ -485,7 +487,7 @@ export default function FormSolicitacaoEdit({
 
           {isAdmin ? (
             options
-              .filter((c) => c.id === form.construtora?.id)
+              .filter((c) => c.id === form?.construtora?.id)
               .map((f) => (
                 <SelectBasic
                   label="Financeira"
@@ -494,9 +496,9 @@ export default function FormSolicitacaoEdit({
                     handleChange("financeiro", Number(value));
                     handleChange("financeiroId", +value);
                   }}
-                  value={form.financeiro ? form.financeiro.id : ""}
+                  value={form?.financeiro ? form?.financeiro.id : ""}
                   required
-                  isDisabled={!form.construtora}
+                  isDisabled={!form?.construtora}
                   options={f.financeiros.map((f) => ({
                     id: f.financeiro.id!,
                     fantasia: f.financeiro.fantasia!,
@@ -511,9 +513,9 @@ export default function FormSolicitacaoEdit({
                 handleChange("financeiro", value);
                 handleChange("financeiroId", +value);
               }}
-              value={form.financeiro ? form.financeiro.id : ""}
+              value={form?.financeiro ? form?.financeiro.id : ""}
               required
-              isDisabled={!form.construtora}
+              isDisabled={!form?.construtora}
               options={
                 session?.Financeira
                   ? session.Financeira.map((f) => ({
@@ -527,7 +529,7 @@ export default function FormSolicitacaoEdit({
 
           {session?.hierarquia === "ADM" &&
             options
-              .filter((c) => c.id === form.construtora?.id)
+              .filter((c) => c.id === form?.construtora?.id)
               .map((c) => (
                 <SelectBasic
                   label="Corretor"
@@ -536,9 +538,9 @@ export default function FormSolicitacaoEdit({
                     handleChange("corretor", value);
                     handleChange("corretorId", +value);
                   }}
-                  value={form.corretor ? form.corretor.id : ""}
+                  value={form?.corretor ? form?.corretor.id : ""}
                   required
-                  isDisabled={!form.construtora}
+                  isDisabled={!form?.construtora}
                   options={c.colaboradores.map((c) => ({
                     id: c.id!,
                     fantasia: c.nome!,
@@ -550,18 +552,18 @@ export default function FormSolicitacaoEdit({
           <BoxBasic
             id="idfcweb"
             label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
-            value={form.id_fcw || ""}
+            value={form?.id_fcw || ""}
             isLink={isAdmin}
             href={
               isAdmin
-                ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form.id_fcw}`
+                ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form?.id_fcw}`
                 : undefined
             }
           />
           <BoxBasic
             id="andamento"
             label="Andamento"
-            value={form.andamento || ""}
+            value={form?.andamento || ""}
           />
           {isAdmin && (
             <SelectMultiItem
@@ -612,39 +614,39 @@ export default function FormSolicitacaoEdit({
           Chamado
         </Button>
         <BtCreateAlertCliente DataSolicitacao={data} user={session} />
-        {form.distrato &&
-          form.ativo &&
+        {form?.distrato &&
+          form?.ativo &&
           ((hierarquia === "ADM" && (
             <>
-              <BtRemoverDistrato id={form.id} user={session} />
+              <BtRemoverDistrato id={form?.id} user={session} />
             </>
           )) ||
             (hierarquia === "CCA" && (
               <>
-                <BtRemoverDistrato id={form.id} user={session} />
+                <BtRemoverDistrato id={form?.id} user={session} />
               </>
             )))}
-        {!form.id_fcw && form.ativo && (
+        {!form?.id_fcw && form?.ativo && (
           <CriarFcweb Dados={form} user={session!} />
         )}
-        {form.ativo && hierarquia === "ADM" && <ResendSms id={form.id} />}
-        <BotaoPausar id={form.id} statusPause={data.pause} />
+        {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
+        <BotaoPausar id={form?.id} statusPause={data?.pause} />
         <BtnIniciarAtendimento
           hierarquia={hierarquia}
           status={
-            data.statusAtendimento
+            data?.statusAtendimento
               ? data.statusAtendimento
-              : form.statusAtendimento
+              : form?.statusAtendimento
           }
-          aprovacao={form.andamento}
-          id={form.id}
+          aprovacao={form?.andamento}
+          id={form?.id}
         />
-        {session?.hierarquia === "ADM" && !data.ativo && (
+        {session?.hierarquia === "ADM" && !data?.ativo && (
           <ReativarButton size={"sm"} colorScheme="orange" solicitacaoId={id}>
             Reativar
           </ReativarButton>
         )}
-        {!data.distrato && (
+        {!data?.distrato && (
           <BtnBasicSave
             size={"sm"}
             bg={"green.500"}

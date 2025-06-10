@@ -3,6 +3,7 @@ import { Box, Button, Flex, Text, Textarea } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import React from "react";
+import Loading from "@/app/loading";
 
 interface MensagensProps {
   id: number;
@@ -46,7 +47,6 @@ export default function MensagensChat({
 }: MensagensProps): React.ReactElement {
   const [message, setMessage] = useState("");
   const chat: MensagemObj[] = data || [];
-
   const handleSend = () => {
     if (!message.trim() || !session?.nome) return;
 
@@ -70,19 +70,18 @@ export default function MensagensChat({
   const mensagens = chat.map((item: MensagemObj) => {
     if (!session?.id) return null;
     const isCurrentUser = item.autor_id === session?.id;
-    
     return (
-      <Flex 
-        key={item.id} 
-        justifyContent={isCurrentUser ? "flex-end" : "flex-start"} 
+      <Flex
+        key={item.id}
+        justifyContent={isCurrentUser ? "flex-end" : "flex-start"}
         width="100%"
         mb={2}
         px={2}
       >
-        <Box 
+        <Box
           maxW={{ base: "85%", md: "70%" }}
-          bg={isCurrentUser ? "blue.100" : "gray.100"} 
-          p={3} 
+          bg={isCurrentUser ? "blue.100" : "gray.100"}
+          p={3}
           borderRadius="1rem"
           boxShadow="sm"
         >
@@ -91,7 +90,9 @@ export default function MensagensChat({
               {item.autor}
             </Text>
           )}
-          <Text mb={1} wordBreak="break-word">{item.mensagem}</Text>
+          <Text mb={1} wordBreak="break-word">
+            {item.mensagem}
+          </Text>
           <Flex gap={2} justifyContent="flex-end">
             <Text fontSize="xs" color="gray.500">
               {item.hora}
@@ -120,11 +121,11 @@ export default function MensagensChat({
           justifyContent="space-between"
           position="relative"
         >
-          <Box 
+          <Box
             bg="green.200"
             p={4}
             borderRadius="1rem"
-            h={{base: "25rem", lg: "30rem"}}
+            h={{ base: "25rem", lg: "30rem" }}
             overflowY="auto"
             mb={3}
             boxShadow="inner"
@@ -147,15 +148,15 @@ export default function MensagensChat({
                 border="1px solid"
                 borderColor="gray.300"
                 _hover={{ borderColor: !id ? "gray.300" : "gray.400" }}
-                _focus={{ 
+                _focus={{
                   borderColor: !id ? "gray.300" : "blue.500",
-                  boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)"
+                  boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)",
                 }}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 isDisabled={!id}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSend();
                   }

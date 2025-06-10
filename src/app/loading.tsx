@@ -3,8 +3,8 @@ import { Box, Center, CircularProgress, Flex, Heading } from "@chakra-ui/react";
 export default function Loading() {
   return (
     <Flex
-      w={"100%"}
-      h={"100vh"}
+      w={"full"}
+      h={"full"}
       flexDir="column"
       justifyContent={"center"}
       alignItems={"center"}
