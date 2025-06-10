@@ -35,7 +35,6 @@ const GetListaDados = async (
 export default async function HomePage() {
   const session = await GetSessionServer();
   const ListDados = await GetListaDados(session);
-  console.log("🚀 ~ HomePage ~ ListDados:", ListDados);
 
   return (
     <>

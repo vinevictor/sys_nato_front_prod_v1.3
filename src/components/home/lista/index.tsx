@@ -27,7 +27,6 @@ import { ImClock } from "react-icons/im";
 import { InputComponentFilterHome } from "../imputs/input";
 import { SelectComponentFilterHome } from "../imputs/select";
 import { SelectPgComponent } from "../imputs/selectPg";
-import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
@@ -209,6 +208,7 @@ export const DadoCompomentList = ({
       )
     );
     setMesageError(null);
+    router.refresh();
   };
 
   const NextPage = async () => {
@@ -504,7 +504,7 @@ export const DadoCompomentList = ({
               <SelectPgComponent
                 total={Total || 0}
                 ClientQtd={dados?.data.length || 0}
-                SelectPage={PagAtual}
+                SelectPage={Pagina || 1}
                 setSelectPage={setPagina}
                 SetVewPage={NextPage}
               />
