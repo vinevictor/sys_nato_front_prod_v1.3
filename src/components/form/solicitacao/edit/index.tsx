@@ -1,4 +1,5 @@
 "use client";
+import Loading from "@/app/loading";
 import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_cliente";
 import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
 import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
@@ -296,7 +297,10 @@ export default function FormSolicitacaoEdit({
       ? ""
       : form?.andamento;
 
+      console.log(data);
   return (
+    <>
+    {!form && <Loading />}
     <Flex
       w={"full"}
       rounded={"md"}
@@ -599,7 +603,7 @@ export default function FormSolicitacaoEdit({
           <InputFileUpload
             id="cnh"
             label="Documento de Identidade"
-            value={form.uploadCnh}
+            value={form?.uploadCnh}
             onvalue={(value) => handleChange("uploadCnh", value)}
           />
         </Flex>
@@ -621,12 +625,12 @@ export default function FormSolicitacaoEdit({
           form?.ativo &&
           ((hierarquia === "ADM" && (
             <>
-              <BtRemoverDistrato id={form?.id} user={session} />
+              <BtRemoverDistrato id={form?.id} />
             </>
           )) ||
             (hierarquia === "CCA" && (
               <>
-                <BtRemoverDistrato id={form?.id} user={session} />
+                <BtRemoverDistrato id={form?.id} />
               </>
             )))}
         {!form?.id_fcw && form?.ativo && (
@@ -645,7 +649,7 @@ export default function FormSolicitacaoEdit({
           id={form?.id}
         />
         {session?.hierarquia === "ADM" && !data?.ativo && (
-          <ReativarButton size={"sm"} colorScheme="orange" solicitacaoId={id}>
+          <ReativarButton size={"sm"} px={8} colorScheme="red" solicitacaoId={id}>
             Reativar
           </ReativarButton>
         )}
@@ -662,5 +666,6 @@ export default function FormSolicitacaoEdit({
         )}
       </Flex>
     </Flex>
+    </>
   );
 }

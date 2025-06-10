@@ -44,7 +44,6 @@ export async function PUT(
         if (!response.ok) {
           throw new Error(`Erro ao buscar tags salvas: ${response.statusText}`);
         }
-
         const tagsSalvas = await response.json();
 
         const tagsSalvasDescriptions = new Set(
@@ -96,16 +95,17 @@ export async function PUT(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        body: JSON.stringify(dataSend),
+        body: JSON.stringify(body),
       }
     );
 
+    const data = await user.json();
+    console.log("🚀 ~ data:", data)
     if (!user.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });
     }
-    const data = await user.json();
 
-    return NextResponse.json({ status: 200 });
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
