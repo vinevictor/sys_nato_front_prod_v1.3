@@ -24,7 +24,7 @@ export async function POST(request: Request) {
             throw new Error("Erro ao criar o registro");
         }
         const retorno = await response.json();
-
+        console.log(retorno);
         return NextResponse.json(
             {
                 message: "FC criado com sucesso",
