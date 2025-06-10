@@ -9,20 +9,23 @@ interface CardGridDistratoProps extends BoxProps {
   User: AuthUser;
 }
 
-export default function CardGridDistrato({ Id, User, ...props }: CardGridDistratoProps) {
+export default function CardGridDistrato({
+  Id,
+  User,
+  ...props
+}: CardGridDistratoProps) {
   const Hierarquia = User?.hierarquia;
 
   return (
     <Box {...props}>
       {Hierarquia === "ADM" && (
         <>
-          <BtRemoverDistrato id={Id}
-           user={User} />
+          <BtRemoverDistrato id={Id} />
         </>
       )}
       {Hierarquia === "CCA" && (
         <>
-          <BtRemoverDistrato id={Id} user={User} />
+          <BtRemoverDistrato id={Id} />
         </>
       )}
     </Box>
