@@ -595,14 +595,14 @@ export default function FormSolicitacaoEdit({
           </Flex>
         </Box>
 
-        <Flex gap={6}>
+        {/* <Flex gap={6}>
           <InputFileUpload
             id="cnh"
             label="Documento de Identidade"
             value={form.uploadCnh}
             onvalue={(value) => handleChange("uploadCnh", value)}
           />
-        </Flex>
+        </Flex> */}
       </Flex>
 
       <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>

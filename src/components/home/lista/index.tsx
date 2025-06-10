@@ -229,7 +229,7 @@ export const DadoCompomentList = ({
     );
     setPagina(Pagina);
   };
-  console.log(data);
+  
   return (
     <>
       <Box

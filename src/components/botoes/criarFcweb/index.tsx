@@ -64,6 +64,7 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
           telefone: Dados?.telefone,
           email: Dados?.email,
           dtnascimento: Dados?.dt_nascimento,
+          id: Dados?.id,
         }),
       });
 
@@ -88,6 +89,7 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
         duration: 6000,
         isClosable: true,
       });
+      
     } catch (error: any) {
       console.error(error);
       toast({

@@ -86,7 +86,6 @@ export async function GetSessionServer(): Promise<SessionNext.Server | null> {
       }
     );
     const retorno = await response.json();
-    console.log("🚀 ~ GetSessionServer ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
