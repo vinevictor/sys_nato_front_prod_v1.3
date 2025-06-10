@@ -622,7 +622,10 @@ export default function FormSolicitacaoEdit({
         >
           Chamado
         </Button>
-        <BtCreateAlertCliente DataSolicitacao={data} user={session} />
+        <BtCreateAlertCliente
+          DataSolicitacao={data}
+          user={session}
+        />
         {form?.distrato &&
           form?.ativo &&
           ((hierarquia === "ADM" && (
