@@ -37,6 +37,7 @@ export async function POST(request: Request) {
         }/*  */
 
         const retorno = await response.json();
+        console.log(retorno);
         return NextResponse.json(
             {
                 message: "FC criado com sucesso",

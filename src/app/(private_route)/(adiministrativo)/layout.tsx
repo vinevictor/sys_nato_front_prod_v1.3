@@ -36,8 +36,7 @@ export default async function PainelAdmLayout({
             </Text>
           </Box>
           <Divider
-            my={5}
-            border={"1px solid"}
+            my={4}
             borderColor={"gray.300"}
             w={"100%"}
           />
@@ -46,19 +45,17 @@ export default async function PainelAdmLayout({
             w={"100%"}
             gap={2}
             flexWrap={{ base: "wrap", md: "nowrap" }}
-            justifyContent={{ base: "center", md: "normal" }}
-            alignItems={{ base: "center", md: "normal" }}
+            justifyContent="flex-start"
+            alignItems="flex-start"
           >
             {session?.user.role?.user && <BotaoAdm name={"Usuarios"} />}
-            {session?.user.role?.empreendimento && (
-              <BotaoAdm name={"Empreendimentos"} />
-            )}
+            {session?.user.role?.empreendimento && <BotaoAdm name={"Empreendimentos"} />}
             {session?.user.role?.construtora && <BotaoAdm name={"Construtora"} />}
             {session?.user.hierarquia === "ADM" && <BotaoAdm name={"CCAs"} />}
             {session?.user.hierarquia === "ADM" && <BotaoAdm name={"Tags"} />}
           </Flex>
         </Flex>
-        <Flex w={{ base: "100%", md: "90%" }} minW={"90%"} h={"full"}>
+        <Flex w={{ base: "100%", md: "90%" }} minW={"90%"} h={"full"} >
           {children}
         </Flex>
       </Flex>

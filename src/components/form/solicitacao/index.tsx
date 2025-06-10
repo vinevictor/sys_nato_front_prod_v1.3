@@ -495,19 +495,10 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
       </Alert>
       <Flex w={"60%"} justifyContent={"center"} gap={4}>
         <InputFileUpload
-          label="CNH"
+          label="Documento de Identificação"
           id="cnh"
           value={form.uploadCnh}
           onvalue={(url) => handleChange("uploadCnh", url)}
-          required
-          boxWidth="100%"
-        />
-
-        <InputFileUpload
-          label="RG"
-          id="doc"
-          value={form.uploadRg}
-          onvalue={(url) => handleChange("uploadRg", url)}
           required
           boxWidth="100%"
         />
