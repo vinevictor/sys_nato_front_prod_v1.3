@@ -128,6 +128,9 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.nome}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+        {dados.financeiro.fantasia}
+        </Td>
+        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {agendamento}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>

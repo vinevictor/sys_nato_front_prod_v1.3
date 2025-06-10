@@ -10,6 +10,10 @@ import {
   Select,
   Textarea,
   useToast,
+  Stack,
+  VStack,
+  HStack,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import HistoricoComponent from "../historico";
 import MensagensChat from "../mensagensChat";
@@ -65,9 +69,13 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   const [solicitacaoId, setSolicitacaoId] = useState<number>(0);
   const [DadosChamado, setDadosChamado] = useState<TypeChamado | null>(null);
   const [titulo, setTitulo] = useState<string>("");
-
   const toast = useToast();
   const router = useRouter();
+  const flexDirection = useBreakpointValue({ base: "column", lg: "row" }) as "column" | "row";
+  const mainWidth = useBreakpointValue({ base: "full", lg: "70%" });
+  const sidebarWidth = useBreakpointValue({ base: "full", lg: "30%" });
+  const formWidth = useBreakpointValue({ base: "full", sm: "95%", md: "90%" });
+  const headerPadding = useBreakpointValue({ base: 2, md: 4, lg: 8 });
 
   const handleRemoveExistingImage = useCallback(
     (imageId: string, imageUrl: string) => {
@@ -200,20 +208,20 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         images: finalImages,
         temp: !DadosChamado?.id
           ? [
-              {
-                id: new Date().getTime().toString(),
-                descricao: `Chamado criado por ${session.nome}`,
-                createAt: new Date().toISOString(),
-              },
-            ]
+            {
+              id: new Date().getTime().toString(),
+              descricao: `Chamado criado por ${session.nome}`,
+              createAt: new Date().toISOString(),
+            },
+          ]
           : [
-              ...DadosChamado?.temp,
-              {
-                id: new Date().getTime().toString(),
-                descricao: `Chamado atualizado por ${session.nome}`,
-                createAt: new Date().toISOString(),
-              },
-            ],
+            ...DadosChamado?.temp,
+            {
+              id: new Date().getTime().toString(),
+              descricao: `Chamado atualizado por ${session.nome}`,
+              createAt: new Date().toISOString(),
+            },
+          ],
       };
 
       const url = !DadosChamado?.id
@@ -282,105 +290,141 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   }, [data]);
 
   return (
-    <>
-      <Flex
-        w="full"
-        h={{ base: "auto", lg: "full" }}
-        bg="gray.500"
-        p={4}
-        gap={4}
-        flexDir={{ base: "column", lg: "row" }}
+    <Flex
+      w="full"
+      minH={{ base: "100vh", lg: "full" }}
+      bg="gray.500"
+      p={{ base: 2, md: 4 }}
+      gap={{ base: 2, md: 4 }}
+      flexDir={flexDirection}
+    >
+      
+      <Box
+        display="flex"
+        flexDir="column"
+        w={mainWidth}
+        minH={{ base: "auto", lg: "full" }}
+        bg="white"
+        borderRadius="1rem"
+        boxShadow="md"
+        border="1px solid"
+        borderColor="gray.200"
+        p={{ base: 2, md: 4 }}
+        gap={{ base: 2, md: 4 }}
+        justifyContent="space-between"
       >
-        <Box
-          display={"flex"}
-          flexDir={"column"}
-          w={{ base: "full", lg: "70%" }}
-          h={{ base: "auto", lg: "full" }}
-          bg="white"
-          borderRadius="1rem"
-          boxShadow="md"
-          border="1px solid"
-          borderColor="gray.200"
-          p={4}
-          gap={4}
-          justifyContent={"space-between"}
+        
+        <Flex
+          w="full"
+          justifyContent="space-between"
+          alignItems={{ base: "flex-start", md: "center" }}
+          flexDir={{ base: "column", md: "row" }}
+          gap={{ base: 2, md: 0 }}
         >
-          <Flex w="full" justifyContent="space-between" alignItems="center">
-            <Flex gap={3} pl={8} alignItems="end" justifyContent="flex-start">
-              <Heading>Chamado</Heading>
-              {DadosChamado?.id && (
-                <Heading size="lg">Id: {DadosChamado?.id}</Heading>
-              )}
-            </Flex>
-            <Flex gap={2} pe={10}>
-              {session?.role?.adm ? (
-                <>
-                  {DadosChamado?.status && (
-                    <Flex gap={2} alignItems="center">
-                      <Heading size="lg">Status</Heading>
-                      <Select
-                        value={status}
-                        name="status"
-                        size="sm"
-                        onChange={(e) => setStatus(e.target.value)}
-                      >
-                        <option value="ABERTO">Aberto</option>
-                        <option value="EM_ANDAMENTO">Em andamento</option>
-                        <option value="LV2">Enviado para nível 2</option>
-                        <option value="CONCLUIDO">Concluído</option>
-                      </Select>
-                    </Flex>
-                  )}
-                </>
-              ) : (
-                <>
-                  {DadosChamado?.status && (
-                    <Heading size="lg">Status: {DadosChamado?.status}</Heading>
-                  )}
-                </>
-              )}
-            </Flex>
+          <Flex
+            gap={{ base: 2, md: 3 }}
+            pl={{ base: 0, md: headerPadding }}
+            alignItems={{ base: "flex-start", md: "end" }}
+            justifyContent="flex-start"
+            flexDir={{ base: "column", sm: "row" }}
+          >
+            <Heading size={{ base: "md", md: "lg" }}>Chamado</Heading>
+            {DadosChamado?.id && (
+              <Heading size={{ base: "sm", md: "md" }}>
+                Id: {DadosChamado?.id}
+              </Heading>
+            )}
           </Flex>
-          <Divider border={"1px solid"} borderColor="gray.300" my={2} />
 
           <Flex
-            w="full"
-            alignItems="center"
-            justifyContent="flex-start"
             gap={2}
-            flexDir={"column"}
+            pe={{ base: 0, md: 10 }}
+            w={{ base: "full", md: "auto" }}
+            justifyContent={{ base: "flex-start", md: "flex-end" }}
           >
-            <Flex w={"90%"} gap={2} flexDir="column">
-              <FormLabel>Motivo do chamado</FormLabel>
-              <Input
-                placeholder="Descreva o motivo do chamado"
-                w="full"
-                borderRadius="1rem"
-                border="1px solid"
-                borderColor="gray.300"
-                _hover={{ borderColor: "gray.300" }}
-                _focus={{ borderColor: "blue.500" }}
-                value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
-              />
-            </Flex>
-            <Flex w={"90%"} h={"15rem"} gap={2} flexDir="column">
-              <FormLabel>Descrição do chamado</FormLabel>
-              <Textarea
-                placeholder="Descrição"
-                w="full"
-                h="full"
-                resize="none"
-                borderRadius="1rem"
-                border="1px solid"
-                borderColor="gray.300"
-                _hover={{ borderColor: "gray.300" }}
-                _focus={{ borderColor: "blue.500" }}
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-              />
-            </Flex>
-            <Flex w={"90%"} h={"25rem"} gap={8}>
+            {session?.role?.adm ? (
+              <>
+                {DadosChamado?.status && (
+                  <Flex
+                    gap={2}
+                    alignItems={{ base: "flex-start", md: "center" }}
+                    flexDir={{ base: "column", sm: "row" }}
+                    w={{ base: "full", sm: "auto" }}
+                  >
+                    <Heading size={{ base: "sm", md: "md" }}>Status</Heading>
+                    <Select
+                      value={status}
+                      name="status"
+                      size="sm"
+                      onChange={(e) => setStatus(e.target.value)}
+                      w={{ base: "full", sm: "auto" }}
+                      minW={{ sm: "150px" }}
+                    >
+                      <option value="ABERTO">Aberto</option>
+                      <option value="EM_ANDAMENTO">Em andamento</option>
+                      <option value="LV2">Enviado para nível 2</option>
+                      <option value="CONCLUIDO">Concluído</option>
+                    </Select>
+                  </Flex>
+                )}
+              </>
+            ) : (
+              <>
+                {DadosChamado?.status && (
+                  <Heading size={{ base: "sm", md: "md" }}>
+                    Status: {DadosChamado?.status}
+                  </Heading>
+                )}
+              </>
+            )}
+          </Flex>
+        </Flex>
+
+        <Divider border="1px solid" borderColor="gray.300" my={2} />
+
+        {/* Formulário */}
+        <VStack w="full" spacing={{ base: 3, md: 4 }} align="stretch">
+          <VStack w={formWidth} mx="auto" spacing={2} align="stretch">
+            <FormLabel mb={1}>Motivo do chamado</FormLabel>
+            <Input
+              placeholder="Descreva o motivo do chamado"
+              borderRadius="1rem"
+              border="1px solid"
+              borderColor="gray.300"
+              _hover={{ borderColor: "gray.300" }}
+              _focus={{ borderColor: "blue.500" }}
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              size={{ base: "sm", md: "md" }}
+            />
+          </VStack>
+
+          <VStack w={formWidth} mx="auto" spacing={2} align="stretch">
+            <FormLabel mb={1}>Descrição do chamado</FormLabel>
+            <Textarea
+              placeholder="Descrição"
+              h={{ base: "120px", md: "150px", lg: "200px" }}
+              resize="none"
+              borderRadius="1rem"
+              border="1px solid"
+              borderColor="gray.300"
+              _hover={{ borderColor: "gray.300" }}
+              _focus={{ borderColor: "blue.500" }}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              size={{ base: "sm", md: "md" }}
+            />
+          </VStack>
+
+          {/* Seção de Imagens e Detalhes */}
+          <Stack
+            w={formWidth}
+            mx="auto"
+            spacing={{ base: 4, md: 6 }}
+            direction={{ base: "column", lg: "row" }}
+            align="stretch"
+          >
+            <Box flex="1" minH={{ base: "200px", md: "300px" }}>
               {!DadosChamado?.id && (
                 <ImageComponent
                   onChange={setImages}
@@ -389,18 +433,17 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
                 />
               )}
               {DadosChamado?.id && (
-                <>
-                  <ImageComponent
-                    onChange={handleSetImage}
-                    maxImages={5}
-                    DataImages={
-                      DadosChamado?.images.length > 0
-                        ? DadosChamado?.images
-                        : []
-                    }
-                  />
-                </>
+                <ImageComponent
+                  onChange={handleSetImage}
+                  maxImages={5}
+                  DataImages={
+                    DadosChamado?.images.length > 0 ? DadosChamado?.images : []
+                  }
+                />
               )}
+            </Box>
+
+            <Box flex="1" minH={{ base: "200px", md: "300px" }}>
               <DetalhesChamadoComponent
                 Departamento={setDepartamento}
                 Prioridade={setPrioridade}
@@ -408,35 +451,58 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
                 cliente={setSolicitacaoId}
                 data={DadosChamado}
               />
-            </Flex>
-          </Flex>
-          <Flex w="full" justifyContent={"flex-end"}>
-            <Button colorScheme="green" onClick={handleSave}>
-              Salvar
-            </Button>
-          </Flex>
+            </Box>
+          </Stack>
+        </VStack>
+
+        
+        <Flex
+          w="full"
+          justifyContent={{ base: "center", md: "flex-end" }}
+          pt={{ base: 2, md: 4 }}
+        >
+          <Button
+            colorScheme="green"
+            onClick={handleSave}
+            size={{ base: "md", md: "lg" }}
+            w={{ base: "full", sm: "auto" }}
+            maxW={{ base: "300px", sm: "none" }}
+          >
+            Salvar
+          </Button>
+        </Flex>
+      </Box>
+
+      
+      <Flex
+        w={sidebarWidth}
+        minH={{ base: "600px", lg: "full" }}
+        flexDir="column"
+        gap={{ base: 2, md: 4 }}
+      >
+        
+        <Box
+          h={{ base: "350px", md: "400px", lg: "65%" }}
+          w="full"
+          minH="300px"
+        >
+          <MensagensChat
+            id={DadosChamado?.id || 0}
+            data={DadosChamado?.chat || []}
+            session={session}
+            onSend={SaveChat}
+          />
         </Box>
 
-        <Flex
-          w={{ base: "full", lg: "30%" }}
-          h={{ base: "auto", lg: "full" }}
-          flexDir="column"
-          gap={4}
-        >
-          <Box h={"65%"} w={"full"}>
-            <MensagensChat
-              id={DadosChamado?.id || 0}
-              data={DadosChamado?.chat || []}
-              session={session}
-              onSend={SaveChat}
-            />
-          </Box>
 
-          <Box h={"35%"} w={"full"}>
-            <HistoricoComponent data={DadosChamado?.temp || []} />
-          </Box>
-        </Flex>
+        <Box
+          h={{ base: "250px", md: "300px", lg: "35%" }}
+          w="full"
+          minH="200px"
+        >
+          <HistoricoComponent data={DadosChamado?.temp || []} />
+        </Box>
       </Flex>
-    </>
+    </Flex>
   );
 };

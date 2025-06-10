@@ -57,7 +57,6 @@ export function BtCreateAlertCliente({
       descricao: Descricao,
     };
 
-    // Send a POST request to the /api/alerts/create endpoint with the data object.
     const request = await fetch(`/api/alerts/create`, {
       method: "POST",
       headers: {
@@ -66,7 +65,6 @@ export function BtCreateAlertCliente({
       body: JSON.stringify(data),
     });
 
-    // If the request was successful, show a success toast message.
     if (request.ok) {
       toast({
         title: "Sucesso!",
@@ -80,7 +78,8 @@ export function BtCreateAlertCliente({
       setLoading(false);
       setTimeout(() => {
         setAlert(false);
-      }, 100);
+      }, 1000);
+      window.location.reload();
       onClose();
     }
 

@@ -32,7 +32,7 @@ export const DetalhesChamadoComponent = ({
     }
   }, [IdParams]);
 
-  
+
   useEffect(() => {
     if (data && data.id) {
       if (data.departamento && data.departamento !== departamento) {
@@ -42,7 +42,7 @@ export const DetalhesChamadoComponent = ({
         setPrioridade(data.prioridade);
       }
       if (data.dth_qru && data.dth_qru !== dthQru) {
-        
+
         const date = new Date(data.dth_qru);
         const localDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
           .toISOString()
@@ -77,13 +77,18 @@ export const DetalhesChamadoComponent = ({
       <Flex w={"full"} gap={4} flexDir="column">
         <Box>
           <FormLabel>Departamento</FormLabel>
-          <Input
+          <Select
             borderColor="gray.300"
-            placeholder="Departamento"
+            placeholder="Selecione o departamento"
             w={"100%"}
             value={departamento}
             onChange={(e) => setDepartamento(e.target.value)}
-          />
+          >
+            <option value="suporte">SUPORTE</option>
+            <option value="dados">ATUALIZAÇÃO DE DADOS</option>
+            <option value="relacionamento">RELACIONAMENTO AO CLIENTE</option>
+            <option value="duvidas">DIFICULDADES/DUVIDAS</option>
+          </Select>
         </Box>
         <Box>
           <FormLabel>Prioridade</FormLabel>
@@ -120,7 +125,7 @@ export const DetalhesChamadoComponent = ({
                 </Text>
               }
             >
-            {solicitacaoId > 0 && <Input
+              {solicitacaoId > 0 && <Input
                 borderColor="gray.300"
                 type="text"
                 placeholder="Id da solicitação"
