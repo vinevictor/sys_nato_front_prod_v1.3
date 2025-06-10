@@ -576,9 +576,6 @@ export default function FormSolicitacaoEdit({
           )}
         </Flex>
         <Box>
-          <Text fontWeight="bold" fontSize="md" mb={2}>
-            DOCUMENTOS A SER ASSINADOS
-          </Text>
 
           <Flex
             border="1px"
@@ -599,15 +596,9 @@ export default function FormSolicitacaoEdit({
         <Flex gap={6}>
           <InputFileUpload
             id="cnh"
-            label="CNH"
+            label="Documento de Identidade"
             value={form.uploadCnh}
             onvalue={(value) => handleChange("uploadCnh", value)}
-          />
-          <InputFileUpload
-            id="rg"
-            label="RG"
-            value={form.uploadRg}
-            onvalue={(value) => handleChange("uploadRg", value)}
           />
         </Flex>
       </Flex>

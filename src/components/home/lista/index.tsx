@@ -20,6 +20,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Text
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImClock } from "react-icons/im";
@@ -228,7 +229,7 @@ export const DadoCompomentList = ({
     );
     setPagina(Pagina);
   };
-
+  console.log(data);
   return (
     <>
       <Box
@@ -452,6 +453,14 @@ export const DadoCompomentList = ({
                   borderBottomColor={"gray.300"}
                 >
                   NOME
+                </Th>
+                <Th
+                  fontSize={"lg"}
+                  p={"0.8rem"}
+                  borderBottomColor={"gray.300"}
+                  w={"8rem"}
+                >
+                  CCA
                 </Th>
                 <Th
                   fontSize={"lg"}
