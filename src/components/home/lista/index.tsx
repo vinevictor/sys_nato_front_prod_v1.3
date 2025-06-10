@@ -504,7 +504,7 @@ export const DadoCompomentList = ({
               <SelectPgComponent
                 total={Total || 0}
                 ClientQtd={dados?.data.length || 0}
-                SelectPage={PagAtual}
+                SelectPage={Pagina || 1}
                 setSelectPage={setPagina}
                 SetVewPage={NextPage}
               />
