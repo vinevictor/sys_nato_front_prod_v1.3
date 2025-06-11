@@ -20,7 +20,6 @@ import {
   Thead,
   Tr,
   useDisclosure,
-  Text
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImClock } from "react-icons/im";
@@ -129,7 +128,6 @@ export const DadoCompomentList = ({
   const [Pagina, setPagina] = useState<number | null>(null);
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
-  const [PagAtual, setPagAtual] = useState<number>(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { data } = useHomeContex();
@@ -229,7 +227,7 @@ export const DadoCompomentList = ({
     );
     setPagina(Pagina);
   };
-  
+
   return (
     <>
       <Box
@@ -308,7 +306,7 @@ export const DadoCompomentList = ({
               <InputComponentFilterHome
                 type="text"
                 value={Nome ?? ""}
-                onChange={(e) => setNome(e.target.value)}
+                onChange={(e) => setNome(e.target.value.toUpperCase())}
               />
             </Box>
 
