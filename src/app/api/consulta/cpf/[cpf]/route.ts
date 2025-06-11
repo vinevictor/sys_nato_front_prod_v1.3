@@ -7,7 +7,6 @@ export async function GET(
 ) {
   try {
     const { cpf } = params;
-    console.log("🚀 ~ cpf:", cpf);
 
     const session = await GetSessionServer();
     if (!session) {
@@ -24,7 +23,6 @@ export async function GET(
       }
     );
     const response = await data.json();
-    console.log("🚀 ~ response:", response);
     if (!data.ok) {
       return NextResponse.json(
         { message: response.message, cpf: true, solicitacoes: [] },
