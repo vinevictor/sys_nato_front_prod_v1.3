@@ -298,7 +298,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       gap={{ base: 2, md: 4 }}
       flexDir={flexDirection}
     >
-      
+
       <Box
         display="flex"
         flexDir="column"
@@ -313,7 +313,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         gap={{ base: 2, md: 4 }}
         justifyContent="space-between"
       >
-        
+
         <Flex
           w="full"
           justifyContent="space-between"
@@ -455,12 +455,27 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
           </Stack>
         </VStack>
 
-        
+
         <Flex
           w="full"
           justifyContent={{ base: "center", md: "flex-end" }}
           pt={{ base: 2, md: 4 }}
+          gap={4}
         >
+          
+
+          <Button
+            colorScheme="red"
+            variant="outline"
+            _hover={{ bg: "red.300", color: "white", borderColor: "white" }}
+            onClick={() => router.push('/chamado')}
+            size={{ base: "md", md: "lg" }}
+            w={{ base: "full", sm: "auto" }}
+            maxW={{ base: "300px", sm: "none" }}
+          >
+            Cancelar
+          </Button>
+
           <Button
             colorScheme="green"
             onClick={handleSave}
@@ -473,14 +488,14 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         </Flex>
       </Box>
 
-      
+
       <Flex
         w={sidebarWidth}
         minH={{ base: "600px", lg: "full" }}
         flexDir="column"
         gap={{ base: 2, md: 4 }}
       >
-        
+
         <Box
           h={{ base: "350px", md: "400px", lg: "65%" }}
           w="full"

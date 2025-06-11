@@ -64,7 +64,7 @@ export default function BtnAlertList({ session }: BtnAlertListProps) {
         variant="solid"
         colorScheme="green"
       >
-        Alertar {Cont}
+        Alertas {Cont}
       </Button>
 
       <Modal

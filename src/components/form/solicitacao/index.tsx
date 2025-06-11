@@ -279,7 +279,7 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
               body: JSON.stringify(data),
             }
           );
-          console.log(response);
+          
           const retorno = await response.json();
           console.log(retorno);
           if (response.ok) {

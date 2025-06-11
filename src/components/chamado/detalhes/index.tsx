@@ -118,22 +118,14 @@ export const DetalhesChamadoComponent = ({
           </Box>
           <Box>
             <FormLabel>Id da solicitação</FormLabel>
-            <Suspense
-              fallback={
-                <Text color="red.500" fontSize="xs">
-                  informe o id da solicitação
-                </Text>
-              }
-            >
-              {solicitacaoId > 0 && <Input
-                borderColor="gray.300"
-                type="text"
-                placeholder="Id da solicitação"
-                w={"100%"}
-                value={solicitacaoId.toString()}
-                onChange={(e) => setSolicitacaoId(Number(e.target.value))}
-              />}
-            </Suspense>
+            <Input
+              borderColor="gray.300"
+              type="text"
+              placeholder="Id da solicitação"
+              w={"100%"}
+              value={solicitacaoId.toString()}
+              readOnly
+            />
           </Box>
         </Flex>
       </Flex>

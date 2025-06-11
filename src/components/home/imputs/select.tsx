@@ -2,16 +2,17 @@ import { Select, SelectProps } from "@chakra-ui/react";
 
 interface SelectPropsComponent extends SelectProps {
   Data: any;
+  place: string;
 }
     
 
-export const SelectComponentFilterHome = ({ Data, ...props }: SelectPropsComponent) => {
+export const SelectComponentFilterHome = ({ Data, place , ...props }: SelectPropsComponent) => {
   return (
     <Select
       textColor={"#00713D"}
       _hover={{ borderColor: "#00613C" }}
       borderColor={"#00713D"}
-      placeholder="construtora"
+      placeholder={place}
       size="sm"
       borderRadius="1rem"
       {...props}

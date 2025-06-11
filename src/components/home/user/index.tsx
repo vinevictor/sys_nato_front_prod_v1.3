@@ -21,6 +21,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
           p={3}
           flexDir="column"
           gap={4}
+          
         >
           <BugReport />
           <Flex gap={4}>
