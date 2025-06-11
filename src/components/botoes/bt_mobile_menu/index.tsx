@@ -15,7 +15,6 @@ export default function BotaoMobileMenu({
 }: BotaoMobileMenuProps) {
   const router = useRouter();
 
-
   return (
     <>
       <MenuItem
