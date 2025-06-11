@@ -49,7 +49,6 @@ export default async function HomePage() {
           {session && <ModalPrimeAsses session={session.user} />}
           {session && <ModalTermos session={session.user} />}
 
-          {/* dados user */}
           {session && <UserCompomentInfo session={session.user} />}
           <DadoCompomentList dados={ListDados} session={session} />
         </Flex>

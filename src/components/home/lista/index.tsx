@@ -239,7 +239,22 @@ export const DadoCompomentList = ({
         px={4}
         py={3}
       >
-        <Button display={{ base: "block", xl: "none" }} onClick={onOpen} m={2}>
+        <Button
+          display={{ base: "inline-flex", xl: "none" }}
+          onClick={onOpen}
+          m={4}
+          size="sm" 
+          variant="outline"
+          px={6}
+          py={4}
+          fontSize="md" 
+          fontWeight="bold"
+          borderRadius="lg"
+          border="1px solid green"
+          color="green" 
+          _hover={{ bg: "green.50" }}
+          alignSelf="flex-start"
+        >
           Chamados - Alertas - Now
         </Button>
 
@@ -339,6 +354,7 @@ export const DadoCompomentList = ({
               </FormLabel>
               <SelectComponentFilterHome
                 Data={DataConstrutora}
+                place="Construtora"
                 value={Construtora?.toString() ?? ""}
                 onChange={(e) => setConstrutora(Number(e.target.value))}
               />
@@ -350,6 +366,7 @@ export const DadoCompomentList = ({
               </FormLabel>
               <SelectComponentFilterHome
                 Data={DataEmpreendimento}
+                place="Empreendimento"
                 value={Empreendimento?.toString() ?? ""}
                 onChange={(e) => setEmpreendimento(Number(e.target.value))}
               />
@@ -361,6 +378,7 @@ export const DadoCompomentList = ({
               </FormLabel>
               <SelectComponentFilterHome
                 Data={DataFinanceiro}
+                place="Financeiro"
                 value={Financeiro?.toString() ?? ""}
                 onChange={(e) => setFinanceiro(Number(e.target.value))}
               />
