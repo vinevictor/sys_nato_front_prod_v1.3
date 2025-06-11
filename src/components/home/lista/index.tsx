@@ -206,7 +206,7 @@ export const DadoCompomentList = ({
       )
     );
     setMesageError(null);
-    router.refresh();
+    window.location.reload();
   };
 
   const NextPage = async () => {
