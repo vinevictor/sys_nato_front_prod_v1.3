@@ -29,90 +29,87 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
   return (
     <Flex
       justifyContent={"space-between"}
-      py={3}
-      w={"100%"}
+      alignItems={"center"}
       bg={"#00713D"}
-      px={40}
+      px={{ base: "8", md: "10" }}
       minH="70px" // Garante altura mínima para evitar layout shift
     >
       {session ? (
         <>
-          <Flex gap={10} alignItems={"center"}>
-            <Box minW={"100px"} w={"112px"}>
-              <Img src="/SisnatoLogoL.png" alt="Logo" width={"100%"} />
-            </Box>
-            <Box display={{ base: "flex", md: "none" }}>
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  aria-label="Options"
-                  icon={<RxHamburgerMenu />}
-                  variant="outline"
+          {/* <Flex
+            w={"full"}
+            bg={"red"}
+            alignItems={"center"}
+            justifyItems={"space-between"}
+          > */}
+          <Box minW={"100px"} w={"112px"}>
+            <Img src="/SisnatoLogoL.png" alt="Logo" width={"100%"} />
+          </Box>
+          <Box display={{ base: "flex", md: "none" }}>
+            <Menu>
+              <MenuButton
+                bg={"gray.50"}
+                as={IconButton}
+                aria-label="Options"
+                icon={<RxHamburgerMenu />}
+                variant="outline"
+              />
+              <MenuList>
+                <BotaoMobileMenu name="Home" path="/" icon={<FiHome />} />
+                <BotaoMobileMenu
+                  name="Nova Solicitação"
+                  path="/solicitacoes"
+                  icon={<FiFilePlus />}
                 />
-                <MenuList>
-                  <BotaoMobileMenu name="Home" path="/" icon={<FiHome />} />
+                {session?.role?.adm && (
                   <BotaoMobileMenu
-                    name="Nova Solicitação"
-                    path="/solicitacoes"
-                    icon={<FiFilePlus />}
+                    name="Painel adm"
+                    path="/adm"
+                    icon={<FiSettings />}
                   />
-                  {session?.role?.adm && (
-                    <BotaoMobileMenu
-                      name="Painel adm"
-                      path="/adm"
-                      icon={<FiSettings />}
-                    />
-                  )}
-                  <BotaoMobileMenu
-                    name="Dashboard"
-                    path="/dashboard"
-                    icon={<LuLayoutDashboard />}
-                  />
-                  <BotaoMobileMenu name="FAQ" path="/faq" icon={<CgToday />} />
-                  {/* {session?.role?.direto && (
+                )}
+                <BotaoMobileMenu
+                  name="Dashboard"
+                  path="/dashboard"
+                  icon={<LuLayoutDashboard />}
+                />
+                <BotaoMobileMenu name="FAQ" path="/faq" icon={<CgToday />} />
+                {/* {session?.role?.direto && (
                     <BotaoMobileMenu
                       name="Direto"
                       path="/direto"
                       icon={<CgBriefcase />}
                     />
                   )} */}
-                  <BotaoMobileMenu
-                    name="Sair"
-                    path="/login"
-                    icon={<FiLogOut />}
-                  />
-                </MenuList>
-              </Menu>
-            </Box>
-            <Box display={{ base: "none", md: "flex" }} gap={1} w={"85%"}>
-              <BotaoMenu name="Home" path="/" icon={<FiHome />} />
-              <BotaoMenu
-                name="Nova Solicitação"
-                path="/solicitacoes"
-                icon={<FiFilePlus />}
-              />
-              {session?.role?.adm && (
-                <BotaoMenu
-                  name="Painel adm"
-                  path="/adm"
-                  icon={<FiSettings />}
+                <BotaoMobileMenu
+                  name="Sair"
+                  path="/login"
+                  icon={<FiLogOut />}
                 />
-              )}
-              <BotaoMenu
-                name="Dashboard"
-                path="/dashboard"
-                icon={<LuLayoutDashboard />}
-              />
-              <BotaoMenu name="FAQ" path="/faq" icon={<CgToday />} />
-              {session?.role?.direto && (
-                <BotaoMenu
-                  name="Direto"
-                  path="/direto"
-                  icon={<CgBriefcase />}
-                />
-              )}
-            </Box>
-          </Flex>
+              </MenuList>
+            </Menu>
+          </Box>
+          <Box display={{ base: "none", md: "flex" }} gap={1} w={"85%"}>
+            <BotaoMenu name="Home" path="/" icon={<FiHome />} />
+            <BotaoMenu
+              name="Nova Solicitação"
+              path="/solicitacoes"
+              icon={<FiFilePlus />}
+            />
+            {session?.role?.adm && (
+              <BotaoMenu name="Painel adm" path="/adm" icon={<FiSettings />} />
+            )}
+            <BotaoMenu
+              name="Dashboard"
+              path="/dashboard"
+              icon={<LuLayoutDashboard />}
+            />
+            <BotaoMenu name="FAQ" path="/faq" icon={<CgToday />} />
+            {session?.role?.direto && (
+              <BotaoMenu name="Direto" path="/direto" icon={<CgBriefcase />} />
+            )}
+          </Box>
+          {/* </Flex> */}
         </>
       ) : (
         // Placeholder vazio para manter a estrutura do DOM e evitar erro de hidratação
