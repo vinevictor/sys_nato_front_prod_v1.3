@@ -12,16 +12,16 @@ import {
   ModalHeader,
   ModalOverlay,
   List,
-  Link,
   Flex,
   InputGroup,
   InputLeftElement,
   Icon,
   InputRightElement,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import { FaIdCard } from "react-icons/fa";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoWarning } from "react-icons/io5";
 import { cpf as ChekCpf } from "cpf-cnpj-validator";
 import { useEffect, useState } from "react";
 import { mask, unMask } from "remask";
@@ -103,6 +103,8 @@ export default function ModalConsultaRegistro({
               duration: 3000,
               isClosable: true,
             });
+            setIsContinue(false);
+            onCpfChange(CPF);
           } else {
             setSolicitacoes(response.solicitacoes);
             toast({
@@ -239,25 +241,37 @@ export default function ModalConsultaRegistro({
                     boxShadow="sm"
                     flexDirection={{ base: "column", md: "row" }}
                   >
-                    <Link
-                      href={`/solicitacoes/${item.id}`}
+                    <Text
                       color="teal.600"
                       fontWeight="bold"
                       fontSize="md"
                       mb={{ base: 2, md: 0 }}
                     >
                       {item.nome}
-                    </Link>
-                    <Link
-                      href={`/solicitacoes/${item.id}`}
-                      color="teal.600"
-                      fontWeight="semibold"
-                      fontSize="sm"
-                    >
+                    </Text>
+                    <Text color="teal.600" fontWeight="semibold" fontSize="sm">
                       {item.id}
-                    </Link>
+                    </Text>
                   </Flex>
                 ))}
+                {solicitacoes.length > 0 && (
+                  <Flex
+                    justify="space-between"
+                    align="center"
+                    p={4}
+                    bg="orange.100"
+                    borderRadius="md"
+                    boxShadow="sm"
+                    border="1px solid orange"
+                    flexDirection={{ base: "column", md: "row" }}
+                  >
+                    <Text fontSize={"1xs"}>
+                      <Icon as={IoWarning} color="orange.600" mr={2} />
+                      Solicitação Já Existente, Favor Abrir um Chamado ou entrar
+                      em contato com a nossa equipe.
+                    </Text>
+                  </Flex>
+                )}
               </List>
             </Box>
           )}
