@@ -1,3 +1,4 @@
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -6,12 +7,22 @@ export async function GET(
 ) {
   try {
     const { cpf } = params;
-    console.log("🚀 ~ cpf:", cpf);
+
+    const session = await GetSessionServer();
+    if (!session) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
     const data = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/checkcpf/${cpf}`
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/checkcpf/${cpf}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+        },
+      }
     );
     const response = await data.json();
-    console.log("🚀 ~ response:", response);
     if (!data.ok) {
       return NextResponse.json(
         { message: response.message, cpf: true, solicitacoes: [] },
