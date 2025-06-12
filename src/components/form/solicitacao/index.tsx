@@ -24,13 +24,18 @@ import { useEffect, useState } from "react";
 interface FormSolicitacaoProps {
   cpf?: string;
   onSuccess?: () => void; // Callback para quando o formulário for enviado com sucesso
+  solicitacao?: any;
 }
 
-export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps) {
+export default function FormSolicitacao({
+  cpf,
+  onSuccess,
+  solicitacao,
+}: FormSolicitacaoProps) {
   const [form, setForm] = useState({
     cpf: cpf,
     nome: "",
-    datanascimento: "" ,
+    datanascimento: "",
     telefone: "",
     telefone2: "",
     email: "",
@@ -43,7 +48,6 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
     relacionamento: "",
   });
 
-  console.log("🚀 ~ FormSolicitacao ~ form:", form);
   const [Logwhats, setLogwhats] = useState<string>("");
   const [load, setLoad] = useState<boolean>(false);
   const toast = useToast();
@@ -103,7 +107,16 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
         fetchADM();
       }
     }
-  }, [session, cpf]);
+    if (solicitacao) {
+      setForm((form) => ({
+        ...form,
+        nome: solicitacao?.nome,
+        datanascimento: solicitacao?.dt_nascimento.split("T")[0],
+        telefone: solicitacao?.telefone,
+        email: solicitacao?.email,
+      }));
+    }
+  }, [session, cpf, solicitacao]);
 
   const fetchADM = async () => {
     const req = await fetch("/api/adm/getoptions");
@@ -145,19 +158,19 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
   const redirectToHome = () => {
     if (onSuccess) {
       onSuccess();
-    } else if (typeof window !== 'undefined') {
+    } else if (typeof window !== "undefined") {
       // Tentar usar o router do Next.js se disponível
       const tryNextRouter = async () => {
         try {
-          const { useRouter } = await import('next/router');
+          const { useRouter } = await import("next/router");
           const router = useRouter();
           if (router?.push) {
-            router.push('/');
+            router.push("/");
           } else {
-            window.location.href = '/';
+            window.location.href = "/";
           }
         } catch {
-          window.location.href = '/';
+          window.location.href = "/";
         }
       };
       tryNextRouter();
@@ -239,7 +252,7 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
         });
       } else {
         const data: any = {
-          url: typeof window !== 'undefined' ? window.location.origin : '',
+          url: typeof window !== "undefined" ? window.location.origin : "",
           nome: form.nome.toUpperCase(),
           telefone: form.telefone.replace(/\W+/g, ""),
           cpf: form.cpf.replace(/\W+/g, ""),
@@ -279,9 +292,8 @@ export default function FormSolicitacao({ cpf, onSuccess }: FormSolicitacaoProps
               body: JSON.stringify(data),
             }
           );
-          
+
           const retorno = await response.json();
-          console.log(retorno);
           if (response.ok) {
             toast({
               title: "Sucesso",
