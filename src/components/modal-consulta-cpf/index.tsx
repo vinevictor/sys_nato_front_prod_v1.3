@@ -47,6 +47,7 @@ export default function ModalConsultaRegistro({
   const [CPFMask, setCPFMask] = useState("");
   const toast = useToast();
   const [solicitacoes, setSolicitacoes] = useState([]);
+  console.log("🚀 ~ solicitacoes:", solicitacoes);
   const [IsContinue, setIsContinue] = useState(false);
   const router = useRouter();
 
@@ -263,14 +264,15 @@ export default function ModalConsultaRegistro({
                           {item.nome}
                         </Link>
                       ) : (
-                        <Text
+                        <Link
+                          href={`/solicitacoes/${item.id}`}
                           color="teal.600"
                           fontWeight="bold"
                           fontSize="md"
                           mb={{ base: 2, md: 0 }}
                         >
                           {item.nome}
-                        </Text>
+                        </Link>
                       )}
                       {session?.hierarquia === "ADM" ? (
                         <Link
@@ -282,13 +284,14 @@ export default function ModalConsultaRegistro({
                           {item.id}
                         </Link>
                       ) : (
-                        <Text
+                        <Link
+                          href={`/solicitacoes/${item.id}`}
                           color="teal.600"
                           fontWeight="semibold"
                           fontSize="sm"
                         >
                           {item.id}
-                        </Text>
+                        </Link>
                       )}
                     </Flex>
                     {session?.hierarquia === "ADM" && (
