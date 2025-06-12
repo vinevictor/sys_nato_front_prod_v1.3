@@ -19,24 +19,28 @@ import {
   InputRightElement,
   useToast,
   Text,
+  Link,
 } from "@chakra-ui/react";
-import { FaIdCard } from "react-icons/fa";
+import { FaIdCard, FaLongArrowAltUp } from "react-icons/fa";
 import { IoSearch, IoWarning } from "react-icons/io5";
 import { cpf as ChekCpf } from "cpf-cnpj-validator";
 import { useEffect, useState } from "react";
 import { mask, unMask } from "remask";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/hook/useSession";
 
 interface CpfProps {
   onCpfChange: (cpf: string) => void;
   setCpfChange: string | null;
   onIsOpen: (isOpen: boolean) => void;
+  onSolicitacao: (solicitacao: any) => void;
 }
 
 export default function ModalConsultaRegistro({
   setCpfChange,
   onCpfChange,
   onIsOpen,
+  onSolicitacao,
 }: CpfProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [CPF, setCPF] = useState("");
@@ -46,6 +50,7 @@ export default function ModalConsultaRegistro({
   const [IsContinue, setIsContinue] = useState(false);
   const router = useRouter();
 
+  const session = useSession();
   useEffect(() => {
     if (!setCpfChange) {
       setIsOpen(true);
@@ -128,6 +133,11 @@ export default function ModalConsultaRegistro({
         });
       }
     }
+  };
+  const handleContinueWithData = (item: any) => {
+    onSolicitacao(item);
+    setIsOpen(false);
+    onIsOpen(true);
   };
 
   const handleContinue = () => {
@@ -229,32 +239,76 @@ export default function ModalConsultaRegistro({
               </FormLabel>
               <List spacing={3}>
                 {solicitacoes.map((item: any) => (
-                  <Flex
-                    key={item}
-                    justify="space-between"
-                    align="center"
-                    p={4}
-                    bg="gray.50"
-                    borderRadius="md"
-                    _hover={{ bg: "gray.100" }}
-                    transition="all 0.2s ease"
-                    boxShadow="sm"
-                    flexDirection={{ base: "column", md: "row" }}
-                  >
-                    <Text
-                      color="teal.600"
-                      fontWeight="bold"
-                      fontSize="md"
-                      mb={{ base: 2, md: 0 }}
+                  <Flex key={item.id} direction="column">
+                    <Flex
+                      key={item}
+                      justify="space-between"
+                      align="center"
+                      p={4}
+                      bg="gray.50"
+                      borderRadius="md"
+                      _hover={{ bg: "gray.100" }}
+                      transition="all 0.2s ease"
+                      boxShadow="sm"
+                      flexDirection={{ base: "column", md: "row" }}
                     >
-                      {item.nome}
-                    </Text>
-                    <Text color="teal.600" fontWeight="semibold" fontSize="sm">
-                      {item.id}
-                    </Text>
+                      {session?.hierarquia === "ADM" ? (
+                        <Link
+                          href={`/solicitacoes/${item.id}`}
+                          color="teal.600"
+                          fontWeight="bold"
+                          fontSize="md"
+                          mb={{ base: 2, md: 0 }}
+                        >
+                          {item.nome}
+                        </Link>
+                      ) : (
+                        <Text
+                          color="teal.600"
+                          fontWeight="bold"
+                          fontSize="md"
+                          mb={{ base: 2, md: 0 }}
+                        >
+                          {item.nome}
+                        </Text>
+                      )}
+                      {session?.hierarquia === "ADM" ? (
+                        <Link
+                          href={`/solicitacoes/${item.id}`}
+                          color="teal.600"
+                          fontWeight="semibold"
+                          fontSize="sm"
+                        >
+                          {item.id}
+                        </Link>
+                      ) : (
+                        <Text
+                          color="teal.600"
+                          fontWeight="semibold"
+                          fontSize="sm"
+                        >
+                          {item.id}
+                        </Text>
+                      )}
+                    </Flex>
+                    {session?.hierarquia === "ADM" && (
+                      <Button
+                        colorScheme="green"
+                        size="sm"
+                        h={"fit-content"}
+                        p={1}
+                        fontSize={"1xs"}
+                        onClick={() => handleContinueWithData(item)}
+                        borderTopRadius={0}
+                      >
+                        <Icon as={FaLongArrowAltUp} mr={1} />
+                        Usar Informações desta solicitação
+                        <Icon as={FaLongArrowAltUp} mr={1} />
+                      </Button>
+                    )}
                   </Flex>
                 ))}
-                {solicitacoes.length > 0 && (
+                {solicitacoes.length > 0 && session?.hierarquia !== "ADM" && (
                   <Flex
                     justify="space-between"
                     align="center"
