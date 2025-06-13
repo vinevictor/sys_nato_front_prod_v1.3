@@ -437,9 +437,9 @@ export const DadoCompomentList = ({
                   fontSize={"lg"}
                   p={"0.8rem"}
                   borderBottomColor={"gray.300"}
-                  w={"8rem"}
+                  w={"15rem"}
                 >
-                  CCA
+                  CONST - CCA
                 </Th>
                 <Th
                   fontSize={"lg"}
@@ -467,16 +467,6 @@ export const DadoCompomentList = ({
                     <ImClock />
                   </Flex>
                 </Th>
-                {session?.user?.hierarquia === "ADM" && (
-                  <Th
-                    fontSize={"lg"}
-                    p={"0.8rem"}
-                    borderBottomColor={"gray.300"}
-                    w={"15rem"}
-                  >
-                    CONSTRUTORA
-                  </Th>
-                )}
               </Tr>
             </Thead>
             <Tbody>
