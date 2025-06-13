@@ -12,7 +12,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  FormLabel,
   Select,
   Table,
   Tbody,
@@ -243,15 +242,15 @@ export const DadoCompomentList = ({
           display={{ base: "inline-flex", xl: "none" }}
           onClick={onOpen}
           m={4}
-          size="sm" 
+          size="sm"
           variant="outline"
           px={6}
           py={4}
-          fontSize="md" 
+          fontSize="md"
           fontWeight="bold"
           borderRadius="lg"
           border="1px solid green"
-          color="green" 
+          color="green"
           _hover={{ bg: "green.50" }}
           alignSelf="flex-start"
         >
@@ -303,9 +302,6 @@ export const DadoCompomentList = ({
         >
           <Flex flexWrap="wrap" gap={4} justifyContent="flex-start" w="full">
             <Box w={{ base: "48%", md: "20%", xl: "5rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Id
-              </FormLabel>
               <InputComponentFilterHome
                 textAlign={"center"}
                 type="number"
@@ -315,9 +311,6 @@ export const DadoCompomentList = ({
             </Box>
 
             <Box w={{ base: "48%", md: "40%", xl: "20rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Nome
-              </FormLabel>
               <InputComponentFilterHome
                 type="text"
                 value={Nome ?? ""}
@@ -326,9 +319,6 @@ export const DadoCompomentList = ({
             </Box>
 
             <Box w={{ base: "48%", md: "20%", xl: "10rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Andamento
-              </FormLabel>
               <Select
                 textColor={"#00713D"}
                 _hover={{ borderColor: "#00613C" }}
@@ -349,9 +339,6 @@ export const DadoCompomentList = ({
             </Box>
 
             <Box w={{ base: "48%", md: "30%", xl: "13rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Construtora
-              </FormLabel>
               <SelectComponentFilterHome
                 Data={DataConstrutora}
                 place="Construtora"
@@ -361,9 +348,6 @@ export const DadoCompomentList = ({
             </Box>
 
             <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Empreendimento
-              </FormLabel>
               <SelectComponentFilterHome
                 Data={DataEmpreendimento}
                 place="Empreendimento"
@@ -373,9 +357,6 @@ export const DadoCompomentList = ({
             </Box>
 
             <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
-              <FormLabel textAlign={{ base: "left", xl: "center" }}>
-                Financeiro
-              </FormLabel>
               <SelectComponentFilterHome
                 Data={DataFinanceiro}
                 place="Financeiro"
