@@ -46,19 +46,49 @@ export const BugReport = () => {
     }
   };
 
-  const MapBug = bug?.map((bug: any) => {
+  const MapBug = bug?.map((bug: any, index: number) => {
     return (
-      <>
-        <Alert status={"warning"} rounded={"lg"}>
-          <GoAlertFill
-            fontSize={"2rem"}
-            color="#daa300"
-            style={{ marginRight: "1rem" }}
-          />
-          <AlertTitle>Alerta</AlertTitle>
-          <AlertDescription>{bug.descricao}</AlertDescription>
-        </Alert>
-      </>
+      <Alert 
+        key={index}
+        status={"warning"} 
+        bg="orange.50"
+        border="1px solid"
+        borderColor="orange.200"
+        borderRadius="lg"
+        p={4}
+        shadow="sm"
+        cursor="pointer"
+        transition="all 0.3s"
+        _hover={{
+          bg: "orange.100",
+          borderColor: "orange.300",
+          shadow: "md",
+          transform: "translateY(-2px)"
+        }}
+      >
+        <GoAlertFill
+          fontSize={"1.5rem"}
+          color="#D69E2E"
+          style={{ marginRight: "0.75rem", flexShrink: 0 }}
+        />
+        <Flex flexDir="column" gap={1} flex={1}>
+          <AlertTitle 
+            fontSize="xl" 
+            fontWeight="bold" 
+            color="orange.700"
+            mb={1}
+          >
+            Alerta
+          </AlertTitle>
+          <AlertDescription 
+            fontSize="md" 
+            color="orange.600"
+            lineHeight="1.4"
+          >
+            {bug.descricao}
+          </AlertDescription>
+        </Flex>
+      </Alert>
     );
   });
 
