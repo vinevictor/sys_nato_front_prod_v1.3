@@ -29,14 +29,18 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     ? "green.200"
     : "white";
 
-
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
 
   const agendamento =
     dados.dt_agendamento && dados.hr_agendamento
-      ? dados.dt_agendamento.toString().split("T")[0].split("-").reverse().join("/") +
-      " " +
-      dados.hr_agendamento.toString().split("T")[1].split(".")[0]
+      ? dados.dt_agendamento
+          .toString()
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("/") +
+        " " +
+        dados.hr_agendamento.toString().split("T")[1].split(".")[0]
       : "";
 
   const timeOut = calcTimeOut(
@@ -64,9 +68,12 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
               andamento={dados.andamento}
               onClick={() => {
                 (async () => {
-                  const res = await fetch(`/api/solicitacao/delete/${dados.id}`, {
-                    method: "DELETE",
-                  });
+                  const res = await fetch(
+                    `/api/solicitacao/delete/${dados.id}`,
+                    {
+                      method: "DELETE",
+                    }
+                  );
                   if (!res.ok) {
                     toast({
                       title: "Erro",
@@ -128,7 +135,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.nome}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-        {dados.financeiro.fantasia}
+          {dados.construtora?.fantasia} - {dados.financeiro.fantasia}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {agendamento}
@@ -139,11 +146,6 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {timeOut}
         </Td>
-        {session?.user?.hierarquia === "ADM" && (
-          <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-            {dados.construtora?.fantasia}
-          </Td>
-        )}
       </Tr>
     </>
   );

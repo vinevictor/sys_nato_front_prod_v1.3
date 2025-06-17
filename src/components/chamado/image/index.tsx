@@ -19,7 +19,7 @@ import React, {
   useState,
   useRef,
 } from "react";
-import { FiUpload, FiX } from "react-icons/fi";
+import { FiDownload, FiUpload, FiX } from "react-icons/fi";
 
 // Interface para as imagens existentes passadas como prop
 export interface ExistingImageInput {
@@ -324,7 +324,7 @@ export const ImageComponent = ({
                   cursor="pointer"
                   aria-label="Substituir imagem"
                 >
-                  <Icon as={FiUpload} w={3} h={3} />
+                  <Icon as={FiDownload} w={3} h={3} />
                   <Input
                     id={`replace-file-${image.id}`}
                     type="file"

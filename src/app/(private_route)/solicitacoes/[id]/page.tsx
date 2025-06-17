@@ -2,6 +2,7 @@
 
 import Loading from "@/app/loading";
 import FormSolicitacaoEdit from "@/components/form/solicitacao/edit";
+import LogsComponent from "@/components/logsComponent";
 import MensagensChat from "@/components/mensagensChat";
 import ListAlertas from "@/components/solicitacao/alert";
 import { useSession } from "@/hook/useSession";
@@ -26,6 +27,7 @@ export default function PageSolicitacoes({ params }: Props) {
   const { id } = params;
   const [data, setData] = useState<any>(null);
   const [dataMensagem, setDataMensagem] = useState<any>(null);
+  const [Logs, setLogs] = useState<any>(null);
   const user: any = useSession();
   const [isLoadingMensagem, setIsLoadingMensagem] = useState(false);
 
@@ -37,7 +39,10 @@ export default function PageSolicitacoes({ params }: Props) {
     try {
       const req = await fetch(`/api/solicitacao/get/${id}`);
       const res = await req.json();
+      const logs = await fetch(`/api/solicitacao/logs/${id}`);
+      const logsRes = await logs.json();
       setData(res);
+      setLogs(logsRes);
       setDataMensagem(res.obs);
     } catch (error) {
       console.error("Erro ao buscar dados", error);
@@ -90,6 +95,11 @@ export default function PageSolicitacoes({ params }: Props) {
           </Flex>
         </Flex>
       </Flex>
+      {user?.hierarquia === "ADM" && (
+        <Flex w={"100%"}>
+          <LogsComponent logs={Logs} />
+        </Flex>
+      )}
     </>
   );
 }
