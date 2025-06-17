@@ -76,7 +76,7 @@ export default function BtnAlertList({ session }: BtnAlertListProps) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Lista De Alertas</ModalHeader>
+          <ModalHeader>Alertas</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex
