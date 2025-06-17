@@ -293,7 +293,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
               w={"100%"}
               color="white"
               textAlign="center"
-              p={"12px"}
+              p={"6px"}
               href="/chamado"
               bg="linear-gradient(135deg, #38A169 0%, #2F855A 100%)"
               fontWeight="bold"
