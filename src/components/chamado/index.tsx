@@ -205,7 +205,10 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         status,
         solicitacaoId,
         idUser: session.id,
-        images: finalImages,
+        images: finalImages.length > 0 ? finalImages.map(img => ({
+          url_view: img.url_view,
+          url_download: img.url_download,
+        })) : [],
         temp: !DadosChamado?.id
           ? [
             {
