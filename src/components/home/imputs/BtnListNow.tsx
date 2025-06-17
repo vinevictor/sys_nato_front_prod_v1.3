@@ -51,7 +51,7 @@ export const BtnListNow = ({ session }: BtnListNowProps) => {
       isLoading={loading}
       spinner={<BeatLoader size={8} color="white" />}
     >
-      Listar Now {Cont}
+      Lista Now {Cont}
     </Button>
   );
 };

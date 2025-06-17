@@ -19,7 +19,7 @@ import React, {
   useState,
   useRef,
 } from "react";
-import { FiUpload, FiX } from "react-icons/fi";
+import { FiDownload, FiUpload, FiX } from "react-icons/fi";
 
 // Interface para as imagens existentes passadas como prop
 export interface ExistingImageInput {
@@ -55,38 +55,32 @@ export const ImageComponent = ({
   const [managedImages, setManagedImages] = useState<ManagedImage[]>([]);
   const toast = useToast();
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const isInitializedRef = useRef(false);
 
-  // Efeito para inicializar/atualizar 
+  // Efeito para inicializar as imagens existentes apenas uma vez 
   useEffect(() => {
-    if (DataImages && DataImages.length > 0) {
-      const currentManagedImageUrls = new Set(managedImages.map(img => img.url_view));
-
-      const newExistingImages = DataImages.filter(
-        dataImg => !currentManagedImageUrls.has(dataImg.url_view)
-      ).map(img => ({
+    // Verifica se já foi inicializado para evitar reprocessamento
+    if (!isInitializedRef.current && DataImages?.length > 0) {
+      // Converte DataImages para ManagedImage
+      const existingImages = DataImages.map(img => ({
         id: img.url_view,
         url_view: img.url_view,
         url_download: img.url_download,
-        isNew: false,
+        isNew: false
       }));
-
-      if (newExistingImages.length > 0) {
-        setManagedImages(prevImages => {
-          return [...prevImages.filter(img => img.isNew), ...newExistingImages];
-        });
-      }
+      
+      // Inicializa o estado com as imagens existentes
+      setManagedImages(existingImages);
+      isInitializedRef.current = true;
     }
-  }, [DataImages, managedImages]);
+  }, [DataImages]);
 
-  const currentNewImagesRef = useRef<ManagedImage[]>([]);
-
+  // Efeito para atualizar o callback de onChange quando as imagens gerenciadas mudarem
   useEffect(() => {
-    const newImagesForCallback = managedImages.filter(img => img.isNew && img.file);
-
-    if (JSON.stringify(newImagesForCallback) !== JSON.stringify(currentNewImagesRef.current)) {
-      onChange(newImagesForCallback);
-      currentNewImagesRef.current = newImagesForCallback;
-    }
+    // Envia todas as imagens gerenciadas (novas e existentes) para o callback.
+    // O componente pai pode então usar a flag 'isNew' para diferenciar
+    // quais imagens precisam ser enviadas para o backend, por exemplo.
+    onChange(managedImages);
   }, [managedImages, onChange]);
 
   // Efeito para limpar blob URLs ao desmontar o componente
@@ -126,6 +120,7 @@ export const ImageComponent = ({
         return;
       }
 
+      // Cria um array de novas imagens válidas
       const newManagedImages: ManagedImage[] = validFiles.map((file) => ({
         id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         url_view: URL.createObjectURL(file),
@@ -133,7 +128,15 @@ export const ImageComponent = ({
         isNew: true,
       }));
 
-      setManagedImages((prev) => [...prev, ...newManagedImages]);
+      // Adiciona as novas imagens ao array existente, sem substituir as anteriores
+      setManagedImages((prev) => [
+        ...prev, // mantém as imagens já existentes
+        ...newManagedImages // adiciona as novas imagens
+      ]);
+      // DICA: Usar o spread operator garante que cada nova imagem será adicionada junto das outras, formando uma galeria.
+      // Isso evita que uma nova imagem substitua as anteriores.
+      // Sempre utilize essa abordagem ao trabalhar com arrays no estado do React.
+      console.log("Imagens adicionadas:", newManagedImages);
     },
     [managedImages, maxImages, toast]
   );
@@ -279,7 +282,7 @@ export const ImageComponent = ({
       {managedImages.length > 0 && (
         <Grid
           templateColumns="repeat(auto-fill, minmax(120px, 1fr))"
-          gap={4}
+          gap={6}
           mt={4}
         >
           {managedImages.map((image) => (
@@ -324,7 +327,7 @@ export const ImageComponent = ({
                   cursor="pointer"
                   aria-label="Substituir imagem"
                 >
-                  <Icon as={FiUpload} w={3} h={3} />
+                  <Icon as={FiDownload} w={3} h={3} />
                   <Input
                     id={`replace-file-${image.id}`}
                     type="file"
