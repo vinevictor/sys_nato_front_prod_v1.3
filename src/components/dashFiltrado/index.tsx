@@ -78,7 +78,7 @@ export default function DashFiltrado({
 
     try {
       const req = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard/get/infos/search`,
+        `/api/dashboard/filtrado`,
         {
           method: "POST",
           headers: {
