@@ -1,46 +1,72 @@
 "use client";
 
+import VideoComponent from "@/components/video";
+import { CloseIcon } from "@chakra-ui/icons";
 import {
-  Flex,
-  VStack,
   Box,
+  Flex,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
   Text,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  IconButton,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { CloseIcon } from "@chakra-ui/icons";
+
+interface Video {
+  id: number;
+  url: string;
+  nome: string;
+  tag: string;
+  createAt: string;
+  posterUrl?: string; // URL opcional para a imagem de pré-visualização
+}
 
 export default function SuporteFaqPerguntasFrequentes() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [videos, setVideoList] = useState<any[]>([]);
+  const [videos, setVideoList] = useState<Video[] | null>(null);
+  // Estado para armazenar as URLs dos vídeos via proxy
+  const [proxyUrls, setProxyUrls] = useState<Record<string, string>>({});
+  const toast = useToast();
 
-  useEffect(() => { 
-    const fetchData = async () => {
+  useEffect(() => {
+    (async () => {
       try {
-        const videos = await fetchVideos();
-        setVideoList(videos);
-      } catch (error) {
-        console.error("Erro ao buscar vídeos:", error);
-      }
-    };
+        const res = await fetch("/api/faq");
+        const data = await res.json();
+        setVideoList(data.video);
 
-    fetchData();
+        if (data.video.length > 0) {
+          // Criar URLs de proxy para cada vídeo
+          const proxies: Record<string, string> = {};
+          data.video.forEach((video: Video) => {
+            proxies[video.url] = `/api/video-proxy?url=${encodeURIComponent(
+              video.url
+            )}`;
+          });
+          setProxyUrls(proxies);
+        }
+      } catch (error: any) {
+        console.error("Erro ao buscar vídeos:", error);
+        toast({
+          title: "Erro ao buscar vídeos",
+          description: error.message || "Erro ao buscar vídeos",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    })();
   }, []);
-  const fetchVideos = async (): Promise<any[]> => {
-    const res = await fetch("/api/videosfaq/getall");
-    const data = await res.json();
-    console.log(data);
-    return data;
-  };
 
   const handleVideoClick = (videoUrl: string) => {
-    setSelectedVideo(videoUrl);
+    // Usar a URL via proxy para evitar problemas de CORS
+    setSelectedVideo(proxyUrls[videoUrl] || videoUrl);
     onOpen();
   };
 
@@ -63,48 +89,66 @@ export default function SuporteFaqPerguntasFrequentes() {
         width="100%"
         maxWidth="1200px"
       >
-        {videos.map((video, index) => (
-          <Box
-            key={index}
-            as="div"
-            overflow="hidden"
-            width={{ base: "150px", md: "200px", lg: "250px" }}
-            height={{ base: "180px", md: "220px", lg: "270px" }}
-            position="relative"
-            cursor="pointer"
-            transition="transform 0.3s ease"
-            _hover={{ transform: "scale(1.1)" }}
-            onClick={() => handleVideoClick(video.src)}
-          >
-            <video
-              src={video.src}
-              style={{ width: "100%", height: "70%", objectFit: "cover", borderRadius: "8px" }}
-            />
-            <Text
-              mt={2}
-              fontSize={{ base: "sm", md: "md" }}
-              fontWeight="semibold"
-              textAlign="center"
-              color="gray.600"
+        {!videos && null}
+        {videos &&
+          videos.map((video, index) => (
+            <Box
+              key={index}
+              as="div"
+              overflow="hidden"
+              width={{ base: "150px", md: "200px", lg: "250px" }}
+              height={{ base: "180px", md: "220px", lg: "270px" }}
+              position="relative"
+              cursor="pointer"
+              transition="transform 0.3s ease"
+              _hover={{ transform: "scale(1.1)" }}
+              onClick={() => handleVideoClick(video.url)}
             >
-              {video.title}
-            </Text>
-          </Box>
-        ))}
+              <video
+                src={video.url} // Mantenha a URL original para a pré-visualização
+                // Adicionando poster para exibir uma imagem de pré-visualização
+                poster={`https://api.microlink.io/?url=${encodeURIComponent(
+                  video.url
+                )}&screenshot=true&meta=false&embed=screenshot.url`}
+                preload="metadata"
+                onError={(e) => {
+                  console.error("Erro ao carregar o vídeo:", e);
+                  // Define um poster de fallback em caso de erro
+                  e.currentTarget.poster =
+                    "https://placehold.co/600x400/333333/FFFFFF?text=Video";
+                }}
+                style={{
+                  width: "100%",
+                  height: "70%",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                }}
+              />
+              <Text
+                mt={2}
+                fontSize={{ base: "sm", md: "md" }}
+                fontWeight="semibold"
+                textAlign="center"
+                color="gray.600"
+              >
+                {video.nome}
+              </Text>
+            </Box>
+          ))}
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
-        <ModalContent bg="black" color="white" borderRadius="md" overflow="hidden">
-          <ModalBody p={0} position="relative">
+        <ModalContent
+          bg="black"
+          color="white"
+          borderRadius="md"
+          overflow="hidden"
+        >
+          <ModalBody p={0} position="relative" w="100%" h="100%">
             {selectedVideo && (
               <>
-                <video
-                  src={selectedVideo}
-                  style={{ width: "100%" }}
-                  controls
-                  autoPlay
-                />
+                <VideoComponent url={selectedVideo} />
               </>
             )}
             <IconButton
