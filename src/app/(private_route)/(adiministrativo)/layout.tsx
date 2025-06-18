@@ -25,12 +25,12 @@ export default async function PainelAdmLayout({
         justifyContent={"space-between"}
         flexDir={{ base: "column", md: "row" }}
       >
-        {/* Sidebar */}
+    
         <Flex
           w={{ 
-            base: "60px", // Telas muito pequenas: apenas largura para ícones
-            sm: "100%",   // Telas pequenas: largura total
-            md: "250px",  // Telas médias e grandes: largura fixa
+            base: "60px", 
+            sm: "100%",  
+            md: "250px",  
           }}
           minW={{ 
             base: "60px", 
@@ -44,15 +44,15 @@ export default async function PainelAdmLayout({
           }}
           h={{ base: "auto", md: "100%" }}
           flexDir={"column"}
-          flexShrink={0} // Não permite que a sidebar encolha
+          flexShrink={0} 
           bg={{ base: "transparent", md: "gray.50" }}
           borderRadius={{ base: 0, md: "md" }}
           p={{ base: 1, sm: 2, md: 3 }}
         >
-          {/* Título da Sidebar */}
+
           <Box 
             w={"100%"}
-            display={{ base: "none", sm: "block" }} // Esconde título em telas muito pequenas
+            display={{ base: "none", sm: "block" }} 
           >
             <Text 
               color={"gray.400"} 
@@ -67,7 +67,7 @@ export default async function PainelAdmLayout({
             my={4}
             borderColor={"gray.300"}
             w={"100%"}
-            display={{ base: "none", sm: "block" }} // Esconde divider em telas muito pequenas
+            display={{ base: "none", sm: "block" }} 
           />
           
           
@@ -92,7 +92,7 @@ export default async function PainelAdmLayout({
         
         <Flex 
           w={{ 
-            base: "calc(100% - 60px)", // Ajusta para a largura da sidebar em telas pequenas
+            base: "calc(100% - 60px)", 
             sm: "100%", 
             md: "calc(100% - 250px)" 
           }} 
