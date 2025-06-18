@@ -1,8 +1,12 @@
-{{
-}}
-export const dynamic = 'force-dynamic';
-{{
-}}
+{
+  {
+  }
+}
+export const dynamic = "force-dynamic";
+{
+  {
+  }
+}
 
 import GetConstrutoras from "@/actions/dashboard/services/getConstrutoras";
 import GetEmpreendimentos from "@/actions/dashboard/services/getEmpreendimentos";
@@ -12,12 +16,14 @@ import CardInfoDashboard from "@/components/cardInfoDashboard";
 import DashFiltrado from "@/components/dashFiltrado";
 import LineChart from "@/components/lineChart.tsx";
 import PieChart from "@/components/pieChart.tsx";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { Flex } from "@chakra-ui/react";
 import { FaRegClock } from "react-icons/fa6";
 import { LuClipboardCheck, LuTag } from "react-icons/lu";
 
 export default async function DashBoard() {
   // Função para buscar dados da API
+  const session = await GetSessionServer();
   const fetchData = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard`,
@@ -25,28 +31,23 @@ export default async function DashBoard() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.token}`,
         },
         cache: "no-cache",
       }
     );
-    console.log("🚀 ~ fetchData ~ response:", response);
-    if (!response.ok) {
-      console.log("teste");
-    }
+
     return response.json();
   };
 
   const req = await fetchData();
-  console.log("🚀 ~ DashBoard ~ req:", req);
   const data = req.contagem;
   const tags = req.tags;
-  // console.log("🚀 ~ DashBoard ~ tags:", tags)
 
   //Dados para o filtro
   const construtoras = await GetConstrutoras();
   const empreendimentos = await GetEmpreendimentos();
   const financeiras = await GetFinanceiras();
-  // console.log("🚀 ~ DashBoard ~ empreendimentos:", empreendimentos)
 
   // Dados tags
   const lista_tags = tags.lista_tags;
@@ -182,15 +183,9 @@ export default async function DashBoard() {
           alignItems={"center"}
         >
           <DashFiltrado
-            construtoras={
-              construtoras
-            }
-            financeiras={
-              financeiras
-            }
-            empreendimentos={
-              empreendimentos
-            }
+            construtoras={construtoras}
+            financeiras={financeiras}
+            empreendimentos={empreendimentos}
           />
         </Flex>
       </Flex>
