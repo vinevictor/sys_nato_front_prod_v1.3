@@ -1,7 +1,12 @@
 import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export const dynamic = "force-dynamic";
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await GetSessionServer();
     if (!session) {
@@ -16,9 +21,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`
+          Authorization: `Bearer ${session?.token}`,
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       }
     );
     const data = await response.json();

@@ -1,5 +1,4 @@
 "use client";
-export const dynamic = 'force-dynamic';
 
 import Financeiras from "@/components/financeirasCard";
 import { Box, Divider, Flex, Heading, Link } from "@chakra-ui/react";

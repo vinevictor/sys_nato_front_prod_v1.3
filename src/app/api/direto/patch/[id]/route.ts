@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { GetSessionServer } from "@/lib/auth_confg";
 
+export const dynamic = "force-dynamic";
+
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
@@ -21,7 +23,6 @@ export async function PATCH(
         Authorization: `Bearer ${session.token}`,
       },
       body: JSON.stringify(body),
-      cache: "no-store",
     });
 
     const text = await resp.text();

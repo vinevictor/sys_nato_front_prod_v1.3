@@ -1,6 +1,7 @@
 import { GetSessionServer } from "@/lib/auth_confg";
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -18,10 +19,9 @@ export async function POST(request: Request) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(data),
-        cache: "no-store",
       }
     );
-    
+
     if (!response.ok) {
       throw new Error("Erro ao criar o registro");
     }

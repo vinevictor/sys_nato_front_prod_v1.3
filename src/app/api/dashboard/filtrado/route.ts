@@ -1,6 +1,7 @@
-"use server";
 import { NextResponse } from "next/server";
 import { GetSessionServer } from "@/lib/auth_confg";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +21,6 @@ export async function POST(request: Request) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(data),
-        cache: "no-store",
       }
     );
     if (!req.ok) {

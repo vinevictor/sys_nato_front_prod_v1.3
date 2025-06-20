@@ -20,10 +20,6 @@ export async function GET() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      cache: "force-cache",
-      next: {
-        tags: ["get_tags"],
-      },
     });
     const res = await req.json();
 

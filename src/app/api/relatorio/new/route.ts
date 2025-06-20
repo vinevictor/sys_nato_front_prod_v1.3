@@ -1,6 +1,7 @@
 import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     const body = await request.json();
-    console.log("🚀 ~ POST ~ body:", body)
+    console.log("🚀 ~ POST ~ body:", body);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/relatorio`,
@@ -18,13 +19,13 @@ export async function POST(request: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`
+          Authorization: `Bearer ${session?.token}`,
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       }
     );
     const data = await response.json();
-    console.log("🚀 ~ GET ~ data:", data)
+    console.log("🚀 ~ GET ~ data:", data);
 
     if (!response.ok) {
       throw new Error(data.message);
