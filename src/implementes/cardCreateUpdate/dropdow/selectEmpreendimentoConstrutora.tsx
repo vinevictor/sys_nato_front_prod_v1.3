@@ -1,5 +1,4 @@
 "use client";
-
 import useEmpreendimentoContext from "@/hook/useEmpreendimentoContext";
 import { Flex, Select, SelectProps, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -8,26 +7,28 @@ interface SelectUserConstrutoraProps extends SelectProps {
   setValue: any;
 }
 
+interface EmpreendimentoConstrutoraProps {
+  id: number;
+  cnpj: string;
+  razaosocial: string;
+  tel: string | null;
+  email: string | null;
+  atividade: string | null;
+  fantasia: string | null;
+}
+
 export function SelectEmpreendimentoConstrutora({
   setValue,
   ...props
 }: SelectUserConstrutoraProps) {
   const [Construtora, setConstrutora] = useState<number | any>();
   const [ConstrutoraData, setConstrutoraData] = useState<
-  {
-    id: number;
-    cnpj: string;
-    razaosocial: string;
-    tel: string | null;
-    email: string | null;
-    atividade: string | null;
-    fantasia: string | null;
-  }[]
+    EmpreendimentoConstrutoraProps[]
   >([]);
   const toast = useToast();
-  
+
   const { setConstrutoraTag } = useEmpreendimentoContext();
-  
+
   function handleConstrutoraChange(selectedId: number) {
     const selectedConstrutora = ConstrutoraData.find(
       (construtora) => construtora.id === selectedId
@@ -44,9 +45,8 @@ export function SelectEmpreendimentoConstrutora({
       const req = await fetch("/api/construtora/getall");
       const res = await req.json();
       setConstrutoraData(res);
-      
     } catch (error: any) {
-      console.log("🚀 ~ getConstrutora ~ error:", error)
+      console.log("🚀 ~ getConstrutora ~ error:", error);
       toast({
         title: "Erro",
         description: error.message,
@@ -56,7 +56,7 @@ export function SelectEmpreendimentoConstrutora({
       });
     }
   };
-  
+
   useEffect(() => {
     getConstrutora();
 
@@ -64,7 +64,7 @@ export function SelectEmpreendimentoConstrutora({
       setConstrutora(setValue);
     }
   }, [setValue]);
-  
+
   return (
     <>
       <Flex gap={2}>

@@ -1,10 +1,13 @@
-"use client"; // Marca o componente para uso no cliente
+
+export const dynamic = 'force-dynamic';
+
 import UserRegisterProvider from "@/provider/UserRegister";
 import { Box, Button, Divider, Flex, Heading, SimpleGrid, VStack } from "@chakra-ui/react";
 import UserCreate from "@/actions/user/create";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import BotaoCancelar from "@/components/botoes/btn_cancelar";
 import Permissoes from "@/components/usuarios_component/permissoes";
+
 
 // Componente de cadastro de usuário com layout responsivo e clean code
 export default function CadastrarUsuario() {

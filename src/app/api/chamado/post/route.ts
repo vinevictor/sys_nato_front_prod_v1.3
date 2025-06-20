@@ -1,6 +1,7 @@
 import { GetSessionServer } from "@/lib/auth_confg";
-// src/app/api/suporte/upload/route.ts
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +11,6 @@ export async function POST(request: Request) {
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    console.log("🚀 ~ formData:", formData);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/chamado`,
       {
@@ -22,7 +22,6 @@ export async function POST(request: Request) {
         body: JSON.stringify(formData),
       }
     );
-    console.log("🚀 ~ response:", response);
     const retornoArquivo = await response.json();
 
     if (!response.ok) {

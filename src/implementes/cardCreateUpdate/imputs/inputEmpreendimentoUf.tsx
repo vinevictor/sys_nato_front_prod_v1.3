@@ -5,12 +5,13 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 
 export interface InputEmpreendimentoUfProps extends InputProps {
-    setUfValue?: string;
+  setUfValue?: string;
 }
-export default function InputEmpreendimentoUf({ setUfValue, ...props }: InputEmpreendimentoUfProps) {
-    
-    const [ufLocal, setUfLocal] = useState<string>("");
-
+export default function InputEmpreendimentoUf({
+  setUfValue,
+  ...props
+}: InputEmpreendimentoUfProps) {
+  const [ufLocal, setUfLocal] = useState<string>("");
 
   useEffect(() => {
     if (!setUfValue) return;
@@ -27,9 +28,15 @@ export default function InputEmpreendimentoUf({ setUfValue, ...props }: InputEmp
 
   return (
     <>
-        <Box>
-          <Input {...props} value={ufLocal} type="text" maxLength={2} onChange={handleChange} />
-        </Box>
+      <Box>
+        <Input
+          {...props}
+          value={ufLocal}
+          type="text"
+          maxLength={2}
+          onChange={handleChange}
+        />
+      </Box>
     </>
   );
 }

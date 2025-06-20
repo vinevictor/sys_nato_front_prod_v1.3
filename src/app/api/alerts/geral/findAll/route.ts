@@ -1,6 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const session = await GetSessionServer();
@@ -16,12 +18,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
-      },
-      cache: "force-cache",
-      next: {
-        tags: ["alert-geral-all"],
-        revalidate: 300,// 5 minutos
-      },
+      }
     });
     const data = await get.json();
     console.log("🚀 ~ GET ~ data:", data)

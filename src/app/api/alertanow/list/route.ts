@@ -1,6 +1,9 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+// Esta rota precisa ser dinâmica pois utiliza autenticação baseada em sessão (cookies/token)
+export const dynamic = 'force-dynamic';
+
 
 export async function GET() {
     try {
@@ -18,7 +21,6 @@ export async function GET() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-store",
       });
       const data = await user.json();
       if (!user.ok) {

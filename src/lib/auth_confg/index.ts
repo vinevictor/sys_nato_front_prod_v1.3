@@ -1,9 +1,10 @@
 // servidor: biblioteca de auth (removido 'use server')
-import { SessionServer } from "@/types/session";
 import * as jose from "jose";
 import { cookies } from "next/headers";
 
-export async function OpenSessionToken(token: string): Promise<any> {
+export const dynamic = "force-dynamic";
+
+export async function OpenSessionToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
   const { payload } = await jose.jwtVerify(token, secret);
   return payload;
@@ -42,13 +43,13 @@ export async function CreateSessionClient(payload = {}) {
   });
 }
 
-export async function GetSessionClient(): Promise<SessionNext.Client | null> {
+export async function GetSessionClient() {
   try {
     const token = cookies().get("session");
     if (!token) {
       return null;
     }
-    const data = await OpenSessionToken(token.value);
+    const data: any = await OpenSessionToken(token.value);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`
     );
@@ -61,14 +62,14 @@ export async function GetSessionClient(): Promise<SessionNext.Client | null> {
     data.user.construtora = retorno.construtora || [];
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
-    return data.user;
+    return await Promise.resolve(data.user);
   } catch (error) {
     console.log(error);
     return null;
   }
 }
 
-export async function GetSessionServer(): Promise<SessionNext.Server | null> {
+export async function GetSessionServer() {
   try {
     const token = cookies().get("session-token");
     if (!token) {
@@ -95,7 +96,7 @@ export async function GetSessionServer(): Promise<SessionNext.Server | null> {
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
 
-    return data;
+    return await Promise.resolve(data);
   } catch (error) {
     console.log(error);
     return null;

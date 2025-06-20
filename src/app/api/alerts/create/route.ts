@@ -1,5 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +29,7 @@ export async function POST(request: Request) {
         body: JSON.stringify(data),
       }
     );
+    revalidateTag("alert-geral-all");
     const retorno = await response.json();
     console.log("🚀 ~ POST ~ retorno:", retorno);
     return NextResponse.json(retorno, { status: 200 });

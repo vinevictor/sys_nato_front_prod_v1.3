@@ -1,5 +1,4 @@
-"use client";
-import { CreateEmpreendimento } from "@/actions/empreendimento/service/createEmpreendimento";
+import CreateEmpreendimento from "@/actions/empreendimento/service/createEmpreendimento";
 import BotaoCancelar from "@/components/botoes/btn_cancelar";
 import { BotaoRetorno } from "@/components/botoes/btm_retorno";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";

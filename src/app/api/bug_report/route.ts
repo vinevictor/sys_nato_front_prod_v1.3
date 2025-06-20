@@ -1,6 +1,10 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+// Esta rota depende de autenticação baseada em sessão (cookies/token),
+// por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await GetSessionServer();
@@ -16,10 +20,6 @@ export async function GET() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`
-        },
-        cache: "force-cache",
-        next: {
-          tags: ["bug-report-all"],
         },
       }
     );

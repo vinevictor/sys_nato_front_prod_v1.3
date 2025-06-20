@@ -1,10 +1,12 @@
-import { NextResponse } from 'next/server';
-import { GetSessionServer } from '@/lib/auth_confg';
+import { NextResponse } from "next/server";
+import { GetSessionServer } from "@/lib/auth_confg";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
     const session = await GetSessionServer();
-    if (!session) return NextResponse.json('Unauthorized', { status: 401 });
+    if (!session) return NextResponse.json("Unauthorized", { status: 401 });
 
     const { searchParams } = new URL(req.url);
     const upstream = new URL(
@@ -14,24 +16,23 @@ export async function GET(req: Request) {
 
     const resp = await fetch(upstream.toString(), {
       headers: { Authorization: `Bearer ${session.token}` },
-      cache: 'no-store',
     });
 
     if (!resp.ok) {
-      return NextResponse.json('Upstream error', { status: resp.status });
+      return NextResponse.json("Upstream error", { status: resp.status });
     }
     const payload = await resp.json();
-   
+
     return NextResponse.json(
       {
-        data: payload,        
+        data: payload,
         total: payload.length,
-        page: Number(searchParams.get('pagina') ?? 1),
+        page: Number(searchParams.get("pagina") ?? 1),
       },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
-    return NextResponse.json('Internal error', { status: 500 });
+    return NextResponse.json("Internal error", { status: 500 });
   }
 }

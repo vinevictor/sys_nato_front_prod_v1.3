@@ -2,6 +2,10 @@ import crypto from 'crypto';
 import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+// Esta rota depende de autenticação baseada em sessão (cookies/token),
+// por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const session = await GetSessionServer();

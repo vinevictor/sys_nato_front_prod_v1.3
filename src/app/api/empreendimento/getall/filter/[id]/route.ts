@@ -1,6 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -22,7 +24,6 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`
         },
-        next: { revalidate: 5 },
       }
     );
     if (!reqest.ok) {

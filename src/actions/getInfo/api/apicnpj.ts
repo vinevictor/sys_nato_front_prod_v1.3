@@ -1,5 +1,4 @@
 "use server";
-
 export default async function ApiCpnjJson(cnpj: string) {
   // console.log("🚀 ~ ApiCpnjJson ~ cnpj:", cnpj)
   try {

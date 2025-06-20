@@ -1,5 +1,4 @@
 "use client";
-
 import { EmpreendimentoContext } from "@/context/EmpreendimentoContext";
 import { useState } from "react";
 

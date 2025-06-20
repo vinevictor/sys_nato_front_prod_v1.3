@@ -2,6 +2,8 @@ import { GetSessionServer } from '@/lib/auth_confg';
 import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -31,7 +33,6 @@ export async function GET(
     }
     const data = await req.json();
 
-    // Criar hash (ETag) do conteúdo JSON para validar cache
     const bodyString = JSON.stringify(data);
     const etag = crypto.createHash('md5').update(bodyString).digest('hex');
 

@@ -1,7 +1,7 @@
-"use server";
-
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function PATCH(
   request: Request,
@@ -29,7 +29,6 @@ export async function PATCH(
     );
 
     const retorno = await response.json();
-
     if (!response.ok) {
       throw new Error(retorno.message || "Erro ao atualizar chamado");
     }

@@ -13,6 +13,9 @@ import { Metadata } from "next";
 import { TagList } from "@/components/tag/tag-list"; // Importando o novo Client Component
 import { revalidateTag } from "next/cache"; // Importando para revalidação
 
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Tags",
 };
