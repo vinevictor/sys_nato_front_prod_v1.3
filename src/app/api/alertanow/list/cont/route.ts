@@ -23,7 +23,6 @@ try {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
-    cache: "no-store",
   });
   const data = await user.json();
   if (!user.ok) {

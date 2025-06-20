@@ -22,7 +22,6 @@ export async function GET(request: Request) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-store",
       }
     );
 

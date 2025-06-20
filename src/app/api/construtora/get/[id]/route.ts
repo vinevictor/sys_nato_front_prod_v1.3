@@ -1,7 +1,8 @@
 import { GetSessionServer } from '@/lib/auth_confg';
 import crypto from 'crypto';
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
@@ -24,7 +25,6 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-store",
       }
     );
 

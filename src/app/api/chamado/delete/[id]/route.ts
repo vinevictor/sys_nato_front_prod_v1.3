@@ -1,6 +1,7 @@
 import { GetSessionServer } from "@/lib/auth_confg";
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function DELETE(
   request: Request,
@@ -19,8 +20,7 @@ export async function DELETE(
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.token}`,
-        },
-        cache: "no-store",
+        }
       }
     );
 

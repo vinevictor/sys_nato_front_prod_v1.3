@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { GetSessionServer } from "@/lib/auth_confg";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/solicitacao
  *
@@ -76,8 +78,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
+      }
     });
 
     if (!user.ok) {

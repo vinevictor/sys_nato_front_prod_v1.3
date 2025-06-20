@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { cnpj: string } }
@@ -20,7 +22,6 @@ export async function GET(
           "Content-Type": "application/json",
           "User-Agent": "PostmanRuntime/7.30.0",
         },
-        cache: "no-store",
       }
     );
     const data = await response.json();
@@ -33,7 +34,7 @@ export async function GET(
       {
         error: false,
         message: "CNPJ encontrado",
-        data: data
+        data: data,
       },
       { status: 200 }
     );

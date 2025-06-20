@@ -1,6 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { cpf: string } }
@@ -20,7 +22,6 @@ export async function GET(
         headers: {
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-store",
       }
     );
     const response = await data.json();

@@ -1,6 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // Função responsável por tratar requisições PUT para pausar uma solicitação
 // Corrigido para exportação correta no padrão do Next.js App Router
 export async function PUT(

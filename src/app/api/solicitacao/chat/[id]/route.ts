@@ -1,6 +1,8 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -13,7 +15,7 @@ export async function PUT(
     const session = await GetSessionServer();
 
     if (!session) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: true, message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await fetch(
