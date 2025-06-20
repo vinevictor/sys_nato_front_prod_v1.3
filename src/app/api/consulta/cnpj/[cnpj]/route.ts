@@ -20,6 +20,7 @@ export async function GET(
           "Content-Type": "application/json",
           "User-Agent": "PostmanRuntime/7.30.0",
         },
+        cache: "no-store",
       }
     );
     const data = await response.json();

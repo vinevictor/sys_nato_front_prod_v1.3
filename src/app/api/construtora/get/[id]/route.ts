@@ -33,8 +33,6 @@ export async function GET(
     }
     const data = await req.json();
 
-    revalidateTag("construtora-all");
-    // Criar hash (ETag) do conteúdo JSON para validar cache
     const bodyString = JSON.stringify(data);
     const etag = crypto.createHash('md5').update(bodyString).digest('hex');
 

@@ -20,6 +20,7 @@ export async function GET(
         headers: {
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "no-store",
       }
     );
     const response = await data.json();

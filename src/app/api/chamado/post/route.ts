@@ -21,7 +21,7 @@ export async function POST(request: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-        next: { tags: ["chamado-all"] },
+        cache: "no-store",
       }
     );
     console.log("🚀 ~ response:", response);
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       return NextResponse.json(retornoArquivo, { status: 500 });
     }
-    revalidateTag("chamado-all");
+
     return NextResponse.json(
       { data: retornoArquivo, message: "Arquivo enviado com sucesso" },
       { status: 200 }

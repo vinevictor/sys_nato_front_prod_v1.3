@@ -24,7 +24,6 @@ export async function PUT(
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(data),
-        cache: "no-store",
       }
     );
     if (!req.ok) {
