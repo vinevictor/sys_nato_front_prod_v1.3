@@ -1,5 +1,5 @@
 # Use the latest Node.js image as the base image
-FROM node:20.17.0
+FROM node:22.14.0
 
 # Set the working directory
 WORKDIR /app
@@ -14,7 +14,10 @@ RUN yarn
 COPY . .
 
 # Build the Next.js application
-RUN yarn build
+# RUN yarn build
+
+# export port
+EXPOSE 3000
 
 # Start the application
 CMD ["yarn", "start"]
