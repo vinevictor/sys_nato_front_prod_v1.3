@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
@@ -19,9 +20,10 @@ export async function DELETE(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.token}`,
         },
+        cache: "no-store",
       }
     );
-
+revalidateTag("chamado-all");
     const retorno = await response.json();
 
     if (!response.ok) {

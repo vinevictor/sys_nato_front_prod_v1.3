@@ -1,3 +1,5 @@
+
+"use client";
 import { IconButton, IconButtonProps, Tooltip } from "@chakra-ui/react";
 import { BsBoxArrowUpRight } from "react-icons/bs";
 

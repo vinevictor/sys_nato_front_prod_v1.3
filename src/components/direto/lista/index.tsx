@@ -139,17 +139,17 @@ export const DadoCompomentList = ({
     }
     if (session?.user) {
       (async () => {
-        if (session.user.hierarquia === "ADM") {
+        if (session?.user?.hierarquia === "ADM") {
           setDataConstrutora(await fetchConstrutoraAll());
           setDataEmpreendimento(await fetchEmpreendimentoAll());
           setDataFinanceiro(await fetchFinanceiroAll());
         } else {
-          session.user.construtora.length > 0 &&
-            setDataConstrutora(session.user.construtora);
-          session.user.empreendimento.length > 0 &&
-            setDataEmpreendimento(session.user.empreendimento);
-          session.user.Financeira.length > 0 &&
-            setDataFinanceiro(session.user.Financeira);
+          session?.user?.construtora?.length > 0 &&
+            setDataConstrutora(session?.user?.construtora);
+          session?.user?.empreendimento?.length > 0 &&
+            setDataEmpreendimento(session?.user?.empreendimento);
+          session?.user?.Financeira?.length > 0 &&
+            setDataFinanceiro(session?.user?.Financeira);
         }
       })();
     }

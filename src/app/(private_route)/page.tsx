@@ -22,7 +22,7 @@ const GetListaDados = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
-    cache: "no-store",
+    next: { revalidate: 5 },
   });
   const data = await user.json();
   if (!user.ok) {
@@ -50,7 +50,7 @@ export default async function HomePage() {
           {session && <ModalTermos session={session.user} />}
 
           {session && <UserCompomentInfo session={session.user} />}
-          <DadoCompomentList dados={ListDados} session={session} />
+          {session && <DadoCompomentList dados={ListDados} session={session} />}
         </Flex>
       </HomeProvider>
     </>

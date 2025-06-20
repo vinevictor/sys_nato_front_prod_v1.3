@@ -1,3 +1,4 @@
+"use client";
 import { Box, Icon, Tooltip } from "@chakra-ui/react";
 import { FaRunning } from "react-icons/fa";
 

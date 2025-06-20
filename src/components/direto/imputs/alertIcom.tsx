@@ -1,3 +1,4 @@
+"use client";
 import { Box, Icon, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Portal } from "@chakra-ui/react";
 import { FiAlertTriangle } from "react-icons/fi";
 

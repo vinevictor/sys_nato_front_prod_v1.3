@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -24,8 +25,10 @@ export async function POST(request: Request) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(data),
+        cache: "no-store",
       }
     );
+    revalidateTag("alert-geral-all");
     const retorno = await response.json();
     console.log("🚀 ~ POST ~ retorno:", retorno);
     return NextResponse.json(retorno, { status: 200 });

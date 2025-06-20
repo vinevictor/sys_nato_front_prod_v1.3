@@ -1,3 +1,4 @@
+"use client";
 import { Select, SelectProps } from "@chakra-ui/react";
 
 interface SelectPropsComponent extends SelectProps {

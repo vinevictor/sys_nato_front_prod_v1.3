@@ -20,6 +20,7 @@ export async function DELETE(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "no-store",
       }
     );
     const retorno = await response.json();
