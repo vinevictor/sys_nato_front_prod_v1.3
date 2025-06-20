@@ -1,4 +1,6 @@
 "use client"; // Marca o componente para uso no cliente
+export const dynamic = 'force-dynamic';
+
 import UserRegisterProvider from "@/provider/UserRegister";
 import { Box, Button, Divider, Flex, Heading, SimpleGrid, VStack } from "@chakra-ui/react";
 import UserCreate from "@/actions/user/create";
