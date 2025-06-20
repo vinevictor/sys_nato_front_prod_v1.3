@@ -117,7 +117,6 @@ export default async function DashBoard() {
 
   const mediaHorasGlobal = averageTimeInHours(MediaHorasConvertida);
 
-  // Dados para o PieChart
   const arrayRG = data.map((item: any) => item.RG);
   const arrayCNH = data.map((item: any) => item.CNH);
   const totalRG = arrayRG.reduce((acc: number, item: number) => acc + item, 0);
@@ -128,6 +127,7 @@ export default async function DashBoard() {
 
   return (
     <>
+
       <Flex w={"full"} h={"full"} flexDir={"column"} p={2}>
         <Flex
           w={"100%"}
@@ -176,7 +176,6 @@ export default async function DashBoard() {
         </Flex>
         <Flex
           w={"100%"}
-          // bg={"#00713C"}
           rounded={"12px"}
           p={4}
           justifyContent={"center"}
@@ -190,56 +189,5 @@ export default async function DashBoard() {
         </Flex>
       </Flex>
     </>
-    // <Flex
-    //   w="100%"
-    //   px={{ base: 2, md: "10rem" }}
-    //   py={5}
-    //   flexDir="column"
-    //   bg="white"
-    //   align="center"
-    //   justify="center"
-    //   minH="100vh"
-    // >
-    //   <VStack spacing={8} p={5} align="stretch" w="100%">
-    //     <Text
-    //       fontSize="3xl"
-    //       fontWeight="bold"
-    //       color="#00713C"
-    //       textAlign="center"
-    //     >
-    //       Dashboard Global
-    //     </Text>
-    //     <Flex
-    //       alignItems="flex-start"
-    //       w="100%"
-    //       gap={{ base: 4, md: 6 }}
-    //       flexDir={{ base: "column", md: "row" }}
-    //       justify="center"
-    //       flexWrap="wrap" // Permite o wrap dos itens
-    //     >
-    //       {/* Gráfico de Linha com dados convertidos */}
-
-    //       {/* Gráfico de barra das tags */}
-
-    //       {/* Gráficos de Pizza */}
-    //       <Flex flexDirection="row" gap={4} align="center">
-
-    //       </Flex>
-    //     </Flex>
-    //     <Divider />
-
-    // {/* <DashFiltrado
-    //   construtoras={
-    //     user?.hierarquia == "ADM" ? construtoras : user?.construtora
-    //   }
-    //   financeiras={
-    //     user?.hierarquia == "ADM" ? financeiras : user?.Financeira
-    //   }
-    //   empreendimentos={
-    //     user?.hierarquia == "ADM" ? empreendimentos : user?.empreendimento
-    //   }
-    // /> */}
-    //   </VStack>
-    // </Flex>
   );
 }

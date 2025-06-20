@@ -8,9 +8,10 @@ import {
   Text,
   Divider,
   Spinner,
-  Input
+  Input,
+  SimpleGrid
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import PieChart from "../pieChart.tsx";
 import DoughnutChart from "../doughnutChart";
 import { useSession } from "@/hook/useSession";
@@ -142,7 +143,7 @@ export default function DashFiltrado({
     }
   };
 
- 
+
   const renderValue = (value: any) => {
     if (value === null || value === undefined) return "N/A";
     if (typeof value === 'object') return JSON.stringify(value);
@@ -152,7 +153,7 @@ export default function DashFiltrado({
 
   const processTagData = (tagData: any) => {
     if (!tagData || !Array.isArray(tagData)) return { labels: [], values: [] };
-    
+
     return tagData.reduce((acc, item) => {
       if (typeof item === 'string' && item.includes(' = ')) {
         const [label, value] = item.split(' = ');
@@ -166,219 +167,214 @@ export default function DashFiltrado({
     }, { labels: [], values: [] });
   };
 
-  return (
-    <>
+  function Metric({ label, value }: { label: string; value: string }) {
+    return (
+      <Flex gap={1}>
+        <Text fontSize="xl" color="#00713C" fontWeight="medium">
+          {label}
+        </Text>
+        <Text fontSize="xl" color="#1D1D1B">
+          {value}
+        </Text>
+      </Flex>
+    );
+  }
 
-      {hierarquia == "ADM" && (
-        <>
-          <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} gap={4} w={"full"}>
-            <Input 
-              placeholder='Data Início' 
-              width={"fit-content"} 
-              size='md' 
-              type='date' 
-              value={dataInicio || ""}
-              onChange={(e) => setDataInicio(e.target.value || null)} 
-            />
-            <Input 
-              placeholder='Data Fim' 
-              w={'fit-content'} 
-              size='md' 
-              type='date' 
-              value={dataFim || ""}
-              onChange={(e) => setDataFim(e.target.value || null)} 
-            />
-            <Select w={"200px"} value={construtora || ""} onChange={(e) => setConstrutora(e.target.value || null)}>
-              <option value="">Construtora</option>
-              {Array.isArray(construtoras) && construtoras.map((construtora: any) => (
-                <option key={construtora?.id || Math.random()} value={construtora?.id || ""}>
-                  {construtora?.fantasia || "Nome não disponível"}
-                </option>
-              ))}
-            </Select>
-            <Select w={"200px"} value={empreedimento || ""} onChange={(e) => setEmpreendimento(e.target.value || null)}>
-              <option value="">Empreendimento</option>
-              {Array.isArray(empreendimentos) && empreendimentos.map((empreendimento: any) => (
-                <option key={empreendimento?.id || Math.random()} value={empreendimento?.id || ""}>
-                  {empreendimento?.nome || "Nome não disponível"}
-                </option>
-              ))}
-            </Select>
-            <Select w={"200px"} value={financeiro || ""} onChange={(e) => setFinanceira(e.target.value || null)}>
-              <option value="">Financeira</option>
-              {Array.isArray(financeiras) && financeiras.map((financeira: any) => (
-                <option key={financeira?.id || Math.random()} value={financeira?.id || ""}>
-                  {financeira?.fantasia || "Nome não disponível"}
-                </option>
-              ))}
-            </Select>
-            <Button shadow={"md"} size={"sm"} colorScheme={"teal"} onClick={handleSubmit}>
-              Filtrar
-            </Button>
-            <Button shadow={"md"} size={"sm"} colorScheme={"blue"} onClick={handleLimpar}>
-              Limpar
-            </Button>
-          </Box>
-        </>
-      )}
-
-
-      {hierarquia !== "ADM" && (
-        <>
-          <Box display={"flex"} justifyContent={"center"} gap={2} w={"100%"}>
-            <Input 
-              placeholder='Data Início' 
-              width={"fit-content"} 
-              size='md' 
-              type='date' 
-              value={dataInicio || ""}
-              onChange={(e) => setDataInicio(e.target.value || null)} 
-            />
-            <Input 
-              placeholder='Data Fim' 
-              w={'fit-content'} 
-              size='md' 
-              type='date' 
-              value={dataFim || ""}
-              onChange={(e) => setDataFim(e.target.value || null)} 
-            />
-            <Select w={"200px"} value={construtora || ""} onChange={(e) => setConstrutora(e.target.value || null)}>
-              <option value="">Construtora</option>
-              {Array.isArray(construtoras) && construtoras.map((construtora: any) => (
-                <option key={construtora?.id || Math.random()} value={construtora?.id || ""}>
-                  {construtora?.fantasia || "Nome não disponível"}
-                </option>
-              ))}
-            </Select>
-            <Select w={"200px"} value={empreedimento || ""} onChange={(e) => setEmpreendimento(e.target.value || null)}>
-              <option value="">Empreendimento</option>
-              {Array.isArray(empreendimentos) && empreendimentos.map((empreendimento: any) => (
-                <option key={empreendimento?.id || Math.random()} value={empreendimento?.id || ""}>
-                  {empreendimento?.nome || "Nome não disponível"}
-                </option>
-              ))}
-            </Select>
-            <Button shadow={"md"} size={"sm"} colorScheme={"teal"} onClick={handleSubmit}>
-              Filtrar
-            </Button>
-            <Button shadow={"md"} size={"sm"} colorScheme={"blue"} onClick={handleLimpar}>
-              Limpar
-            </Button>
-          </Box>
-        </>
-      )}
-
-      <Flex
-        alignItems="flex-start"
-        w="100%"
-        gap={{ base: 4, md: 6 }}
-        flexDir={{ base: "column", md: "row" }}
-        justify="center"
-        flexWrap="wrap"
+  function ChartWrapper({ children }: { children: ReactNode }) {
+    return (
+      <Box
+        bg="white"
+        p={4}
+        boxShadow="md"
+        borderRadius="lg"
+        w={{ base: "280px", md: "320px" }}
+        h="auto"
       >
-        {dados ? (
-          <>
-            <Flex
-              w="100%"
-              maxW="950px"
-              h="auto"
-              gap={2}
-              bg="white"
-              flexDirection={"column"}
-            >
-              <Box
-                display={"flex"}
-                flexDirection={"row"}
-                justifyContent={"space-around"}
-                p={5}
-                bg="white"
-                borderRadius="md"
-                boxShadow="md"
-              >
-                <Flex flexDirection={"row"} gap={1}>
-                  <Text fontSize="xl" color={"#00713C"}>
-                    Quantidade de Certificados:
-                  </Text>
-                  <Text fontSize="xl" color={"#1D1D1B"}>
-                    {renderValue(dados?.total_solicitacao)}
-                  </Text>
-                </Flex>
-                <Flex flexDirection={"row"} gap={1}>
-                  <Text fontSize="xl" color={"#00713C"}>
-                    Media de Horas/Certificado:
-                  </Text>
-                  <Text fontSize="xl" color={"#1D1D1B"}>
-                    {renderValue(dados?.time)}
-                  </Text>
-                </Flex>
-              </Box>
-            </Flex>
-          </>
-        ) : null}
+        {children}
+      </Box>
+    );
+  }
+
+  return (
+    /* COLUNA PRINCIPAL ─────────────────────────────────────────────── */
+    <Flex direction="column" w="full" gap={6} align="center">
+
+      {/* BLOCO DE FILTRO ─────────────────────────────────────────────── */}
+      <Flex
+        wrap="wrap"
+        gap={4}
+        w="full"
         
-        <Divider />
-        {dados ? (
-          <Flex
-            flexDirection="row"
-            maxW={"1000px"}
-            flexWrap={"wrap"}
-            gap={4}
-            justifyContent={"center"}
-          >
-            <PieChart
-              title="Quantidade de RG e CNH"
-              colors={["#1D1D1B", "#00713C"]}
-              labels={["RG", "CNH"]}
-              dataValues={[
-                Number(dados?.rg) || 0, 
-                Number(dados?.cnh) || 0
-              ]}
-            />
+        justify="center"
+        align="center"
+      >
+        <Flex gap={4} align="around" justify="around" w="full" >
+          <Input
+            placeholder="Data Início"
+            type="date"
             
-            {dados?.suporte && Number(dados.suporte) > 0 ? (
-              <Box w="60%" h="250px">
+            value={dataInicio || ""}
+            onChange={(e) => setDataInicio(e.target.value || null)}
+          />
+          <Input
+            placeholder="Data Fim"
+            type="date"
+            
+            value={dataFim || ""}
+            onChange={(e) => setDataFim(e.target.value || null)}
+          />
+        {/* Construtora */}
+        <Select
+          
+          value={construtora || ""}
+          onChange={(e) => setConstrutora(e.target.value || null)}
+          >
+          <option value="">Construtora</option>
+          {Array.isArray(construtoras) &&
+            construtoras.map((c: any) => (
+              <option key={c?.id || Math.random()} value={c?.id || ""}>
+                {c?.fantasia || "Nome não disponível"}
+              </option>
+            ))}
+        </Select>
+
+        {/* Empreendimento */}
+        <Select
+          
+          value={empreedimento || ""}
+          onChange={(e) => setEmpreendimento(e.target.value || null)}
+          >
+          <option value="">Empreendimento</option>
+          {Array.isArray(empreendimentos) &&
+            empreendimentos.map((epr: any) => (
+              <option key={epr?.id || Math.random()} value={epr?.id || ""}>
+                {epr?.nome || "Nome não disponível"}
+              </option>
+            ))}
+        </Select>
+
+        {/* Financeira (apenas ADM) */}
+        {hierarquia === "ADM" && (
+          <Select
+          
+          value={financeiro || ""}
+          onChange={(e) => setFinanceira(e.target.value || null)}
+          >
+            <option value="">Financeira</option>
+            {Array.isArray(financeiras) &&
+              financeiras.map((fin: any) => (
+                <option key={fin?.id || Math.random()} value={fin?.id || ""}>
+                  {fin?.fantasia || "Nome não disponível"}
+                </option>
+              ))}
+          </Select>
+        )}
+        </Flex>
+
+        {/* Botões */}
+        <Button shadow="md" size="sm" colorScheme="teal" onClick={handleSubmit}>
+          Filtrar
+        </Button>
+        {hierarquia === "ADM" && (
+          <Button shadow="md" size="sm" colorScheme="blue" onClick={handleLimpar}>
+            Limpar
+          </Button>
+        )}
+      </Flex>
+
+      {/* BLOCO DE MÉTRICAS E GRÁFICOS ───────────────────────────────── */}
+      {dados && (
+        <Flex direction="column" gap={6} w="full" align="center" maxW="1280px">
+          {/* Métricas chave */}
+          <Flex
+            w="full"
+            maxW="950px"
+            bg="white"
+            p={5}
+            boxShadow="md"
+            borderRadius="md"
+            justify="space-around"
+            wrap="wrap"
+            gap={4}
+          >
+            <Metric
+              label="Quantidade de Certificados:"
+              value={renderValue(dados?.total_solicitacao)}
+            />
+            <Metric
+              label="Média de Horas/Certificado:"
+              value={renderValue(dados?.time)}
+            />
+          </Flex>
+
+          {/* Grid de Gráficos */}
+          <SimpleGrid
+            columns={{ base: 1, sm: 2, lg: 3 }}
+            spacing={6}
+            w="full"
+            justifyItems="center"
+          >
+            {/* RG x CNH */}
+            <ChartWrapper>
+              <PieChart
+                title="Quantidade de RG e CNH"
+                colors={["#1D1D1B", "#00713C"]}
+                labels={["RG", "CNH"]}
+                dataValues={[
+                  Number(dados?.rg) || 0,
+                  Number(dados?.cnh) || 0
+                ]}
+              />
+            </ChartWrapper>
+
+            {/* Suporte (se houver) */}
+            {dados?.suporte && Number(dados.suporte) > 0 && (
+              <ChartWrapper>
                 <DoughnutChart
                   labels={processTagData(dados?.suporte_tag).labels}
                   dataValues={processTagData(dados?.suporte_tag).values}
                   title={`Total Suporte: ${renderValue(dados?.suporte)}`}
                 />
-              </Box>
-            ) : null}
-            
-            <PieChart
-              title="Video Conferencia e Presencial"
-              colors={["#00713C", "#1D1D1B"]}
-              labels={["Video Conf.", "Presencial"]}
-              dataValues={[
-                Number(dados?.total_vc) || 0, 
-                Number(dados?.total_int) || 0
-              ]}
-            />
-            
-            {dados?.erros && Number(dados.erros) > 0 ? (
-              <Box w="60%" h="250px">
+              </ChartWrapper>
+            )}
+
+            {/* Vídeo Conf. x Presencial */}
+            <ChartWrapper>
+              <PieChart
+                title="Vídeo Conferência x Presencial"
+                colors={["#00713C", "#1D1D1B"]}
+                labels={["Vídeo Conf.", "Presencial"]}
+                dataValues={[
+                  Number(dados?.total_vc) || 0,
+                  Number(dados?.total_int) || 0
+                ]}
+              />
+            </ChartWrapper>
+
+            {/* Erros (se houver) */}
+            {dados?.erros && Number(dados.erros) > 0 && (
+              <ChartWrapper>
                 <DoughnutChart
                   labels={processTagData(dados?.erros_tag).labels}
                   dataValues={processTagData(dados?.erros_tag).values}
                   title={`Total Erros: ${renderValue(dados?.erros)}`}
                 />
-              </Box>
-            ) : null}
-          </Flex>
-        ) : null}
-        
-        {loading ? (
-          <Spinner
-            thickness="6px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="green.500"
-            h={"100px"}
-            w={"100px"}
-            size="xl"
-          />
-        ) : null}
-      </Flex>
-    </>
+              </ChartWrapper>
+            )}
+          </SimpleGrid>
+        </Flex>
+      )}
+
+      {/* SPINNER (loading) ──────────────────────────────────────────── */}
+      {loading && (
+        <Spinner
+          thickness="6px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="green.500"
+          size="xl"
+        />
+      )}
+    </Flex>
   );
-}
+}  

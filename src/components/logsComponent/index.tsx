@@ -66,27 +66,16 @@ export default function LogsComponent({ logs }: LogProps) {
             background: "gray.500",
           },
         }}
-        pr={2}
+        
       >
-        <List spacing={4}>
-          {logs.map((log, index) => (
-            <ListItem
-              key={index}
-              border={"1px solid #ccc"}
-              p={4}
-              rounded={"md"}
-              _hover={{ bg: "gray.100" }}
-            >
-              <VStack align="flex-start" spacing={2}>
-                <HStack justifyContent="space-between" width="full">
-                  <Text fontSize="md" fontWeight="bold" color="teal.600">
-                    ID: {log.id}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500">
-                    Data Criação: {new Date(log.createAt).toLocaleString()}
-                  </Text>
+        <List>
+          {logs.map((log) => (
+            <ListItem>
+              <VStack align="flex-start">
+                <HStack justifyContent="space-between" width="full">                  
+
                 </HStack>
-                <Divider my={2} />
+                <Divider/>
                 <Text fontSize="md" color="gray.700">
                   {log.descricao}
                 </Text>
