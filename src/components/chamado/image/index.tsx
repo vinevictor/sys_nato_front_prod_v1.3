@@ -57,18 +57,18 @@ export const ImageComponent = ({
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const isInitializedRef = useRef(false);
 
-  // Efeito para inicializar as imagens existentes apenas uma vez 
+  // Efeito para inicializar as imagens existentes apenas uma vez
   useEffect(() => {
     // Verifica se já foi inicializado para evitar reprocessamento
     if (!isInitializedRef.current && DataImages?.length > 0) {
       // Converte DataImages para ManagedImage
-      const existingImages = DataImages.map(img => ({
+      const existingImages = DataImages.map((img) => ({
         id: img.url_view,
         url_view: img.url_view,
         url_download: img.url_download,
-        isNew: false
+        isNew: false,
       }));
-      
+
       // Inicializa o estado com as imagens existentes
       setManagedImages(existingImages);
       isInitializedRef.current = true;
@@ -131,7 +131,7 @@ export const ImageComponent = ({
       // Adiciona as novas imagens ao array existente, sem substituir as anteriores
       setManagedImages((prev) => [
         ...prev, // mantém as imagens já existentes
-        ...newManagedImages // adiciona as novas imagens
+        ...newManagedImages, // adiciona as novas imagens
       ]);
       // DICA: Usar o spread operator garante que cada nova imagem será adicionada junto das outras, formando uma galeria.
       // Isso evita que uma nova imagem substitua as anteriores.
@@ -326,18 +326,11 @@ export const ImageComponent = ({
                   h="20px"
                   cursor="pointer"
                   aria-label="Substituir imagem"
+                  onClick={() => {
+                    window.open(image.url_download, "_blank");
+                  }}
                 >
                   <Icon as={FiDownload} w={3} h={3} />
-                  <Input
-                    id={`replace-file-${image.id}`}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleReplaceFileSelect(image.id, e)}
-                    display="none"
-                    ref={(el) => {
-                      fileInputRefs.current[image.id] = el;
-                    }}
-                  />
                 </Button>
               </Flex>
             </Box>
