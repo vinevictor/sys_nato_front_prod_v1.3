@@ -1,3 +1,7 @@
+// Esta rota utiliza dados dinâmicos e precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE.
+// Veja: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 
 /**
