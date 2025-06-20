@@ -21,6 +21,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         Authorization: `Bearer ${session?.token}`,
       },
       body: JSON.stringify(body),
+      cache: "no-store",
     });
     const data = await get.json();
 

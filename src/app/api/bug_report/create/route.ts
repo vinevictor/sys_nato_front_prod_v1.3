@@ -18,6 +18,7 @@ export async function POST(request: Request) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(body),
+        cache: "no-store",
       }
     );
     const retorno = await response.json();

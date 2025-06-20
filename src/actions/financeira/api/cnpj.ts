@@ -1,4 +1,4 @@
-'use server'
+"use server";
 export default async function ApiCpnj(cnpj: string) {
   try {
     const response = await fetch(

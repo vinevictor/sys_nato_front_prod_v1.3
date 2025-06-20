@@ -16,6 +16,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${session?.token}`,
             },
+            cache: "no-store",
         });
         const data = await request.json();
 

@@ -7,6 +7,9 @@ import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
 
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "HOME",
   description: "sistema de gestão de vendas de imóveis",
@@ -22,7 +25,7 @@ const GetListaDados = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
-    cache: "no-store",
+    next: { revalidate: 5 },
   });
   const data = await user.json();
   if (!user.ok) {
@@ -50,7 +53,7 @@ export default async function HomePage() {
           {session && <ModalTermos session={session.user} />}
 
           {session && <UserCompomentInfo session={session.user} />}
-          <DadoCompomentList dados={ListDados} session={session} />
+          {session && <DadoCompomentList dados={ListDados} session={session} />}
         </Flex>
       </HomeProvider>
     </>

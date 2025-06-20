@@ -7,6 +7,9 @@ import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
 
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "HOME DIRETO",
   description: "sistema de gestão de vendas de imóveis",
@@ -48,11 +51,11 @@ export default async function DiretoPage() {
           overflowY="auto"
           overflowX="hidden"
         >
-          <ModalPrimeAsses session={session as any} />
-          <ModalTermos session={session as any} />
+          {/* <ModalPrimeAsses session={session as any} />
+          <ModalTermos session={session as any} /> */}
 
-          <UserCompomentInfo session={session} />
-          <DadoCompomentList dados={ListDados} session={session} />
+          {session && <UserCompomentInfo session={session} />}
+          {session && <DadoCompomentList dados={ListDados} session={session} />}
         </Flex>
       </HomeProvider>
     </>

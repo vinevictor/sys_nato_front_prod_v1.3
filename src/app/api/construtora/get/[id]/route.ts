@@ -1,5 +1,6 @@
 import { GetSessionServer } from '@/lib/auth_confg';
 import crypto from 'crypto';
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -23,6 +24,7 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "no-store",
       }
     );
 
@@ -31,6 +33,7 @@ export async function GET(
     }
     const data = await req.json();
 
+    revalidateTag("construtora-all");
     // Criar hash (ETag) do conteúdo JSON para validar cache
     const bodyString = JSON.stringify(data);
     const etag = crypto.createHash('md5').update(bodyString).digest('hex');

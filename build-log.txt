@@ -1,0 +1,829 @@
+yarn run v1.22.22
+$ next build
+  ▲ Next.js 14.2.15
+  - Environments: .env
+  - Experiments (use with caution):
+    · optimizeCss
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/59) ...
+   Generating static pages (14/59) 
+Erro ao processar proxy de vídeo: B [Error]: Dynamic server usage: Route /api/video-proxy couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at V (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:21777)
+    at Object.get (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:29137)
+    at u (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/video-proxy/route.js:1:546)
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36963
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/lib/trace/tracer.js:122:103 {
+  description: "Route /api/video-proxy couldn't be rendered statically because it used `request.url`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /api/alertanow/list/cont couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at d (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/logout/route.js:1:6746)
+    at c (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alertanow/list/cont/route.js:1:837)
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36963
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854) {
+  description: "Route /api/alertanow/list/cont couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alertanow/putNow/[id]/route.js:1:3259)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alertanow/putNow/[id]/route.js:1:3259)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alertanow/putNow/[id]/route.js:1:3259)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alertanow/putNow/[id]/route.js:1:3259)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/adm/update/[id]/route.js:1:3228)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/adm/update/[id]/route.js:1:3228)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/adm/update/[id]/route.js:1:3228)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/adm/update/[id]/route.js:1:3228)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/update/[id]/route.js:1:3261)
+    at y (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/chamado/page.js:1:19218)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/update/[id]/route.js:1:3261)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/update/[id]/route.js:1:3261)
+    at y (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/chamado/page.js:1:19218)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/update/[id]/route.js:1:3261)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /adm couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /construtoras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/create/route.js:1:5649)
+    at s (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/chamado/novo/page.js:1:2586)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/create/route.js:1:5649)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/create/route.js:1:5649)
+    at s (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/chamado/novo/page.js:1:2586)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/create/route.js:1:5649)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /chamado/novo couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/solicitacao/[id]/route.js:1:3228)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/solicitacao/[id]/route.js:1:3228)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/solicitacao/[id]/route.js:1:3228)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/solicitacao/[id]/route.js:1:3228)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /empreendimentos/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+
+Error occurred prerendering page "/500". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module 'critters'
+Require stack:
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/pages/_document.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/load-components.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/build/utils.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/build/worker.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1225:15)
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1055:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1311:12)
+    at mod.require (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.critters (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:17952)
+    at r (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:18476)
+🚀 ~ EmpreendimentoPage ~ session: null
+n [Error]: Dynamic server usage: Route /solicitacoes couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at d (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/logout/route.js:1:6746)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /solicitacoes couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /solicitacoes couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at d (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/logout/route.js:1:6746)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /solicitacoes couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at x (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:6596)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at x (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:6596)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at x (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:6596)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at x (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:6596)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (29/59) 
+
+Error occurred prerendering page "/404". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: Cannot find module 'critters'
+Require stack:
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/pages/_document.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/load-components.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/build/utils.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/build/worker.js
+- /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1225:15)
+    at /home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1055:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1311:12)
+    at mod.require (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.critters (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:17952)
+    at r (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/pages.runtime.prod.js:14:18476)
+n [Error]: Dynamic server usage: Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/alerts/delete/[id]/route.js:1:5714)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /financeiras couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+🚀 ~ solicitacoes: []
+   Generating static pages (44/59) 
+n [Error]: Dynamic server usage: Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at j (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/page.js:13:22663)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at j (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/page.js:13:22663)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/auth/route.js:1:3113)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route / couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at s (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/(adiministrativo)/usuarios/cadastrar/page.js:1:19546)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+🚀 ~ Layout ~ session: null
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at s (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/(private_route)/(adiministrativo)/usuarios/cadastrar/page.js:1:19546)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at b (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/4116.js:1:11694)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+n [Error]: Dynamic server usage: Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/9379.js:1:37156)
+    at p (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/433.js:1:1692)
+    at l (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/app/api/ResendSms/[id]/route.js:1:3178)
+    at a (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/.next/server/chunks/8483.js:1:4863)
+    at eh (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:134657)
+    at e (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:137542)
+    at ek (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:138016)
+    at Array.toJSON (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eP (/home/ti001/Documentos/projetos/sys_nato_front_prod_v1.3/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090) {
+  description: "Route /usuarios/cadastrar couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+🚀 ~ Layout ~ session: null
+GetListaDados status: Unauthorized
+GetListaDados status: Unauthorized
+ ✓ Generating static pages (59/59)
+
+> Export encountered errors on following paths:
+	/_error: /404
+	/_error: /500
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

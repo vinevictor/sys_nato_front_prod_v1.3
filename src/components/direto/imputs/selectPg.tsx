@@ -1,3 +1,4 @@
+"use client";
 import { IconButton, Select } from "@chakra-ui/react";
 import { IoIosArrowForward } from "react-icons/io";
 

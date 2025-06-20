@@ -1,6 +1,7 @@
 "use server";
 
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -25,11 +26,12 @@ export async function PATCH(
           Authorization: `Bearer ${session.token}`,
         },
         body: JSON.stringify(data),
+        cache: "no-store",
       }
     );
 
     const retorno = await response.json();
-
+    revalidateTag("chamado-all");
     if (!response.ok) {
       throw new Error(retorno.message || "Erro ao atualizar chamado");
     }

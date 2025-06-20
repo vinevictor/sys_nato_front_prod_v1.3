@@ -1,3 +1,4 @@
+"use client";
 import { Input, InputProps } from "@chakra-ui/react";
 
 interface InputComponentProps extends InputProps {}

@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -17,9 +18,10 @@ export async function POST(request: Request) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(data),
+        cache: "no-store",
       }
     );
-
+    revalidateTag("construtora-all");
     if (!response.ok) {
       throw new Error("Erro ao criar o registro");
     }

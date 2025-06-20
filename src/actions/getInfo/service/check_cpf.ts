@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { GetSessionServer } from "@/lib/auth_confg";
 
