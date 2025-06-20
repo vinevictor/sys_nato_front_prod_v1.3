@@ -95,7 +95,7 @@ export async function GetSessionServer(): Promise<SessionNext.Server | null> {
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
 
-    return data;
+    return await Promise.resolve(data);
   } catch (error) {
     console.log(error);
     return null;

@@ -7,6 +7,9 @@ import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
 
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "HOME",
   description: "sistema de gestão de vendas de imóveis",
