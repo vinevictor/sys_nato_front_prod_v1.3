@@ -60,7 +60,6 @@ export default function MaskedInput({
 
   const handleBlur = async () => {
     const clean = unMask(localValue);
-    console.log("🚀 ~ handleBlur ~ clean:", clean);
 
     // CPF Validation
     if (isCpf) {
@@ -75,13 +74,16 @@ export default function MaskedInput({
 
     // WhatsApp Validation
     if (isWhatsapp) {
-      if (clean.length < 10 || !clean) {
+      if (!clean) {
+        setIsInvaldNumber(false);
+        setIsInvalidWhatsapp(false);
+        return;
+      } else if (clean.length < 10) {
         setIsInvaldNumber(true);
         setIsInvalidWhatsapp(false);
         return;
       }
       const check = await checkWhatsapp(clean);
-      console.log("🚀 ~ handleBlur ~ check:", check);
       if (!check) {
         setIsInvalidWhatsapp(true);
         setIsInvaldNumber(false);
@@ -95,13 +97,12 @@ export default function MaskedInput({
 
   const checkWhatsapp = async (telefone: string): Promise<boolean> => {
     try {
-      // const bugCheck = await fetch(`/api/bug_report`);
-      // const Dados = await bugCheck.json();
-      // console.log("🚀 ~ checkWhatsapp ~ Dados:", Dados);
-      // if (Dados.length > 0) {
-      //   return true;
-      // }
-      // console.log("🚀 ~ checkWhatsapp ~ telefone:", telefone);
+      const bugCheck = await fetch(`/api/bug_report`);
+      const Dados = await bugCheck.json();
+      console.log("🚀 ~ checkWhatsapp ~ Dados:", Dados);
+      if (Dados.length > 0) {
+        return true;
+      }
 
       const request = await fetch("/api/consulta/whatsapp", {
         method: "POST",
@@ -109,7 +110,6 @@ export default function MaskedInput({
         body: JSON.stringify({ telefone }),
       });
       const data = await request.json();
-      console.log("🚀 ~ checkWhatsapp ~ data:", data);
 
       if (data?.data?.log && retornoLog) {
         retornoLog(data.data.log);
