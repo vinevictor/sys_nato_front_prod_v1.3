@@ -2,6 +2,8 @@
 import { EmpreendimentoContext } from "@/context/EmpreendimentoContext";
 import { useContext } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default function useEmpreendimentoContext() {
   const context = useContext(EmpreendimentoContext);
 

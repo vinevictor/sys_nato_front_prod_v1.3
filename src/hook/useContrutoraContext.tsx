@@ -1,6 +1,8 @@
 import { ConstrutoraContext } from "@/context/ConstrutoraContex";
 import { useContext } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default function useConstrutoraCOntex() {
     const context = useContext(ConstrutoraContext);
 

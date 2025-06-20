@@ -2,6 +2,8 @@
 import { FiltroContext } from "@/context/UserFiltroContext";
 import { useContext } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default function UserFiltroContext() {
   const context = useContext(FiltroContext);
 
