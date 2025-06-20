@@ -125,7 +125,7 @@ export default function MensagensChat({
             bg="green.200"
             p={4}
             borderRadius="1rem"
-            h={{ base: "25rem", lg: "30rem" }}
+            h={"full"}
             overflowY="auto"
             mb={3}
             boxShadow="inner"

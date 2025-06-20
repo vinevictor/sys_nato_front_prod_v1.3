@@ -39,6 +39,7 @@ interface PageProps {
     status?: string;
     prioridade?: string;
     departamento?: string;
+    clear?: string;
   };
 }
 
@@ -120,7 +121,18 @@ async function handleFilter(formData: FormData) {
   if (departamento) params.set("departamento", departamento);
 
   const queryString = params.toString();
-  redirect(`/chamado${queryString ? `?${queryString}` : ""}`);
+  
+  // Adiciona um parâmetro especial para indicar que deve limpar os campos
+  const finalParams = new URLSearchParams(queryString);
+  finalParams.set("clear", "true");
+  
+  redirect(`/chamado?${finalParams.toString()}`);
+}
+
+// Server Action para limpar filtros
+async function handleClearFilters() {
+  "use server";
+  redirect('/chamado');
 }
 
 export default async function ChamadoPage({
@@ -142,8 +154,6 @@ export default async function ChamadoPage({
   const departamentosUnicos = [
     ...new Set(chamadosTodos.map((c: any) => c.departamento)),
   ].filter(Boolean);
-
-  console.log("🚀 ~ ChamadoPage ~ chamados:", chamados);
 
   return (
     <>
@@ -199,20 +209,15 @@ export default async function ChamadoPage({
           </Flex>
 
           {/* 2 */}
-          <form action={handleFilter}>
-            <Flex
-              w={"100%"}
-              gap={2}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
+          <Flex gap={2} justifyContent={"center"} alignItems={"center"}>
+            <form action={handleFilter} style={{ display: 'contents' }}>
               <Box w={"25rem"}>
                 <Input
                   name="busca"
                   type="text"
                   placeholder="Buscar chamados"
                   w={"100%"}
-                  defaultValue={searchParams.busca || ""}
+                  defaultValue={searchParams.clear ? "" : (searchParams.busca || "")}
                 />
               </Box>
               <Box w={"15rem"}>
@@ -220,7 +225,7 @@ export default async function ChamadoPage({
                   name="status"
                   placeholder="status"
                   w={"100%"}
-                  defaultValue={searchParams.status || ""}
+                  defaultValue={searchParams.clear ? "" : (searchParams.status || "")}
                 >
                   {statusUnicos.map((status: any) => (
                     <option key={status} value={status}>
@@ -234,11 +239,11 @@ export default async function ChamadoPage({
                   name="prioridade"
                   placeholder="prioridade"
                   w={"100%"}
-                  defaultValue={searchParams.prioridade || ""}
+                  defaultValue={searchParams.clear ? "" : (searchParams.prioridade || "")}
                 >
                   {prioridadesUnicas.map((prioridade: any) => (
                     <option key={prioridade} value={prioridade}>
-                      {prioridade}
+                      {prioridade.toUpperCase()}
                     </option>
                   ))}
                 </Select>
@@ -248,11 +253,11 @@ export default async function ChamadoPage({
                   name="departamento"
                   placeholder="Departamento"
                   w={"100%"}
-                  defaultValue={searchParams.departamento || ""}
+                  defaultValue={searchParams.clear ? "" : (searchParams.departamento || "")}
                 >
                   {departamentosUnicos.map((departamento: any) => (
                     <option key={departamento} value={departamento}>
-                      {departamento}
+                      {departamento.toUpperCase()}
                     </option>
                   ))}
                 </Select>
@@ -262,8 +267,15 @@ export default async function ChamadoPage({
                   Filtrar
                 </Button>
               </Box>
-            </Flex>
-          </form>
+            </form>
+            <Box w={"10rem"}>
+              <form action={handleClearFilters}>
+                <Button type="submit" colorScheme="gray" w={"100%"}>
+                  Limpar
+                </Button>
+              </form>
+            </Box>
+          </Flex>
           <Divider my={4} borderColor="gray.300" />
 
           {/* 3 */}

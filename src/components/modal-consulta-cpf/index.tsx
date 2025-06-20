@@ -49,6 +49,7 @@ export default function ModalConsultaRegistro({
   const [solicitacoes, setSolicitacoes] = useState([]);
   console.log("🚀 ~ solicitacoes:", solicitacoes);
   const [IsContinue, setIsContinue] = useState(false);
+  const [solexists, setsolExists] = useState(false);
   const router = useRouter();
 
   const session = useSession();
@@ -113,12 +114,14 @@ export default function ModalConsultaRegistro({
             onCpfChange(CPF);
           } else {
             setSolicitacoes(response.solicitacoes);
+            setsolExists(true);
             toast({
               title: "CPF disponível.",
               description: response.message,
               status: "success",
               duration: 3000,
               isClosable: true,
+              
             });
             setIsContinue(true);
             onCpfChange(CPF);
@@ -230,14 +233,16 @@ export default function ModalConsultaRegistro({
 
           {solicitacoes.length >= 0 && (
             <Box mt={8}>
+              {solexists === true && (
               <FormLabel
                 fontWeight="semibold"
                 color="teal.600"
                 fontSize="lg"
                 mb={4}
               >
-                Solicitações existentes
+                Solicitação existente
               </FormLabel>
+              )}
               <List spacing={3}>
                 {solicitacoes.map((item: any) => (
                   <Flex key={item.id} direction="column">

@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+
 interface FormSolicitacaoProps {
   cpf?: string;
   onSuccess?: () => void; // Callback para quando o formulário for enviado com sucesso
@@ -488,34 +489,6 @@ export default function FormSolicitacao({
             boxWidth="24%"
           />
         )}
-      </Flex>
-      <Alert
-        w={"60%"}
-        status="info"
-        variant="subtle"
-        bg="yellow.50"
-        border={"1px solid"}
-        borderColor="orange.600"
-        color="orange.700"
-        borderRadius="md"
-      >
-        <AlertIcon color="orange.600" />
-        <AlertDescription>
-          Ao subir os arquivos, dê preferência à CNH exportada do app CNH
-          Digital ou foto da CNH totalmente aberta.
-        </AlertDescription>
-      </Alert>
-      <Flex w={"60%"} justifyContent={"center"} gap={4}>
-        <InputFileUpload
-          label="Documento de Identificação"
-          id="cnh"
-          value={form.uploadCnh}
-          onvalue={(url) => handleChange("uploadCnh", url)}
-          required
-          boxWidth="100%"
-        />
-      </Flex>
-      <Flex w={"60%"} gap={4}>
         <FormLabel>
           Relacionamento
           <Tooltip
@@ -532,6 +505,9 @@ export default function FormSolicitacao({
             <option value="false">Não</option>
           </Select>
         </FormLabel>
+      </Flex>
+      
+      <Flex w={"60%"} gap={4}>
         {relacionamento && (
           <MaskedInput
             label="CPF"
@@ -544,19 +520,7 @@ export default function FormSolicitacao({
             boxWidth="%"
           />
         )}
-        {session?.hierarquia === "ADM" && relacionamento !== true && (
-          <Box>
-            <FormLabel>Envio de SMS</FormLabel>
-            <Flex alignItems={"flex-start"}>
-              <Switch
-                colorScheme="green"
-                size="lg"
-                onChange={(e) => setSms(e.target.checked)}
-                isChecked={Sms}
-              />
-            </Flex>
-          </Box>
-        )}
+       
       </Flex>
       <Flex
         roundedBottom={"md"}
@@ -573,6 +537,6 @@ export default function FormSolicitacao({
           </Button>
         )}
       </Flex>
-    </Flex>
+    </Flex> 
   );
 }

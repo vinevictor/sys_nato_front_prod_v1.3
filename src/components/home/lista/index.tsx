@@ -303,10 +303,18 @@ export const DadoCompomentList = ({
           <Flex flexWrap="wrap" gap={4} justifyContent="flex-start" w="full">
             <Box w={{ base: "48%", md: "20%", xl: "5rem" }}>
               <InputComponentFilterHome
-                textAlign={"center"}
+                textAlign={"start"}
                 type="number"
-                value={Id ?? 0}
-                onChange={(e) => setId(Number(e.target.value))}
+                placeholder="ID"
+                value={Id?.toString() || ""} 
+                onChange={(e) => {
+                  const value = e.target.value.trim();
+                  if (value === "") {
+                    setId(null);
+                  } else if (!isNaN(Number(value)) && Number(value) > 0) {
+                    setId(Number(value));
+                  }
+                }}
               />
             </Box>
 
