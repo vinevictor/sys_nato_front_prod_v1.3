@@ -21,6 +21,7 @@ export async function GET(request: Request, response: Response) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "no-cache",
       }
     );
     const data = await req.json();
