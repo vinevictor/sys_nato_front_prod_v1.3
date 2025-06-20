@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         cache: "no-store",
       }
     );
-    revalidateTag("construtora-all");
+    
     if (!response.ok) {
       throw new Error("Erro ao criar o registro");
     }

@@ -19,11 +19,7 @@ export async function GET(request: Request) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      cache: "force-cache",
-      next: {
-        tags: ["alert-geral-all"],
-        revalidate: 300,// 5 minutos
-      },
+      cache: "no-store",
     });
     const data = await get.json();
     console.log("🚀 ~ GET ~ data:", data)

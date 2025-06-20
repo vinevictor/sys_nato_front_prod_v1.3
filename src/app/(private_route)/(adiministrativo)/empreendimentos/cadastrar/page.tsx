@@ -6,7 +6,7 @@ import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import EmpreendimentoProvider from "@/provider/EmpreendimentoProvider";
 import { Box, Button, Divider, Flex, Heading, Spacer } from "@chakra-ui/react";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function CadastrarEmpreendimento() {
   return (

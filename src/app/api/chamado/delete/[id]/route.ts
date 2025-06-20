@@ -23,7 +23,7 @@ export async function DELETE(
         cache: "no-store",
       }
     );
-revalidateTag("chamado-all");
+
     const retorno = await response.json();
 
     if (!response.ok) {

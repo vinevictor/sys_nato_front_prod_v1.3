@@ -26,7 +26,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      cache: "no-store",
     });
 
     const res = await retorno.json();

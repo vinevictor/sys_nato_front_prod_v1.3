@@ -31,7 +31,6 @@ export async function PATCH(
     );
 
     const retorno = await response.json();
-    revalidateTag("chamado-all");
     if (!response.ok) {
       throw new Error(retorno.message || "Erro ao atualizar chamado");
     }

@@ -19,7 +19,7 @@ export async function GET() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        next: { revalidate: 10 },
+        cache: "no-store",
       }
     );
 
