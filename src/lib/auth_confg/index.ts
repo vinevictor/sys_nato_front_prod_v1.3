@@ -61,7 +61,7 @@ export async function GetSessionClient(): Promise<SessionNext.Client | null> {
     data.user.construtora = retorno.construtora || [];
     data.user.empreendimento = retorno.empreendimento || [];
     data.user.Financeira = retorno.Financeira || [];
-    return data.user;
+    return await Promise.resolve(data.user);
   } catch (error) {
     console.log(error);
     return null;
