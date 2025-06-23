@@ -13,7 +13,7 @@ type Props = {
 export async function CardUpdateConstrutora({ id, setConstrutoraCard }: Props) {
   return (
     <>
-      <CardCreateUpdate.Form action={UpdateConstrutora} method="POST">
+      <CardCreateUpdate.Form action={UpdateConstrutora}>
         <Flex w={"full"} flexWrap={"wrap"} gap={5}>
           <ContrutoraProvider>
             <CardCreateUpdate.GridConstrutoraCnpj

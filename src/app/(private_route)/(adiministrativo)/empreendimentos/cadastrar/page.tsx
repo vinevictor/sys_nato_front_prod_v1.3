@@ -29,7 +29,7 @@ export default function CadastrarEmpreendimento() {
             <Box> </Box>
           </Flex>
           <Divider my={4} borderColor="gray.300" />
-          <CardCreateUpdate.Form action={CreateEmpreendimento} method="POST">
+          <CardCreateUpdate.Form action={CreateEmpreendimento}>
             <Flex w={"full"} flexWrap={"wrap"} gap={5}>
               <EmpreendimentoProvider>
                 <CardCreateUpdate.GridEmpreendimentoConstrutora w={"13rem"} />

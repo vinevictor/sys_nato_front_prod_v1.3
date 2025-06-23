@@ -45,7 +45,7 @@ export async function CreateSessionClient(payload = {}) {
 
 export async function GetSessionClient() {
   try {
-    const token = cookies().get("session");
+    const token = cookies().get("session-token");
     if (!token) {
       return null;
     }

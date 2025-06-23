@@ -42,7 +42,7 @@ interface FirlterDataProps {
   empreendimento: number | null;
   financeiro: number | null;
   id: number | null;
-  pagina: number | null;
+  pagina?: number | null;
 }
 
 const FirlterData = async (
@@ -81,12 +81,11 @@ const FirlterData = async (
     cache: "no-store",
   });
   const data = await user.json();
-
   if (!user.ok) {
     console.error("FirlterData status:", user.status);
     return null;
   }
-  return data.data;
+  return data;
 };
 
 const fetchConstrutoraAll = async () => {
@@ -170,12 +169,12 @@ export const DadoCompomentList = ({
         empreendimento: Empreendimento,
         financeiro: Financeiro,
         id: Id,
-        pagina: Pagina,
       },
       session
     );
-    if (filtro?.length !== 0) {
-      setListaDados(filtro);
+    if (filtro?.total !== 0) {
+      setListaDados(filtro.data);
+      setTotal(filtro.total);
     } else {
       setListaDados(null);
       setMesageError("Nenhum dado encontrado");
@@ -190,40 +189,38 @@ export const DadoCompomentList = ({
     setFinanceiro(null);
     setId(null);
     setPagina(null);
-    setListaDados(
-      await FirlterData(
-        {
-          nome: null,
-          andamento: null,
-          construtora: null,
-          empreendimento: null,
-          financeiro: null,
-          id: null,
-          pagina: null,
-        },
-        session
-      )
+    const data = await FirlterData(
+      {
+        nome: Nome,
+        andamento: Andamento,
+        construtora: Construtora,
+        empreendimento: Empreendimento,
+        financeiro: Financeiro,
+        id: Id,
+        pagina: null,
+      },
+      session
     );
+    setListaDados(data.data);
     setMesageError(null);
     window.location.reload();
   };
 
   const NextPage = async () => {
     if (Pagina === null) return;
-    setListaDados(
-      await FirlterData(
-        {
-          nome: null,
-          andamento: null,
-          construtora: null,
-          empreendimento: null,
-          financeiro: null,
-          id: null,
-          pagina: Pagina,
-        },
-        session
-      )
+    const data = await FirlterData(
+      {
+        nome: Nome,
+        andamento: Andamento,
+        construtora: Construtora,
+        empreendimento: Empreendimento,
+        financeiro: Financeiro,
+        id: Id,
+        pagina: Pagina,
+      },
+      session
     );
+    setListaDados(data.data);
     setPagina(Pagina);
   };
 
@@ -306,7 +303,7 @@ export const DadoCompomentList = ({
                 textAlign={"start"}
                 type="number"
                 placeholder="ID"
-                value={Id?.toString() || ""} 
+                value={Id?.toString() || ""}
                 onChange={(e) => {
                   const value = e.target.value.trim();
                   if (value === "") {
