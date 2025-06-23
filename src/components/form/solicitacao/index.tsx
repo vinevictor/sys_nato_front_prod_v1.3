@@ -4,10 +4,6 @@ import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import { useSession } from "@/hook/useSession";
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  Box,
   Button,
   Flex,
   FormLabel,
@@ -20,7 +16,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-
 
 interface FormSolicitacaoProps {
   cpf?: string;
@@ -144,8 +139,8 @@ export default function FormSolicitacao({
       );
       setCorretores(
         construtoraSelecionada.colaboradores.map((colab: any) => ({
-          id: colab.user.id,
-          nome: colab.user.nome,
+          id: colab.id,
+          nome: colab.nome,
         })) || []
       );
     } else {
@@ -506,7 +501,7 @@ export default function FormSolicitacao({
           </Select>
         </FormLabel>
       </Flex>
-      
+
       <Flex w={"60%"} gap={4}>
         {relacionamento && (
           <MaskedInput
@@ -520,7 +515,6 @@ export default function FormSolicitacao({
             boxWidth="%"
           />
         )}
-       
       </Flex>
       <Flex
         roundedBottom={"md"}
@@ -537,6 +531,6 @@ export default function FormSolicitacao({
           </Button>
         )}
       </Flex>
-    </Flex> 
+    </Flex>
   );
 }
