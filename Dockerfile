@@ -1,5 +1,5 @@
 # Use the latest Node.js image as the base image
-FROM node:20.17.0
+FROM node:22.14.0
 
 # Set the working directory
 WORKDIR /app
@@ -13,14 +13,11 @@ RUN yarn
 # Copy the rest of the application code
 COPY . .
 
-# sincronizar banco de dados
-RUN yarn prisma generate
+# Build the Next.js application
+# RUN yarn build
 
-# Build the application
-RUN yarn build
-
-# Expose the port the app runs on
-EXPOSE 3002
+# export port
+EXPOSE 3000
 
 # Start the application
-CMD ["yarn", "start", "-p", "3002"]
+CMD ["yarn", "start"]

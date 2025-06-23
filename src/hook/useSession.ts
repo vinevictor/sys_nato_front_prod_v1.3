@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { SessionClient } from "@/types/session";
 
+export const dynamic = "force-dynamic";
+
 export const useSession = (): SessionClient | null => {
   const [session, setSession] = useState<SessionClient | null>(null);
 
