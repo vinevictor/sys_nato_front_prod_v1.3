@@ -41,7 +41,6 @@ export default function FormSolicitacao({
     corretor: 0 as number,
     uploadRg: "",
     uploadCnh: "",
-    // relacionamento: "",
   });
 
   const [Logwhats, setLogwhats] = useState<string>("");
@@ -91,7 +90,6 @@ export default function FormSolicitacao({
       nome: null as string | null,
     },
   ]);
-  // const [relacionamento, setrelacionamento] = useState<boolean>(false);
   const [Sms, setSms] = useState<boolean>(true);
 
   const session = useSession();
@@ -265,9 +263,7 @@ export default function FormSolicitacao({
           construtora: Number(form.construtora),
           empreendimento: Number(form.empreendimento),
           dt_nascimento: new Date(form.datanascimento),
-          // relacionamentos:
-          // form.relacionamento && relacionamento ? [form.relacionamento] : [],
-          // rela_quest: relacionamento,
+
           financeiro: Number(form.financeira),
           ...(Logwhats && { obs: Logwhats }),
         };
@@ -484,38 +480,8 @@ export default function FormSolicitacao({
             boxWidth="24%"
           />
         )}
-        {/* <FormLabel>
-          Relacionamento
-          <Tooltip
-            label="Preencha este campo caso o Contrato contenha mais de um proprietário"
-            aria-label="A tooltip"
-          >
-            <Icon ml={2} color="black" cursor="pointer" boxSize={3} />
-          </Tooltip>
-          <Select
-            onChange={(e) => setrelacionamento(e.target.value === "true")}
-            value={String(relacionamento)}
-          >
-            <option value="true">Sim</option>
-            <option value="false">Não</option>
-          </Select>
-        </FormLabel> */}
       </Flex>
 
-      {/* <Flex w={"60%"} gap={4}>
-        {relacionamento && (
-          <MaskedInput
-            label="CPF"
-            id="relacionamento"
-            mask={"999.999.999-99"}
-            isCpf
-            value={form.relacionamento}
-            onvalue={(value) => handleChange("relacionamento", value)}
-            required
-            boxWidth="%"
-          />
-        )}
-      </Flex> */}
       <Flex
         roundedBottom={"md"}
         bg={"gray.100"}

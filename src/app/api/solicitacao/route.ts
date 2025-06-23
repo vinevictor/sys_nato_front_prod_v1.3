@@ -33,7 +33,6 @@ export async function POST(request: Request) {
     );
 
     const data = await user.json();
-    console.log("🚀 ~ POST ~ data:", data);
 
     if (!user.ok) {
       return NextResponse.json(data, { status: 400 });
