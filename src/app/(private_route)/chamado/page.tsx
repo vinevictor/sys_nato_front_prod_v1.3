@@ -35,6 +35,7 @@ interface TypeChamado {
 
 interface PageProps {
   searchParams: {
+    id?: string;
     busca?: string;
     status?: string;
     prioridade?: string;
@@ -66,40 +67,26 @@ async function getChamadosAll(session: SessionNext.Server | null) {
 }
 
 // Função para filtrar chamados
-function filtrarChamados(
-  chamados: TypeChamado[],
-  filtros: PageProps["searchParams"]
-) {
-  let resultado = chamados;
+function filtrarChamados(chamados: TypeChamado[], filtros: PageProps["searchParams"]) {
+  let resultado = [...chamados];
+
+  if (filtros.id?.trim()) {
+    resultado = resultado.filter((c) => String(c.id) === filtros.id!.trim());
+  }
 
   if (filtros.busca?.trim()) {
+    const termo = filtros.busca.toLowerCase();
     resultado = resultado.filter(
-      (chamado) =>
-        chamado.titulo.toLowerCase().includes(filtros.busca!.toLowerCase()) ||
-        chamado.descricao
-          ?.toLowerCase()
-          .includes(filtros.busca!.toLowerCase()) ||
-        chamado.user_nome?.toLowerCase().includes(filtros.busca!.toLowerCase())
+      (c) =>
+        c.titulo.toLowerCase().includes(termo) ||
+        c.descricao?.toLowerCase().includes(termo) ||
+        c.user_nome?.toLowerCase().includes(termo)
     );
   }
 
-  if (filtros.status) {
-    resultado = resultado.filter(
-      (chamado) => chamado.status === filtros.status
-    );
-  }
-
-  if (filtros.prioridade) {
-    resultado = resultado.filter(
-      (chamado) => chamado.prioridade === filtros.prioridade
-    );
-  }
-
-  if (filtros.departamento) {
-    resultado = resultado.filter(
-      (chamado) => chamado.departamento === filtros.departamento
-    );
-  }
+  if (filtros.status)       resultado = resultado.filter((c) => c.status       === filtros.status);
+  if (filtros.prioridade)   resultado = resultado.filter((c) => c.prioridade   === filtros.prioridade);
+  if (filtros.departamento) resultado = resultado.filter((c) => c.departamento === filtros.departamento);
 
   return resultado;
 }
@@ -108,25 +95,24 @@ function filtrarChamados(
 async function handleFilter(formData: FormData) {
   "use server";
 
-  const busca = formData.get("busca") as string;
-  const status = formData.get("status") as string;
-  const prioridade = formData.get("prioridade") as string;
-  const departamento = formData.get("departamento") as string;
-
   const params = new URLSearchParams();
 
-  if (busca?.trim()) params.set("busca", busca);
-  if (status) params.set("status", status);
-  if (prioridade) params.set("prioridade", prioridade);
-  if (departamento) params.set("departamento", departamento);
+  const busca       = formData.get("busca")       as string;
+  const id          = formData.get("id")          as string;
+  const status      = formData.get("status")      as string;
+  const prioridade  = formData.get("prioridade")  as string;
+  const departamento= formData.get("departamento")as string;
 
-  const queryString = params.toString();
-  
-  // Adiciona um parâmetro especial para indicar que deve limpar os campos
-  const finalParams = new URLSearchParams(queryString);
-  finalParams.set("clear", "true");
-  
-  redirect(`/chamado?${finalParams.toString()}`);
+  if (busca?.trim())       params.set("busca", busca.trim());
+  if (id?.trim())          params.set("id", id.trim());
+  if (status)              params.set("status", status);
+  if (prioridade)          params.set("prioridade", prioridade);
+  if (departamento)        params.set("departamento", departamento);
+
+  // Adiciona parâmetro para limpar os inputs após a filtragem
+  params.set("clear", "true");
+
+  redirect(`/chamado?${params.toString()}`);
 }
 
 // Server Action para limpar filtros
@@ -143,6 +129,9 @@ export default async function ChamadoPage({
   const session = await GetSessionServer();
   const chamadosTodos = session ? await getChamadosAll(session) : [];
   const chamados = filtrarChamados(chamadosTodos, searchParams);
+
+  // Determina se deve limpar os inputs (quando clear=true)
+  const shouldClearInputs = searchParams.clear === "true";
 
   // Obter valores únicos para os selects
   const statusUnicos: any = [
@@ -217,7 +206,16 @@ export default async function ChamadoPage({
                   type="text"
                   placeholder="Buscar chamados"
                   w={"100%"}
-                  defaultValue={searchParams.clear ? "" : (searchParams.busca || "")}
+                  defaultValue={shouldClearInputs ? "" : (searchParams.busca || "")}
+                />
+              </Box>
+              <Box w={"15rem"}>
+                <Input
+                  name="id"
+                  type="text"
+                  placeholder="ID"
+                  w={"100%"}
+                  defaultValue={shouldClearInputs ? "" : (searchParams.id || "")}
                 />
               </Box>
               <Box w={"15rem"}>
@@ -225,7 +223,7 @@ export default async function ChamadoPage({
                   name="status"
                   placeholder="status"
                   w={"100%"}
-                  defaultValue={searchParams.clear ? "" : (searchParams.status || "")}
+                  defaultValue={shouldClearInputs ? "" : (searchParams.status || "")}
                 >
                   {statusUnicos.map((status: any) => (
                     <option key={status} value={status}>
@@ -239,7 +237,7 @@ export default async function ChamadoPage({
                   name="prioridade"
                   placeholder="prioridade"
                   w={"100%"}
-                  defaultValue={searchParams.clear ? "" : (searchParams.prioridade || "")}
+                  defaultValue={shouldClearInputs ? "" : (searchParams.prioridade || "")}
                 >
                   {prioridadesUnicas.map((prioridade: any) => (
                     <option key={prioridade} value={prioridade}>
@@ -253,7 +251,7 @@ export default async function ChamadoPage({
                   name="departamento"
                   placeholder="Departamento"
                   w={"100%"}
-                  defaultValue={searchParams.clear ? "" : (searchParams.departamento || "")}
+                  defaultValue={shouldClearInputs ? "" : (searchParams.departamento || "")}
                 >
                   {departamentosUnicos.map((departamento: any) => (
                     <option key={departamento} value={departamento}>
