@@ -4,6 +4,8 @@ import ModalConsultaRegistro from "@/components/modal-consulta-cpf";
 import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 
+export const dynamic = 'force-dynamic';
+
 export default function Solicitacao() {
   const [cpfChange, setCpfChange] = useState<string>("");
   const [isOpen, setIsOpen] = useState<Boolean>(true);
