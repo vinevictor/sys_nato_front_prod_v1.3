@@ -62,8 +62,8 @@ const FirlterData = async (
 
   const URL =
     filter.length > 0
-      ? `/api/solicitacao/getall?${filter.join("&")}`
-      : `/api/solicitacao/getall`;
+      ? `/api/direto/get?${filter.join("&")}`
+      : `/api/direto/get`;
 
   try {
     const user = await fetch(URL, {
@@ -169,10 +169,10 @@ export const DadoCompomentList = ({
   useEffect(() => {
     // Inicializar dados usando as funções helper
     const dadosArray = extractDataArray(dados) || extractDataArray(data);
-    
+
     if (dadosArray.length > 0) {
       setListaDados(dadosArray);
-      
+
       // Tentar extrair informações de paginação dos dados originais
       const paginationInfo = extractPaginationInfo(dados) || extractPaginationInfo(data);
       setTotal(paginationInfo.total || dadosArray.length);
@@ -257,7 +257,7 @@ export const DadoCompomentList = ({
       if (filtro) {
         const dadosArray = extractDataArray(filtro);
         const paginationInfo = extractPaginationInfo(filtro);
-        
+
         if (dadosArray.length > 0) {
           setListaDados(dadosArray);
           setTotal(paginationInfo.total || dadosArray.length);
@@ -289,7 +289,7 @@ export const DadoCompomentList = ({
       setFinanceiro(null);
       setId(null);
       setPagina(null);
-      
+
       const result = await FirlterData(
         {
           nome: null,
@@ -306,7 +306,7 @@ export const DadoCompomentList = ({
       if (result) {
         const dadosArray = extractDataArray(result);
         const paginationInfo = extractPaginationInfo(result);
-        
+
         setListaDados(dadosArray);
         setTotal(paginationInfo.total || dadosArray.length);
         setPagAtual(paginationInfo.pagina);
@@ -314,7 +314,7 @@ export const DadoCompomentList = ({
         // Restaurar dados originais
         const dadosOriginais = extractDataArray(dados) || extractDataArray(data);
         const paginationOriginal = extractPaginationInfo(dados) || extractPaginationInfo(data);
-        
+
         setListaDados(dadosOriginais);
         setTotal(paginationOriginal.total || dadosOriginais.length);
         setPagAtual(paginationOriginal.pagina);
@@ -329,7 +329,7 @@ export const DadoCompomentList = ({
 
   const NextPage = async () => {
     if (Pagina === null) return;
-    
+
     setLoading(true);
     try {
       const result = await FirlterData(
@@ -348,7 +348,7 @@ export const DadoCompomentList = ({
       if (result) {
         const dadosArray = extractDataArray(result);
         const paginationInfo = extractPaginationInfo(result);
-        
+
         setListaDados(dadosArray);
         setTotal(paginationInfo.total || dadosArray.length);
         setPagAtual(paginationInfo.pagina);
@@ -369,12 +369,13 @@ export const DadoCompomentList = ({
         w={{ base: "100%", "2xl": "80%" }}
         h={"100%"}
         px={4}
+        justifyContent={"space-between"}
         py={3}
       >
         <Box display={{ base: "block", "2xl": "none" }}>
           <BugReport />
         </Box>
-        
+
         <Flex
           flexDir={{ base: "column", "2xl": "row" }}
           justifyContent="center"
@@ -382,30 +383,33 @@ export const DadoCompomentList = ({
           gap={{ base: 2, "2xl": 4 }}
         >
           <Box w={{ base: "100%", "2xl": "5rem" }}>
-            <FormLabel textAlign={{ base: "left", "2xl": "center" }}>
-              Id
-            </FormLabel>
+            
             <InputComponentFilterHome
-              textAlign={"center"}
+              textAlign={"start"}
               type="number"
-              value={Id ?? 0}
-              onChange={(e) => setId(Number(e.target.value))}
+              placeholder="ID"
+              value={Id?.toString() || ""}
+              onChange={(e) => {
+                const value = e.target.value.trim();
+                if (value === "") {
+                  setId(null);
+                } else if (!isNaN(Number(value)) && Number(value) > 0) {
+                  setId(Number(value));
+                }
+              }}
             />
           </Box>
           <Box w={{ base: "100%", "2xl": "20rem" }}>
-            <FormLabel textAlign={{ base: "left", "2xl": "center" }}>
-              Nome
-            </FormLabel>
+            
             <InputComponentFilterHome
               type="text"
               value={Nome ?? ""}
+              placeholder="Nome"
               onChange={(e) => setNome(e.target.value)}
             />
           </Box>
           <Box w={{ base: "100%", "2xl": "10rem" }}>
-            <FormLabel textAlign={{ base: "left", "2xl": "center" }}>
-              Andamento
-            </FormLabel>
+          
             <Select
               textColor={"#00713D"}
               _hover={{ borderColor: "#00613C" }}
@@ -425,9 +429,7 @@ export const DadoCompomentList = ({
             </Select>
           </Box>
           <Box w={{ base: "100%", "2xl": "15rem" }}>
-            <FormLabel textAlign={{ base: "left", "2xl": "center" }}>
-              Empreendimento
-            </FormLabel>
+            
             <SelectComponentFilterHome
               Data={DataEmpreendimento}
               value={Empreendimento?.toString() ?? ""}
@@ -435,9 +437,7 @@ export const DadoCompomentList = ({
             />
           </Box>
           <Box w={{ base: "100%", "2xl": "15rem" }}>
-            <FormLabel textAlign={{ base: "left", "2xl": "center" }}>
-              Financeiro
-            </FormLabel>
+            
             <SelectComponentFilterHome
               Data={DataFinanceiro}
               value={Financeiro?.toString() ?? ""}
@@ -615,7 +615,7 @@ export const DadoCompomentList = ({
                 </Flex>
               </Flex>
             </Flex>
-            
+
             <Flex
               display={{ base: "flex", "2xl": "none" }}
               w={"full"}
