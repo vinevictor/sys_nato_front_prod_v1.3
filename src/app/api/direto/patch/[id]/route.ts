@@ -7,6 +7,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+
   try {
     const session = await GetSessionServer();
     if (!session) {
@@ -15,7 +16,7 @@ export async function PATCH(
 
     const body = await req.json();
     const upstreamUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/${params.id}`;
-
+    console.log("body", body);
     const resp = await fetch(upstreamUrl, {
       method: "PATCH",
       headers: {
@@ -34,10 +35,7 @@ export async function PATCH(
     }
 
     if (!resp.ok) {
-      return NextResponse.json(
-        { message: "Upstream error", status: resp.status, details: payload },
-        { status: resp.status }
-      );
+      return NextResponse.json(payload, { status: resp.status });
     }
 
     return NextResponse.json(payload, { status: 200 });

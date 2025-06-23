@@ -1,7 +1,7 @@
 "use client";
 
 import Loading from "@/app/loading";
-import FormSolicitacaoEdit from "@/components/form/solicitacao/edit";
+import FormSolicitacaoEdit from "@/components/form/direto/edit";
 import LogsComponent from "@/components/logsComponent";
 import MensagensChat from "@/components/mensagensChat";
 import ListAlertas from "@/components/solicitacao/alert";

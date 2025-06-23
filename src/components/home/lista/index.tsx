@@ -297,7 +297,7 @@ export const DadoCompomentList = ({
         <Flex
           flexDir={{ base: "column", xl: "row" }}
           justifyContent="center"
-          alignItems="flex-end"
+          
           gap={{ base: 2, xl: 4 }}
         >
           <Flex flexWrap="wrap" gap={4} justifyContent="flex-start" w="full">
