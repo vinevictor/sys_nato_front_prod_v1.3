@@ -9,6 +9,8 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+export const dynamic = 'force-dynamic';
+
 export default function ConstrutoraPage() {
   const [Dados, setDados] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

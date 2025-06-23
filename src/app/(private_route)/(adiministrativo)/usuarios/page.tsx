@@ -6,6 +6,7 @@ import UserProvider from "@/provider/UserProvider";
 import { Box, Divider, Flex, Heading, Link, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+export const dynamic = 'force-dynamic';
 
 export default function UsuariosPage() {
   const [Dados, setDados] = useState([]);
