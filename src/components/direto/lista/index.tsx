@@ -24,7 +24,7 @@ import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 
 interface DadoCompomentListProps {
-  dados: solictacao.SolicitacaoGetType | null;
+  dados: solictacao.SolicitacaoGetType | solictacao.SolicitacaoObjectType[] | null;
   session: SessionNext.Server | null;
 }
 
@@ -65,39 +65,81 @@ const FirlterData = async (
       ? `/api/solicitacao/getall?${filter.join("&")}`
       : `/api/solicitacao/getall`;
 
-  const user = await fetch(URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.token}`,
-    },
-    cache: "no-store",
-  });
+  try {
+    const user = await fetch(URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.token}`,
+      },
+      cache: "no-store",
+    });
 
-  if (!user.ok) {
-    console.error("FirlterData status:", user.status);
+    if (!user.ok) {
+      console.error("FirlterData status:", user.status);
+      return null;
+    }
+    const data = await user.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
     return null;
   }
-  const data = await user.json();
-  return data;
 };
 
 const fetchConstrutoraAll = async () => {
-  const resq = await fetch(`/api/construtora/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/construtora/getall`);
+    const data = await resq.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar construtoras:", error);
+    return [];
+  }
 };
 
 const fetchEmpreendimentoAll = async () => {
-  const resq = await fetch(`/api/empreendimento/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/empreendimento/getall`);
+    const data = await resq.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar empreendimentos:", error);
+    return [];
+  }
 };
 
 const fetchFinanceiroAll = async () => {
-  const resq = await fetch(`/api/financeira/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/financeira/getall`);
+    const data = await resq.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar financeiras:", error);
+    return [];
+  }
+};
+
+// Função helper para extrair dados do objeto/array
+const extractDataArray = (dados: any): solictacao.SolicitacaoObjectType[] => {
+  if (Array.isArray(dados)) {
+    return dados;
+  }
+  if (dados && typeof dados === 'object' && Array.isArray(dados.data)) {
+    return dados.data;
+  }
+  return [];
+};
+
+// Função helper para extrair informações de paginação
+const extractPaginationInfo = (dados: any) => {
+  if (dados && typeof dados === 'object' && !Array.isArray(dados)) {
+    return {
+      total: dados.total || 0,
+      pagina: dados.pagina || 1
+    };
+  }
+  return { total: 0, pagina: 1 };
 };
 
 export const DadoCompomentList = ({
@@ -120,93 +162,135 @@ export const DadoCompomentList = ({
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
   const [PagAtual, setPagAtual] = useState<number>(0);
+  const [Loading, setLoading] = useState<boolean>(false);
 
   const { data } = useHomeContex();
 
   useEffect(() => {
-    console.log("data", dados);
-    if (dados) {
-      setListaDados(dados.data);
-      setTotal(dados.total);
-      setPagAtual(dados.pagina);
+    // Inicializar dados usando as funções helper
+    const dadosArray = extractDataArray(dados) || extractDataArray(data);
+    
+    if (dadosArray.length > 0) {
+      setListaDados(dadosArray);
+      
+      // Tentar extrair informações de paginação dos dados originais
+      const paginationInfo = extractPaginationInfo(dados) || extractPaginationInfo(data);
+      setTotal(paginationInfo.total || dadosArray.length);
+      setPagAtual(paginationInfo.pagina);
+      setMesageError(null);
+    } else {
+      setListaDados(null);
+      setMesageError("Nenhum dado encontrado");
     }
-    if (data) {
-      if (data.data?.length > 0) {
-        setListaDados(data.data);
-        setTotal(data.total);
-        setPagAtual(data.pagina);
-      }
-    }
+
+    // Carregar dados auxiliares
     if (session?.user) {
       (async () => {
-        if (session?.user?.hierarquia === "ADM") {
-          setDataConstrutora(await fetchConstrutoraAll());
-          setDataEmpreendimento(await fetchEmpreendimentoAll());
-          setDataFinanceiro(await fetchFinanceiroAll());
-        } else {
-          session?.user?.construtora?.length > 0 &&
-            setDataConstrutora(session?.user?.construtora);
-          session?.user?.empreendimento?.length > 0 &&
-            setDataEmpreendimento(session?.user?.empreendimento);
-          session?.user?.Financeira?.length > 0 &&
-            setDataFinanceiro(session?.user?.Financeira);
+        try {
+          if (session?.user?.hierarquia === "ADM") {
+            const [construtoras, empreendimentos, financeiras] = await Promise.all([
+              fetchConstrutoraAll(),
+              fetchEmpreendimentoAll(),
+              fetchFinanceiroAll()
+            ]);
+            setDataConstrutora(construtoras || []);
+            setDataEmpreendimento(empreendimentos || []);
+            setDataFinanceiro(financeiras || []);
+          } else {
+            setDataConstrutora(session?.user?.construtora || []);
+            setDataEmpreendimento(session?.user?.empreendimento || []);
+            setDataFinanceiro(session?.user?.Financeira || []);
+          }
+        } catch (error) {
+          console.error("Erro ao carregar dados auxiliares:", error);
         }
       })();
     }
   }, [data, dados, session]);
 
   const filtroPrimario = async () => {
-    if (!ListaDados) return;
-    const filtro = ListaDados.filter((item) => {
-      item.nome.toLowerCase().includes(Nome?.toLowerCase() || "") &&
-        item.andamento
-          ?.toLowerCase()
-          .includes(Andamento?.toLowerCase() || "") &&
-        item.construtora?.id === Construtora &&
-        item.empreendimento.id === Empreendimento &&
-        item.financeiro.id === Financeiro &&
-        item.id === Id;
+    // Usar dados originais para filtrar
+    const dadosOriginais = extractDataArray(dados) || extractDataArray(data);
+
+    if (dadosOriginais.length === 0) {
+      setMesageError("Nenhum dado disponível para filtrar");
+      return;
+    }
+
+    const filtro = dadosOriginais.filter((item) => {
+      const nomeMatch = !Nome || item.nome.toLowerCase().includes(Nome.toLowerCase());
+      const andamentoMatch = !Andamento || item.andamento?.toLowerCase().includes(Andamento.toLowerCase());
+      const construtoraMatch = !Construtora || item.construtora?.id === Construtora;
+      const empreendimentoMatch = !Empreendimento || item.empreendimento?.id === Empreendimento;
+      const financeiroMatch = !Financeiro || item.financeiro?.id === Financeiro;
+      const idMatch = !Id || item.id === Id;
+
+      return nomeMatch && andamentoMatch && construtoraMatch && empreendimentoMatch && financeiroMatch && idMatch;
     });
-    if (filtro?.length !== 0) {
+
+    if (filtro.length > 0) {
       setListaDados(filtro);
+      setTotal(filtro.length);
+      setMesageError(null);
     } else {
-      setListaDados(null);
-      setMesageError("Nenhum dado encontrado");
+      setListaDados([]);
+      setMesageError("Nenhum dado encontrado com os filtros aplicados");
     }
   };
 
   const filtroSecundario = async () => {
-    const filtro = await FirlterData(
-      {
-        nome: Nome,
-        andamento: Andamento,
-        construtora: Construtora,
-        empreedimento: Empreendimento,
-        financeiro: Financeiro,
-        id: Id,
-        pagina: Pagina,
-      },
-      session
-    );
+    setLoading(true);
+    try {
+      const filtro = await FirlterData(
+        {
+          nome: Nome,
+          andamento: Andamento,
+          construtora: Construtora,
+          empreedimento: Empreendimento,
+          financeiro: Financeiro,
+          id: Id,
+          pagina: Pagina,
+        },
+        session
+      );
 
-    if (filtro?.length !== 0) {
-      setListaDados(filtro);
-    } else {
-      setListaDados(null);
-      setMesageError("Nenhum dado encontrado no banco de dados");
+      if (filtro) {
+        const dadosArray = extractDataArray(filtro);
+        const paginationInfo = extractPaginationInfo(filtro);
+        
+        if (dadosArray.length > 0) {
+          setListaDados(dadosArray);
+          setTotal(paginationInfo.total || dadosArray.length);
+          setPagAtual(paginationInfo.pagina);
+          setMesageError(null);
+        } else {
+          setListaDados([]);
+          setMesageError("Nenhum dado encontrado no banco de dados");
+        }
+      } else {
+        setListaDados([]);
+        setMesageError("Erro ao realizar busca avançada");
+      }
+    } catch (error) {
+      console.error("Erro na busca avançada:", error);
+      setMesageError("Erro ao realizar busca avançada");
+    } finally {
+      setLoading(false);
     }
   };
 
   const HandleFilterBlank = async () => {
-    setNome(null);
-    setAndamento(null);
-    setConstrutora(null);
-    setEmpreendimento(null);
-    setFinanceiro(null);
-    setId(null);
-    setPagina(null);
-    setListaDados(
-      await FirlterData(
+    setLoading(true);
+    try {
+      setNome(null);
+      setAndamento(null);
+      setConstrutora(null);
+      setEmpreendimento(null);
+      setFinanceiro(null);
+      setId(null);
+      setPagina(null);
+      
+      const result = await FirlterData(
         {
           nome: null,
           andamento: null,
@@ -217,15 +301,38 @@ export const DadoCompomentList = ({
           pagina: null,
         },
         session
-      )
-    );
-    setMesageError(null);
+      );
+
+      if (result) {
+        const dadosArray = extractDataArray(result);
+        const paginationInfo = extractPaginationInfo(result);
+        
+        setListaDados(dadosArray);
+        setTotal(paginationInfo.total || dadosArray.length);
+        setPagAtual(paginationInfo.pagina);
+      } else {
+        // Restaurar dados originais
+        const dadosOriginais = extractDataArray(dados) || extractDataArray(data);
+        const paginationOriginal = extractPaginationInfo(dados) || extractPaginationInfo(data);
+        
+        setListaDados(dadosOriginais);
+        setTotal(paginationOriginal.total || dadosOriginais.length);
+        setPagAtual(paginationOriginal.pagina);
+      }
+      setMesageError(null);
+    } catch (error) {
+      console.error("Erro ao limpar filtros:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const NextPage = async () => {
     if (Pagina === null) return;
-    setListaDados(
-      await FirlterData(
+    
+    setLoading(true);
+    try {
+      const result = await FirlterData(
         {
           nome: null,
           andamento: null,
@@ -236,8 +343,21 @@ export const DadoCompomentList = ({
           pagina: Pagina,
         },
         session
-      )
-    );
+      );
+
+      if (result) {
+        const dadosArray = extractDataArray(result);
+        const paginationInfo = extractPaginationInfo(result);
+        
+        setListaDados(dadosArray);
+        setTotal(paginationInfo.total || dadosArray.length);
+        setPagAtual(paginationInfo.pagina);
+      }
+    } catch (error) {
+      console.error("Erro ao navegar para próxima página:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -254,6 +374,7 @@ export const DadoCompomentList = ({
         <Box display={{ base: "block", "2xl": "none" }}>
           <BugReport />
         </Box>
+        
         <Flex
           flexDir={{ base: "column", "2xl": "row" }}
           justifyContent="center"
@@ -295,7 +416,7 @@ export const DadoCompomentList = ({
               value={Andamento ?? ""}
               onChange={(e) => setAndamento(e.target.value)}
             >
-              <option></option>
+              <option value="">Todos</option>
               <option value="VAZIO">VAZIO</option>
               <option value="INICIADO">INICIADO</option>
               <option value="APROVADO">APROVADO</option>
@@ -332,6 +453,7 @@ export const DadoCompomentList = ({
               _hover={{ bg: "#00631B" }}
               size="md"
               onClick={filtroPrimario}
+              isLoading={Loading}
             >
               Filtrar
             </Button>
@@ -345,34 +467,51 @@ export const DadoCompomentList = ({
               _hover={{ bg: "#00631B" }}
               size="md"
               onClick={HandleFilterBlank}
+              isLoading={Loading}
             >
               Limpar
             </Button>
           </Box>
         </Flex>
-        {ListaDados?.length === 0 && MesageError && (
-          <>
-            <Flex
-              justifyContent="center"
-              alignItems="center"
-              w="100%"
-              h="78vh"
-              gap={8}
-              p={4}
-            >
-              <Text>{MesageError}</Text>
-              <Button
-                w={{ base: "100%", "2xl": "auto" }}
-                size="lg"
-                colorScheme="green"
-                onClick={filtroSecundario}
-              >
-                Busca Avançada
-              </Button>
-            </Flex>
-          </>
+
+        {/* Mostrar loading */}
+        {Loading && (
+          <Flex
+            justifyContent="center"
+            alignItems="center"
+            w="100%"
+            h="200px"
+          >
+            <Text>Carregando...</Text>
+          </Flex>
         )}
-        {ListaDados && (
+
+        {/* Mostrar erro quando não há dados */}
+        {!Loading && (!ListaDados || ListaDados.length === 0) && MesageError && (
+          <Flex
+            justifyContent="center"
+            alignItems="center"
+            w="100%"
+            h="78vh"
+            gap={8}
+            p={4}
+            flexDirection="column"
+          >
+            <Text fontSize="lg" textAlign="center">{MesageError}</Text>
+            <Button
+              w={{ base: "100%", "2xl": "auto" }}
+              size="lg"
+              colorScheme="green"
+              onClick={filtroSecundario}
+              isLoading={Loading}
+            >
+              Busca Avançada
+            </Button>
+          </Flex>
+        )}
+
+        {/* Mostrar dados quando existem */}
+        {!Loading && ListaDados && ListaDados.length > 0 && (
           <>
             <Flex
               w={"full"}
@@ -448,7 +587,7 @@ export const DadoCompomentList = ({
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {ListaDados?.map((item) => (
+                  {ListaDados.map((item) => (
                     <TableComponent
                       key={item.id}
                       dados={item}
@@ -468,7 +607,7 @@ export const DadoCompomentList = ({
                   paginas:
                   <SelectPgComponent
                     total={Total || 0}
-                    ClientQtd={dados?.data.length || 0}
+                    ClientQtd={ListaDados.length || 0}
                     SelectPage={PagAtual}
                     setSelectPage={setPagina}
                     SetVewPage={NextPage}
@@ -476,13 +615,14 @@ export const DadoCompomentList = ({
                 </Flex>
               </Flex>
             </Flex>
+            
             <Flex
               display={{ base: "flex", "2xl": "none" }}
               w={"full"}
               flexDir={"column"}
               gap={3}
             >
-              {ListaDados?.map((item) => (
+              {ListaDados.map((item) => (
                 <CardComponentHome
                   key={item.id}
                   dados={item}

@@ -6,8 +6,6 @@ import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
-
-// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -17,24 +15,29 @@ export const metadata: Metadata = {
 
 const GetListaDados = async (
   session: SessionNext.Server | null
-): Promise<solictacao.SolicitacaoGetType | null> => {
-  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
-  const user = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.token}`,
-    },
-    cache: "no-store",
-  });
-  const data = await user.json();
-  // console.log(data); OK
-
-  if (!user.ok) {
-    console.error("GetListaDados status:", data.message);
+): Promise<solictacao.SolicitacaoGetType | solictacao.SolicitacaoObjectType[] | null> => {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
+    const user = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.token}`,
+      },
+      cache: "no-store",
+    });
+    
+    if (!user.ok) {
+      console.error("GetListaDados status:", user.status);
+      return null;
+    }
+    
+    const data = await user.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
     return null;
   }
-  return data;
 };
 
 export default async function DiretoPage() {
@@ -51,8 +54,8 @@ export default async function DiretoPage() {
           overflowY="auto"
           overflowX="hidden"
         >
-          {/* <ModalPrimeAsses session={session as any} />
-          <ModalTermos session={session as any} /> */}
+          <ModalPrimeAsses session={session as any} />
+          <ModalTermos session={session as any} />
 
           {session && <UserCompomentInfo session={session} />}
           {session && <DadoCompomentList dados={ListDados} session={session} />}

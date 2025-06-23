@@ -22,6 +22,7 @@ export async function GET(req: Request) {
       return NextResponse.json("Upstream error", { status: resp.status });
     }
     const payload = await resp.json();
+    console.log("payload");
 
     return NextResponse.json(
       {
