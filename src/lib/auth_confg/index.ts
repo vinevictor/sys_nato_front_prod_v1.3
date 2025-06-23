@@ -1,8 +1,8 @@
 // servidor: biblioteca de auth (removido 'use server')
+"use server"
 import * as jose from "jose";
 import { cookies } from "next/headers";
 
-export const dynamic = "force-dynamic";
 
 export async function OpenSessionToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
