@@ -2,14 +2,10 @@
 import Loading from "@/app/loading";
 import { BotaoRetorno } from "@/components/botoes/btm_retorno";
 import Construtora from "@/components/construtora_compoment";
-// import { useSession } from "@/hook/useSession";
 
 import { Box, Divider, Flex, Heading, Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-// export const dynamic = "force-dynamic";
 
 export interface ConstrutoraProps {
   data: any;
@@ -18,61 +14,11 @@ export interface ConstrutoraProps {
 export default function ConstrutoraPage({ data }: ConstrutoraProps) {
   const [Dados, setDados] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  //   const session = useSession();
-  //   const router = useRouter();
 
   useEffect(() => {
     setDados(data);
     setLoading(false);
   }, [data]);
-
-  //   useEffect(() => {
-  //     if (session) {
-  //       if (session?.hierarquia === "ADM") {
-  //         FetchData();
-  //         setLoading(false);
-  //       } else if (session?.hierarquia === "CCA") {
-  //         const data = session?.construtora
-  //           .map((c) => FetchDataId(c.id))
-  //           .filter((d) => d !== null);
-  //         setDados(data);
-  //         setLoading(false);
-  //       } else if (session?.hierarquia === "GRT") {
-  //         const data = session?.construtora
-  //           .map((c) => FetchDataId(c.id))
-  //           .filter((d) => d !== null);
-  //         setDados(data);
-  //         setLoading(false);
-  //       } else {
-  //         router.push("/");
-  //       }
-  //     }
-  //   }, [session]);
-
-  //   const FetchData = async () => {
-  //     try {
-  //       const req = await fetch("/api/construtora/getall");
-  //       const res = await req.json();
-  //       setDados(res);
-  //     } catch (error) {
-  //       console.error("Erro ao buscar dados das construtoras:", error);
-  //     }
-  //   };
-
-  //   const FetchDataId = async (id: number) => {
-  //     try {
-  //       const req = await fetch(`/api/construtora/get/${id}`);
-  //       if (!req.ok) {
-  //         console.error("Erro ao buscar dados da construtora:", req.statusText);
-  //         return null;
-  //       }
-  //       const res = await req.json();
-  //       return res;
-  //     } catch (error) {
-  //       console.error("Erro ao buscar dados das construtoras:", error);
-  //       return null;
-  //     }
-  //   };
 
   if (loading) {
     return <Loading />;
