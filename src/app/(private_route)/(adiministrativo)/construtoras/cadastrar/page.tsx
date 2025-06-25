@@ -10,6 +10,8 @@ import { useSession } from "@/hook/useSession";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default function CadastrarFinanceira() {
   const session = useSession();
   const router = useRouter();
@@ -43,7 +45,7 @@ export default function CadastrarFinanceira() {
             <Box> </Box>
           </Flex>
           <Divider my={4} borderColor="gray.300" />
-          <CardCreateUpdate.Form action={CreateConstrutora} method="POST">
+          <CardCreateUpdate.Form action={CreateConstrutora}>
             <Flex w={"full"} flexWrap={"wrap"} gap={5}>
               <ContrutoraProvider>
                 <CardCreateUpdate.GridConstrutoraCnpj w={"15rem"} />

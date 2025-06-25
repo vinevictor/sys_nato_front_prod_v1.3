@@ -13,7 +13,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import React from "react";
-import { RiMailSendLine } from "react-icons/ri";
+import { MdLockReset } from "react-icons/md";
 
 interface BtnResetSenhaProps {
   ID: number;
@@ -63,7 +63,7 @@ export function BtnResetSenha({ ID }: BtnResetSenhaProps) {
         <IconButton
           colorScheme="blue"
           variant="outline"
-          icon={<RiMailSendLine />}
+          icon={<MdLockReset size={23}/>}
           aria-label="Resetar Senha"
           onClick={onOpen}
         />

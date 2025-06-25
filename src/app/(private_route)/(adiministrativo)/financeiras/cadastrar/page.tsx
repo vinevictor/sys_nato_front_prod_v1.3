@@ -31,7 +31,7 @@ export default async function CadastrarFinanceira() {
             <Box flex={1} />
           </Flex>
           <Divider my={4} borderColor="gray.300" />
-          <CardCreateUpdate.Form action={FinanceiraCreate} method="POST">
+          <CardCreateUpdate.Form action={FinanceiraCreate}>
             <Flex
               w={"full"}
               flexWrap={{ base: "wrap", md: "wrap" }}
