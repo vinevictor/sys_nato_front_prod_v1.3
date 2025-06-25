@@ -10,14 +10,14 @@ import { useSession } from "@/hook/useSession";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function CadastrarFinanceira() {
   const session = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if(session && session.hierarquia !== "ADM") {
+    if (session && session.hierarquia !== "ADM") {
       router.push("/");
     }
   }, []);
@@ -80,6 +80,5 @@ export default function CadastrarFinanceira() {
     </>
   );
 }
-
 
 //TODO: revisar cadastro de construtora
