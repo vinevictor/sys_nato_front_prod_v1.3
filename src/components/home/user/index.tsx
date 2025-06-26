@@ -1,5 +1,5 @@
 import { BugReport } from "@/components/bug";
-import { Flex, FormLabel, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, FormLabel, Link, Stack, Text } from "@chakra-ui/react";
 import { mask } from "remask";
 import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
@@ -39,12 +39,12 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
               <Text fontSize="xl" fontWeight="bold" textAlign="center">
                 {session.nome}
               </Text>
-              <Text 
-                fontSize="sm" 
-                textAlign="center" 
-                bg="whiteAlpha.300" 
-                px={4} 
-                py={1} 
+              <Text
+                fontSize="sm"
+                textAlign="center"
+                bg="whiteAlpha.300"
+                px={4}
+                py={1}
                 borderRadius="full"
                 fontWeight="semibold"
               >
@@ -54,11 +54,11 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
 
 
             <Flex gap={2} flexWrap="wrap" justify="center">
-              <Flex 
-                flexDir="column" 
+              <Flex
+                flexDir="column"
                 align="center"
-                bg="whiteAlpha.200" 
-                p={3} 
+                bg="whiteAlpha.200"
+                p={3}
                 borderRadius="lg"
                 flex="1"
                 minW="80px"
@@ -66,12 +66,12 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
                 <FormLabel fontSize="xs" fontWeight="bold" color="whiteAlpha.800" mb={1}>ID</FormLabel>
                 <Text fontSize="sm" fontWeight="bold">{session.id}</Text>
               </Flex>
-              
-              <Flex 
-                flexDir="column" 
+
+              <Flex
+                flexDir="column"
                 align="center"
-                bg="whiteAlpha.200" 
-                p={3} 
+                bg="whiteAlpha.200"
+                p={3}
                 borderRadius="lg"
                 flex="1"
                 minW="120px"
@@ -79,12 +79,12 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
                 <FormLabel fontSize="xs" fontWeight="bold" color="whiteAlpha.800" mb={1}>Telefone</FormLabel>
                 <Text fontSize="sm" fontWeight="bold">{mask(session.telefone, "(99) 9 9999-9999")}</Text>
               </Flex>
-              
-              <Flex 
-                flexDir="column" 
+
+              <Flex
+                flexDir="column"
                 align="center"
-                bg="whiteAlpha.200" 
-                p={3} 
+                bg="whiteAlpha.200"
+                p={3}
                 borderRadius="lg"
                 flex="1"
                 minW="100px"
@@ -101,62 +101,11 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Construtora{session.construtora.length > 1 ? 's' : ''}
             </Text>
+            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+              {session.construtora.length === 0 && 'Sem Construtoras'}
+              {session.construtora.length > 0 && session.construtora.length + ' Construtora'}
+            </Text>
             <Flex gap={3} flexWrap="wrap">
-              {session.construtora.length > 1 &&
-                session.construtora.map(
-                  (item: SessionNext.Construtora, index: number) => (
-                    <Flex 
-                      key={index}
-                      flexDir="column" 
-                      bg="white" 
-                      p={3} 
-                      borderRadius="lg" 
-                      shadow="sm"
-                      border="1px solid"
-                      borderColor="gray.200"
-                      flex="1"
-                      minW="150px"
-                      cursor="pointer"
-                      transition="all 0.3s"
-                      _hover={{
-                        bg: "green.50",
-                        borderColor: "green.300",
-                        shadow: "md",
-                        transform: "translateY(-2px)"
-                      }}
-                    >
-                      <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>
-                        Construtora {index + 1}
-                      </FormLabel>
-                      <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.fantasia}</Text>
-                    </Flex>
-                  )
-                )}
-              {session.construtora.length === 1 &&
-                session.construtora.map((item: SessionNext.Construtora, index: number) => (
-                  <Flex 
-                    key={index}
-                    flexDir="column" 
-                    bg="white" 
-                    p={3} 
-                    borderRadius="lg" 
-                    shadow="sm"
-                    border="1px solid"
-                    borderColor="gray.200"
-                    w="100%"
-                    cursor="pointer"
-                    transition="all 0.3s"
-                    _hover={{
-                      bg: "green.50",
-                      borderColor: "green.300",
-                      shadow: "md",
-                      transform: "translateY(-2px)"
-                    }}
-                  >
-                    <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>Construtora</FormLabel>
-                    <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.fantasia}</Text>
-                  </Flex>
-                ))}
             </Flex>
           </Flex>
 
@@ -164,126 +113,20 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Empreendimento{session.empreendimento.length > 1 ? 's' : ''}
             </Text>
-            <Flex gap={3} flexWrap="wrap">
-              {session.empreendimento.length > 1 &&
-                session.empreendimento.map(
-                  (item: SessionNext.Empreendimento, index: number) => (
-                    <Flex 
-                      key={index}
-                      flexDir="column" 
-                      bg="white" 
-                      p={3} 
-                      borderRadius="lg" 
-                      shadow="sm"
-                      border="1px solid"
-                      borderColor="gray.200"
-                      flex="1"
-                      minW="150px"
-                      cursor="pointer"
-                      transition="all 0.3s"
-                      _hover={{
-                        bg: "green.50",
-                        borderColor: "green.300",
-                        shadow: "md",
-                        transform: "translateY(-2px)"
-                      }}
-                    >
-                      <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>
-                        Empreendimento {index + 1}
-                      </FormLabel>
-                      <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.nome}</Text>
-                    </Flex>
-                  )
-                )}
-              {session.empreendimento.length === 1 &&
-                session.empreendimento.map((item: SessionNext.Empreendimento, index: number) => (
-                  <Flex 
-                    key={index}
-                    flexDir="column" 
-                    bg="white" 
-                    p={3} 
-                    borderRadius="lg" 
-                    shadow="sm"
-                    border="1px solid"
-                    borderColor="gray.200"
-                    w="100%"
-                    cursor="pointer"
-                    transition="all 0.3s"
-                    _hover={{
-                      bg: "green.50",
-                      borderColor: "green.300",
-                      shadow: "md",
-                      transform: "translateY(-2px)"
-                    }}
-                  >
-                    <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>Empreendimento</FormLabel>
-                    <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.nome}</Text>
-                  </Flex>
-                ))}
-            </Flex>
+            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+              {session.empreendimento.length === 0 && 'Sem Empreendimentos'}
+              {session.empreendimento.length > 0 && session.empreendimento.length + ' Empreendimento'}
+            </Text>
           </Flex>
 
           <Flex flexDir="column" gap={3}>
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Financeira{session.Financeira.length > 1 ? 's' : ''}
             </Text>
-            <Flex gap={3} flexWrap="wrap">
-              {session.Financeira.length > 1 &&
-                session.Financeira.map(
-                  (item: SessionNext.Financeira, index: number) => (
-                    <Flex 
-                      key={index}
-                      flexDir="column" 
-                      bg="white" 
-                      p={3} 
-                      borderRadius="lg" 
-                      shadow="sm"
-                      border="1px solid"
-                      borderColor="gray.200"
-                      flex="1"
-                      minW="150px"
-                      cursor="pointer"
-                      transition="all 0.3s"
-                      _hover={{
-                        bg: "green.50",
-                        borderColor: "green.300",
-                        shadow: "md",
-                        transform: "translateY(-2px)"
-                      }}
-                    >
-                      <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>
-                        Financeira {index + 1}
-                      </FormLabel>
-                      <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.fantasia}</Text>
-                    </Flex>
-                  )
-                )}
-              {session.Financeira.length === 1 &&
-                session.Financeira.map((item: SessionNext.Financeira, index: number) => (
-                  <Flex 
-                    key={index}
-                    flexDir="column" 
-                    bg="white" 
-                    p={3} 
-                    borderRadius="lg" 
-                    shadow="sm"
-                    border="1px solid"
-                    borderColor="gray.200"
-                    w="100%"
-                    cursor="pointer"
-                    transition="all 0.3s"
-                    _hover={{
-                      bg: "green.50",
-                      borderColor: "green.300",
-                      shadow: "md",
-                      transform: "translateY(-2px)"
-                    }}
-                  >
-                    <FormLabel fontSize="xs" fontWeight="bold" color="green.600" mb={1}>Financeira</FormLabel>
-                    <Text fontSize="sm" fontWeight="medium" color="gray.800">{item.fantasia}</Text>
-                  </Flex>
-                ))}
-            </Flex>
+            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+              {session.Financeira.length === 0 && 'Sem Financeiras'}
+              {session.Financeira.length > 0 && session.Financeira.length + ' Financeira'}
+            </Text>
           </Flex>
 
           <Flex gap={3} w={"100%"} flexDir={"column"} mt={2}>
@@ -301,7 +144,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
               fontSize={"1rem"}
               shadow="md"
               transition="all 0.3s"
-              _hover={{ 
+              _hover={{
                 bg: "linear-gradient(135deg, #2F855A 0%, #276749 100%)",
                 transform: "translateY(-2px)",
                 shadow: "lg"

@@ -89,21 +89,93 @@ const FirlterData = async (
 };
 
 const fetchConstrutoraAll = async () => {
-  const resq = await fetch(`/api/construtora/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/construtora/getall`);
+    
+    // Check if response is ok
+    if (!resq.ok) {
+      console.error('fetchConstrutoraAll failed:', resq.status, resq.statusText);
+      return [];
+    }
+    
+    // Check if response has content
+    const text = await resq.text();
+    if (!text) {
+      console.warn('fetchConstrutoraAll: Empty response');
+      return [];
+    }
+    
+    // Try to parse JSON
+    try {
+      const data = JSON.parse(text);
+      return data;
+    } catch (parseError) {
+      console.error('fetchConstrutoraAll: Invalid JSON response', parseError);
+      return [];
+    }
+    
+  } catch (error) {
+    console.error('fetchConstrutoraAll error:', error);
+    return [];
+  }
 };
 
 const fetchEmpreendimentoAll = async () => {
-  const resq = await fetch(`/api/empreendimento/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/empreendimento/getall`);
+    
+    if (!resq.ok) {
+      console.error('fetchEmpreendimentoAll failed:', resq.status, resq.statusText);
+      return [];
+    }
+    
+    const text = await resq.text();
+    if (!text) {
+      console.warn('fetchEmpreendimentoAll: Empty response');
+      return [];
+    }
+    
+    try {
+      const data = JSON.parse(text);
+      return data;
+    } catch (parseError) {
+      console.error('fetchEmpreendimentoAll: Invalid JSON response', parseError);
+      return [];
+    }
+    
+  } catch (error) {
+    console.error('fetchEmpreendimentoAll error:', error);
+    return [];
+  }
 };
 
 const fetchFinanceiroAll = async () => {
-  const resq = await fetch(`/api/financeira/getall`);
-  const data = await resq.json();
-  return data;
+  try {
+    const resq = await fetch(`/api/financeira/getall`);
+    
+    if (!resq.ok) {
+      console.error('fetchFinanceiroAll failed:', resq.status, resq.statusText);
+      return [];
+    }
+    
+    const text = await resq.text();
+    if (!text) {
+      console.warn('fetchFinanceiroAll: Empty response');
+      return [];
+    }
+    
+    try {
+      const data = JSON.parse(text);
+      return data;
+    } catch (parseError) {
+      console.error('fetchFinanceiroAll: Invalid JSON response', parseError);
+      return [];
+    }
+    
+  } catch (error) {
+    console.error('fetchFinanceiroAll error:', error);
+    return [];
+  }
 };
 
 export const DadoCompomentList = ({
