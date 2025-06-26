@@ -3,6 +3,7 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { redirect } from "next/navigation";
 
+
 export default async function CreateEmpreendimento(_: any, data: FormData) {
   const session = await GetSessionServer();
 
