@@ -1,31 +1,18 @@
 import InputBasic from "@/components/input/basic";
-import InputFileUpload from "@/components/input/doc";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import { useSession } from "@/hook/useSession";
-import {
-  Button,
-  Flex,
-  FormLabel,
-  Icon,
-  Select,
-  Spinner,
-  Switch,
-  Text,
-  Tooltip,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Flex, Spinner, Text, useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface FormSolicitacaoProps {
   cpf?: string;
-  onSuccess?: () => void; // Callback para quando o formulário for enviado com sucesso
   solicitacao?: any;
 }
 
 export default function FormSolicitacao({
   cpf,
-  onSuccess,
   solicitacao,
 }: FormSolicitacaoProps) {
   const [form, setForm] = useState({
@@ -39,8 +26,6 @@ export default function FormSolicitacao({
     empreendimento: 0 as number,
     financeira: 0 as number,
     corretor: 0 as number,
-    uploadRg: "",
-    uploadCnh: "",
   });
 
   const [Logwhats, setLogwhats] = useState<string>("");
@@ -93,6 +78,7 @@ export default function FormSolicitacao({
   const [Sms, setSms] = useState<boolean>(true);
 
   const session = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, cpf: cpf }));
@@ -145,29 +131,6 @@ export default function FormSolicitacao({
       setEmpreendimentos([]);
       setFinanceiras([]);
       setCorretores([]);
-    }
-  };
-
-  // Função para redirecionamento seguro
-  const redirectToHome = () => {
-    if (onSuccess) {
-      onSuccess();
-    } else if (typeof window !== "undefined") {
-      // Tentar usar o router do Next.js se disponível
-      const tryNextRouter = async () => {
-        try {
-          const { useRouter } = await import("next/router");
-          const router = useRouter();
-          if (router?.push) {
-            router.push("/");
-          } else {
-            window.location.href = "/";
-          }
-        } catch {
-          window.location.href = "/";
-        }
-      };
-      tryNextRouter();
     }
   };
 
@@ -239,23 +202,21 @@ export default function FormSolicitacao({
       if (response.cpf) {
         toast({
           title: "CPF já cadastrado!",
-          description: response.message,
+          description: response.message || "CPF já cadastrado!",
           status: "warning",
           duration: 3000,
           isClosable: true,
         });
       } else {
         const data: any = {
-          url: typeof window !== "undefined" ? window.location.origin : "",
-          nome: form.nome.toUpperCase(),
+          url: typeof window !== "undefined" ? window.location.href : "",
+          nome: form.nome.trim().replace(/\s+/g, ' '),
           telefone: form.telefone.replace(/\W+/g, ""),
           cpf: form.cpf.replace(/\W+/g, ""),
           ...(form.telefone2 && {
             telefone2: form.telefone2?.replace(/\W+/g, ""),
           }),
           email: form.email.replace(/\s+/g, "").toLowerCase(),
-          ...(form.uploadRg && { uploadRg: form.uploadRg }),
-          ...(form.uploadCnh && { uploadCnh: form.uploadCnh }),
           corretor:
             session?.hierarquia === "ADM"
               ? Number(form.corretor)
@@ -267,23 +228,16 @@ export default function FormSolicitacao({
           financeiro: Number(form.financeira),
           ...(Logwhats && { obs: Logwhats }),
         };
-        const vendedor =
-          session?.hierarquia === "ADM"
-            ? corretores.find((c) => c.id === form.corretor)?.nome
-            : session?.nome;
 
         try {
           setLoad(true);
-          const response = await fetch(
-            `/api/solicitacao?sms=${Sms}&vendedor=${vendedor}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(data),
-            }
-          );
+          const response = await fetch(`/api/solicitacao?sms=${Sms}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
 
           const retorno = await response.json();
           if (response.ok) {
@@ -295,7 +249,9 @@ export default function FormSolicitacao({
               isClosable: true,
             });
             setLoad(false);
-            redirectToHome();
+            if (retorno.id) {
+              router.push("/");
+            }
           } else {
             toast({
               title: "Erro",
@@ -304,8 +260,8 @@ export default function FormSolicitacao({
               duration: 3000,
               isClosable: true,
             });
-            setLoad(false);
           }
+          setLoad(false);
         } catch (error) {
           toast({
             title: "Erro",
@@ -359,7 +315,7 @@ export default function FormSolicitacao({
           id="nome"
           placeholder="Nome Completo"
           onvalue={(value) => handleChange("nome", value)}
-          value={form.nome}
+          value={form.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}
           required
           boxWidth="50%"
         />
