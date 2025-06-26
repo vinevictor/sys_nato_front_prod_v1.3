@@ -1,6 +1,5 @@
 import ConstrutoraPage from "@/components/construtorasClient/RenderComponent";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { SessionServer } from "@/types/session";
 
 export const dynamic = "force-dynamic";
 
