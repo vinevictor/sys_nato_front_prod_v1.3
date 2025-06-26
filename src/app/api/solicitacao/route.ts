@@ -10,14 +10,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const session = await GetSessionServer();
     if (!session) {
-      return new Response("Unauthorized2", { status: 401 });
-    }
-
-    const expiration = session ? session.exp : 0;
-    const expired = Date.now() > (expiration as number) * 1000;
-
-    if (expired) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return new Response("Unauthorized", { status: 401 });
     }
 
     const user = await fetch(

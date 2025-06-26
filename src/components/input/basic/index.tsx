@@ -25,8 +25,8 @@ export default function InputBasic({
 
   ...props
 }: InputBasicProps) {
-  const handleOnChange = (e: any) => {
-    const value = e;
+  const handleOnChange = (nome: string) => {
+    const value = nome;
     onvalue(value);
   };
 

@@ -25,7 +25,7 @@ const GetListaDados = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
-    next: { revalidate: 5 },
+    cache: "no-store",
   });
   const data = await user.json();
   if (!user.ok) {

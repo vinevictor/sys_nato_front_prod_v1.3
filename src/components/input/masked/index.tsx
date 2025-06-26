@@ -37,7 +37,8 @@ export default function MaskedInput({
   id,
   label,
   retornoLog,
-  ...props
+  boxWidth, // Extraída separadamente para evitar warning do React sobre prop não reconhecida
+  ...props // Agora props não contém boxWidth, evitando que seja passada para o elemento DOM nativo
 }: MaskedInputProps) {
   const [localValue, setLocalValue] = useState(value || "");
   const [isInvalidWhatsapp, setIsInvalidWhatsapp] = useState(false);
@@ -124,7 +125,7 @@ export default function MaskedInput({
   };
 
   return (
-    <FormControl w={props.boxWidth}>
+    <FormControl w={boxWidth}>
       <FormLabel
         htmlFor={id}
         fontSize="sm"
