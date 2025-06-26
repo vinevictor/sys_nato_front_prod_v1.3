@@ -21,7 +21,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     ? "gray.500"
     : !dados.ativo
     ? "red.300"
-    : dados.alertanow
+    : dados.pause
     ? "yellow.200"
     : dados.andamento === "APROVADO"
     ? "green.200"
