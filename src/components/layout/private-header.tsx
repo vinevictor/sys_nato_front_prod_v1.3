@@ -8,5 +8,5 @@ interface PrivateHeaderProps {
 }
 
 export default function PrivateHeader({ session }: PrivateHeaderProps) {
-  return session ? <BotaoJuncao session={session.user} /> : null;
+  return <BotaoJuncao session={session?.user || null} />;
 }
