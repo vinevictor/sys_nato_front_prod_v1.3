@@ -14,7 +14,7 @@ RUN yarn
 COPY . .
 
 # Build the Next.js application
-# RUN yarn build
+RUN yarn build
 
 # export port
 EXPOSE 3000
