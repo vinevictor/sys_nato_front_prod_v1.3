@@ -1,5 +1,7 @@
 import ChamadoSwitch from "@/components/chamado/switch";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   searchParams: {
     id?: string;
