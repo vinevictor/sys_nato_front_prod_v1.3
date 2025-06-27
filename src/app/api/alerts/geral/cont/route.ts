@@ -21,7 +21,6 @@ export async function GET() {
         },
       });
       const data = await get.json();
-      console.log("🚀 ~ GET ~ data cont:", data)
       if (!get.ok)
         return NextResponse.json(
           { message: data.message },
@@ -30,7 +29,6 @@ export async function GET() {
 
       return NextResponse.json(data.count, { status: 200 });
     } catch (error: any) {
-      console.log(error);
       return NextResponse.json(
         { message: error.message.join("\n") || error.message },
         { status: 500 }

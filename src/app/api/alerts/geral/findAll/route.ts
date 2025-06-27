@@ -21,8 +21,7 @@ export async function GET(request: Request) {
       }
     });
     const data = await get.json();
-    console.log("🚀 ~ GET ~ data:", data)
-
+  
     if (!get.ok)
       return NextResponse.json(
         { message: data.message },

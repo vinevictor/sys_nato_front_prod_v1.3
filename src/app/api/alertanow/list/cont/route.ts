@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
-
 export async function GET() {
 try {
   const session = await GetSessionServer();
@@ -26,7 +25,6 @@ try {
   });
   const data = await user.json();
   if (!user.ok) {
-    console.error("GetListaDados status:", data.message);
     return NextResponse.json({ error: "Erro ao buscar contagem" }, { status: 500 });
   }
   return NextResponse.json(data, { status: 200 });
