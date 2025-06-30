@@ -297,309 +297,310 @@ export default function FormSolicitacaoEdit({
       ? ""
       : form?.andamento;
 
-      console.log(data);
+  console.log(data);
   return (
     <>
-    {!form && <Loading />}
-    <Flex
-      w={"full"}
-      rounded={"md"}
-      border={"1px solid #E8E8E8"}
-      alignItems={"center"}
-      flexDir={{ base: "column", md: "column" }}
-      flexWrap={{ base: "nowrap", md: "nowrap" }}
-      gap={2}
-      shadow={"lg"}
-      h={"fit-content"}
-    >
+      {!form && <Loading />}
       <Flex
-        p={4}
-        rounded={"md"}
-        flexDir={"row"}
-        justifyContent={"space-between"}
         w={"full"}
+        rounded={"md"}
+        border={"1px solid #E8E8E8"}
+        alignItems={"center"}
+        flexDir={{ base: "column", md: "column" }}
+        flexWrap={{ base: "nowrap", md: "nowrap" }}
+        gap={2}
+        shadow={"lg"}
+        h={"fit-content"}
       >
-        <Flex flexDir={"column"}>
-          <Text fontSize={"md"}>
-            Criado Em:
-            {` ${
-              form?.createdAt &&
-              form?.createdAt.split("T")[0].split("-").reverse().join("/")
-            }, ${
-              form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
-            }`}
-          </Text>
-          {form?.updatedAt && (
+        <Flex
+          p={4}
+          rounded={"md"}
+          flexDir={"row"}
+          justifyContent={"space-between"}
+          w={"full"}
+        >
+          <Flex flexDir={"column"}>
             <Text fontSize={"md"}>
-              Atualizado Em:
+              Criado Em:
               {` ${
-                form?.updatedAt &&
-                form?.updatedAt.split("T")[0].split("-").reverse().join("/")
+                form?.createdAt &&
+                form?.createdAt.split("T")[0].split("-").reverse().join("/")
               }, ${
-                form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
+                form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
               }`}
             </Text>
-          )}
-          <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
-        </Flex>
-        <Flex flexDir={"column"}>
-          <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
-          <Text fontSize={{ base: "md", md: "md" }}>
-            Corretor:{" "}
-            {form?.corretor?.nome
-              ? form?.corretor.nome
-              : "Corretor Não Cadastrado"}
-          </Text>
-          <Text fontSize={{ base: "md", md: "md" }}>Andamento: {Msg}</Text>
-        </Flex>
-      </Flex>
-      <Divider borderColor="#00713D" />
-      <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexDir={"column"}
-        gap={4}
-        p={4}
-        mb={2}
-      >
-        <Flex gap={2}>
-          <MaskedInput
-            boxWidth="40%"
-            id="cpf"
-            label="CPF"
-            type="text"
-            mask="999.999.999-99"
-            value={form?.cpf || ""}
-            onvalue={(value) => handleChange("cpf", value)}
-            required
-            Disable
-          />
-          <InputBasic
-            id="nome"
-            type="text"
-            label="Nome"
-            value={form?.nome || ""}
-            onvalue={(value) => handleChange("nome", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-          <InputBasic
-            boxWidth="40%"
-            id="dt_nascimento"
-            type="date"
-            label="Data de Nascimento"
-            value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
-            onvalue={(value) => handleChange("dt_nascimento", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-        </Flex>
-        <Flex gap={2}>
-          <InputBasic
-            id="email"
-            type="email"
-            label="Email"
-            value={form?.email || ""}
-            onvalue={(value) => handleChange("email", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-          <MaskedInput
-            id="telefone"
-            label="Whatsapp Com DDD"
-            type="text"
-            mask="(99) 99999-9999"
-            value={form?.telefone || ""}
-            onvalue={(value) => handleChange("telefone", value)}
-            required
-            isWhatsapp
-            isReadOnly={!isAdmin}
-          />
-          <MaskedInput
-            id="telefone2"
-            label="Whatsapp Com DDD 2"
-            type="text"
-            mask="(99) 99999-9999"
-            value={form?.telefone2 || ""}
-            onvalue={(value) => handleChange("telefone2", value)}
-            isWhatsapp
-          />
-        </Flex>
-        <Flex gap={2}>
-          <SelectBasic
-            label="Construtora"
-            id="construtora"
-            onvalue={(value) => handleSelectConstrutora(value)}
-            value={form?.construtora ? form?.construtora.id : ""}
-            required
-            options={
-              isAdmin
-                ? options.map((construtora: any) => ({
-                    id: construtora.id,
-                    fantasia: construtora.fantasia,
-                  }))
-                : session?.construtora
-                ? session?.construtora.map((construtora: any) => ({
-                    id: construtora.id,
-                    fantasia: construtora.fantasia,
-                  }))
-                : []
-            }
-          />
-
-          {isAdmin ? (
-            options
-              .filter((c) => c.id === form?.construtora?.id)
-              .map((c) => (
-                <SelectBasic
-                  label="Empreendimento"
-                  id="empreendimento"
-                  onvalue={(value) => {
-                    handleChange("empreendimento", Number(value));
-                    handleChange("empreendimentoId", +value);
-                  }}
-                  value={form?.empreendimento ? form?.empreendimento.id : ""}
-                  required
-                  isDisabled={!form?.construtora}
-                  options={c.empreendimentos.map((e) => ({
-                    id: e.id!,
-                    fantasia: e.nome!,
-                  }))}
-                />
-              ))
-          ) : (
-            <SelectBasic
-              label="Empreendimento"
-              id="empreendimento"
-              onvalue={(value) => {
-                handleChange("empreendimento", value);
-                handleChange("empreendimentoId", +value);
-              }}
-              value={form?.empreendimento ? form?.empreendimento.id : ""}
-              required
-              isDisabled={!form?.construtora}
-              options={
-                session?.empreendimento
-                  ? session.empreendimento.map((e) => ({
-                      id: e.id,
-                      fantasia: e.nome,
-                    }))
-                  : []
-              }
-            />
-          )}
-
-          {isAdmin ? (
-            options
-              .filter((c) => c.id === form?.construtora?.id)
-              .map((f) => (
-                <SelectBasic
-                  label="Financeira"
-                  id="financeira"
-                  onvalue={(value) => {
-                    handleChange("financeiro", Number(value));
-                    handleChange("financeiroId", +value);
-                  }}
-                  value={form?.financeiro ? form?.financeiro.id : ""}
-                  required
-                  isDisabled={!form?.construtora}
-                  options={f.financeiros.map((f) => ({
-                    id: f.financeiro.id!,
-                    fantasia: f.financeiro.fantasia!,
-                  }))}
-                />
-              ))
-          ) : (
-            <SelectBasic
-              label="Financeira"
-              id="financeira"
-              onvalue={(value) => {
-                handleChange("financeiro", value);
-                handleChange("financeiroId", +value);
-              }}
-              value={form?.financeiro ? form?.financeiro.id : ""}
-              required
-              isDisabled={!form?.construtora}
-              options={
-                session?.Financeira
-                  ? session.Financeira.map((f) => ({
-                      id: f.id,
-                      fantasia: f.fantasia,
-                    }))
-                  : []
-              }
-            />
-          )}
-
-          {session?.hierarquia === "ADM" &&
-            options
-              .filter((c) => c.id === form?.construtora?.id)
-              .map((c) => (
-                <SelectBasic
-                  label="Corretor"
-                  id="corretor"
-                  onvalue={(value) => {
-                    handleChange("corretor", value);
-                    handleChange("corretorId", +value);
-                  }}
-                  value={form?.corretor ? form?.corretor.id : ""}
-                  required
-                  isDisabled={!form?.construtora}
-                  options={c.colaboradores.map((c) => ({
-                    id: c.id!,
-                    fantasia: c.nome!,
-                  }))}
-                />
-              ))}
-        </Flex>
-        <Flex gap={2}>
-          <BoxBasic
-            id="idfcweb"
-            label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
-            value={form?.id_fcw || ""}
-            isLink={isAdmin}
-            href={
-              isAdmin
-                ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form?.id_fcw}`
-                : undefined
-            }
-          />
-          <BoxBasic
-            id="andamento"
-            label="Andamento"
-            value={form?.andamento || ""}
-          />
-          {isAdmin && (
-            <SelectMultiItem
-              id="tags"
-              label="Tags"
-              fetchUrlGet={`/api/tags/getallid/${id}`}
-              fetchUrlDelete={(id) => `/api/tags/delete/${id}`}
-              options={tagsOptions}
-              onChange={(items) => setTags(items)}
-              required
-            />
-          )}
-        </Flex>
-        <Box>
-
-          <Flex
-            border="1px"
-            borderColor="blue.200"
-            bg="blue.50"
-            p={3}
-            borderRadius="md"
-            align="center"
-            gap={2}
-          >
-            <Icon as={AiOutlineInfoCircle} color="blue.500" boxSize={5} />
-            <Text color="blue.700" fontSize="sm">
-              Os processos com CNH anexada terão prioridade no atendimento
-            </Text>
+            {form?.updatedAt && (
+              <Text fontSize={"md"}>
+                Atualizado Em:
+                {` ${
+                  form?.updatedAt &&
+                  form?.updatedAt.split("T")[0].split("-").reverse().join("/")
+                }, ${
+                  form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
+                }`}
+              </Text>
+            )}
+            <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
           </Flex>
-        </Box>
+          <Flex flexDir={"column"}>
+            <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
+            <Text fontSize={{ base: "md", md: "md" }}>
+              Corretor:{" "}
+              {form?.corretor?.nome
+                ? form?.corretor.nome
+                : "Corretor Não Cadastrado"}
+            </Text>
+            <Text fontSize={{ base: "md", md: "md" }}>Andamento: {Msg}</Text>
+          </Flex>
+        </Flex>
+        <Divider borderColor="#00713D" />
+        <Flex
+          w={"100%"}
+          justifyContent={"center"}
+          flexDir={"column"}
+          gap={4}
+          p={4}
+          mb={2}
+        >
+          <Flex gap={2}>
+            <MaskedInput
+              boxWidth="40%"
+              id="cpf"
+              label="CPF"
+              type="text"
+              mask="999.999.999-99"
+              value={form?.cpf || ""}
+              onvalue={(value) => handleChange("cpf", value)}
+              required
+              Disable
+            />
+            <InputBasic
+              id="nome"
+              type="text"
+              label="Nome"
+              value={form?.nome || ""}
+              onvalue={(value) => handleChange("nome", value)}
+              required
+              isReadOnly={!isAdmin}
+            />
+            <InputBasic
+              boxWidth="40%"
+              id="dt_nascimento"
+              type="date"
+              label="Data de Nascimento"
+              value={
+                form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""
+              }
+              onvalue={(value) => handleChange("dt_nascimento", value)}
+              required
+              isReadOnly={!isAdmin}
+            />
+          </Flex>
+          <Flex gap={2}>
+            <InputBasic
+              id="email"
+              type="email"
+              label="Email"
+              value={form?.email || ""}
+              onvalue={(value) => handleChange("email", value)}
+              required
+              isReadOnly={!isAdmin}
+            />
+            <MaskedInput
+              id="telefone"
+              label="Whatsapp Com DDD"
+              type="text"
+              mask="(99) 99999-9999"
+              value={form?.telefone || ""}
+              onvalue={(value) => handleChange("telefone", value)}
+              required
+              isWhatsapp
+              isReadOnly={!isAdmin}
+            />
+            <MaskedInput
+              id="telefone2"
+              label="Whatsapp Com DDD 2"
+              type="text"
+              mask="(99) 99999-9999"
+              value={form?.telefone2 || ""}
+              onvalue={(value) => handleChange("telefone2", value)}
+              isWhatsapp
+            />
+          </Flex>
+          <Flex gap={2}>
+            <SelectBasic
+              label="Construtora"
+              id="construtora"
+              onvalue={(value) => handleSelectConstrutora(value)}
+              value={form?.construtora ? form?.construtora.id : ""}
+              required
+              options={
+                isAdmin
+                  ? options.map((construtora: any) => ({
+                      id: construtora.id,
+                      fantasia: construtora.fantasia,
+                    }))
+                  : session?.construtora
+                  ? session?.construtora.map((construtora: any) => ({
+                      id: construtora.id,
+                      fantasia: construtora.fantasia,
+                    }))
+                  : []
+              }
+            />
 
-        {/* <Flex gap={6}>
+            {isAdmin ? (
+              options
+                .filter((c) => c.id === form?.construtora?.id)
+                .map((c) => (
+                  <SelectBasic
+                    label="Empreendimento"
+                    id="empreendimento"
+                    onvalue={(value) => {
+                      handleChange("empreendimento", Number(value));
+                      handleChange("empreendimentoId", +value);
+                    }}
+                    value={form?.empreendimento ? form?.empreendimento.id : ""}
+                    required
+                    isDisabled={!form?.construtora}
+                    options={c.empreendimentos.map((e) => ({
+                      id: e.id!,
+                      fantasia: e.nome!,
+                    }))}
+                  />
+                ))
+            ) : (
+              <SelectBasic
+                label="Empreendimento"
+                id="empreendimento"
+                onvalue={(value) => {
+                  handleChange("empreendimento", value);
+                  handleChange("empreendimentoId", +value);
+                }}
+                value={form?.empreendimento ? form?.empreendimento.id : ""}
+                required
+                isDisabled={!form?.construtora}
+                options={
+                  session?.empreendimento
+                    ? session.empreendimento.map((e) => ({
+                        id: e.id,
+                        fantasia: e.nome,
+                      }))
+                    : []
+                }
+              />
+            )}
+
+            {isAdmin ? (
+              options
+                .filter((c) => c.id === form?.construtora?.id)
+                .map((f) => (
+                  <SelectBasic
+                    label="Financeira"
+                    id="financeira"
+                    onvalue={(value) => {
+                      handleChange("financeiro", Number(value));
+                      handleChange("financeiroId", +value);
+                    }}
+                    value={form?.financeiro ? form?.financeiro.id : ""}
+                    required
+                    isDisabled={!form?.construtora}
+                    options={f.financeiros.map((f) => ({
+                      id: f.financeiro.id!,
+                      fantasia: f.financeiro.fantasia!,
+                    }))}
+                  />
+                ))
+            ) : (
+              <SelectBasic
+                label="Financeira"
+                id="financeira"
+                onvalue={(value) => {
+                  handleChange("financeiro", value);
+                  handleChange("financeiroId", +value);
+                }}
+                value={form?.financeiro ? form?.financeiro.id : ""}
+                required
+                isDisabled={!form?.construtora}
+                options={
+                  session?.Financeira
+                    ? session.Financeira.map((f) => ({
+                        id: f.id,
+                        fantasia: f.fantasia,
+                      }))
+                    : []
+                }
+              />
+            )}
+
+            {session?.hierarquia === "ADM" &&
+              options
+                .filter((c) => c.id === form?.construtora?.id)
+                .map((c) => (
+                  <SelectBasic
+                    label="Corretor"
+                    id="corretor"
+                    onvalue={(value) => {
+                      handleChange("corretor", value);
+                      handleChange("corretorId", +value);
+                    }}
+                    value={form?.corretor ? form?.corretor.id : ""}
+                    required
+                    isDisabled={!form?.construtora}
+                    options={c.colaboradores.map((c) => ({
+                      id: c.id!,
+                      fantasia: c.nome!,
+                    }))}
+                  />
+                ))}
+          </Flex>
+          <Flex gap={2}>
+            <BoxBasic
+              id="idfcweb"
+              label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
+              value={form?.id_fcw || ""}
+              isLink={isAdmin}
+              href={
+                isAdmin
+                  ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form?.id_fcw}`
+                  : undefined
+              }
+            />
+            <BoxBasic
+              id="andamento"
+              label="Andamento"
+              value={form?.andamento || ""}
+            />
+            {isAdmin && (
+              <SelectMultiItem
+                id="tags"
+                label="Tags"
+                fetchUrlGet={`/api/tags/getallid/${id}`}
+                fetchUrlDelete={(id) => `/api/tags/delete/${id}`}
+                options={tagsOptions}
+                onChange={(items) => setTags(items)}
+                required
+              />
+            )}
+          </Flex>
+          <Box>
+            <Flex
+              border="1px"
+              borderColor="blue.200"
+              bg="blue.50"
+              p={3}
+              borderRadius="md"
+              align="center"
+              gap={2}
+            >
+              <Icon as={AiOutlineInfoCircle} color="blue.500" boxSize={5} />
+              <Text color="blue.700" fontSize="sm">
+                Os processos com CNH anexada terão prioridade no atendimento
+              </Text>
+            </Flex>
+          </Box>
+
+          {/* <Flex gap={6}>
           <InputFileUpload
             id="cnh"
             label="Documento de Identidade"
@@ -607,65 +608,67 @@ export default function FormSolicitacaoEdit({
             onvalue={(value) => handleChange("uploadCnh", value)}
           />
         </Flex> */}
-      </Flex>
+        </Flex>
 
-      <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-        <Button
-          colorScheme="orange"
-          size={"sm"}
-          onClick={() => router.push(`/chamado/novo?id=${id}`)}
-        >
-          Chamado
-        </Button>
-        <BtCreateAlertCliente
-          DataSolicitacao={data}
-          user={session}
-        />
-        {form?.distrato &&
-          form?.ativo &&
-          ((hierarquia === "ADM" && (
-            <>
-              <BtRemoverDistrato id={form?.id} />
-            </>
-          )) ||
-            (hierarquia === "CCA" && (
+        <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
+          {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
+          <Button
+            colorScheme="orange"
+            size={"sm"}
+            onClick={() => router.push(`/chamado/novo?id=${id}`)}
+          >
+            Chamado
+          </Button>
+          <BtCreateAlertCliente DataSolicitacao={data} user={session} />
+          {form?.distrato &&
+            form?.ativo &&
+            ((hierarquia === "ADM" && (
               <>
                 <BtRemoverDistrato id={form?.id} />
               </>
-            )))}
-        {!form?.id_fcw && form?.ativo && (
-          <CriarFcweb Dados={form} user={session!} />
-        )}
-        {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
-        <BotaoPausar id={form?.id} statusPause={data?.pause} />
-        <BtnIniciarAtendimento
-          hierarquia={hierarquia}
-          status={
-            data?.statusAtendimento
-              ? data.statusAtendimento
-              : form?.statusAtendimento
-          }
-          aprovacao={form?.andamento}
-          id={form?.id}
-        />
-        {session?.hierarquia === "ADM" && !data?.ativo && (
-          <ReativarButton size={"sm"} px={8} colorScheme="red" solicitacaoId={id}>
-            Reativar
-          </ReativarButton>
-        )}
-        {!data?.distrato && (
-          <BtnBasicSave
-            size={"sm"}
-            bg={"green.500"}
-            color={"white"}
-            onClick={handlesubmit}
-            _hover={{ bg: "green.600" }}
-          >
-            Salvar
-          </BtnBasicSave>
-        )}
+            )) ||
+              (hierarquia === "CCA" && (
+                <>
+                  <BtRemoverDistrato id={form?.id} />
+                </>
+              )))}
+          {!form?.id_fcw && form?.ativo && (
+            <CriarFcweb Dados={form} user={session!} />
+          )}
+          <BotaoPausar id={form?.id} statusPause={data?.pause} />
+          <BtnIniciarAtendimento
+            hierarquia={hierarquia}
+            status={
+              data?.statusAtendimento
+                ? data.statusAtendimento
+                : form?.statusAtendimento
+            }
+            aprovacao={form?.andamento}
+            id={form?.id}
+          />
+          {session?.hierarquia === "ADM" && !data?.ativo && (
+            <ReativarButton
+              size={"sm"}
+              px={8}
+              colorScheme="red"
+              solicitacaoId={id}
+            >
+              Reativar
+            </ReativarButton>
+          )}
+          {!data?.distrato && (
+            <BtnBasicSave
+              size={"sm"}
+              bg={"green.500"}
+              color={"white"}
+              onClick={handlesubmit}
+              _hover={{ bg: "green.600" }}
+            >
+              Salvar
+            </BtnBasicSave>
+          )}
+        </Flex>
       </Flex>
-    </Flex>
     </>
   );
 }

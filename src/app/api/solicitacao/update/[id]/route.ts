@@ -26,7 +26,6 @@ export async function PUT(
       ...(body.construtoraId && { construtora: body.construtoraId }),
       ...(body.financeiroId && { financeiro: body.financeiroId }),
       ...(body.empreendimentoId && { empreendimento: body.empreendimentoId }),
-      ...(body.relacionamento && { relacionamentos: body.relacionamento.cpf }),
     };
     const session = await GetSessionServer();
 
@@ -97,12 +96,11 @@ export async function PUT(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(dataSend),
       }
     );
 
     const data = await user.json();
-    console.log("🚀 ~ data:", data)
     if (!user.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });
     }

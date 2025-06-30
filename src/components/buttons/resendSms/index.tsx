@@ -16,6 +16,7 @@ export function ResendSms({ id }: ResendSmsProps) {
     e.preventDefault();
     setLoading(true);
     const request = await fetch(`/api/ResendSms/${id}`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
@@ -46,13 +47,13 @@ export function ResendSms({ id }: ResendSmsProps) {
     <>
       <Button
         size={"sm"}
-        colorScheme="blue"
-        textColor={"black"}
+        colorScheme="green"
+        textColor={"white"}
         onClick={handleResendSms}
         isLoading={Loading}
         spinner={<BeatLoader size={8} color="white" />}
       >
-        REENVIAR SMS
+        Enviar Mensagem
       </Button>
     </>
   );
