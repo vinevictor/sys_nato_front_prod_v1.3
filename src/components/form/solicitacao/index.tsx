@@ -39,6 +39,12 @@ export default function FormSolicitacao({
         {
           id: null as number | null,
           nome: null as string | null,
+          colaboradores: [
+            {
+              id: null as number | null,
+              nome: null as string | null,
+            },
+          ],
         },
       ] as any[],
       financeiros: [
@@ -49,14 +55,9 @@ export default function FormSolicitacao({
           },
         },
       ] as any[],
-      colaboradores: [
-        {
-          id: null as number | null,
-          nome: null as string | null,
-        },
-      ],
     },
   ]);
+  console.log("🚀 ~ options:", options);
   const [empreendimentos, setEmpreendimentos] = useState([
     {
       id: null as number | null,
@@ -85,6 +86,8 @@ export default function FormSolicitacao({
     if (session) {
       if (session.hierarquia === "ADM") {
         fetchADM();
+      } else {
+        fetchUser();
       }
     }
     if (solicitacao) {
@@ -98,9 +101,16 @@ export default function FormSolicitacao({
     }
   }, [session, cpf, solicitacao]);
 
+  const fetchUser = async () => {
+    const req = await fetch("/api/adm/getuseroptions");
+    const res = await req.json();
+    console.log("🚀 ~ fetchUser ~ res:", res);
+    setOptions(res);
+  };
   const fetchADM = async () => {
     const req = await fetch("/api/adm/getoptions");
     const data = await req.json();
+    console.log("🚀 ~ fetchADM ~ data:", data);
     setOptions(data);
   };
 
@@ -108,26 +118,52 @@ export default function FormSolicitacao({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSelectEmpreendimento = (value: number) => {
+    handleChange("empreendimento", value);
+    handleChange("corretor", null); // Limpa o corretor selecionado anteriormente
+
+    // Encontra a construtora que já está selecionada no estado do formulário
+    const construtoraAtual = options.find((c) => c.id === form.construtora);
+    if (!construtoraAtual) return;
+
+    // Encontra o empreendimento selecionado dentro da lista da construtora
+    const empreendimentoSelecionado = construtoraAtual.empreendimentos.find(
+      (e) => e.id === Number(value)
+    );
+
+    if (empreendimentoSelecionado && empreendimentoSelecionado.colaboradores) {
+      // Transforma a lista de 'colaboradores' para o formato { id, nome } esperado pelo select
+      const listaCorretores = empreendimentoSelecionado.colaboradores.map(
+        (colab: any) => ({
+          id: colab.user.id,
+          nome: colab.user.nome,
+        })
+      );
+      setCorretores(listaCorretores);
+    } else {
+      setCorretores([]);
+    }
+  };
+
   const handleSelectConstrutora = (value: number) => {
+    // Reseta os valores dos campos dependentes no formulário
     handleChange("construtora", value);
     handleChange("empreendimento", null);
     handleChange("financeira", null);
     handleChange("corretor", null);
 
-    const construtoraSelecionada = options.find((e) => e.id === Number(value));
+    const construtoraSelecionada = options.find((c) => c.id === Number(value));
 
     if (construtoraSelecionada) {
       setEmpreendimentos(construtoraSelecionada.empreendimentos || []);
       setFinanceiras(
+        // Sua lógica para financeiras já está correta!
         construtoraSelecionada.financeiros.map((f: any) => f.financeiro) || []
       );
-      setCorretores(
-        construtoraSelecionada.colaboradores.map((colab: any) => ({
-          id: colab.id,
-          nome: colab.nome,
-        })) || []
-      );
+      // Limpa a lista de corretores, pois eles dependem do empreendimento
+      setCorretores([]);
     } else {
+      // Limpa tudo se nenhuma construtora for selecionada
       setEmpreendimentos([]);
       setFinanceiras([]);
       setCorretores([]);
@@ -210,7 +246,7 @@ export default function FormSolicitacao({
       } else {
         const data: any = {
           url: typeof window !== "undefined" ? window.location.href : "",
-          nome: form.nome.trim().replace(/\s+/g, ' '),
+          nome: form.nome.trim().replace(/\s+/g, " "),
           telefone: form.telefone.replace(/\W+/g, ""),
           cpf: form.cpf.replace(/\W+/g, ""),
           ...(form.telefone2 && {
@@ -315,7 +351,10 @@ export default function FormSolicitacao({
           id="nome"
           placeholder="Nome Completo"
           onvalue={(value) => handleChange("nome", value)}
-          value={form.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}
+          value={form.nome
+            .toUpperCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")}
           required
           boxWidth="50%"
         />
@@ -395,10 +434,11 @@ export default function FormSolicitacao({
         <SelectBasic
           label="Empreendimento"
           id="empreendimento"
-          onvalue={(value) => handleChange("empreendimento", value)}
+          // Chame a nova função aqui!
+          onvalue={(value) => handleSelectEmpreendimento(value)}
           value={form.empreendimento}
           required
-          isDisabled={!form.construtora}
+          isDisabled={!form.construtora} // Continua desabilitado se não houver construtora
           options={empreendimentos.map((e) => ({
             id: e.id!,
             fantasia: e.nome!,
@@ -428,7 +468,8 @@ export default function FormSolicitacao({
             }}
             value={form.corretor}
             required
-            isDisabled={!form.construtora}
+            // Desabilite se não houver empreendimento selecionado
+            isDisabled={!form.empreendimento}
             options={corretores.map((c) => ({
               id: c.id!,
               fantasia: c.nome!,

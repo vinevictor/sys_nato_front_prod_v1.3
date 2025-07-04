@@ -10,7 +10,6 @@ import ReativarButton from "@/components/buttons/reativar";
 import { ResendSms } from "@/components/buttons/resendSms";
 import BtnBasicSave from "@/components/buttons/save";
 import InputBasic from "@/components/input/basic";
-import InputFileUpload from "@/components/input/doc";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
@@ -112,153 +111,139 @@ export default function FormSolicitacaoEdit({
   const isAdmin = session?.hierarquia === "ADM";
   const [tagsOptions, setTagsOptions] = useState([] as any[]);
   const [Tags, setTags] = useState([] as any[]);
-  const [form, setForm] = useState<SolicitacaoType>({
-    id: 0,
-    nome: "",
-    email: "",
-    cpf: "",
-    telefone: "",
-    telefone2: "",
-    dt_nascimento: "",
-    id_fcw: 0,
-    obs: "",
-    ativo: false,
-    rela_quest: false,
-    dt_distrato: null,
-    status_aprovacao: false,
-    distrato_id: 0,
-    andamento: "",
-    type_validacao: "",
-    dt_aprovacao: null,
-    ht_aprovacao: null,
-    dt_agendamento: null,
-    hr_agendamento: null,
-    estatos_pgto: "",
-    valorcd: 0,
-    situacao_pgto: 0,
-    freqSms: 0,
-    alertanow: false,
-    dt_criacao_now: null,
-    statusAtendimento: false,
-    pause: false,
-    createdAt: "",
-    updatedAt: "",
-    relacionamento: {
-      id: 0,
-      nome: "",
-    },
-    dt_revogacao: "",
-    direto: false,
-    txid: "",
-    chamados: [
-      {
-        id: 0,
-        descricao: "",
-      },
-    ],
-    construtora: {
-      id: 0,
-      fantasia: "",
-    },
-    empreendimento: {
-      id: 0,
-      nome: "",
-    },
-    financeiro: {
-      id: 0,
-      fantasia: "",
-    },
-    corretor: {
-      id: 0,
-      nome: "",
-    },
-    construtoraId: 0,
-    empreendimentoId: 0,
-    financeiroId: 0,
-    corretorId: 0,
-    uploadCnh: null,
-    uploadRg: null,
-    distrato: null,
-  });
-  const [options, setOptions] = useState([
-    {
-      id: 0,
-      fantasia: "",
-      empreendimentos: [
-        {
-          id: 0,
-          nome: "",
-        },
-      ],
-      financeiros: [
-        {
-          financeiro: {
-            id: 0,
-            fantasia: "",
-          },
-        },
-      ],
-      colaboradores: [
-        {
-          id: 0,
-          nome: "",
-        },
-      ],
-    },
-  ]);
+  const [form, setForm] = useState<SolicitacaoType>(data);
+  const [allOptions, setAllOptions] = useState<any[]>([]);
+  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<any[]>(
+    []
+  );
+  const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
+  const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
+
 
   useEffect(() => {
-    if (session) {
-      setForm(data);
-      if (session.hierarquia === "ADM") {
-        fetchADM();
-        fetchTags();
+    if (!session || !data) return;
+
+    setForm(data);
+    setTags(data.tags || []);
+
+    const fetchAndSetOptions = async () => {
+      if (isAdmin) {
+        try {
+          const req = await fetch("/api/adm/getoptions");
+          const optionsData = await req.json();
+          setAllOptions(optionsData);
+          fetchTags();
+
+          // Popula os selects com base nos dados iniciais da solicitação
+          if (data.construtoraId) {
+            const initialConstrutora = optionsData.find(
+              (c: any) => c.id === data.construtoraId
+            );
+            if (initialConstrutora) {
+              const empreendimentos = initialConstrutora.empreendimentos || [];
+              setEmpreendimentosOptions(empreendimentos);
+              setFinanceirasOptions(
+                initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
+                  []
+              );
+
+              if (data.empreendimentoId) {
+                const initialEmpreendimento = empreendimentos.find(
+                  (e: any) => e.id === data.empreendimentoId
+                );
+                if (initialEmpreendimento?.colaboradores) {
+                  const corretores = initialEmpreendimento.colaboradores.map(
+                    (colab: any) => colab.user
+                  );
+                  setCorretoresOptions(corretores);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao buscar opções de ADM:", error);
+        }
+      } else {
+        setEmpreendimentosOptions(session.empreendimento || []);
+        setFinanceirasOptions(session.Financeira || []);
       }
-    }
-    setTags(data?.tags || []);
-  }, [id, session, data]);
+    };
+
+    fetchAndSetOptions();
+  }, [id, session, data, isAdmin]);
 
   const fetchTags = async () => {
     const req = await fetch("/api/tags/getall");
     const res = await req.json();
     setTagsOptions(res);
   };
-  const fetchADM = async () => {
-    const req = await fetch("/api/adm/getoptions");
-    const res = await req.json();
-    setOptions(res);
-  };
+
 
   const handleChange = (field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSelectConstrutora = (value: number) => {
-    if (isAdmin) {
-      const construtoraSelecionada = options.find(
-        (e) => e.id === Number(value)
-      );
-      if (construtoraSelecionada) {
-        handleChange("construtora", {
-          id: construtoraSelecionada.id,
-          fantasia: construtoraSelecionada.fantasia,
-        });
-        handleChange("construtoraId", construtoraSelecionada.id);
-      }
+    const construtoraId = Number(value);
+    let construtoraSelecionada;
 
-      handleChange("empreendimento", { id: null, nome: "" });
-      handleChange("financeiro", { id: null, fantasia: "" });
-      handleChange("corretor", { id: null, nome: "" });
+    if (isAdmin) {
+      construtoraSelecionada = allOptions.find((c) => c.id === construtoraId);
     } else {
-      handleChange("construtoraId", Number(value));
-      handleChange("construtora", {
-        id: Number(value),
-        fantasia: "",
-      });
-      handleChange("empreendimento", { id: null, nome: "" });
-      handleChange("financeiro", { id: null, fantasia: "" });
-      handleChange("corretor", { id: null, nome: "" });
+      construtoraSelecionada = session?.construtora.find(
+        (c) => c.id === construtoraId
+      );
+      const empreendimentosDaSessao =
+        session?.empreendimento.filter(
+          (e: any) => e.construtoraId === construtoraId
+        ) || [];
+      setEmpreendimentosOptions(empreendimentosDaSessao);
     }
+
+    handleChange("construtoraId", construtoraId);
+    handleChange("construtora", {
+      id: construtoraSelecionada?.id || null,
+      fantasia: construtoraSelecionada?.fantasia || "",
+    });
+
+    if (isAdmin && construtoraSelecionada) {
+      setEmpreendimentosOptions(construtoraSelecionada.empreendimentos || []);
+      setFinanceirasOptions(
+        construtoraSelecionada.financeiros?.map((f: any) => f.financeiro) || []
+      );
+    }
+
+    handleChange("empreendimentoId", null);
+    handleChange("empreendimento", { id: null, nome: "" });
+    handleChange("financeiroId", null);
+    handleChange("financeiro", { id: null, fantasia: "" });
+    handleChange("corretorId", null);
+    handleChange("corretor", { id: null, nome: "" });
+    setCorretoresOptions([]);
+  };
+
+  const handleSelectEmpreendimento = (value: number) => {
+    const empreendimentoId = Number(value);
+    const empreendimentoSelecionado = empreendimentosOptions.find(
+      (e) => e.id === empreendimentoId
+    );
+
+    handleChange("empreendimentoId", empreendimentoId);
+    handleChange("empreendimento", {
+      id: empreendimentoSelecionado?.id || null,
+      nome: empreendimentoSelecionado?.nome || "",
+    });
+
+    if (isAdmin) {
+      const corretores =
+        empreendimentoSelecionado?.colaboradores?.map(
+          (colab: any) => colab.user
+        ) || [];
+      setCorretoresOptions(corretores);
+    }
+
+    handleChange("corretorId", null);
+    handleChange("corretor", { id: null, nome: "" });
   };
 
   const handlesubmit = async () => {
@@ -429,130 +414,75 @@ export default function FormSolicitacaoEdit({
           </Flex>
           <Flex gap={2}>
             <SelectBasic
+              id="construtora" 
               label="Construtora"
-              id="construtora"
               onvalue={(value) => handleSelectConstrutora(value)}
-              value={form?.construtora ? form?.construtora.id : ""}
+              value={form?.construtoraId || ""}
               required
               options={
                 isAdmin
-                  ? options.map((construtora: any) => ({
-                      id: construtora.id,
-                      fantasia: construtora.fantasia,
-                    }))
-                  : session?.construtora
-                  ? session?.construtora.map((construtora: any) => ({
-                      id: construtora.id,
-                      fantasia: construtora.fantasia,
-                    }))
-                  : []
+                  ? allOptions.map((c) => ({ id: c.id, fantasia: c.fantasia }))
+                  : session?.construtora?.map((c) => ({
+                      id: c.id,
+                      fantasia: c.fantasia,
+                    })) || []
               }
             />
 
-            {isAdmin ? (
-              options
-                .filter((c) => c.id === form?.construtora?.id)
-                .map((c) => (
-                  <SelectBasic
-                    label="Empreendimento"
-                    id="empreendimento"
-                    onvalue={(value) => {
-                      handleChange("empreendimento", Number(value));
-                      handleChange("empreendimentoId", +value);
-                    }}
-                    value={form?.empreendimento ? form?.empreendimento.id : ""}
-                    required
-                    isDisabled={!form?.construtora}
-                    options={c.empreendimentos.map((e) => ({
-                      id: e.id!,
-                      fantasia: e.nome!,
-                    }))}
-                  />
-                ))
-            ) : (
+            <SelectBasic
+              id="empreendimento" 
+              label="Empreendimento"
+              onvalue={(value) => handleSelectEmpreendimento(value)}
+              value={form?.empreendimentoId || ""}
+              required
+              isDisabled={!form?.construtoraId}
+              options={empreendimentosOptions.map((e) => ({
+                id: e.id,
+                fantasia: e.nome,
+              }))}
+            />
+
+            <SelectBasic
+              id="financeira" 
+              label="Financeira"
+              onvalue={(value) => {
+                const id = Number(value);
+                handleChange("financeiroId", id);
+                handleChange(
+                  "financeiro",
+                  financeirasOptions.find((f) => f.id === id) || null
+                );
+              }}
+              value={form?.financeiroId || ""}
+              required
+              isDisabled={!form?.construtoraId}
+              options={financeirasOptions.map((f) => ({
+                id: f.id,
+                fantasia: f.fantasia,
+              }))}
+            />
+
+            {isAdmin && (
               <SelectBasic
-                label="Empreendimento"
-                id="empreendimento"
+                id="corretor" 
+                label="Corretor"
                 onvalue={(value) => {
-                  handleChange("empreendimento", value);
-                  handleChange("empreendimentoId", +value);
+                  const id = Number(value);
+                  handleChange("corretorId", id);
+                  handleChange(
+                    "corretor",
+                    corretoresOptions.find((c) => c.id === id) || null
+                  );
                 }}
-                value={form?.empreendimento ? form?.empreendimento.id : ""}
+                value={form?.corretorId || ""}
                 required
-                isDisabled={!form?.construtora}
-                options={
-                  session?.empreendimento
-                    ? session.empreendimento.map((e) => ({
-                        id: e.id,
-                        fantasia: e.nome,
-                      }))
-                    : []
-                }
+                isDisabled={!form?.empreendimentoId}
+                options={corretoresOptions.map((c) => ({
+                  id: c.id,
+                  fantasia: c.nome,
+                }))}
               />
             )}
-
-            {isAdmin ? (
-              options
-                .filter((c) => c.id === form?.construtora?.id)
-                .map((f) => (
-                  <SelectBasic
-                    label="Financeira"
-                    id="financeira"
-                    onvalue={(value) => {
-                      handleChange("financeiro", Number(value));
-                      handleChange("financeiroId", +value);
-                    }}
-                    value={form?.financeiro ? form?.financeiro.id : ""}
-                    required
-                    isDisabled={!form?.construtora}
-                    options={f.financeiros.map((f) => ({
-                      id: f.financeiro.id!,
-                      fantasia: f.financeiro.fantasia!,
-                    }))}
-                  />
-                ))
-            ) : (
-              <SelectBasic
-                label="Financeira"
-                id="financeira"
-                onvalue={(value) => {
-                  handleChange("financeiro", value);
-                  handleChange("financeiroId", +value);
-                }}
-                value={form?.financeiro ? form?.financeiro.id : ""}
-                required
-                isDisabled={!form?.construtora}
-                options={
-                  session?.Financeira
-                    ? session.Financeira.map((f) => ({
-                        id: f.id,
-                        fantasia: f.fantasia,
-                      }))
-                    : []
-                }
-              />
-            )}
-
-            {session?.hierarquia === "ADM" &&
-              options
-                .filter((c) => c.id === form?.construtora?.id)
-                .map((c) => (
-                  <SelectBasic
-                    label="Corretor"
-                    id="corretor"
-                    onvalue={(value) => {
-                      handleChange("corretor", value);
-                      handleChange("corretorId", +value);
-                    }}
-                    value={form?.corretor ? form?.corretor.id : ""}
-                    required
-                    isDisabled={!form?.construtora}
-                    options={c.colaboradores.map((c) => ({
-                      id: c.id!,
-                      fantasia: c.nome!,
-                    }))}
-                  />
-                ))}
           </Flex>
           <Flex gap={2}>
             <BoxBasic
