@@ -47,7 +47,6 @@ export default function ModalConsultaRegistro({
   const [CPFMask, setCPFMask] = useState("");
   const toast = useToast();
   const [solicitacoes, setSolicitacoes] = useState([]);
-  console.log("🚀 ~ solicitacoes:", solicitacoes);
   const [IsContinue, setIsContinue] = useState(false);
   const [solexists, setsolExists] = useState(false);
   const router = useRouter();
