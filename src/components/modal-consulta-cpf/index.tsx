@@ -230,7 +230,7 @@ export default function ModalConsultaRegistro({
             </InputGroup>
           </Box>
 
-          {solicitacoes.length >= 0 && (
+          {solicitacoes.length > 0 && (
             <Box mt={8}>
               {solexists === true && (
               <FormLabel

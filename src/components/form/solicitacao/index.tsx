@@ -490,7 +490,7 @@ export default function FormSolicitacao({
           <Spinner size={"sm"} />
         ) : (
           <Button onClick={handlesubmit} colorScheme="green" isLoading={load}>
-            {load ? "Enviando..." : "Salvar Alterações"}
+            {load ? "Enviando..." : "Criar Solicitação"}
           </Button>
         )}
       </Flex>
