@@ -162,29 +162,10 @@ export default async function DashBoard() {
         </Flex>
         <Flex justifyContent={"space-around"} gap={"1%"} h={"50%"} p={"1%"}>
           <PieChart
-            title="Quantidade de RG e CNH"
-            colors={["#1D1D1B", "#00713C"]}
-            labels={["RG", "CNH"]}
-            dataValues={[totalRG, totalCNH]}
-          />
-          <PieChart
             title="Video Conferencia e Presencial"
             colors={["#00713C", "#1D1D1B"]}
             labels={["Video Conf.", "Presencial"]}
             dataValues={[totalVideoConferencia, totalInterna]}
-          />
-        </Flex>
-        <Flex
-          w={"100%"}
-          rounded={"12px"}
-          p={4}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <DashFiltrado
-            construtoras={construtoras}
-            financeiras={financeiras}
-            empreendimentos={empreendimentos}
           />
         </Flex>
       </Flex>
