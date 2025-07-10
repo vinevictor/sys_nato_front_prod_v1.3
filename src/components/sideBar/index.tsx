@@ -91,7 +91,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/primeiro-acesso");
+                  handleGuiaUsuario("/faq/primeiro-acesso");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -101,7 +101,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/biometria-senha");
+                  handleGuiaUsuario("/faq/biometria-senha");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -111,7 +111,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/instalacao-certificado-app");
+                  handleGuiaUsuario("/faq/instalacao-certificado-app");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -121,7 +121,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/sincronizar-conta");
+                  handleGuiaUsuario("/faq/sincronizar-conta");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -161,7 +161,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/senha-emissao");
+                  handleGuiaUsuario("/faq/senha-emissao");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -171,7 +171,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/senha-app");
+                  handleGuiaUsuario("/faq/senha-app");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -181,7 +181,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/senha-bird-id");
+                  handleGuiaUsuario("/faq/senha-bird-id");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -191,7 +191,7 @@ export default function Sidebar() {
               cursor={"pointer"}
               p={2}
               onClick={() => {
-                handleGuiaUsuario("/suportefaq/recuperacao-senhas");
+                handleGuiaUsuario("/faq/recuperacao-senhas");
               }}
               _hover={{ color: "teal.300" }}
               >Recuperação de Senhas</Text>
@@ -229,7 +229,7 @@ export default function Sidebar() {
                 cursor="pointer"
                 p={2}
                 onClick={() => {
-                  handleGuiaUsuario("/suportefaq/autenticacao-gov");
+                  handleGuiaUsuario("/faq/autenticacao-gov");
                 }}
                 _hover={{ color: "teal.300" }}
               >
@@ -243,7 +243,7 @@ export default function Sidebar() {
             _hover={{ bg: "green.100", cursor: "pointer" }}
             bg={expanded === 4 ? "green.100" : "transparent"}
             p={4}
-            onClick={() => {toggleExpand(4); handleGuiaUsuario("/suportefaq/perguntas-frequentes")}}
+            onClick={() => {toggleExpand(4); handleGuiaUsuario("/faq/perguntas-frequentes")}}
           >
             <FcHighPriority size={20} />
             <Text ml={2} fontWeight="medium">
@@ -255,7 +255,7 @@ export default function Sidebar() {
             _hover={{ bg: "green.100", cursor: "pointer" }}
             bg={expanded === 5 ? "green.100" : "transparent"}
             p={4}
-            onClick={() => {toggleExpand(5); handleGuiaUsuario("/suportefaq/videos-tutoriais")}}
+            onClick={() => {toggleExpand(5); handleGuiaUsuario("/faq/videos-tutoriais")}}
           >
             <BsPersonVideo size={20} color="teal"/>
             <Text ml={2} fontWeight="medium">

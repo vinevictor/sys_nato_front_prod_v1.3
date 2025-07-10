@@ -44,7 +44,7 @@ export default function FooterComponent() {
         display={{ base: "none", md: "flex" }}
       >
         <Button variant="link" color="white" size="sm">
-          <Link href="/suportefaq" isExternal>
+          <Link href="/faq" isExternal>
             FAQ
           </Link>
         </Button>
