@@ -130,11 +130,9 @@ export default function FormSolicitacaoEdit({
         try {
           const req = await fetch("/api/adm/getoptions");
           const optionsData = await req.json();
-          console.log("🚀 ~ fetchAndSetOptions ~ optionsData:", optionsData);
           setAllOptions(optionsData);
           fetchTags();
 
-          // Popula os selects com base nos dados iniciais da solicitação
           if (data.construtoraId) {
             const initialConstrutora = optionsData.find(
               (c: any) => c.id === data.construtoraId
@@ -142,18 +140,15 @@ export default function FormSolicitacaoEdit({
             if (initialConstrutora) {
               const empreendimentos = initialConstrutora.empreendimentos || [];
               setEmpreendimentosOptions(empreendimentos);
-              setFinanceirasOptions(initialConstrutora.financeiros || []);
+              setFinanceirasOptions(
+                initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
+                  []
+              );
 
               if (data.empreendimentoId) {
-                const initialEmpreendimento = empreendimentos.find(
-                  (e: any) => e.id === data.empreendimentoId
-                );
-                if (initialEmpreendimento?.colaboradores) {
-                  const corretores = initialEmpreendimento.colaboradores.map(
-                    (colab: any) => colab.user
-                  );
-                  setCorretoresOptions(corretores);
-                }
+                fetchCorretores(+data.empreendimentoId);
+                handleChange("empreendimentoId", data.empreendimentoId);
+                handleChange("financeiroId", data.financeiroId);
               }
             }
           }
@@ -204,7 +199,9 @@ export default function FormSolicitacaoEdit({
 
     if (isAdmin && construtoraSelecionada) {
       setEmpreendimentosOptions(construtoraSelecionada.empreendimentos || []);
-      setFinanceirasOptions(construtoraSelecionada.financeiros || []); // Apenas remova o .map
+      setFinanceirasOptions(
+        construtoraSelecionada.financeiros?.map((f: any) => f.financeiro) || []
+      );
     }
 
     handleChange("empreendimentoId", null);
@@ -229,15 +226,51 @@ export default function FormSolicitacaoEdit({
     });
 
     if (isAdmin) {
-      const corretores =
-        empreendimentoSelecionado?.colaboradores?.map(
-          (colab: any) => colab.user
-        ) || [];
-      setCorretoresOptions(corretores);
+      fetchCorretores(value);
     }
 
     handleChange("corretorId", null);
     handleChange("corretor", { id: null, nome: "" });
+  };
+
+  const handleSelectCorretor = (value: number) => {
+    const corretorId = Number(value);
+    const corretorSelecionado = corretoresOptions.find(
+      (c) => c.id === corretorId
+    );
+    if (corretorSelecionado) {
+      setFinanceirasOptions(corretorSelecionado.financeiros || []);
+    }
+    handleChange("corretorId", corretorId);
+    handleChange("corretor", {
+      id: corretorSelecionado?.id || null,
+      nome: corretorSelecionado?.nome || "",
+    });
+
+    handleChange("financeiroId", null);
+    handleChange("financeiro", { id: null, fantasia: "" });
+  };
+
+  const fetchCorretores = async (empreendimentoId: number) => {
+    try {
+      const req = await fetch(`/api/adm/getcorretores/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          empreendimentoId: +empreendimentoId,
+          construtoraId: form.construtora.id,
+        }),
+      });
+      const data = await req.json();
+
+      setCorretoresOptions(data.corretores || []);
+      setFinanceirasOptions(data.financeiros || []);
+    } catch (error) {
+      console.error("Erro ao buscar corretores:", error);
+      toast({ title: "Erro ao carregar corretores", status: "error" });
+    }
   };
 
   const handlesubmit = async () => {
@@ -276,7 +309,6 @@ export default function FormSolicitacaoEdit({
       ? ""
       : form?.andamento;
 
-  console.log(data);
   return (
     <>
       {!form && <Loading />}
@@ -455,18 +487,12 @@ export default function FormSolicitacaoEdit({
                 fantasia: f.fantasia,
               }))}
             />
-
             {isAdmin && (
               <SelectBasic
                 id="corretor"
                 label="Corretor"
                 onvalue={(value) => {
-                  const id = Number(value);
-                  handleChange("corretorId", id);
-                  handleChange(
-                    "corretor",
-                    corretoresOptions.find((c) => c.id === id) || null
-                  );
+                  handleSelectCorretor(value);
                 }}
                 value={form?.corretorId || ""}
                 required

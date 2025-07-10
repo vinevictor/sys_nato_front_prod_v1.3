@@ -39,6 +39,7 @@ export default function FormSolicitacao({
   );
   const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
   const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
+  const [construtoraId, setConstrutoraId] = useState(0);
   const [Sms, setSms] = useState<boolean>(true);
 
   const router = useRouter();
@@ -56,6 +57,7 @@ export default function FormSolicitacao({
         telefone: solicitacao?.telefone,
         email: solicitacao?.email,
       }));
+      setConstrutoraId(solicitacao?.construtoraId);
     }
   }, [session, cpf, solicitacao]);
 
@@ -84,18 +86,41 @@ export default function FormSolicitacao({
     );
 
     if (empreendimentoSelecionado) {
-      // Extrai os corretores do empreendimento selecionado
-      const corretores =
-        empreendimentoSelecionado.colaboradores?.map(
-          (colab: any) => colab.user
-        ) || [];
-      setCorretoresOptions(corretores);
+      fetchCorretores(value);
     } else {
       setCorretoresOptions([]);
+      setFinanceirasOptions([]);
     }
 
     // Reseta o corretor
+    handleChange("financeira", null);
     handleChange("corretor", null);
+  };
+
+  const fetchCorretores = async (empreendimentoId: number) => {
+    try {
+      const req = await fetch(`/api/adm/getcorretores/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          empreendimentoId: +empreendimentoId,
+          construtoraId: form.construtora,
+        }),
+      });
+      const data = await req.json();
+      setCorretoresOptions(data.corretores || []);
+      setFinanceirasOptions(data.financeiros || []);
+    } catch (error) {
+      console.error("Erro ao buscar corretores:", error);
+      toast({ title: "Erro ao carregar corretores", status: "error" });
+    }
+  };
+
+  const handleSelectCorretor = (value: number) => {
+    const corretorId = Number(value);
+    handleChange("corretor", corretorId);
   };
 
   const handleSelectConstrutora = (value: number) => {
@@ -105,11 +130,12 @@ export default function FormSolicitacao({
     );
 
     handleChange("construtora", construtoraId);
+    setConstrutoraId(construtoraId);
 
     if (construtoraSelecionada) {
       setEmpreendimentosOptions(construtoraSelecionada.empreendimentos || []);
-      // Assumindo que o backend já corrigido não tem mais o aninhamento "financeiro"
-      setFinanceirasOptions(construtoraSelecionada.financeiros || []);
+      setFinanceirasOptions([]);
+      setCorretoresOptions([]);
     } else {
       setEmpreendimentosOptions([]);
       setFinanceirasOptions([]);
@@ -396,7 +422,6 @@ export default function FormSolicitacao({
           }))}
           boxWidth="25%"
         />
-
         <SelectBasic
           label="Financeira"
           id="financeira"
@@ -410,12 +435,13 @@ export default function FormSolicitacao({
           }))}
           boxWidth="15%"
         />
+
         {isAdmin && (
           <SelectBasic
             label="Corretor"
             id="corretor"
             onvalue={(value) => {
-              handleChange("corretor", value);
+              handleSelectCorretor(value);
             }}
             value={form.corretor || ""}
             required
