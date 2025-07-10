@@ -119,7 +119,6 @@ export default function FormSolicitacaoEdit({
   const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
   const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
 
-
   useEffect(() => {
     if (!session || !data) return;
 
@@ -131,6 +130,7 @@ export default function FormSolicitacaoEdit({
         try {
           const req = await fetch("/api/adm/getoptions");
           const optionsData = await req.json();
+          console.log("🚀 ~ fetchAndSetOptions ~ optionsData:", optionsData);
           setAllOptions(optionsData);
           fetchTags();
 
@@ -142,10 +142,7 @@ export default function FormSolicitacaoEdit({
             if (initialConstrutora) {
               const empreendimentos = initialConstrutora.empreendimentos || [];
               setEmpreendimentosOptions(empreendimentos);
-              setFinanceirasOptions(
-                initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
-                  []
-              );
+              setFinanceirasOptions(initialConstrutora.financeiros || []);
 
               if (data.empreendimentoId) {
                 const initialEmpreendimento = empreendimentos.find(
@@ -178,7 +175,6 @@ export default function FormSolicitacaoEdit({
     setTagsOptions(res);
   };
 
-
   const handleChange = (field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -208,9 +204,7 @@ export default function FormSolicitacaoEdit({
 
     if (isAdmin && construtoraSelecionada) {
       setEmpreendimentosOptions(construtoraSelecionada.empreendimentos || []);
-      setFinanceirasOptions(
-        construtoraSelecionada.financeiros?.map((f: any) => f.financeiro) || []
-      );
+      setFinanceirasOptions(construtoraSelecionada.financeiros || []); // Apenas remova o .map
     }
 
     handleChange("empreendimentoId", null);
@@ -414,7 +408,7 @@ export default function FormSolicitacaoEdit({
           </Flex>
           <Flex gap={2}>
             <SelectBasic
-              id="construtora" 
+              id="construtora"
               label="Construtora"
               onvalue={(value) => handleSelectConstrutora(value)}
               value={form?.construtoraId || ""}
@@ -430,7 +424,7 @@ export default function FormSolicitacaoEdit({
             />
 
             <SelectBasic
-              id="empreendimento" 
+              id="empreendimento"
               label="Empreendimento"
               onvalue={(value) => handleSelectEmpreendimento(value)}
               value={form?.empreendimentoId || ""}
@@ -443,7 +437,7 @@ export default function FormSolicitacaoEdit({
             />
 
             <SelectBasic
-              id="financeira" 
+              id="financeira"
               label="Financeira"
               onvalue={(value) => {
                 const id = Number(value);
@@ -464,7 +458,7 @@ export default function FormSolicitacaoEdit({
 
             {isAdmin && (
               <SelectBasic
-                id="corretor" 
+                id="corretor"
                 label="Corretor"
                 onvalue={(value) => {
                   const id = Number(value);
