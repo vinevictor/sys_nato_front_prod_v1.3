@@ -54,7 +54,7 @@ export const ImageComponent = ({
 }: ImageComponentProps) => {
   const [managedImages, setManagedImages] = useState<ManagedImage[]>([]);
   const toast = useToast();
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
   const isInitializedRef = useRef(false);
 
   // Efeito para inicializar as imagens existentes apenas uma vez 
@@ -184,46 +184,35 @@ export const ImageComponent = ({
     [onRemoveExistingImage]
   );
 
-  const handleReplaceFileSelect = useCallback(
-    (idToReplace: string, e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        const newFile = e.target.files[0];
-        if (!newFile.type.startsWith("image/")) {
-          toast({
-            title: "Arquivo inválido",
-            description:
-              "Por favor, selecione um arquivo de imagem para substituir.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          e.target.value = "";
-          return;
-        }
+  /**
+   * Função para lidar com o download de uma imagem existente.
+   * Cria um link temporário e o clica para iniciar o download.
+   * @param downloadUrl A URL da imagem a ser baixada.
+   */
+  const handleDownloadImage = useCallback((downloadUrl?: string) => {
+    if (!downloadUrl) {
+      toast({
+        title: "Download indisponível",
+        description: "O link para download não foi fornecido para esta imagem.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
-        setManagedImages((prev) =>
-          prev.map((img) => {
-            if (img.id === idToReplace) {
-              // Limpar blob URL antiga se for uma nova imagem
-              if (img.isNew && img.url_view.startsWith("blob:")) {
-                URL.revokeObjectURL(img.url_view);
-              }
-              return {
-                ...img, // Mantém o ID original se desejado, ou gera um novo
-                url_view: URL.createObjectURL(newFile),
-                file: newFile,
-                isNew: true, // A imagem substituída é agora tratada como uma nova para upload
-                url_download: undefined, // Remove url_download se existia
-              };
-            }
-            return img;
-          })
-        );
-        e.target.value = ""; // Resetar o input
-      }
-    },
-    [toast]
-  );
+    // Cria um elemento de link na memória para iniciar o download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    // Opcional: você pode definir um nome para o arquivo baixado
+    // link.download = downloadUrl.split('/').pop() || 'imagem';
+
+    // Adiciona, clica e remove o link do DOM
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+  }, [toast]);
 
   return (
     <Flex w={"full"} gap={2} h="full" flexDir="column">
@@ -316,28 +305,18 @@ export const ImageComponent = ({
                   <Icon as={FiX} w={3} h={3} />
                 </Button>
                 <Button
-                  as="label"
-                  htmlFor={`replace-file-${image.id}`}
                   size="xs"
                   colorScheme="blue"
                   borderRadius="full"
+                  onClick={() => handleDownloadImage(image.url_download)}
                   p={0}
                   minW="20px"
                   h="20px"
-                  cursor="pointer"
-                  aria-label="Substituir imagem"
+                  aria-label="Download imagem"
+                  // Desabilita o botão se a imagem for nova (ainda não salva) ou não tiver URL de download
+                  isDisabled={image.isNew || !image.url_download}
                 >
                   <Icon as={FiDownload} w={3} h={3} />
-                  <Input
-                    id={`replace-file-${image.id}`}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleReplaceFileSelect(image.id, e)}
-                    display="none"
-                    ref={(el) => {
-                      fileInputRefs.current[image.id] = el;
-                    }}
-                  />
                 </Button>
               </Flex>
             </Box>
