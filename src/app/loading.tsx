@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <Flex
       w={"full"}
-      h={"full"}
+      h={"100vh"}
       flexDir="column"
       justifyContent={"center"}
       alignItems={"center"}
