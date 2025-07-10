@@ -31,64 +31,22 @@ export default function FormSolicitacao({
   const [Logwhats, setLogwhats] = useState<string>("");
   const [load, setLoad] = useState<boolean>(false);
   const toast = useToast();
-  const [options, setOptions] = useState([
-    {
-      id: null as number | null,
-      fantasia: null as string | null,
-      empreendimentos: [
-        {
-          id: null as number | null,
-          nome: null as string | null,
-          colaboradores: [
-            {
-              id: null as number | null,
-              nome: null as string | null,
-            },
-          ],
-        },
-      ] as any[],
-      financeiros: [
-        {
-          financeiro: {
-            id: null as number | null,
-            fantasia: null as string | null,
-          },
-        },
-      ] as any[],
-    },
-  ]);
-  console.log("🚀 ~ options:", options);
-  const [empreendimentos, setEmpreendimentos] = useState([
-    {
-      id: null as number | null,
-      nome: null as string | null,
-    },
-  ]);
-  const [financeiras, setFinanceiras] = useState([
-    {
-      id: null as number | null,
-      fantasia: null as string | null,
-    },
-  ]);
-  const [corretores, setCorretores] = useState([
-    {
-      id: null as number | null,
-      nome: null as string | null,
-    },
-  ]);
+  const session = useSession();
+  const isAdmin = session?.hierarquia === "ADM";
+  const [allOptions, setAllOptions] = useState<any[]>([]);
+  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<any[]>(
+    []
+  );
+  const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
+  const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
   const [Sms, setSms] = useState<boolean>(true);
 
-  const session = useSession();
   const router = useRouter();
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, cpf: cpf }));
     if (session) {
-      if (session.hierarquia === "ADM") {
-        fetchADM();
-      } else {
-        fetchUser();
-      }
+      fetchData();
     }
     if (solicitacao) {
       setForm((form) => ({
@@ -101,17 +59,16 @@ export default function FormSolicitacao({
     }
   }, [session, cpf, solicitacao]);
 
-  const fetchUser = async () => {
-    const req = await fetch("/api/adm/getuseroptions");
-    const res = await req.json();
-    console.log("🚀 ~ fetchUser ~ res:", res);
-    setOptions(res);
-  };
-  const fetchADM = async () => {
-    const req = await fetch("/api/adm/getoptions");
-    const data = await req.json();
-    console.log("🚀 ~ fetchADM ~ data:", data);
-    setOptions(data);
+  const fetchData = async () => {
+    const apiUrl = isAdmin ? "/api/adm/getoptions" : "/api/adm/getuseroptions";
+    try {
+      const req = await fetch(apiUrl);
+      const data = await req.json();
+      setAllOptions(data);
+    } catch (error) {
+      console.error("Erro ao buscar opções:", error);
+      toast({ title: "Erro ao carregar dados", status: "error" });
+    }
   };
 
   const handleChange = (field: keyof typeof form, value: any) => {
@@ -119,55 +76,50 @@ export default function FormSolicitacao({
   };
 
   const handleSelectEmpreendimento = (value: number) => {
-    handleChange("empreendimento", value);
-    handleChange("corretor", null); // Limpa o corretor selecionado anteriormente
+    const empreendimentoId = Number(value);
+    handleChange("empreendimento", empreendimentoId);
 
-    // Encontra a construtora que já está selecionada no estado do formulário
-    const construtoraAtual = options.find((c) => c.id === form.construtora);
-    if (!construtoraAtual) return;
-
-    // Encontra o empreendimento selecionado dentro da lista da construtora
-    const empreendimentoSelecionado = construtoraAtual.empreendimentos.find(
-      (e) => e.id === Number(value)
+    const empreendimentoSelecionado = empreendimentosOptions.find(
+      (e) => e.id === empreendimentoId
     );
 
-    if (empreendimentoSelecionado && empreendimentoSelecionado.colaboradores) {
-      // Transforma a lista de 'colaboradores' para o formato { id, nome } esperado pelo select
-      const listaCorretores = empreendimentoSelecionado.colaboradores.map(
-        (colab: any) => ({
-          id: colab.user.id,
-          nome: colab.user.nome,
-        })
-      );
-      setCorretores(listaCorretores);
+    if (empreendimentoSelecionado) {
+      // Extrai os corretores do empreendimento selecionado
+      const corretores =
+        empreendimentoSelecionado.colaboradores?.map(
+          (colab: any) => colab.user
+        ) || [];
+      setCorretoresOptions(corretores);
     } else {
-      setCorretores([]);
+      setCorretoresOptions([]);
     }
+
+    // Reseta o corretor
+    handleChange("corretor", null);
   };
 
   const handleSelectConstrutora = (value: number) => {
-    // Reseta os valores dos campos dependentes no formulário
-    handleChange("construtora", value);
+    const construtoraId = Number(value);
+    const construtoraSelecionada = allOptions.find(
+      (c) => c.id === construtoraId
+    );
+
+    handleChange("construtora", construtoraId);
+
+    if (construtoraSelecionada) {
+      setEmpreendimentosOptions(construtoraSelecionada.empreendimentos || []);
+      // Assumindo que o backend já corrigido não tem mais o aninhamento "financeiro"
+      setFinanceirasOptions(construtoraSelecionada.financeiros || []);
+    } else {
+      setEmpreendimentosOptions([]);
+      setFinanceirasOptions([]);
+    }
+
+    // Reseta os campos e opções dependentes
     handleChange("empreendimento", null);
     handleChange("financeira", null);
     handleChange("corretor", null);
-
-    const construtoraSelecionada = options.find((c) => c.id === Number(value));
-
-    if (construtoraSelecionada) {
-      setEmpreendimentos(construtoraSelecionada.empreendimentos || []);
-      setFinanceiras(
-        // Sua lógica para financeiras já está correta!
-        construtoraSelecionada.financeiros.map((f: any) => f.financeiro) || []
-      );
-      // Limpa a lista de corretores, pois eles dependem do empreendimento
-      setCorretores([]);
-    } else {
-      // Limpa tudo se nenhuma construtora for selecionada
-      setEmpreendimentos([]);
-      setFinanceiras([]);
-      setCorretores([]);
-    }
+    setCorretoresOptions([]);
   };
 
   const handlesubmit = async () => {
@@ -425,7 +377,7 @@ export default function FormSolicitacao({
           onvalue={(value) => handleSelectConstrutora(value)}
           value={form.construtora}
           required
-          options={options.map((construtora: any) => ({
+          options={allOptions.map((construtora: any) => ({
             id: construtora.id,
             fantasia: construtora.fantasia,
           }))}
@@ -434,14 +386,13 @@ export default function FormSolicitacao({
         <SelectBasic
           label="Empreendimento"
           id="empreendimento"
-          // Chame a nova função aqui!
           onvalue={(value) => handleSelectEmpreendimento(value)}
-          value={form.empreendimento}
+          value={form.empreendimento || ""}
           required
-          isDisabled={!form.construtora} // Continua desabilitado se não houver construtora
-          options={empreendimentos.map((e) => ({
-            id: e.id!,
-            fantasia: e.nome!,
+          isDisabled={!form.construtora}
+          options={empreendimentosOptions.map((e) => ({
+            id: e.id,
+            fantasia: e.nome,
           }))}
           boxWidth="25%"
         />
@@ -450,29 +401,28 @@ export default function FormSolicitacao({
           label="Financeira"
           id="financeira"
           onvalue={(value) => handleChange("financeira", value)}
-          value={form.financeira}
+          value={form.financeira || ""}
           required
           isDisabled={!form.construtora}
-          options={financeiras.map((f) => ({
-            id: f.id!,
-            fantasia: f.fantasia!,
+          options={financeirasOptions.map((f) => ({
+            id: f.id,
+            fantasia: f.fantasia,
           }))}
           boxWidth="15%"
         />
-        {session?.hierarquia === "ADM" && (
+        {isAdmin && (
           <SelectBasic
             label="Corretor"
             id="corretor"
             onvalue={(value) => {
               handleChange("corretor", value);
             }}
-            value={form.corretor}
+            value={form.corretor || ""}
             required
-            // Desabilite se não houver empreendimento selecionado
             isDisabled={!form.empreendimento}
-            options={corretores.map((c) => ({
-              id: c.id!,
-              fantasia: c.nome!,
+            options={corretoresOptions.map((c) => ({
+              id: c.id,
+              fantasia: c.nome,
             }))}
             boxWidth="24%"
           />
