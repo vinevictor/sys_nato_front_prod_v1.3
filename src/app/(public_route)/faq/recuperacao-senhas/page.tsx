@@ -148,7 +148,7 @@ export default function SuporteFaqSenhaEmissao() {
               colorScheme="blue"
               size="lg"
               w="100%"
-              onClick={() => router.push("/suportefaq/videos-tutoriais")}
+              onClick={() => router.push("/faq/videos-tutoriais")}
             >
               Video tutorial redefinição de senha
             </Button>
