@@ -45,7 +45,7 @@ export default function Sidebar() {
     >
       <Flex
         alignSelf={"center"}
-        onClick={() => {setExpanded(0); handleGuiaUsuario("/suportefaq")}}
+        onClick={() => { setExpanded(0); handleGuiaUsuario("/faq") }}
         _hover={{ cursor: "pointer" }}
       >
         <Text
@@ -187,13 +187,13 @@ export default function Sidebar() {
               >
                 Senha do Bird ID
               </Text>
-              <Text 
-              cursor={"pointer"}
-              p={2}
-              onClick={() => {
-                handleGuiaUsuario("/faq/recuperacao-senhas");
-              }}
-              _hover={{ color: "teal.300" }}
+              <Text
+                cursor={"pointer"}
+                p={2}
+                onClick={() => {
+                  handleGuiaUsuario("/faq/recuperacao-senhas");
+                }}
+                _hover={{ color: "teal.300" }}
               >Recuperação de Senhas</Text>
             </VStack>
           </Collapse>
@@ -243,11 +243,11 @@ export default function Sidebar() {
             _hover={{ bg: "green.100", cursor: "pointer" }}
             bg={expanded === 4 ? "green.100" : "transparent"}
             p={4}
-            onClick={() => {toggleExpand(4); handleGuiaUsuario("/faq/perguntas-frequentes")}}
+            onClick={() => { toggleExpand(4); handleGuiaUsuario("/faq/perguntas-frequentes") }}
           >
             <FcHighPriority size={20} />
             <Text ml={2} fontWeight="medium">
-              Perguntas Frequentes 
+              Perguntas Frequentes
             </Text>
           </Flex>
           <Flex
@@ -255,9 +255,9 @@ export default function Sidebar() {
             _hover={{ bg: "green.100", cursor: "pointer" }}
             bg={expanded === 5 ? "green.100" : "transparent"}
             p={4}
-            onClick={() => {toggleExpand(5); handleGuiaUsuario("/faq/videos-tutoriais")}}
+            onClick={() => { toggleExpand(5); handleGuiaUsuario("/faq/videos-tutoriais") }}
           >
-            <BsPersonVideo size={20} color="teal"/>
+            <BsPersonVideo size={20} color="teal" />
             <Text ml={2} fontWeight="medium">
               Videos Tutoriais
             </Text>
