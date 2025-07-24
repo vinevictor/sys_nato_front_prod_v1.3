@@ -34,6 +34,7 @@ export default function PieChart({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
@@ -63,25 +64,25 @@ export default function PieChart({
 
   return (
     <Flex
-               
+
       rounded="12px"
       p={4}
       justify="space-around"
-      direction="column"      
+      direction="column"
     >
-      
+
       <Flex justifyContent={"center"} alignItems={"center"}>
         <FaChartPie color="#fff" />
         <Text fontWeight="bold" >
           {title}
         </Text>
       </Flex>
-  
-   
+
+
       <Box
-        p={5}
+        p={3}
         bg="white"
-        display="flex"        
+        display="flex"
         justifyContent="center"
         alignItems="center"
       >

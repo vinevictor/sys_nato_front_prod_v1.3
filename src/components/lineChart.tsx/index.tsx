@@ -67,6 +67,8 @@ export default function LineChart({ labels, dataValues }: LineChartProps) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
+
     plugins: {
       legend: {
         display: false,
@@ -84,24 +86,24 @@ export default function LineChart({ labels, dataValues }: LineChartProps) {
         padding: {
           bottom: 30,
         },
-        color: "#333", 
+        color: "#333",
       },
       tooltip: {
-        enabled: true, 
-        borderColor: "#00713C", 
-        borderWidth: 2, 
+        enabled: true,
+        borderColor: "#00713C",
+        borderWidth: 2,
         titleFont: {
           size: 14,
-          weight: "bold" as const, 
-          color: "#00713C", 
+          weight: "bold" as const,
+          color: "#00713C",
         },
         bodyFont: {
           size: 12,
-          color: "#333", 
+          color: "#333",
         },
-        padding: 12, 
-        cornerRadius: 10, 
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
+        padding: 12,
+        cornerRadius: 10,
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         callbacks: {
           label: function (context: any) {
             const value = context.raw;
@@ -114,7 +116,7 @@ export default function LineChart({ labels, dataValues }: LineChartProps) {
       y: {
         beginAtZero: true,
         grid: {
-          display: false, 
+          display: false,
         },
         title: {
           display: false,
@@ -122,13 +124,13 @@ export default function LineChart({ labels, dataValues }: LineChartProps) {
         },
         ticks: {
           callback: function (tickValue: string | number) {
-            return secondsToTime(Number(tickValue)); 
+            return secondsToTime(Number(tickValue));
           },
         },
       },
       x: {
         grid: {
-          display: false, 
+          display: false,
         },
       },
     },
@@ -136,15 +138,15 @@ export default function LineChart({ labels, dataValues }: LineChartProps) {
       point: {
         hoverBorderWidth: 3,
         hoverBackgroundColor: "#00713C",
-        borderWidth: 3, 
-        borderColor: "#00713C", 
+        borderWidth: 3,
+        borderColor: "#00713C",
       },
     },
   };
 
   return (
     <Box
-      h="auto"
+      h="full"
       w={"full"}
       p={2}
       bg="white"
