@@ -1,23 +1,11 @@
-{
-  {
-  }
-}
-export const dynamic = "force-dynamic";
-{
-  {
-  }
-}
 
-import GetConstrutoras from "@/actions/dashboard/services/getConstrutoras";
-import GetEmpreendimentos from "@/actions/dashboard/services/getEmpreendimentos";
-import GetFinanceiras from "@/actions/dashboard/services/getFinanceiras";
 import BarChart from "@/components/barChart";
 import CardInfoDashboard from "@/components/cardInfoDashboard";
-import DashFiltrado from "@/components/dashFiltrado";
+
 import LineChart from "@/components/lineChart.tsx";
 import PieChart from "@/components/pieChart.tsx";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { FaRegClock } from "react-icons/fa6";
 import { LuClipboardCheck, LuTag } from "react-icons/lu";
 
@@ -44,10 +32,6 @@ export default async function DashBoard() {
   const data = req.contagem;
   const tags = req.tags;
 
-  //Dados para o filtro
-  const construtoras = await GetConstrutoras();
-  const empreendimentos = await GetEmpreendimentos();
-  const financeiras = await GetFinanceiras();
 
   // Dados tags
   const lista_tags = tags.lista_tags;
@@ -99,31 +83,6 @@ export default async function DashBoard() {
 
   const MediaHorasConvertida = arrayMediaHoras.map(timeToSeconds);
 
-  function averageTimeInHours(secondsArray: number[]): string {
-    const totalSeconds = secondsArray.reduce((acc, curr) => acc + curr, 0);
-    const averageSeconds = totalSeconds / 6;
-
-    const roundedAverageSeconds = Math.round(averageSeconds);
-
-    const hours = Math.floor(averageSeconds / 3600);
-    const minutes = Math.floor((averageSeconds % 3600) / 60);
-    const seconds = roundedAverageSeconds % 60;
-
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-      2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`;
-  }
-
-  const mediaHorasGlobal = averageTimeInHours(MediaHorasConvertida);
-
-  const arrayRG = data.map((item: any) => item.RG);
-  const arrayCNH = data.map((item: any) => item.CNH);
-  const totalRG = arrayRG.reduce((acc: number, item: number) => acc + item, 0);
-  const totalCNH = arrayCNH.reduce(
-    (acc: number, item: number) => acc + item,
-    0
-  );
 
   return (
     <>
@@ -152,21 +111,25 @@ export default async function DashBoard() {
             icon={<LuTag />}
           />
         </Flex>
-        <Flex justifyContent={"space-around"} gap={"1%"} p={"1%"}>
-          <LineChart labels={mesAnoLabels} dataValues={MediaHorasConvertida} />
-          <BarChart
-            lista_tags={lista_tags}
-            labelTitle="Quantidade de Tags: "
-            dataQuantidades={quantidadeTags}
-          />
-        </Flex>
-        <Flex justifyContent={"space-around"} gap={"1%"} h={"50%"} p={"1%"}>
-          <PieChart
-            title="Video Conferencia e Presencial"
-            colors={["#00713C", "#1D1D1B"]}
-            labels={["Video Conf.", "Presencial"]}
-            dataValues={[totalVideoConferencia, totalInterna]}
-          />
+        <Flex flexDir={"column"} w={"full"} gap={"20px"} h={"full"} alignItems="center" justifyContent="center">
+          <Box h={"full"} w="50%" m="auto">
+            <LineChart labels={mesAnoLabels} dataValues={MediaHorasConvertida} />
+          </Box>
+          <Box h={"full"} w="50%" m="auto">
+            <BarChart
+              lista_tags={lista_tags}
+              labelTitle="Quantidade de Tags: "
+              dataQuantidades={quantidadeTags}
+            />
+          </Box>
+          <Box h={"full"} w="60%" m="auto">
+            <PieChart
+              title="Video Conferencia e Presencial"
+              colors={["#00713C", "#1D1D1B"]}
+              labels={["Video Conf.", "Presencial"]}
+              dataValues={[totalVideoConferencia, totalInterna]}
+            />
+          </Box>
         </Flex>
       </Flex>
     </>

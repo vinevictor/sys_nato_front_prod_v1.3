@@ -79,6 +79,7 @@ export default function BarChart({ lista_tags }: BarChartProps) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -93,20 +94,20 @@ export default function BarChart({ lista_tags }: BarChartProps) {
         },
       },
       tooltip: {
-        borderColor: "#00713C", 
-        borderWidth: 2, 
+        borderColor: "#00713C",
+        borderWidth: 2,
         titleFont: {
           size: 14,
-          weight: "bold" as const, 
-          color: "#00713C", 
+          weight: "bold" as const,
+          color: "#00713C",
         },
         bodyFont: {
           size: 12,
-          color: "#333", 
+          color: "#333",
         },
-        padding: 12, 
-        cornerRadius: 10, 
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
+        padding: 12,
+        cornerRadius: 10,
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         callbacks: {
           label: (context: any) => {
             const descricao = finalTags[context.dataIndex].descricao;
@@ -143,7 +144,7 @@ export default function BarChart({ lista_tags }: BarChartProps) {
 
   return (
     <Box
-      h="auto"
+      h="full"
       w={"full"}
       p={2}
       bg="white"
@@ -152,7 +153,7 @@ export default function BarChart({ lista_tags }: BarChartProps) {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      _hover={{ boxShadow: "xl" }}      
+      _hover={{ boxShadow: "xl" }}
     >
       <Bar data={data} options={options} />
     </Box>
