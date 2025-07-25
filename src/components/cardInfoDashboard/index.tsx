@@ -1,9 +1,12 @@
 import { Flex, Text } from "@chakra-ui/react";
+import React from 'react';
+
 type CardInfoDashboardProps = {
   title: string;
-  value: string;
-  icon: any;
+  value: string | number;
+  icon: React.ReactElement;
 };
+
 export default function CardInfoDashboard({
   title,
   value,
@@ -28,6 +31,7 @@ export default function CardInfoDashboard({
           alignItems={"center"}
           rounded={"8px"}
           p={2}
+          fontSize="1.8em"
         >
           {icon}
         </Flex>

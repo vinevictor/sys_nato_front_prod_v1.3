@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GetSessionServer } from "./lib/auth_confg";
 
-const publicRoutes = ["/login", "/suportefaq", "/termos/privacidade", "/termos/uso", "/api/auth", "/api/auth/logout", "/api/faq", "/api/video-thumbnail", "/api/video-proxy", "/suportefaq/videos-tutoriais", "/teste-video", "/suportefaq/autenticacao-gov","/suportefaq/biometria-senha","/suportefaq/instalacao-certificado-app","/suportefaq/perguntas-frequentes","/suportefaq/senha-app","/suportefaq/senha-bird-id","/suportefaq/senha-emissao","/suportefaq/sincronizar-conta","/suportefaq/primeiro-acesso","/suportefaq/recuperacao-senhas","/suportefaq/recuperacao-senhas"];
+const publicRoutes = ["/login", "/faq", "/termos/privacidade", "/termos/uso", "/api/auth", "/api/auth/logout", "/api/faq", "/api/video-thumbnail", "/api/video-proxy", "/faq/videos-tutoriais", "/teste-video", "/faq/autenticacao-gov","/faq/biometria-senha","/faq/instalacao-certificado-app","/faq/perguntas-frequentes","/faq/senha-app","/suportefaq/senha-bird-id","/faq/senha-emissao","/faq/sincronizar-conta","/faq/primeiro-acesso","/faq/recuperacao-senhas","/faq/recuperacao-senhas"];
 
 export async function middleware(req: NextRequest) {
   const session = await GetSessionServer();

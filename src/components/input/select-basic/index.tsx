@@ -5,6 +5,7 @@ import {
   Text,
   SelectProps,
 } from "@chakra-ui/react";
+import { BeatLoader } from "react-spinners";
 
 interface Option {
   id: string | number;
@@ -19,6 +20,7 @@ interface SelectBasicProps extends SelectProps {
   required?: boolean;
   boxWidth?: string;
   options: Option[];
+  isLoading?: boolean;
 }
 
 export default function SelectBasic({
@@ -28,6 +30,7 @@ export default function SelectBasic({
   id,
   label,
   options,
+  isLoading,
   ...props
 }: SelectBasicProps) {
   const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -51,6 +54,9 @@ export default function SelectBasic({
         )}
       </FormLabel>
 
+     {isLoading ? (
+      <BeatLoader size={8} color="#38A169" cssOverride={{ display: 'flex', justifyContent: 'center', margin: '8px 0' }} />
+     ) : (
       <Select
         {...props}
         id={id}
@@ -65,6 +71,7 @@ export default function SelectBasic({
           </option>
         ))}
       </Select>
+     )}
     </FormControl>
   );
 }
