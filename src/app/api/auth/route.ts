@@ -6,8 +6,9 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("🚀 ~ POST ~ body:", body)
     const { username, password } = body;
-    
+    console.log(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/auth`);
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/auth`;
     const res = await fetch(
       url,
