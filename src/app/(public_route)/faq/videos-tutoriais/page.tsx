@@ -1,20 +1,6 @@
 "use client";
 
-import VideoComponent from "@/components/video";
-import { CloseIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Flex,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-  useToast,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, useToast, VStack, Image } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 interface Video {
@@ -27,12 +13,41 @@ interface Video {
 }
 
 export default function SuporteFaqPerguntasFrequentes() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [videos, setVideoList] = useState<Video[] | null>(null);
-  // Estado para armazenar as URLs dos vídeos via proxy
-  const [proxyUrls, setProxyUrls] = useState<Record<string, string>>({});
+  const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
   const toast = useToast();
+
+  const generateThumbnail = (videoUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.crossOrigin = 'anonymous';
+      video.muted = true;
+      
+      video.onloadedmetadata = () => {
+        video.currentTime = 2; // Captura frame aos 2 segundos
+      };
+      
+      video.onseeked = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        } else {
+          resolve("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f0f0f0'/%3E%3Cpath d='M120 60l60 40-60 40V60z' fill='%23666'/%3E%3C/svg%3E");
+        }
+      };
+      
+      video.onerror = () => {
+        resolve("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f0f0f0'/%3E%3Cpath d='M120 60l60 40-60 40V60z' fill='%23666'/%3E%3C/svg%3E");
+      };
+      
+      video.src = videoUrl;
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -42,14 +57,19 @@ export default function SuporteFaqPerguntasFrequentes() {
         setVideoList(data.video);
 
         if (data.video.length > 0) {
-          // Criar URLs de proxy para cada vídeo
-          const proxies: Record<string, string> = {};
-          data.video.forEach((video: Video) => {
-            proxies[video.url] = `/api/video-proxy?url=${encodeURIComponent(
-              video.url
-            )}`;
-          });
-          setProxyUrls(proxies);
+          const thumbs: Record<string, string> = {};
+          
+          for (const video of data.video) {
+            try {
+              const thumbnail = await generateThumbnail(video.url);
+              thumbs[video.url] = thumbnail;
+            } catch (error) {
+              console.error(`Erro ao gerar thumbnail para ${video.url}:`, error);
+              thumbs[video.url] = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f0f0f0'/%3E%3Cpath d='M120 60l60 40-60 40V60z' fill='%23666'/%3E%3C/svg%3E";
+            }
+          }
+          
+          setThumbnails(thumbs);
         }
       } catch (error: any) {
         console.error("Erro ao buscar vídeos:", error);
@@ -65,9 +85,7 @@ export default function SuporteFaqPerguntasFrequentes() {
   }, []);
 
   const handleVideoClick = (videoUrl: string) => {
-    // Usar a URL via proxy para evitar problemas de CORS
-    setSelectedVideo(proxyUrls[videoUrl] || videoUrl);
-    onOpen();
+    window.open(videoUrl, '_blank');
   };
 
   return (
@@ -104,26 +122,49 @@ export default function SuporteFaqPerguntasFrequentes() {
               _hover={{ transform: "scale(1.1)" }}
               onClick={() => handleVideoClick(video.url)}
             >
-              <video
-                src={video.url} // Mantenha a URL original para a pré-visualização
-                // Adicionando poster para exibir uma imagem de pré-visualização
-                poster={`https://api.microlink.io/?url=${encodeURIComponent(
+              <Box
+                position="relative"
+                width="100%"
+                height="70%"
+                borderRadius="8px"
+                overflow="hidden"
+                backgroundColor="#f0f0f0"
+              >
+                <Image
+                  src={`https://api.microlink.io/?url=${encodeURIComponent(
                   video.url
                 )}&screenshot=true&meta=false&embed=screenshot.url`}
-                preload="metadata"
-                onError={(e) => {
-                  console.error("Erro ao carregar o vídeo:", e);
-                  // Define um poster de fallback em caso de erro
-                  e.currentTarget.poster =
-                    "https://placehold.co/600x400/333333/FFFFFF?text=Video";
-                }}
-                style={{
-                  width: "100%",
-                  height: "70%",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
+                  alt={`Thumbnail ${video.nome}`}
+                  width="100%"
+                  height="100%"
+                  objectFit="cover"
+                />
+                {/* Ícone de play sobreposto */}
+                <Box
+                  position="absolute"
+                  top="50%"
+                  left="50%"
+                  transform="translate(-50%, -50%)"
+                  backgroundColor="rgba(0, 0, 0, 0.7)"
+                  borderRadius="50%"
+                  width="50px"
+                  height="50px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  transition="all 0.3s ease"
+                  _hover={{ backgroundColor: "rgba(0, 0, 0, 0.9)", transform: "translate(-50%, -50%) scale(1.1)" }}
+                >
+                  <Box
+                    width="0"
+                    height="0"
+                    borderLeft="15px solid white"
+                    borderTop="10px solid transparent"
+                    borderBottom="10px solid transparent"
+                    marginLeft="3px"
+                  />
+                </Box>
+              </Box>
               <Text
                 mt={2}
                 fontSize={{ base: "sm", md: "md" }}
@@ -137,32 +178,6 @@ export default function SuporteFaqPerguntasFrequentes() {
           ))}
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent
-          bg="black"
-          color="white"
-          borderRadius="md"
-          overflow="hidden"
-        >
-          <ModalBody p={0} position="relative" w="100%" h="100%">
-            {selectedVideo && (
-              <>
-                <VideoComponent url={selectedVideo} />
-              </>
-            )}
-            <IconButton
-              icon={<CloseIcon />}
-              position="absolute"
-              top={2}
-              right={2}
-              colorScheme="red"
-              onClick={onClose}
-              aria-label="Close"
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </Flex>
   );
 }

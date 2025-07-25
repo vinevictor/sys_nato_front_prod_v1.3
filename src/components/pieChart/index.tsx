@@ -64,28 +64,29 @@ export default function PieChart({
 
   return (
     <Flex
+      w="full"
+      h="full"
       rounded="12px"
-      p={4}
-      justify="space-around"
+      p={2}
       direction="column"
+      gap={2}
     >
-
-      <Flex justifyContent={"center"} alignItems={"center"}>
-        <FaChartPie color="#fff" />
-        <Text fontWeight="bold" >
+      <Flex justifyContent={"center"} alignItems={"center"} gap={2} minH="40px">
+        <FaChartPie color="#666" />
+        <Text fontWeight="bold" fontSize="sm" color="gray.700">
           {title}
         </Text>
       </Flex>
 
-
       <Box
-        p={3}
+        flex={1}
         bg="white"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        h={"full"}
-        w={"full"}
+        borderRadius="md"
+        boxShadow="md"
+        p={4}
+        _hover={{ boxShadow: "xl" }}
+        w="full"
+        minH={0}
       >
         <Pie data={data} options={options} />
       </Box>

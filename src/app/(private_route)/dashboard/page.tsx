@@ -1,13 +1,13 @@
-
 import BarChart from "@/components/barChart";
 import CardInfoDashboard from "@/components/cardInfoDashboard";
-
 import LineChart from "@/components/lineChart.tsx";
-import PieChart from "@/components/pieChart.tsx";
+import PieChart from "@/components/pieChart";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Grid, SimpleGrid } from "@chakra-ui/react";
 import { FaRegClock } from "react-icons/fa6";
 import { LuClipboardCheck, LuTag } from "react-icons/lu";
+
+export const dynamic = 'force-dynamic';
 
 export default async function DashBoard() {
   // Função para buscar dados da API
@@ -69,10 +69,13 @@ export default async function DashBoard() {
     totalInterna = valorTotal;
   }
 
+  // Dados de mês/ano para os labels
   const mesAnoLabels = data.map((item: any) => `${item.mes}/${item.ano}`);
 
+  // Dados para o LineChart
   const arrayMediaHoras = data.map((item: any) => item.mediaHoras);
 
+  // Função para converter tempo HH:mm:ss em segundos
   const timeToSeconds = (time: string): number => {
     const [hours, minutes, seconds] = time.split(":").map(Number);
     return hours * 3600 + minutes * 60 + seconds;
@@ -93,51 +96,86 @@ export default async function DashBoard() {
     .toISOString()
     .slice(11, 19); // "HH:mm:ss"
 
-
   return (
-    <Flex w="full" h="full" direction="column" p={2} gap={2}>
+    <>
 
-      <Flex w="100%" gap="1%" justify="space-around" p="20px">
-        <CardInfoDashboard
-          title="Total de Solicitações"
-          value={totalSolicitacoesGlobal}
-          icon={<LuClipboardCheck />}
-        />
-        <CardInfoDashboard
-          title="Média de Horas p/ Certificação"
-          value={mediaGlobalHHMMSS}
-          icon={<FaRegClock />}
-        />
-        <CardInfoDashboard
-          title="Problemas Registrados"
-          value={quantidadeTags}
-          icon={<LuTag />}
-        />
-      </Flex>
-
-      <Flex direction="column" gap="20px" align="center" w="full" h="full">
-        <Box w="50%" minH="450px">
-          <LineChart labels={mesAnoLabels} dataValues={mediasSegundos} />
-        </Box>
-
-        <Box w="50%" minH="450px">
-          <BarChart
-            lista_tags={lista_tags}
-            labelTitle="Quantidade de Tags:"
-            dataQuantidades={quantidadeTags}
+      <Flex w={"full"} h={"full"} flexDir={"column"} p={{ base: 4, md: 6 }} gap={6} overflowX="hidden" overflowY="auto">
+        <SimpleGrid
+          columns={{ base: 1, sm: 2, lg: 3 }}
+          spacing={4}
+          w={"100%"}
+        >
+          <CardInfoDashboard
+            title={"Total Solicitações"}
+            value={totalSolicitacoesGlobal}
+            icon={<LuClipboardCheck />}
           />
-        </Box>
-      </Flex>
-      <Flex>
-        <Box w="80%" minH="300px">
-          <PieChart
-            title="Vídeo‑conf. × Presencial"
-            labels={["Vídeo Conf.", "Presencial"]}
-            colors={["#00713C", "#1D1D1B"]}
-            dataValues={[totalVideoConferencia, totalInterna]}
+          <CardInfoDashboard
+            title={"Média de Horas p/ Certificação"}
+            value={mediaGlobalHHMMSS}
+            icon={<FaRegClock />}
           />
-        </Box>
+          <CardInfoDashboard
+            title={"Problemas Registrados"}
+            value={quantidadeTags}
+            icon={<LuTag />}
+          />
+        </SimpleGrid>
+        <Grid
+          templateColumns={{ 
+            base: "1fr", 
+            lg: "1fr 1fr" 
+          }}
+          templateRows={{ 
+            base: "auto auto auto", 
+            lg: "auto auto" 
+          }}
+          gap={6}
+          w={"full"}
+          minH="fit-content"
+        >
+          <Box 
+            gridColumn={{ base: "1", lg: "1 / -1" }}
+            h={{ base: "250px", md: "350px" }}
+            w="full"
+            minW={0}
+          >
+            <LineChart labels={mesAnoLabels} dataValues={MediaHorasConvertida} />
+          </Box>
+          <Box 
+            h={{ base: "400px", md: "350px" }}
+            w="full"
+            minW={0}
+          >
+            <BarChart
+              lista_tags={lista_tags}
+              labelTitle="Quantidade de Tags: "
+              dataQuantidades={quantidadeTags}
+            />
+          </Box>
+          <Box 
+            h={"380px"}
+            w="full"
+            minW={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box
+              w={{ base: "100%", lg: "80%" }}
+              h="full"
+              maxW="400px"
+            >
+              <PieChart
+                title="Video Conferencia e Presencial"
+                colors={["#00713C", "#1D1D1B"]}
+                labels={["Video Conf.", "Presencial"]}
+                dataValues={[totalVideoConferencia, totalInterna]}
+              />
+            </Box>
+          </Box>
+        </Grid>
       </Flex>
-    </Flex>
+    </>
   );
 }

@@ -37,6 +37,8 @@ export default function FormSolicitacao({
   const [empreendimentosOptions, setEmpreendimentosOptions] = useState<any[]>(
     []
   );
+  const [ladingFetchFinanceiras, setLadingFetchFinanceiras] = useState<boolean>(false);
+  const [ladingFetchCorretores, setLadingFetchCorretores] = useState<boolean>(false);
   const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
   const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
   const [construtoraId, setConstrutoraId] = useState(0);
@@ -58,6 +60,22 @@ export default function FormSolicitacao({
         email: solicitacao?.email,
       }));
       setConstrutoraId(solicitacao?.construtoraId);
+    }
+    if (financeirasOptions.length > 0 ) {
+      setLadingFetchFinanceiras(false);
+    }
+    if (corretoresOptions.length > 0) {
+      setLadingFetchCorretores(false);
+    }
+
+    if (corretoresOptions.length > 0 && financeirasOptions.length == 0) {
+     toast({
+      title: "Erro ao buscar opções",
+      description: "Financeira não cadastrada",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+     });
     }
   }, [session, cpf, solicitacao]);
 
@@ -99,6 +117,8 @@ export default function FormSolicitacao({
 
   const fetchCorretores = async (empreendimentoId: number) => {
     try {
+      setLadingFetchCorretores(true);
+      setLadingFetchFinanceiras(true);
       const req = await fetch(`/api/adm/getcorretores/`, {
         method: "POST",
         headers: {
@@ -112,6 +132,8 @@ export default function FormSolicitacao({
       const data = await req.json();
       setCorretoresOptions(data.corretores || []);
       setFinanceirasOptions(data.financeiros || []);
+      data.corretores.length > 0 && setLadingFetchCorretores(false);
+      data.financeiros.length > 0 && setLadingFetchFinanceiras(false);
     } catch (error) {
       console.error("Erro ao buscar corretores:", error);
       toast({ title: "Erro ao carregar corretores", status: "error" });
@@ -428,12 +450,14 @@ export default function FormSolicitacao({
           onvalue={(value) => handleChange("financeira", value)}
           value={form.financeira || ""}
           required
+          isLoading={ladingFetchFinanceiras}
           isDisabled={!form.construtora}
           options={financeirasOptions.map((f) => ({
             id: f.id,
             fantasia: f.fantasia,
           }))}
           boxWidth="15%"
+          
         />
 
         {isAdmin && (
@@ -443,6 +467,7 @@ export default function FormSolicitacao({
             onvalue={(value) => {
               handleSelectCorretor(value);
             }}
+            isLoading={ladingFetchCorretores}
             value={form.corretor || ""}
             required
             isDisabled={!form.empreendimento}

@@ -1,20 +1,19 @@
 "use client";
+import { useSession } from "@/hook/useSession";
 import {
-  Box,
-  Select,
-  Button,
-  useToast,
-  Flex,
-  Text,
-  Divider,
-  Spinner,
-  Input,
-  SimpleGrid
+    Box,
+    Button,
+    Flex,
+    Input,
+    Select,
+    SimpleGrid,
+    Spinner,
+    Text,
+    useToast
 } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
-import PieChart from "../pieChart.tsx";
 import DoughnutChart from "../doughnutChart";
-import { useSession } from "@/hook/useSession";
+import PieChart from "../pieChart/index.jsx";
 
 interface DashFiltradoProps {
   construtoras: any;
