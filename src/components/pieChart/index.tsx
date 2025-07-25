@@ -64,7 +64,8 @@ export default function PieChart({
 
   return (
     <Flex
-
+      w="full"
+      h="full"
       rounded="12px"
       p={2}
       direction="column"
@@ -80,9 +81,12 @@ export default function PieChart({
       <Box
         flex={1}
         bg="white"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+        borderRadius="md"
+        boxShadow="md"
+        p={4}
+        _hover={{ boxShadow: "xl" }}
+        w="full"
+        minH={0}
       >
         <Pie data={data} options={options} />
       </Box>

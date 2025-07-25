@@ -69,10 +69,13 @@ export default async function DashBoard() {
     totalInterna = valorTotal;
   }
 
+  // Dados de mês/ano para os labels
   const mesAnoLabels = data.map((item: any) => `${item.mes}/${item.ano}`);
 
+  // Dados para o LineChart
   const arrayMediaHoras = data.map((item: any) => item.mediaHoras);
 
+  // Função para converter tempo HH:mm:ss em segundos
   const timeToSeconds = (time: string): number => {
     const [hours, minutes, seconds] = time.split(":").map(Number);
     return hours * 3600 + minutes * 60 + seconds;
@@ -80,17 +83,27 @@ export default async function DashBoard() {
 
   const MediaHorasConvertida = arrayMediaHoras.map(timeToSeconds);
 
+  const toSeconds = (t: string) =>
+    t.split(":").reduce((acc, v, i) => acc + +v * [3600, 60, 1][i], 0);
+
+  const mediasSegundos = data.map((i: any) => toSeconds(i.mediaHoras));
+
+  const mediaGlobalSeg = Math.round(
+    mediasSegundos.reduce((a: number, b: number) => a + b, 0) / mediasSegundos.length
+  );
+
+  const mediaGlobalHHMMSS = new Date(mediaGlobalSeg * 1000)
+    .toISOString()
+    .slice(11, 19); // "HH:mm:ss"
 
   return (
     <>
 
-      <Flex w={"full"} h={"full"} flexDir={"column"} p={2}>
-        <Flex
+      <Flex w={"full"} h={"full"} flexDir={"column"} p={{ base: 4, md: 6 }} gap={6} overflowX="hidden" overflowY="auto">
+        <SimpleGrid
+          columns={{ base: 1, sm: 2, lg: 3 }}
+          spacing={4}
           w={"100%"}
-          h={"auto"}
-          gap={"1%"}
-          justifyContent={"space-around"}
-          p={"20px"}
         >
           <CardInfoDashboard
             title={"Total Solicitações"}
@@ -98,36 +111,70 @@ export default async function DashBoard() {
             icon={<LuClipboardCheck />}
           />
           <CardInfoDashboard
-            title={"Total Solicitações"}
-            value={totalSolicitacoesGlobal}
+            title={"Média de Horas p/ Certificação"}
+            value={mediaGlobalHHMMSS}
             icon={<FaRegClock />}
           />
           <CardInfoDashboard
-            title={"Total Solicitações"}
-            value={totalSolicitacoesGlobal}
+            title={"Problemas Registrados"}
+            value={quantidadeTags}
             icon={<LuTag />}
           />
-        </Flex>
-        <Flex flexDir={"column"} w={"full"} gap={"20px"} h={"full"} alignItems="center" justifyContent="center">
-          <Box h={"full"} w="50%" m="auto">
+        </SimpleGrid>
+        <Grid
+          templateColumns={{ 
+            base: "1fr", 
+            lg: "1fr 1fr" 
+          }}
+          templateRows={{ 
+            base: "auto auto auto", 
+            lg: "auto auto" 
+          }}
+          gap={6}
+          w={"full"}
+          minH="fit-content"
+        >
+          <Box 
+            gridColumn={{ base: "1", lg: "1 / -1" }}
+            h={{ base: "250px", md: "350px" }}
+            w="full"
+            minW={0}
+          >
             <LineChart labels={mesAnoLabels} dataValues={MediaHorasConvertida} />
           </Box>
-          <Box h={"full"} w="50%" m="auto">
+          <Box 
+            h={{ base: "400px", md: "350px" }}
+            w="full"
+            minW={0}
+          >
             <BarChart
               lista_tags={lista_tags}
               labelTitle="Quantidade de Tags: "
               dataQuantidades={quantidadeTags}
             />
           </Box>
-          <Box h={"full"} w="60%" m="auto">
-            <PieChart
-              title="Video Conferencia e Presencial"
-              colors={["#00713C", "#1D1D1B"]}
-              labels={["Video Conf.", "Presencial"]}
-              dataValues={[totalVideoConferencia, totalInterna]}
-            />
+          <Box 
+            h={"380px"}
+            w="full"
+            minW={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box
+              w={{ base: "100%", lg: "80%" }}
+              h="full"
+              maxW="400px"
+            >
+              <PieChart
+                title="Video Conferencia e Presencial"
+                colors={["#00713C", "#1D1D1B"]}
+                labels={["Video Conf.", "Presencial"]}
+                dataValues={[totalVideoConferencia, totalInterna]}
+              />
+            </Box>
           </Box>
-        </Flex>
+        </Grid>
       </Flex>
     </>
   );
