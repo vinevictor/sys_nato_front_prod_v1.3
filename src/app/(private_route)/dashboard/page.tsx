@@ -95,7 +95,7 @@ export default async function DashBoard() {
 
 
   return (
-    <Flex w="full" h="full" direction="column" p={2}>
+    <Flex w="full" h="full" direction="column" p={2} gap={2}>
 
       <Flex w="100%" gap="1%" justify="space-around" p="20px">
         <CardInfoDashboard
@@ -116,19 +116,20 @@ export default async function DashBoard() {
       </Flex>
 
       <Flex direction="column" gap="20px" align="center" w="full" h="full">
-        <Box w="50%" minH="300px">
+        <Box w="50%" minH="450px">
           <LineChart labels={mesAnoLabels} dataValues={mediasSegundos} />
         </Box>
 
-        <Box w="50%" minH="300px">
+        <Box w="50%" minH="450px">
           <BarChart
             lista_tags={lista_tags}
             labelTitle="Quantidade de Tags:"
             dataQuantidades={quantidadeTags}
           />
         </Box>
-
-        <Box w="60%" minH="300px">
+      </Flex>
+      <Flex>
+        <Box w="80%" minH="300px">
           <PieChart
             title="Vídeo‑conf. × Presencial"
             labels={["Vídeo Conf.", "Presencial"]}
