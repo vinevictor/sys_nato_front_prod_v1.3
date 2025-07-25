@@ -64,7 +64,6 @@ export default function PieChart({
 
   return (
     <Flex
-
       rounded="12px"
       p={4}
       justify="space-around"
@@ -85,6 +84,8 @@ export default function PieChart({
         display="flex"
         justifyContent="center"
         alignItems="center"
+        h={"full"}
+        w={"full"}
       >
         <Pie data={data} options={options} />
       </Box>
