@@ -1,5 +1,5 @@
 import { BugReport } from "@/components/bug";
-import { Box, Flex, FormLabel, Link, Stack, Text } from "@chakra-ui/react";
+import { Flex, FormLabel, Link, Text } from "@chakra-ui/react";
 import { mask } from "remask";
 import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
@@ -101,7 +101,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Construtora{session.construtora.length > 1 ? 's' : ''}
             </Text>
-            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+            <Text fontSize="sm" fontWeight="bold" textTransform="uppercase">
               {session.construtora.length === 0 && 'Sem Construtoras'}
               {session.construtora.length > 0 && session.construtora.length + ' Construtora'}
             </Text>
@@ -113,7 +113,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Empreendimento{session.empreendimento.length > 1 ? 's' : ''}
             </Text>
-            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+            <Text fontSize="sm" fontWeight="bold" textTransform="uppercase">
               {session.empreendimento.length === 0 && 'Sem Empreendimentos'}
               {session.empreendimento.length > 0 && session.empreendimento.length + ' Empreendimento'}
             </Text>
@@ -123,7 +123,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">
               Financeira{session.Financeira.length > 1 ? 's' : ''}
             </Text>
-            <Text fontSize="sm" fontWeight="bold"  textTransform="uppercase">
+            <Text fontSize="sm" fontWeight="bold" textTransform="uppercase">
               {session.Financeira.length === 0 && 'Sem Financeiras'}
               {session.Financeira.length > 0 && session.Financeira.length + ' Financeira'}
             </Text>

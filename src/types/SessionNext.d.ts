@@ -35,6 +35,9 @@ declare namespace SessionNext {
    * @param {number} exp
    */
   interface Server {
+    construtora: any;
+    empreendimento: any;
+    Financeira: any;
     token: string;
     user: Client;
     iat: number;
