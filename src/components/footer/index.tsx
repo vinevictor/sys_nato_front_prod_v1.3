@@ -67,7 +67,7 @@ export default function FooterComponent() {
         mt={{ base: "10px", md: "0" }}
       >
         <Text color="white">Copyright © 2024 Rede BrasilRP</Text>
-        <Text color="white">Versão Atual Sisnato: {process.env.NEXT_PUBLIC_DEPLY_VERSION}</Text>
+        <Text color="white">Versão Atual Sisnato: {process.env.NEXT_PUBLIC_DEPLOY_VERSION}</Text>
       </Flex>
     </Flex>
   );
