@@ -82,7 +82,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
                 })();
               }}
             />
-            
+
           </Flex>
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
@@ -100,7 +100,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {timeOut}
         </Td>
-        
+
       </Tr>
     </>
   );
