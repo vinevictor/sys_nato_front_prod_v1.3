@@ -40,6 +40,7 @@ export async function PATCH(
 
     return NextResponse.json(payload, { status: 200 });
   } catch (error) {
+    console.log("error", error);
     console.error("Erro interno:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }

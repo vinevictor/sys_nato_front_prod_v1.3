@@ -28,6 +28,7 @@ interface SelectMultiItemProps {
   boxWidth?: string;
   options: Option[];
   fetchUrlGet?: string;
+  fetchUrlPost?: (id: string | number) => string;
   fetchUrlDelete?: (id: string | number) => string;
   onChange?: (items: Option[]) => void;
   selectProps?: SelectProps;
@@ -40,6 +41,7 @@ export default function SelectMultiItem({
   boxWidth,
   options,
   fetchUrlGet,
+  fetchUrlPost,
   fetchUrlDelete,
   onChange,
   ...selectProps
@@ -48,14 +50,50 @@ export default function SelectMultiItem({
   const [items, setItems] = useState<Option[]>([]);
   const toast = useToast();
 
-  const handleAddItem = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddItem = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const find = options.find((item) => String(item.id) === String(selected));
     if (find && !items.some((i) => String(i.id) === String(find.id))) {
-      const updated = [...items, find];
-      setItems(updated);
-      onChange && onChange(updated);
+      if (fetchUrlPost) {
+        try {
+          const request = await fetch(fetchUrlPost(find.id), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            cache: "no-store",
+          });
+
+          const response = await request.json();
+
+          const updated = [...items, find];
+          setItems(updated);
+          onChange && onChange(updated);
+
+          toast({
+            title: request.ok ? "Adição realizada" : "Ops!",
+            description: `${
+              response.message || "Item adicionado"
+            }! Lembre-se de salvar.`,
+            status: request.ok ? "success" : "warning",
+            duration: 3000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Erro",
+            description: "Erro ao adicionar o item.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } else {
+        const updated = [...items, find];
+        setItems(updated);
+        onChange && onChange(updated);
+      }
     }
   };
 
