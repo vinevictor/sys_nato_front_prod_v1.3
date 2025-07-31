@@ -29,6 +29,7 @@ interface SelectMultiItemProps {
   options: Option[];
   fetchUrlGet?: string;
   fetchUrlPost?: (id: string | number) => string;
+  fetchUrlPatch?: (id: string | number) => string;
   fetchUrlDelete?: (id: string | number) => string;
   onChange?: (items: Option[]) => void;
   selectProps?: SelectProps;
@@ -42,6 +43,7 @@ export default function SelectMultiItem({
   options,
   fetchUrlGet,
   fetchUrlPost,
+  fetchUrlPatch,
   fetchUrlDelete,
   onChange,
   ...selectProps
@@ -55,10 +57,15 @@ export default function SelectMultiItem({
 
     const find = options.find((item) => String(item.id) === String(selected));
     if (find && !items.some((i) => String(i.id) === String(find.id))) {
-      if (fetchUrlPost) {
+      if (fetchUrlPost || fetchUrlPatch) {
         try {
-          const request = await fetch(fetchUrlPost(find.id), {
-            method: "POST",
+          const url = fetchUrlPatch
+            ? fetchUrlPatch(find.id)
+            : fetchUrlPost!(find.id);
+          const method = fetchUrlPatch ? "PATCH" : "POST";
+
+          const request = await fetch(url, {
+            method: method,
             headers: {
               "Content-Type": "application/json",
             },
@@ -72,9 +79,9 @@ export default function SelectMultiItem({
           onChange && onChange(updated);
 
           toast({
-            title: request.ok ? "Adição realizada" : "Ops!",
+            title: request.ok ? "Ação realizada" : "Ops!",
             description: `${
-              response.message || "Item adicionado"
+              response.message || "Item processado"
             }! Lembre-se de salvar.`,
             status: request.ok ? "success" : "warning",
             duration: 3000,
@@ -83,7 +90,7 @@ export default function SelectMultiItem({
         } catch (error) {
           toast({
             title: "Erro",
-            description: "Erro ao adicionar o item.",
+            description: "Erro ao processar o item.",
             status: "error",
             duration: 3000,
             isClosable: true,

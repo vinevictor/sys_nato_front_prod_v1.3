@@ -581,9 +581,9 @@ export default function FormSolicitacaoEdit({
               <SelectMultiItem
                 id="tags"
                 label="Tags"
-                fetchUrlGet={`/api/direto/tags/getallid/${id}`}
-                fetchUrlPost={(tagId) => `/api/direto/tags/add/${tagId}`}
-                fetchUrlDelete={(tagId) => `/api/direto/tags/delete/${tagId}`}
+                fetchUrlGet={`/api/direto/tags?id=${id}`}
+                fetchUrlPatch={(tagId) => `/api/direto/tags?id=${tagId}`}
+                fetchUrlDelete={(tagId) => `/api/direto/tags?id=${tagId}`}
                 options={tagsOptions}
                 onChange={(items) => setTags(items)}
                 required
