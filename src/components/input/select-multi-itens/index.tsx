@@ -150,15 +150,29 @@ export default function SelectMultiItem({
     if (fetchUrlGet) {
       (async () => {
         const req = await fetch(fetchUrlGet);
-        const res = await req.json();
+        if (!req.ok || req.status === 204) {
+          setItems([]);
+          onChange && onChange([]);
+          return;
+        }
 
-        if (req.ok) {
-          const data = res?.map((item: any) => ({
-            id: item.id,
-            label: item.descricao || item.label || item.fantasia,
-          }));
+        try {
+          const res = await req.json();
+
+          const resData = Array.isArray(res) ? res : res ? [res] : [];
+
+          const data = resData
+            .map((item: any) => ({
+              id: item.id,
+              label: item.descricao || item.label || item.fantasia,
+            }))
+            .filter((item: any) => item.id !== undefined && item.id !== null);
+
           setItems(data);
           onChange && onChange(data);
+        } catch (error) {
+          setItems([]);
+          onChange && onChange([]);
         }
       })();
     }
