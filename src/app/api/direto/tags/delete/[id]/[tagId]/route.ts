@@ -1,29 +1,31 @@
+
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
-// Esta rota depende de autenticação baseada em sessão (cookies/token),
-// por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { tagId: string } }
+) {
   try {
     const session = await GetSessionServer();
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag-list`;
-    const request = await fetch(url, {
-      method: "GET",
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tag/${params.tagId}`;
+    const requestApi = await fetch(url, {
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${session?.token}`,
       },
     });
-    const data = await request.json();
-    if (!request.ok)
+    const data = await requestApi.json();
+    if (!requestApi.ok)
       return NextResponse.json(
-        { message: "Solicitação não encontrada" },
-        { status: 404 }
+        { message: "Erro ao deletar tag" },
+        { status: 400 }
       );
     return NextResponse.json(data, { status: 200 });
   } catch (error) {

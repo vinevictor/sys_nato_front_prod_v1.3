@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function DELETE(
+export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
@@ -12,21 +12,28 @@ export async function DELETE(
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+    const { searchParams } = new URL(request.url);
+    const diretoId = searchParams.get("diretoId");
 
-    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tag/${params.id}`;
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tag`;
     const requestApi = await fetch(url, {
-      method: "DELETE",
+      method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
+      body: JSON.stringify({
+        diretoId: Number(diretoId),
+        tagId: Number(params.id),
+      }),
     });
     const data = await requestApi.json();
     if (!requestApi.ok)
       return NextResponse.json(
-        { message: "Erro ao deletar tag" },
+        { message: "Erro ao adicionar tag" },
         { status: 400 }
       );
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
