@@ -21,7 +21,7 @@ export async function GET(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`,
+          Authorization: `Bearer ${session.token}`,
         },
       }
     );
