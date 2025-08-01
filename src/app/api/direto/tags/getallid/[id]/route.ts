@@ -8,31 +8,26 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
     const session = await GetSessionServer();
-
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const reqest = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tags/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`,
-        },
-      }
-    );
-
-    if (!reqest.ok) {
-      return new NextResponse("Invalid credentials", { status: 401 });
-    }
-    const data = await reqest.json();
-
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tag/direto/${params.id}`;
+    const requestApi = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session?.token}`,
+      },
+    });
+    const data = await requestApi.json();
+    if (!requestApi.ok)
+      return NextResponse.json(
+        { message: "Solicitação não encontrada" },
+        { status: 404 }
+      );
     return NextResponse.json(data, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(error, { status: 500 });
   }
 }
