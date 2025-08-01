@@ -101,8 +101,10 @@ export async function PUT(
     );
 
     const data = await user.json();
+
     if (!user.ok) {
-      return new NextResponse("Invalid credentials", { status: 401 });
+      console.log("🚀 ~ data:", data);
+      return new NextResponse("Invalid credentials", { status: 402 });
     }
 
     return NextResponse.json(data, { status: 200 });

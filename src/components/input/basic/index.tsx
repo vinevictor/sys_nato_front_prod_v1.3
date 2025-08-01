@@ -22,7 +22,7 @@ export default function InputBasic({
   Disable = false,
   id,
   label,
-
+  boxWidth,
   ...props
 }: InputBasicProps) {
   const handleOnChange = (nome: string) => {
@@ -31,7 +31,7 @@ export default function InputBasic({
   };
 
   return (
-    <FormControl w={props.boxWidth}>
+    <FormControl w={boxWidth}>
       <FormLabel
         htmlFor={id}
         fontSize="sm"

@@ -118,10 +118,10 @@ export default function FormSolicitacaoEdit({
   );
   const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
   const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
-
+  const [isDireto, setIsDireto] = useState<boolean>(false);
   useEffect(() => {
     if (!session || !data) return;
-
+    if (data.direto) setIsDireto(true);
     setForm(data);
     setTags(data.tags || []);
 
@@ -142,7 +142,7 @@ export default function FormSolicitacaoEdit({
               setEmpreendimentosOptions(empreendimentos);
               setFinanceirasOptions(
                 initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
-                  []
+                []
               );
 
               if (data.empreendimentoId) {
@@ -302,12 +302,12 @@ export default function FormSolicitacaoEdit({
 
   const Msg =
     form?.andamento !== "EMITIDO" &&
-    form?.andamento !== "APROVADO" &&
-    form?.dt_agendamento
+      form?.andamento !== "APROVADO" &&
+      form?.dt_agendamento
       ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
       : !form?.andamento
-      ? ""
-      : form?.andamento;
+        ? ""
+        : form?.andamento;
 
   return (
     <>
@@ -333,22 +333,18 @@ export default function FormSolicitacaoEdit({
           <Flex flexDir={"column"}>
             <Text fontSize={"md"}>
               Criado Em:
-              {` ${
-                form?.createdAt &&
+              {` ${form?.createdAt &&
                 form?.createdAt.split("T")[0].split("-").reverse().join("/")
-              }, ${
-                form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
-              }`}
+                }, ${form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
+                }`}
             </Text>
             {form?.updatedAt && (
               <Text fontSize={"md"}>
                 Atualizado Em:
-                {` ${
-                  form?.updatedAt &&
+                {` ${form?.updatedAt &&
                   form?.updatedAt.split("T")[0].split("-").reverse().join("/")
-                }, ${
-                  form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
-                }`}
+                  }, ${form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
+                  }`}
               </Text>
             )}
             <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
@@ -439,34 +435,37 @@ export default function FormSolicitacaoEdit({
             />
           </Flex>
           <Flex gap={2}>
-            <SelectBasic
-              id="construtora"
-              label="Construtora"
-              onvalue={(value) => handleSelectConstrutora(value)}
-              value={form?.construtoraId || ""}
-              required
-              options={
-                isAdmin
-                  ? allOptions.map((c) => ({ id: c.id, fantasia: c.fantasia }))
-                  : session?.construtora?.map((c) => ({
+            {!isDireto && (
+              <SelectBasic
+                id="construtora"
+                label="Construtora"
+                onvalue={(value) => handleSelectConstrutora(value)}
+                value={form?.construtoraId || ""}
+                required
+                options={
+                  isAdmin
+                    ? allOptions.map((c) => ({ id: c.id, fantasia: c.fantasia }))
+                    : session?.construtora?.map((c) => ({
                       id: c.id,
                       fantasia: c.fantasia,
                     })) || []
-              }
-            />
-
-            <SelectBasic
-              id="empreendimento"
-              label="Empreendimento"
-              onvalue={(value) => handleSelectEmpreendimento(value)}
-              value={form?.empreendimentoId || ""}
-              required
-              isDisabled={!form?.construtoraId}
-              options={empreendimentosOptions.map((e) => ({
-                id: e.id,
-                fantasia: e.nome,
-              }))}
-            />
+                }
+              />
+            )}
+            {!isDireto && (
+              <SelectBasic
+                id="empreendimento"
+                label="Empreendimento"
+                onvalue={(value) => handleSelectEmpreendimento(value)}
+                value={form?.empreendimentoId || ""}
+                required
+                isDisabled={!form?.construtoraId}
+                options={empreendimentosOptions.map((e) => ({
+                  id: e.id,
+                  fantasia: e.nome,
+                }))}
+              />
+            )}
 
             <SelectBasic
               id="financeira"
@@ -487,7 +486,8 @@ export default function FormSolicitacaoEdit({
                 fantasia: f.fantasia,
               }))}
             />
-            {isAdmin && (
+
+            {!isDireto && (
               <SelectBasic
                 id="corretor"
                 label="Corretor"
