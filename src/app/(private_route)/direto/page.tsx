@@ -26,12 +26,12 @@ const GetListaDados = async (
       },
       cache: "no-store",
     });
-    
+
     if (!user.ok) {
       console.error("GetListaDados status:", user.status);
       return null;
     }
-    
+
     const data = await user.json();
     return data;
   } catch (error) {

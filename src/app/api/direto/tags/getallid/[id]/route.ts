@@ -8,13 +8,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
     const session = await GetSessionServer();
-
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
-    }
-
+    
     const reqest = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tags/${id}`,
       {
@@ -31,8 +28,9 @@ export async function GET(
     }
     const data = await reqest.json();
 
+
     return NextResponse.json(data, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(error, { status: 500 });
   }
 }
