@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
     }
     const retorno = await response.json();
 
+    revalidateTag("construtora-all");
     return NextResponse.json(
       {
         message: "Registro criado com sucesso",

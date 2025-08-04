@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ export async function DELETE(
         { status: request.status }
       );
     }
-
+    revalidateTag("construtora-all");
     return NextResponse.json(
       { message: "Construtora Desativada com sucesso" },
       { status: 200 }

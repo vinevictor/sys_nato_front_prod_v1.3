@@ -18,6 +18,11 @@ export async function GET(request: Request) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "force-cache",
+        next: {
+          tags: ["construtora-all"],
+          revalidate: 60 * 30,
+        },
       }
     );
     const data = await req.json();
