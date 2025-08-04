@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
     const data = await GetSessionServer()
-    console.log("🚀 ~ Layout ~ session:", data)
     if (data?.user.hierarquia !== "ADM") {
       redirect("/");
     }

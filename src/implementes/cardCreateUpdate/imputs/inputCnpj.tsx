@@ -41,6 +41,7 @@ export default function InputCnpj({ setValueCnpj, ...props }: InputCnpjProps) {
     if (!setValueCnpj) return;
     const valorLimpo = unMask(setValueCnpj);
     const maskCpf = mask(valorLimpo, ["99.999.999/9999-99"]);
+    setError(false);
     setMask(maskCpf);
     setCnpjLocal(valorLimpo);
   }, [setValueCnpj]);
@@ -73,7 +74,8 @@ export default function InputCnpj({ setValueCnpj, ...props }: InputCnpjProps) {
         setError(true);
       }
     }
-};
+  };
+  console.log("🚀 ~ InputCnpj ~ setLoading:", Mask)
 
   return (
     <>

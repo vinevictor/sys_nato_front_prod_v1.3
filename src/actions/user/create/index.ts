@@ -65,12 +65,12 @@ export default async function UserCreate(_: any, data: FormData) {
 
   // Monta o corpo da requisição
   const body = {
-    nome: nome,
-    username: username,
-    password: password,
+    nome: nome.trim(),
+    username: username.trim(),
+    password: password.trim(),
     telefone: telefoneFormat,
-    email: email,
-    cpf: cpf,
+    email: email.trim(),
+    cpf: cpf.trim(),
     cargo: Cargo,
     construtora: construtoraArray,
     empreendimento: empreendimentoArray,

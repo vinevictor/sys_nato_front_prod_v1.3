@@ -26,9 +26,17 @@ export default async function CardGridCnpj({
               py={2}
               textColor={"GrayText"}
               bg={"gray.100"}
+              fontSize="md"
+              fontWeight="md"
               borderBottom={"1px solid #A0AEC0"}
             >
-              {CNPJ}
+              {CNPJ
+                .replace(/\D/g, "")
+                .replace(
+                  /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+                  '$1.$2.$3/$4-$5'
+              )
+              }
             </Text>
             <InputCnpj
               hidden
