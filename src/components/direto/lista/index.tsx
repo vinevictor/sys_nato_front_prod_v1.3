@@ -365,24 +365,24 @@ export const DadoCompomentList = ({
       <Box
         display={"flex"}
         flexDir={"column"}
-        gap={{ base: 2, "2xl": 6 }}
-        w={{ base: "100%", "2xl": "80%" }}
+        gap={{ base: 2, "lg": 6 }}
+        w={{ base: "100%", "lg": "80%" }}
         h={"100%"}
         px={4}
         justifyContent={"space-between"}
         py={3}
       >
-        <Box display={{ base: "block", "2xl": "none" }}>
+        <Box display={{ base: "block", "lg": "none" }}>
           <BugReport />
         </Box>
 
         <Flex
-          flexDir={{ base: "column", "2xl": "row" }}
+          flexDir={{ base: "column", "lg": "row" }}
           justifyContent="center"
           alignItems="flex-end"
-          gap={{ base: 2, "2xl": 4 }}
+          gap={{ base: 2, "lg": 4 }}
         >
-          <Box w={{ base: "100%", "2xl": "5rem" }}>
+          <Box w={{ base: "100%", "lg": "5rem" }}>
             
             <InputComponentFilterHome
               textAlign={"start"}
@@ -399,7 +399,7 @@ export const DadoCompomentList = ({
               }}
             />
           </Box>
-          <Box w={{ base: "100%", "2xl": "20rem" }}>
+          <Box w={{ base: "100%", "lg": "20rem" }}>
             
             <InputComponentFilterHome
               type="text"
@@ -408,7 +408,7 @@ export const DadoCompomentList = ({
               onChange={(e) => setNome(e.target.value)}
             />
           </Box>
-          <Box w={{ base: "100%", "2xl": "10rem" }}>
+          <Box w={{ base: "100%", "lg": "10rem" }}>
           
             <Select
               textColor={"#00713D"}
@@ -428,7 +428,7 @@ export const DadoCompomentList = ({
               <option value="REVOGADO">REVOGADO</option>
             </Select>
           </Box>
-          <Box w={{ base: "100%", "2xl": "15rem" }}>
+          <Box w={{ base: "100%", "lg": "15rem" }}>
             
             <SelectComponentFilterHome
               Data={DataEmpreendimento}
@@ -436,7 +436,7 @@ export const DadoCompomentList = ({
               onChange={(e) => setEmpreendimento(Number(e.target.value))}
             />
           </Box>
-          <Box w={{ base: "100%", "2xl": "15rem" }}>
+          <Box w={{ base: "100%", "lg": "15rem" }}>
             
             <SelectComponentFilterHome
               Data={DataFinanceiro}
@@ -444,10 +444,10 @@ export const DadoCompomentList = ({
               onChange={(e) => setFinanceiro(Number(e.target.value))}
             />
           </Box>
-          <Box w={{ base: "100%", "2xl": "auto" }}>
+          <Box w={{ base: "100%", "lg": "auto" }}>
             <Button
               bg="#00713D"
-              w={{ base: "100%", "2xl": "auto" }}
+              w={{ base: "100%", "lg": "auto" }}
               textColor="white"
               variant="solid"
               _hover={{ bg: "#00631B" }}
@@ -458,10 +458,10 @@ export const DadoCompomentList = ({
               Filtrar
             </Button>
           </Box>
-          <Box w={{ base: "100%", "2xl": "auto" }}>
+          <Box w={{ base: "100%", "lg": "auto" }}>
             <Button
               bg="#00713D"
-              w={{ base: "100%", "2xl": "auto" }}
+              w={{ base: "100%", "lg": "auto" }}
               textColor="white"
               variant="solid"
               _hover={{ bg: "#00631B" }}
@@ -499,7 +499,7 @@ export const DadoCompomentList = ({
           >
             <Text fontSize="lg" textAlign="center">{MesageError}</Text>
             <Button
-              w={{ base: "100%", "2xl": "auto" }}
+              w={{ base: "100%", "lg": "auto" }}
               size="lg"
               colorScheme="green"
               onClick={filtroSecundario}
@@ -518,11 +518,11 @@ export const DadoCompomentList = ({
               bg={"gray.50"}
               shadow={"lg"}
               borderRadius={"15px"}
-              p={{ base: "10px", "2xl": "20px" }}
+              p={{ base: "10px", "lg": "20px" }}
               alignContent={"center"}
               justifyContent={"space-evenly"}
               flexDir={"column"}
-              display={{ base: "none", "2xl": "flex" }}
+              display={{ base: "none", "lg": "flex" }}
               border={"1px solid"}
               borderColor={"gray.200"}
             >
@@ -617,7 +617,7 @@ export const DadoCompomentList = ({
             </Flex>
 
             <Flex
-              display={{ base: "flex", "2xl": "none" }}
+              display={{ base: "flex", "lg": "none" }}
               w={"full"}
               flexDir={"column"}
               gap={3}
