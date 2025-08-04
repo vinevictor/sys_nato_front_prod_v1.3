@@ -1,6 +1,7 @@
 "use server";
 
 import { GetSessionClient, GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export default async function FinanceiraCreate(_: any, data: FormData) {
@@ -55,5 +56,6 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
     };
   }
 
+  revalidateTag("financeira-all");
   redirect("/financeiras");
 }

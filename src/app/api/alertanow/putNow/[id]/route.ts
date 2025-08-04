@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +32,8 @@ export async function PUT(
     if (!req.ok) {
       throw new Error("Erro ao atualizar alerta!");
     }
+    revalidateTag("alertanow-list");
+    revalidateTag("alertanow-list-cont");
     const retorno = await req.json();
 
     return NextResponse.json(

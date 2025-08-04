@@ -15,7 +15,12 @@ export async function GET() {
         const req = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/relatorio/numeros/geral`, {
           headers: {
             "Authorization": `Bearer ${session.token}`
-          }
+          },
+          cache: "force-cache",
+          next: {
+            tags: ["relatorio-all"],
+            revalidate: 60 * 30,
+          },
         });
         const res = await req.json();
         if (!req.ok) {

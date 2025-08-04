@@ -24,6 +24,10 @@ export async function PATCH(
         Authorization: `Bearer ${session.token}`,
       },
       body: JSON.stringify(body),
+      cache: "force-cache",
+      next: {
+        revalidate: 60 * 10,
+      },
     });
 
     const text = await resp.text();

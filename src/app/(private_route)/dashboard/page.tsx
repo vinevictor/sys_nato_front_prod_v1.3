@@ -21,7 +21,11 @@ export default async function DashBoard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-cache",
+        cache: "force-cache",
+        // revalidar a cada 2 horas
+        next: {
+          revalidate: 60 * 60 * 2,
+        },
       }
     );
 

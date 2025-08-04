@@ -18,7 +18,10 @@ export async function GET(
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${session.token}`,
             },
-            cache: "no-store",
+            cache: "force-cache",
+            next: {
+                revalidate: 60 * 30,
+            },
         });
 
         if (!res.ok) {
