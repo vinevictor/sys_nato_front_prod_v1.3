@@ -100,6 +100,9 @@ export default async function DashBoard() {
     .toISOString()
     .slice(11, 19); // "HH:mm:ss"
 
+    // atraz 3 segundos e desativar o useState load
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
   return (
     <>
 
