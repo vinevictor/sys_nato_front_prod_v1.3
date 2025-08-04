@@ -49,7 +49,7 @@ export default function SuporteFaqAutenticacaoGov() {
                   em nuvem”
                 </Text>
                 <Image
-                  src="/gov/autenticacao-gov1.png"
+                  src="/gov/autenticacao-gov1.jpg"
                   alt="Gov.br"
                   alignSelf={"center"}
                   w={"200px"}
@@ -57,14 +57,14 @@ export default function SuporteFaqAutenticacaoGov() {
                   borderRadius="md"
                   boxShadow="md"
                   cursor="pointer"
-                  onClick={() => handleImageClick("/gov/autenticacao-gov1.png")}
+                  onClick={() => handleImageClick("/gov/autenticacao-gov1.jpg")}
                   _hover={{ opacity: 0.8 }}
                 />
               </ListItem>
               <ListItem>
                 <Text mt={2}>Clique na opção “Bird ID”</Text>
                 <Image
-                  src="/gov/autenticacao-gov2.png"
+                  src="/gov/autenticacao-gov2.jpg"
                   alt="Gov.br"
                   alignSelf={"center"}
                   w={"200px"}
@@ -72,7 +72,7 @@ export default function SuporteFaqAutenticacaoGov() {
                   borderRadius="md"
                   boxShadow="md"
                   cursor="pointer"
-                  onClick={() => handleImageClick("/gov/autenticacao-gov2.png")}
+                  onClick={() => handleImageClick("/gov/autenticacao-gov2.jpg")}
                   _hover={{ opacity: 0.8 }}
                 />
               </ListItem>
@@ -81,7 +81,7 @@ export default function SuporteFaqAutenticacaoGov() {
                   Informe seu CPF e o código OTP, depois clique em “Continuar”
                 </Text>
                 <Image
-                  src="/gov/autenticacao-gov3.png"
+                  src="/gov/autenticacao-gov3.jpg"
                   alt="Gov.br"
                   alignSelf={"center"}
                   w={"200px"}
@@ -89,7 +89,7 @@ export default function SuporteFaqAutenticacaoGov() {
                   borderRadius="md"
                   boxShadow="md"
                   cursor="pointer"
-                  onClick={() => handleImageClick("/gov/autenticacao-gov3.png")}
+                  onClick={() => handleImageClick("/gov/autenticacao-gov3.jpg")}
                   _hover={{ opacity: 0.8 }}
                 />
               </ListItem>
@@ -106,7 +106,7 @@ export default function SuporteFaqAutenticacaoGov() {
                 Agora clique na opção “Autorizar Aplicação” e Pronto! 
                 </Text>
                 <Image
-                  src="/gov/autenticacao-gov4.png"
+                  src="/gov/autenticacao-gov4.jpg"
                   alt="Gov.br"
                   alignSelf={"center"}
                   w={"200px"}
@@ -114,7 +114,7 @@ export default function SuporteFaqAutenticacaoGov() {
                   borderRadius="md"
                   boxShadow="md"
                   cursor="pointer"
-                  onClick={() => handleImageClick("/gov/autenticacao-gov4.png")}
+                  onClick={() => handleImageClick("/gov/autenticacao-gov4.jpg")}
                   _hover={{ opacity: 0.8 }}
                   />
               </ListItem>

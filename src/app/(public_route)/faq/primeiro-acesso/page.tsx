@@ -100,7 +100,7 @@ export default function SuporteFaqPrimeiroAcesso() {
         </Box>
 
         <Image
-          src="/primeiroacesso2.png"
+          src="/primeiroacesso2.jpg"
           alt="Bird ID Primeiros Passos"
           w={"30vw"}
           alignSelf={"center"}
@@ -108,7 +108,7 @@ export default function SuporteFaqPrimeiroAcesso() {
           borderRadius="md"
           boxShadow="md"  
           cursor={"pointer"}
-          onClick={() => handleImageClick("/primeiroacesso2.png")}
+          onClick={() => handleImageClick("/primeiroacesso2.jpg")}
           _hover={{ opacity: 0.8 }}
         />
         <Box>
