@@ -77,7 +77,7 @@ export default function InputCnpj({ setValueCnpj, ...props }: InputCnpjProps) {
 
   return (
     <>
-      <Flex direction={"row"}>
+      <Flex direction={"row"} gap={2}>
       {Loading && (
         <Box
           w={"100%"}

@@ -1,17 +1,20 @@
 "use server";
 export default async function ApiCpnj(cnpj: string) {
   try {
-    const response = await fetch(
-      `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`
-    );
+    const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpj}`);
     const data = await response.json();
-
+    
     if (data && !data.error) {
       const result = {
         razaosocial: data.razao_social == null ? "" : data.razao_social,
-        nomefantasia: data.nome_fantasia == null ? "" : data.nome_fantasia,
-        telefone: data.ddd_telefone_1 == null ? "" : data.ddd_telefone_1,
-        email: data.email == null ? "" : data.email,
+        nomefantasia:
+          data.estabelecimento.nome_fantasia == null
+            ? ""
+            : data.estabelecimento.nome_fantasia,
+        email:
+          data.estabelecimento.email == null ? "" : data.estabelecimento.email,
+        telefone:
+          data.estabelecimento.telefone1 ? `${data.estabelecimento.ddd1}${data.estabelecimento.telefone1}`: "",
       };
       return result;
     }

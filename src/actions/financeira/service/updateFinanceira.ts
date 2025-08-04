@@ -8,7 +8,7 @@ export async function UpdateFinanceira(_: any, data: FormData) {
   const razaoSocial = data.get("razaosocial") as string;
   const email = data.get("email") as string;
   const telefone = data.get("telefone") as string;
-  const responsavel = data.get("responsavel") as string;
+  const responsavel = data.get("nome") as string;
   const fantasia = data.get("fantasia") as string;
   const construtora = data.get("construtora") as string;
   const construtoraArray = construtora.split(",");
@@ -39,7 +39,7 @@ export async function UpdateFinanceira(_: any, data: FormData) {
         razaosocial: razaoSocial,
         tel: telefone,
         email: email,
-        responsavelId: +responsavel,
+        responsavel: responsavel,
         fantasia: fantasia,
         construtoras: construtoraFinal,
       }),

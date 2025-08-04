@@ -40,7 +40,7 @@ export function CardFormComponent(props: CardFormProps) {
         title: "Sucesso",
         description: "Informações salvas com sucesso",
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
         position: "top-right",
       });
@@ -54,9 +54,9 @@ export function CardFormComponent(props: CardFormProps) {
           state?.message ||
           "Erro inesperado, favor verificar os dados, e tente novamente",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: "bottom",
       });
       setIsError(false); // Reset state after showing toast
     }

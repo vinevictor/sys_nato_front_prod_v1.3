@@ -9,14 +9,23 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
   const razaosocial = data.get("razaosocial") as string;
   const tel = data.get("telefone") as string;
   const email = data.get("email") as string;
-  const responsavel = data.get("responsavel") as string;
+  const responsavel = data.get("nome") as string;
   const fantasia = data.get("fantasia") as string;
   const construtora = data.get("construtora") as string;
   const construtoraArray = construtora.split(",");
   const construtoraFinal = construtoraArray.map((element) => {
     return Number(element);
   });
+  console.log(construtoraFinal);
 
+  if(construtoraFinal.length === 1 && construtoraFinal[0] === 0){
+    return {
+      error: true,
+      message: "Selecione pelo menos uma construtora",
+      data: null,
+      status: 400,
+    };
+  }
   const telefone = tel.replace(/[^0-9]/g, "");
 
   const session = await GetSessionServer();
@@ -38,7 +47,7 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
         razaosocial: razaosocial,
         tel: telefone,
         email: email,
-        responsavelId: +responsavel,
+        responsavel: responsavel,
         fantasia: fantasia,
         construtoras: construtoraFinal,
       }),

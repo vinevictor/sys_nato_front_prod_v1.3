@@ -13,7 +13,6 @@ export default async function CardGridCnpj({
   ...props
 }: CardGridCnpfProps) {
 
-
   return (
     <>
       <Box {...props}>
