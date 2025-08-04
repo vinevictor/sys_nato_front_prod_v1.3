@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/file/sisnato/videos/faq`;
+    console.log(url);
     const reqest = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/file/sisnatodoc`,
+      url,
       {
         method: "GET",
         headers: {
@@ -17,9 +19,6 @@ export async function GET() {
     const data = await reqest.json();
     if (!reqest.ok) {
       throw new Error(data.message);
-    }
-    if (!data) {
-      throw new Error("Nenhum dado encontrado");
     }
     return NextResponse.json(data, { status: 200 });
   } catch (error) {

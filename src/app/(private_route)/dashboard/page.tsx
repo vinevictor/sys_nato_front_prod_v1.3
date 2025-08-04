@@ -1,133 +1,177 @@
+import Loading from "@/app/loading";
 import BarChart from "@/components/barChart";
 import CardInfoDashboard from "@/components/cardInfoDashboard";
 import LineChart from "@/components/lineChart.tsx";
 import PieChart from "@/components/pieChart";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { Box, Flex, Grid, SimpleGrid } from "@chakra-ui/react";
+import { Suspense } from "react";
 import { FaRegClock } from "react-icons/fa6";
 import { LuClipboardCheck, LuTag } from "react-icons/lu";
+
+// Definir tipos
+interface SessionServer {
+  token: string;
+  // adicione outras propriedades conforme necessário
+}
+
+interface DashboardData {
+  total: number;
+  videoConferencia: number;
+  interna: number;
+  mediaHoras: string;
+  mes: number;
+  ano: number;
+}
+
+interface ApiResponse {
+  contagem: DashboardData[];
+  tags: {
+    lista_tags: any[];
+    total_tags: number;
+  };
+}
 
 export const dynamic = 'force-dynamic';
 
 export default async function DashBoard() {
-  // Função para buscar dados da API
   const session = await GetSessionServer();
-  const fetchData = async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`,
-        },
-        cache: "force-cache",
-        // revalidar a cada 2 horas
-        next: {
-          revalidate: 60 * 60 * 2,
-        },
-      }
-    );
 
-    return response.json();
+  return (
+    <Suspense fallback={<Loading />}>
+      <DashboardContent session={session} />
+    </Suspense>
+  );
+}
+
+async function DashboardContent({
+  session
+}: {
+  session: SessionServer | null
+}) {
+  // Função para buscar dados da API com tratamento de erro
+  const fetchData = async (): Promise<ApiResponse> => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          cache: "force-cache",
+          next: {
+            revalidate: 60 * 60 * 2, // 2 horas
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Erro ao buscar dados do dashboard:', error);
+      // Retornar dados padrão ou relançar o erro
+      throw error;
+    }
   };
 
-  const req = await fetchData();
-  const data = req.contagem;
-  const tags = req.tags;
-
-
-  // Dados tags
-  const lista_tags = tags.lista_tags;
-  const quantidadeTags = tags.total_tags;
-
-  //Quantidade Total Solicitacoes
-  const totalSolicitacoes = data.map((item: any) => item.total);
-  const totalSolicitacoesGlobal = totalSolicitacoes.reduce(
-    (acc: number, item: number) => acc + item,
-    0
-  );
-
-  // Extrair dados para cálculos
-  const arrayVideoConferencia = data.map((item: any) => item.videoConferencia);
-  const arrayInterna = data.map((item: any) => item.interna);
-  let totalVideoConferencia = arrayVideoConferencia.reduce(
-    (acc: number, item: number) => acc + item,
-    0
-  );
-  let totalInterna = arrayInterna.reduce(
-    (acc: number, item: number) => acc + item,
-    0
-  );
-
-  const totalInternaPorcentagem = (
-    (totalInterna / totalSolicitacoesGlobal) *
-    100
-  ).toFixed(1);
-
-  if (+totalInternaPorcentagem < 10) {
-    const valor = Math.round(totalSolicitacoesGlobal * 0.1);
-    const valorTotal = valor + totalInterna;
-
-    totalVideoConferencia = totalSolicitacoesGlobal - valorTotal;
-    totalInterna = valorTotal;
-  }
-
-  // Dados de mês/ano para os labels
-  const mesAnoLabels = data.map((item: any) => `${item.mes}/${item.ano}`);
-
-  // Dados para o LineChart
-  const arrayMediaHoras = data.map((item: any) => item.mediaHoras);
-
-  // Função para converter tempo HH:mm:ss em segundos
+  // Função unificada para converter tempo em segundos
   const timeToSeconds = (time: string): number => {
     const [hours, minutes, seconds] = time.split(":").map(Number);
     return hours * 3600 + minutes * 60 + seconds;
   };
 
-  const MediaHorasConvertida = arrayMediaHoras.map(timeToSeconds);
+  // Função para converter segundos em formato HH:mm:ss
+  const secondsToTime = (seconds: number): string => {
+    return new Date(seconds * 1000).toISOString().slice(11, 19);
+  };
 
-  const toSeconds = (t: string) =>
-    t.split(":").reduce((acc, v, i) => acc + +v * [3600, 60, 1][i], 0);
+  try {
+    const req = await fetchData();
+    const data = req.contagem;
+    const tags = req.tags;
 
-  const mediasSegundos = data.map((i: any) => toSeconds(i.mediaHoras));
+    // Dados tags
+    const lista_tags = tags.lista_tags;
+    const quantidadeTags = tags.total_tags;
 
-  const mediaGlobalSeg = Math.round(
-    mediasSegundos.reduce((a: number, b: number) => a + b, 0) / mediasSegundos.length
-  );
+    // Quantidade Total Solicitações
+    const totalSolicitacoes = data.map(item => item.total);
+    const totalSolicitacoesGlobal = totalSolicitacoes.reduce(
+      (acc, item) => acc + item,
+      0
+    );
 
-  const mediaGlobalHHMMSS = new Date(mediaGlobalSeg * 1000)
-    .toISOString()
-    .slice(11, 19); // "HH:mm:ss"
+    // Extrair dados para cálculos
+    const arrayVideoConferencia = data.map(item => item.videoConferencia);
+    const arrayInterna = data.map(item => item.interna);
+    
+    const totalVideoConferencia = arrayVideoConferencia.reduce(
+      (acc, item) => acc + item,
+      0
+    );
+    const totalInterna = arrayInterna.reduce(
+      (acc, item) => acc + item,
+      0
+    );
 
-    // atraz 3 segundos e desativar o useState load
+    // Removi a lógica de manipulação artificial dos dados
+    // Se precisar de lógica de negócio específica, documente o motivo
+
+    // Dados de mês/ano para os labels
+    const mesAnoLabels = data.map(item => `${item.mes}/${item.ano}`);
+
+    // Dados para o LineChart - convertendo para segundos
+    const MediaHorasConvertida = data.map(item => 
+      timeToSeconds(item.mediaHoras)
+    );
+
+    // Cálculo da média global
+    const mediasSegundos = data.map(item => timeToSeconds(item.mediaHoras));
+    const mediaGlobalSeg = Math.round(
+      mediasSegundos.reduce((a, b) => a + b, 0) / mediasSegundos.length
+    );
+    const mediaGlobalHHMMSS = secondsToTime(mediaGlobalSeg);
+
+    // Delay para manter consistência com outras páginas
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  return (
-    <>
-
-      <Flex w={"full"} h={"full"} flexDir={"column"} p={{ base: 4, md: 6 }} gap={6} overflowX="hidden" overflowY="auto">
+    return (
+      <Flex 
+        w="full" 
+        h="full" 
+        flexDir="column" 
+        p={{ base: 4, md: 6 }} 
+        gap={6} 
+        overflowX="hidden" 
+        overflowY="auto"
+      >
         <SimpleGrid
           columns={{ base: 1, sm: 2, lg: 3 }}
           spacing={4}
-          w={"100%"}
+          w="100%"
         >
           <CardInfoDashboard
-            title={"Total Solicitações"}
+            title="Total Solicitações"
             value={totalSolicitacoesGlobal}
             icon={<LuClipboardCheck />}
           />
           <CardInfoDashboard
-            title={"Média de Horas p/ Certificação"}
+            title="Média de Horas p/ Certificação"
             value={mediaGlobalHHMMSS}
             icon={<FaRegClock />}
           />
           <CardInfoDashboard
-            title={"Problemas Registrados"}
+            title="Problemas Registrados"
             value={quantidadeTags}
             icon={<LuTag />}
           />
         </SimpleGrid>
+
         <Grid
           templateColumns={{ 
             base: "1fr", 
@@ -138,7 +182,7 @@ export default async function DashBoard() {
             lg: "auto auto" 
           }}
           gap={6}
-          w={"full"}
+          w="full"
           minH="fit-content"
         >
           <Box 
@@ -147,8 +191,12 @@ export default async function DashBoard() {
             w="full"
             minW={0}
           >
-            <LineChart labels={mesAnoLabels} dataValues={MediaHorasConvertida} />
+            <LineChart 
+              labels={mesAnoLabels} 
+              dataValues={MediaHorasConvertida} 
+            />
           </Box>
+
           <Box 
             h={{ base: "400px", md: "350px" }}
             w="full"
@@ -160,8 +208,9 @@ export default async function DashBoard() {
               dataQuantidades={quantidadeTags}
             />
           </Box>
+
           <Box 
-            h={"380px"}
+            h="380px"
             w="full"
             minW={0}
             display="flex"
@@ -174,7 +223,7 @@ export default async function DashBoard() {
               maxW="400px"
             >
               <PieChart
-                title="Video Conferencia e Presencial"
+                title="Video Conferência e Presencial"
                 colors={["#00713C", "#1D1D1B"]}
                 labels={["Video Conf.", "Presencial"]}
                 dataValues={[totalVideoConferencia, totalInterna]}
@@ -183,6 +232,17 @@ export default async function DashBoard() {
           </Box>
         </Grid>
       </Flex>
-    </>
-  );
+    );
+
+  } catch (error) {
+    // Componente de erro ou fallback
+    return (
+      <Flex justify="center" align="center" h="50vh">
+        <Box textAlign="center">
+          <h2>Erro ao carregar dashboard</h2>
+          <p>Tente novamente mais tarde</p>
+        </Box>
+      </Flex>
+    );
+  }
 }
