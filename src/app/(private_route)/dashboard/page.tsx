@@ -21,7 +21,11 @@ export default async function DashBoard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "no-cache",
+        cache: "force-cache",
+        // revalidar a cada 2 horas
+        next: {
+          revalidate: 60 * 60 * 2,
+        },
       }
     );
 
@@ -95,6 +99,9 @@ export default async function DashBoard() {
   const mediaGlobalHHMMSS = new Date(mediaGlobalSeg * 1000)
     .toISOString()
     .slice(11, 19); // "HH:mm:ss"
+
+    // atraz 3 segundos e desativar o useState load
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
   return (
     <>

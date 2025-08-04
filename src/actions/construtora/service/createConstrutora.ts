@@ -1,5 +1,6 @@
 "use server";
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export default async function CreateConstrutora(_: any, data: FormData) {
@@ -44,7 +45,7 @@ export default async function CreateConstrutora(_: any, data: FormData) {
         data: result,
       };
     }
-
+    revalidateTag("construtora-all");
     return {
       error: false,
       message: "Construtora cadastrada com sucesso",

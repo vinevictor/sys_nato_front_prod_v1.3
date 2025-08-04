@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       throw new Error("Erro ao criar o registro");
     }
+    revalidateTag("financeira-all");
     const retorno = await response.json();
 
     return NextResponse.json(

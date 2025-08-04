@@ -26,12 +26,12 @@ const GetListaDados = async (
       },
       cache: "no-store",
     });
-
+    
     if (!user.ok) {
       console.error("GetListaDados status:", user.status);
       return null;
     }
-
+    
     const data = await user.json();
     return data;
   } catch (error) {
@@ -43,7 +43,9 @@ const GetListaDados = async (
 export default async function DiretoPage() {
   const session = await GetSessionServer();
   const ListDados = await GetListaDados(session);
-
+  
+  await new Promise((resolve) => setTimeout(resolve, 4000));
+  
   return (
     <>
       <HomeProvider>

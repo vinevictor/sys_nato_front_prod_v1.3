@@ -22,6 +22,11 @@ try {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
+    cache: "force-cache",
+    next: {
+      tags: ["alertanow-list-cont"],
+      revalidate: 60 * 30,
+    },
   });
   const data = await user.json();
   if (!user.ok) {

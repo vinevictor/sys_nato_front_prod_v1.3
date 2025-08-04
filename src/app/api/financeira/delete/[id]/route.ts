@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,7 @@ export async function DELETE(
     if (!reqest.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });
     }
+    revalidateTag("financeira-all");
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error }, { status: 500 });

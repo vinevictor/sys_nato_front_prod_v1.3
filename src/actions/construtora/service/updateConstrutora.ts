@@ -1,5 +1,6 @@
 "use server";
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export default async function UpdateConstrutora(_: any, data: FormData) {
@@ -57,6 +58,7 @@ export default async function UpdateConstrutora(_: any, data: FormData) {
       data: null,
     };
   } else {
+    revalidateTag("construtora-all");
     redirect("/construtoras");
   }
 }

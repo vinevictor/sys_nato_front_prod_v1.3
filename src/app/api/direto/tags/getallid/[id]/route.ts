@@ -11,6 +11,8 @@ export async function GET(
     const session = await GetSessionServer();
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+    const { id } = params;
     
     const reqest = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto-tags/${id}`,

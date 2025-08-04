@@ -1,4 +1,5 @@
 import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export async function DELETE(
     if (!response.ok) {
       throw new Error("Erro ao excluir relatório");
     }
+    revalidateTag("relatorio-all");
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

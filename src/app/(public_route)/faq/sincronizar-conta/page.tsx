@@ -67,7 +67,7 @@ export default function SuporteFaqSincronizarConta() {
           </Text>
         </Box>
         <Image
-          src="/sincronizarconta.png"
+          src="/sincronizarconta.jpg"
           alt="Bird ID QR Code"
           w={'30vw'}
           alignSelf={"center"}
@@ -75,7 +75,7 @@ export default function SuporteFaqSincronizarConta() {
           borderRadius="md"
           boxShadow="md"
           cursor="pointer"
-          onClick={() => handleImageClick("/sincronizarconta.png")}
+          onClick={() => handleImageClick("/sincronizarconta.jpg")}
           _hover={{ opacity: 0.8 }}
         />
         <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered>
