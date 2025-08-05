@@ -90,5 +90,7 @@ export async function UpdateUser(_: any, data: FormData) {
     };
   }
   revalidateTag("usuarios_list");
+  revalidateTag("Usuarios-list-page");
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   redirect("/usuarios");
 }

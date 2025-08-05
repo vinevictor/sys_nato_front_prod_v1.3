@@ -79,7 +79,7 @@ export default function InputCostrutoraCnpj({ setValueCnpj, ...props }: InputCnp
 
   return (
     <>
-      <Flex direction={"row"}>
+      <Flex direction={"row"} gap={2}>
       {Loading && (
         <Box
           w={"100%"}
@@ -113,7 +113,7 @@ export default function InputCostrutoraCnpj({ setValueCnpj, ...props }: InputCnp
         alignSelf={"center"}
         size={"sm"}
         colorScheme="green"
-        aria-label="Search database"
+        aria-label="procurar cnpj"
         icon={<FaSearch />}
         onClick={handleOnClick}
       />

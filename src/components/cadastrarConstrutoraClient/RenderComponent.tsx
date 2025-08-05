@@ -6,23 +6,8 @@ import BotaoCancelar from "@/components/botoes/btn_cancelar";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import ContrutoraProvider from "@/provider/ConstrutoraProvider";
 import { Box, Button, Divider, Flex, Heading, Spacer } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export interface Props {
-  session: any;
-}
-
-export default function CadastrarConstrutoraClient({ session }: Props) {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session && session.hierarquia !== "ADM") {
-      router.push("/");
-    }
-  }, []);
+export default function CadastrarConstrutoraClient() {
 
   return (
     <>
@@ -83,4 +68,3 @@ export default function CadastrarConstrutoraClient({ session }: Props) {
   );
 }
 
-//TODO: revisar cadastro de construtora

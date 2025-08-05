@@ -16,6 +16,10 @@ export default async function Usuarios() {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
+    next: {
+      revalidate: 60 * 60 * 2,
+      tags: ["Usuarios-list-page"],
+    },
   });
 
   const data = await reqest.json();

@@ -41,7 +41,7 @@ export function BtnExcluirFinanceira({ id }: BtnExcluirFinanceiraProps) {
         isClosable: true,
       });
       onClose();
-      router.refresh();
+      router.push("/financeiras");
     } else {
       toast({
         title: "Erro!",

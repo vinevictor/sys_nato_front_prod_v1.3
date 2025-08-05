@@ -38,6 +38,7 @@ export async function DELETE(
       );
     }
     revalidateTag("construtora-all");
+    revalidateTag("construtora-all-page");
     return NextResponse.json(
       { message: "Construtora Desativada com sucesso" },
       { status: 200 }

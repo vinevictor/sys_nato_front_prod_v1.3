@@ -1,6 +1,4 @@
 "use client";
-
-import { DeleteUser } from "@/actions/user/service/deleteUser";
 import {
   Button,
   IconButton,
@@ -14,8 +12,10 @@ import {
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
+import { useFormStatus } from "react-dom";
 import { BsFillTrashFill } from "react-icons/bs";
 import { MdOutlineCancel } from "react-icons/md";
+import { BeatLoader } from "react-spinners";
 
 interface BtnExcluirUserProps {
   id: number;
@@ -23,13 +23,17 @@ interface BtnExcluirUserProps {
 
 export function BtnExcluirUser({ id }: BtnExcluirUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const status = useFormStatus();
   const toast = useToast();
 
   const handleExcluir = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const response = await DeleteUser(id);
+    try {
+    const response = await fetch(`/api/usuario/delete/${id}`, {
+      method: "DELETE",
+    });
+    console.log(response);
 
-    if (response.error === false) {
       toast({
         title: "Sucesso!",
         description: "Usuario excluído com sucesso!",
@@ -40,7 +44,7 @@ export function BtnExcluirUser({ id }: BtnExcluirUserProps) {
 
       onClose();
       window.location.reload();
-    } else {
+    } catch (error) {
       toast({
         title: "Erro!",
         description: "Ocorreu um erro ao excluir o usuario!",
@@ -84,6 +88,8 @@ export function BtnExcluirUser({ id }: BtnExcluirUserProps) {
               leftIcon={<BsFillTrashFill />}
               onClick={handleExcluir}
               colorScheme="red"
+              isLoading={status.pending ? true : false}
+              spinner={<BeatLoader size={8} color="white" />}
             >
               Confirmar Exclusão
             </Button>

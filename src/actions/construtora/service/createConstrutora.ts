@@ -1,10 +1,11 @@
 "use server";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 
 export default async function CreateConstrutora(_: any, data: FormData) {
-  try {
+  
     const cnpj = data.get("cnpj") as string;
     const razaosocial = data.get("razaosocial") as string;
     const tel = data.get("telefone") as string;
@@ -12,11 +13,11 @@ export default async function CreateConstrutora(_: any, data: FormData) {
     const fantasia = data.get("fantasia") as string;
 
     const body = {
-      cnpj,
-      razaosocial,
-      fantasia,
-      tel,
-      email,
+      cnpj: cnpj.trim(),
+      razaosocial: razaosocial.trim(),
+      fantasia: fantasia.trim(),
+      tel: tel.trim(),
+      email: email.trim(),
     };
     const session = await GetSessionServer();
 
@@ -41,22 +42,11 @@ export default async function CreateConstrutora(_: any, data: FormData) {
     if (!res.ok) {
       return {
         error: true,
-        message: "Erro ao cadastrar construtora",
+        message: result.message || "Erro ao cadastrar construtora",
         data: result,
       };
     }
     revalidateTag("construtora-all");
-    return {
-      error: false,
-      message: "Construtora cadastrada com sucesso",
-      data: null,
-    };
-  } catch (error: any) {
-    console.error("Erro ao criar chamado:", error);
-    return {
-      error: true,
-      message: "Erro ao cadastrar construtora",
-      data: error,
-    };
-  }
+    revalidateTag("construtora-all-page");
+    redirect("/construtoras");
 }

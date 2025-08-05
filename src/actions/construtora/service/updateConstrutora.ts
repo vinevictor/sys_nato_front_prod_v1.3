@@ -46,19 +46,13 @@ export default async function UpdateConstrutora(_: any, data: FormData) {
   if (!req.ok) {
     return {
       error: true,
-      message: res.message,
+      message: res.message || "Falha ao atualizar a construtora.",
       data: null,
     };
   }
 
-  if (res.error) {
-    return {
-      error: true,
-      message: res.message,
-      data: null,
-    };
-  } else {
-    revalidateTag("construtora-all");
-    redirect("/construtoras");
-  }
+  revalidateTag("construtora-all");
+  revalidateTag("construtora-all-page");
+  redirect("/construtoras");
 }
+

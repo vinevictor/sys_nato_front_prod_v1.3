@@ -22,9 +22,9 @@ export default function InputFantasia({ setValueFantasia, ...props }: InputFanta
     }
     if (!setValueFantasia) return;
     const ValorSemAcentos = setValueFantasia.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z\s\.,\/\\:;!?'"()-]/g, "");
+    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z0-9\s\.,\/\\:;!?'"()-]/g, "");
     const Linite1EspacoEntre = removeCaracteresEspeciais.replace(/\s+/g, " ");
-    const RemosEspacosExtras = Linite1EspacoEntre.trim();
+    const RemosEspacosExtras = Linite1EspacoEntre;
     const UpCase = RemosEspacosExtras.toUpperCase();
     setFantasiaLocal(UpCase);
   }, [setValueFantasia,data]);
@@ -32,7 +32,7 @@ export default function InputFantasia({ setValueFantasia, ...props }: InputFanta
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valor = e.target.value;
     const ValorSemAcentos = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z\s\.,\/\\:;!?'"()-]/g, "");
+    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z0-9\s\.,\/\\:;!?'"()-]/g, "");
     const Linite1EspacoEntre = removeCaracteresEspeciais.replace(/\s+/g, " ");
     const RemosEspacosExtras = Linite1EspacoEntre;
     const UpCase = RemosEspacosExtras.toUpperCase();

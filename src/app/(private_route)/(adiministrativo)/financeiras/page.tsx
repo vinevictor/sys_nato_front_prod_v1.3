@@ -17,6 +17,10 @@ export default async function FinanceirasPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
+      next: {
+        revalidate: 60 * 60 * 2,
+        tags: ["financeiras-list-page"],
+      },
     }));
 
   const data = await req.json();
