@@ -135,13 +135,18 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.nome}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {dados.construtora?.fantasia} - {dados.financeiro.fantasia}
+          {dados.construtora?.fantasia} -
+          {dados.financeiro ? dados.financeiro.fantasia : "SEM FINANCEIRO"}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {agendamento}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {dados.andamento === "NOVA FC" ? "INICIADO" : dados.andamento === "REAGENDAMENTO" ? "Cliente não estava disponivel. Novo agendamento sendo feito." : dados.andamento}
+          {dados.andamento === "NOVA FC"
+            ? "INICIADO"
+            : dados.andamento === "REAGENDAMENTO"
+            ? "Cliente não estava disponivel. Novo agendamento sendo feito."
+            : dados.andamento}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {timeOut}
