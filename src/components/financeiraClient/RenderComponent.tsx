@@ -43,7 +43,7 @@ export default async function CadastrarFinanceiraClient() {
               alignItems={{ base: "stretch", md: "flex-start" }}
             >
               <FinanceiraProvider>
-                <CardCreateUpdate.GridCnpj w={{ base: "100%", md: "15rem" }} />
+                <CardCreateUpdate.GridCnpj w={{ base: "100%", md: "16rem" }} />
                 <CardCreateUpdate.GridRazaoSocial
                   w={{ base: "100%", md: "35rem" }}
                 />
@@ -53,8 +53,9 @@ export default async function CadastrarFinanceiraClient() {
                 <CardCreateUpdate.GridRazaoSocialEmail
                   w={{ base: "100%", md: "30rem" }}
                 />
-                <CardCreateUpdate.GridResponsavel
+                <CardCreateUpdate.GridName
                   w={{ base: "100%", md: "25rem" }}
+                  label="Responsável"
                 />
                 <CardCreateUpdate.GridFantasia
                   w={{ base: "100%", md: "15rem" }}
@@ -97,6 +98,3 @@ export default async function CadastrarFinanceiraClient() {
     </>
   );
 }
-
-//TODO: revisar cadastro de financeira
-//TODO: relacionar financeira com construtora

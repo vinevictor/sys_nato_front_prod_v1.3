@@ -33,9 +33,10 @@ export function CardUpdateFinanceira({ id, setFinanceiraCard }: Props) {
               w={"30rem"}
               DataSolicitacao={setFinanceiraCard ?? ""}
             />
-            <CardCreateUpdate.GridResponsavel
+            <CardCreateUpdate.GridName
               w={"25rem"}
-              Responsavel={setFinanceiraCard?.responsavel ?? ""}
+              Nome={setFinanceiraCard?.responsavel ?? ""}
+              label="Responsável"
             />
             <CardCreateUpdate.GridFantasia
               w={"15rem"}

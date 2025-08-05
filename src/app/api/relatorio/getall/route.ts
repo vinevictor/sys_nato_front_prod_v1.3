@@ -16,7 +16,6 @@ export async function GET() {
           headers: {
             "Authorization": `Bearer ${session.token}`
           },
-          cache: "force-cache",
           next: {
             tags: ["relatorio-all"],
             revalidate: 60 * 30,

@@ -14,7 +14,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
     <>
       {session && (
         <Flex
-          display={{ base: "none", "2xl": "flex" }}
+          display={{ base: "none", "lg": "flex" }}
           w={"20%"}
           minH={"100%"}
           borderRight="1px solid"

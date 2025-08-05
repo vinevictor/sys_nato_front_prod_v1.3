@@ -21,10 +21,11 @@ export const InputTelRazaoSocial = ({
 
   useEffect(() => {
     if (data) {
-      setTelLocal(data.telefone);
+      const MaskTel = mask(data.telefone, ["(99) 9999-9999", "(99) 9 9999-9999"]);
+      setTelLocal(MaskTel);
     }
     if (tell) {
-      const MaskTel = mask(tell, ["(99) 9 9999-9999", "(99) 9999-9999"]);
+      const MaskTel = mask(tell, ["(99) 9999-9999", "(99) 9 9999-9999"]);
       setTelLocal(MaskTel);
     }
   }, [tell, data]);
@@ -33,7 +34,7 @@ export const InputTelRazaoSocial = ({
     if (e.target) {
       const value = e.target.value;
       const valorLimpo = value.replace(/[^0-9]/g, "");
-      const MaskTel = mask(valorLimpo, ["(99) 9 9999-9999", "(99) 9999-9999"]);
+      const MaskTel = mask(valorLimpo, ["(99) 9999-9999", "(99) 9 9999-9999"]);
       setTelLocal(MaskTel);
     }
   };
@@ -51,7 +52,7 @@ export const InputTelRazaoSocial = ({
       <Input
         hidden
         type="text"
-        value={tell}
+        value={telLocal.replace(/[^0-9]/g, "")}
         name={"telefoneSemMask"}
         readOnly
       />

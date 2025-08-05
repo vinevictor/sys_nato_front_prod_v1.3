@@ -21,7 +21,6 @@ export async function GET() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        cache: "force-cache",
         next: {
           tags: ["financeira-all"],
           revalidate: 60 * 30,

@@ -18,7 +18,7 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
 
   useEffect(() => {
     if (tell) {
-      const MaskTel = mask(tell, ["(99) 9 9999-9999", "(99) 9999-9999"]);
+      const MaskTel = mask(tell, ["(99) 9999-9999", "(99) 9 9999-9999"]);
       setTel1(MaskTel);
     }
   }, [tell]);
@@ -27,7 +27,7 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
     if (e.target) {
       const value = e.target.value;
       const valorLimpo = value.replace(/[^0-9]/g, "");
-      const MaskTel = mask(valorLimpo, ["(99) 9 9999-9999", "(99) 9999-9999"]);
+      const MaskTel = mask(valorLimpo, ["(99) 9999-9999", "(99) 9 9999-9999"]);
       setTel1(MaskTel);
     }
   };

@@ -48,10 +48,8 @@ export default function InputName({
       .replace(/[\u0300-\u036f]/g, "");
   
     const noSpecialChars = normalized.replace(/[^a-zA-Z\s]/g, "");
-  
-    const singleSpaced = noSpecialChars.replace(/\s+/g, " ").trim();
-  
-    const upperCased = singleSpaced.toUpperCase();
+
+    const upperCased = noSpecialChars.toUpperCase();
   
     setNome(upperCased);
   

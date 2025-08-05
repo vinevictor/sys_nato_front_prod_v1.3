@@ -4,18 +4,28 @@ import InputName from "../imputs/inputName";
 interface CardGridNameProps extends BoxProps {
   Nome?: string;
   readonly?: boolean;
+  label?: string;
 }
 
 export default function CardGridName({
   Nome,
   readonly,
+  label,
   ...props
 }: CardGridNameProps) {
   return (
     <Box {...props}>
-      <FormLabel fontSize="sm" fontWeight="md" m={0}>
-        Nome Completo
-      </FormLabel>
+      {
+        label ? (
+          <FormLabel fontSize="sm" fontWeight="md" m={0}>
+            {label}
+          </FormLabel>
+        ) : (
+          <FormLabel fontSize="sm" fontWeight="md" m={0}>
+            Nome Completo
+          </FormLabel>
+        )
+      }
       <InputName
         name="nome"
         variant="flushed"

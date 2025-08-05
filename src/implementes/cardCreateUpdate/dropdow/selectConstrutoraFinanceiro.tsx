@@ -116,7 +116,7 @@ export function SelectConstrutoraFinanceiro({
           value={Construtora}
         >
           <option style={{ backgroundColor: "#EDF2F7" }} value={0}>
-            Selecione uma financeira
+            Selecione uma construtora
           </option>
           {ConstrutoraData.length > 0 &&
             ConstrutoraData.map((Construtora: any) => (
