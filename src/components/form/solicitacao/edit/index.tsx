@@ -2,6 +2,7 @@
 import Loading from "@/app/loading";
 import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_cliente";
 import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
+import BotaoSisapp from "@/components/botoes/bt_sisapp";
 import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
 import BotaoPausar from "@/components/botoes/btn_pausar";
 import { CriarFcweb } from "@/components/botoes/criarFcweb";
@@ -142,7 +143,7 @@ export default function FormSolicitacaoEdit({
               setEmpreendimentosOptions(empreendimentos);
               setFinanceirasOptions(
                 initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
-                []
+                  []
               );
 
               if (data.empreendimentoId) {
@@ -302,12 +303,12 @@ export default function FormSolicitacaoEdit({
 
   const Msg =
     form?.andamento !== "EMITIDO" &&
-      form?.andamento !== "APROVADO" &&
-      form?.dt_agendamento
+    form?.andamento !== "APROVADO" &&
+    form?.dt_agendamento
       ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
       : !form?.andamento
-        ? ""
-        : form?.andamento;
+      ? ""
+      : form?.andamento;
 
   return (
     <>
@@ -333,18 +334,22 @@ export default function FormSolicitacaoEdit({
           <Flex flexDir={"column"}>
             <Text fontSize={"md"}>
               Criado Em:
-              {` ${form?.createdAt &&
+              {` ${
+                form?.createdAt &&
                 form?.createdAt.split("T")[0].split("-").reverse().join("/")
-                }, ${form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
-                }`}
+              }, ${
+                form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
+              }`}
             </Text>
             {form?.updatedAt && (
               <Text fontSize={"md"}>
                 Atualizado Em:
-                {` ${form?.updatedAt &&
+                {` ${
+                  form?.updatedAt &&
                   form?.updatedAt.split("T")[0].split("-").reverse().join("/")
-                  }, ${form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
-                  }`}
+                }, ${
+                  form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
+                }`}
               </Text>
             )}
             <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
@@ -444,11 +449,14 @@ export default function FormSolicitacaoEdit({
                 required
                 options={
                   isAdmin
-                    ? allOptions.map((c) => ({ id: c.id, fantasia: c.fantasia }))
+                    ? allOptions.map((c) => ({
+                        id: c.id,
+                        fantasia: c.fantasia,
+                      }))
                     : session?.construtora?.map((c) => ({
-                      id: c.id,
-                      fantasia: c.fantasia,
-                    })) || []
+                        id: c.id,
+                        fantasia: c.fantasia,
+                      })) || []
                 }
               />
             )}
@@ -561,6 +569,7 @@ export default function FormSolicitacaoEdit({
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
+          <BotaoSisapp body={data} />
           {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
           <Button
             colorScheme="orange"
