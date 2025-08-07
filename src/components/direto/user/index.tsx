@@ -95,7 +95,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
 
           <BugReport />
 
-          <FinanceiraLinks userId={session.user.id} />
+          {session.user.hierarquia !== "ADM" && <FinanceiraLinks userId={session.user.id} />}
 
           <Flex flexDir="column" gap={3}>
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">

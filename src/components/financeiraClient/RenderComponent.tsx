@@ -3,6 +3,7 @@ import FinanceiraProvider from "@/provider/FinanceiraProvider";
 import FinanceiraCreate from "@/actions/financeira/service/createFinanceira";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import BotaoCancelar from "@/components/botoes/btn_cancelar";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
 export default async function CadastrarFinanceiraClient() {
   return (
@@ -73,7 +74,7 @@ export default async function CadastrarFinanceiraClient() {
               flexDir={{ base: "column", md: "row" }}
               gap={2}
             >
-              <Button
+              <SaveBtm
                 type="submit"
                 mt={2}
                 alignSelf={"center"}
@@ -82,7 +83,7 @@ export default async function CadastrarFinanceiraClient() {
                 w={{ base: "100%", md: "auto" }}
               >
                 Salvar
-              </Button>
+              </SaveBtm>
               <BotaoCancelar
                 mt={2}
                 alignSelf={"center"}

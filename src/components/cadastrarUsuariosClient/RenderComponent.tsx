@@ -14,6 +14,7 @@ import UserCreate from "@/actions/user/create";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
 import BotaoCancelar from "@/components/botoes/btn_cancelar";
 import Permissoes from "@/components/usuarios_component/permissoes";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
 export default function CadastrarUsuarioClient() {
   return (
@@ -105,9 +106,9 @@ export default function CadastrarUsuarioClient() {
 
           <Divider my={6} borderColor="gray.400" />
           <Flex w="full" justify="flex-end" gap={4}>
-            <Button type="submit" colorScheme="green" size="md" className="btn">
+            <SaveBtm type="submit" colorScheme="green" size="md" className="btn">
               Salvar
-            </Button>
+            </SaveBtm>
             <BotaoCancelar
               colorScheme="red"
               variant="outline"

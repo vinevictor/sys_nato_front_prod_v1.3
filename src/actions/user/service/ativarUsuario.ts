@@ -28,6 +28,7 @@ export async function ativarUsuario(id: number) {
     return { error: true, message: res.message};
   }
   revalidateTag("usuarios_list");
+  revalidateTag("Usuarios-list-page");
 
   return { error: false, message: 'Usuário ativado com sucesso'}
   

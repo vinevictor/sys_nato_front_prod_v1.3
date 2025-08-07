@@ -26,9 +26,9 @@ export default function InputUser({ setValueUser, ...props }: InputUserProps) {
 
   useEffect(() => {
     if (!setValueUser) return;
-    const ValorSemAcentos = setValueUser
-    const removeCaracteresEspeciais = ValorSemAcentos;
-    const Linite1EspacoEntre = removeCaracteresEspeciais;
+    const ValorSemAcentos = setValueUser.normalize("NFD").replace(/[^a-zA-Z0-9]/g, "");
+    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z0-9]/g, "");
+    const Linite1EspacoEntre = removeCaracteresEspeciais.trim();
     const RemosEspacosExtras = Linite1EspacoEntre;
     const UpCase = RemosEspacosExtras.toUpperCase();
     setUsuario(UpCase);
@@ -36,9 +36,9 @@ export default function InputUser({ setValueUser, ...props }: InputUserProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valor = e.target.value;
-    const ValorSemAcentos = valor
-    const removeCaracteresEspeciais = ValorSemAcentos
-    const Linite1EspacoEntre = removeCaracteresEspeciais;
+    const ValorSemAcentos = valor.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const removeCaracteresEspeciais = ValorSemAcentos.replace(/[^a-zA-Z0-9]/g, "");
+    const Linite1EspacoEntre = removeCaracteresEspeciais.trim();
     const RemosEspacosExtras = Linite1EspacoEntre;
     const UpCase = RemosEspacosExtras.toUpperCase();
     setUsuario(UpCase);

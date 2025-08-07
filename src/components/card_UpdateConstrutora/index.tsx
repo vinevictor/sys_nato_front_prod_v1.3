@@ -1,9 +1,10 @@
-import { Flex, Spacer, Divider, Button, Input } from "@chakra-ui/react";
+import { Flex, Spacer, Divider, Input } from "@chakra-ui/react";
 import React from "react";
 import ContrutoraProvider from "@/provider/ConstrutoraProvider";
 import UpdateConstrutora from "@/actions/construtora/service/updateConstrutora";
 import BotaoCancelar from "../botoes/btn_cancelar";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
 type Props = {
   setConstrutoraCard: any;
@@ -43,15 +44,15 @@ export async function CardUpdateConstrutora({ id, setConstrutoraCard }: Props) {
             />
           </ContrutoraProvider>
           <Spacer />
-          <Button
-            type="submit"
+          <SaveBtm
             mt={2}
             alignSelf={"center"}
             colorScheme="green"
             size="lg"
+            type="submit"
           >
             Salvar
-          </Button>
+          </SaveBtm>
           <BotaoCancelar
             mt={2}
             alignSelf={"center"}
