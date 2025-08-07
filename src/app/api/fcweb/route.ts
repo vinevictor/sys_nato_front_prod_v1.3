@@ -6,12 +6,11 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const User = process.env.USER_API;
-    const Pass = process.env.PASS_API;
+    const pass = process.env.PASS_API_FCWEB;
     const session = await GetSessionServer();
     const { id, ...res } = data;
 
-    const credentials = Buffer.from(`${User}:${Pass}`).toString("base64");
+    const credentials = Buffer.from(`${pass}`).toString("base64");
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
