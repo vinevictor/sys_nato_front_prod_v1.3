@@ -28,6 +28,7 @@ async function ConstrutorasData() {
       },
       next: {
         revalidate: 60 * 10, // 10 minutos
+        tags: ["construtora-all-page"],
       },
     });
 

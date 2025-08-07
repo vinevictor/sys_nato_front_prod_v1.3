@@ -66,5 +66,6 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
   }
 
   revalidateTag("financeira-all");
+  revalidateTag("financeiras-list-page");
   redirect("/financeiras");
 }

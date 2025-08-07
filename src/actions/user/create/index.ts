@@ -100,13 +100,7 @@ export default async function UserCreate(_: any, data: FormData) {
       id: undefined,
     };
   }
-
   revalidateTag("usuarios_list");
+  revalidateTag("Usuarios-list-page");
   redirect(`/usuarios`);
-  // Retorno de sucesso padronizado
-  return {
-    error: false,
-    message: res.message || "Usuário cadastrado com sucesso.",
-    id: res.data?.id?.toString() || undefined, // Garante que o id seja string ou undefined
-  };
 }

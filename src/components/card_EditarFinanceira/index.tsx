@@ -4,6 +4,7 @@ import { Flex, Spacer, Divider, Button } from "@chakra-ui/react";
 import { UpdateFinanceira } from "@/actions/financeira/service/updateFinanceira";
 import BotaoCancelar from "../botoes/btn_cancelar";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
 type Props = {
   setFinanceiraCard: any;
@@ -44,11 +45,11 @@ export function CardUpdateFinanceira({ id, setFinanceiraCard }: Props) {
             />
             <CardCreateUpdate.GridFinanceiraConstrutora
               financeiroConstrutora={setFinanceiraCard?.construtoras ?? 0}
-              w={"15rem"}
+              w={"25rem"}
             />
           </UserRegisterProvider>
           <Spacer />
-          <Button
+          <SaveBtm
             type="submit"
             mt={2}
             alignSelf={"center"}
@@ -56,7 +57,7 @@ export function CardUpdateFinanceira({ id, setFinanceiraCard }: Props) {
             size="lg"
           >
             Salvar
-          </Button>
+          </SaveBtm>
           <BotaoCancelar
             mt={2}
             alignSelf={"center"}

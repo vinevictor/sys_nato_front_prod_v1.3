@@ -16,6 +16,7 @@ import { UpdateUser } from "@/actions/user/service";
 import Loading from "@/app/loading";
 import { GetSessionServer } from "@/lib/auth_confg";
 import Permissoes from "@/components/usuarios_component/permissoes";
+import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
 
 type Props = {
   params: { id: string };
@@ -135,9 +136,9 @@ export default async function EditarUsuario({ params }: Props) {
 
               <Divider my={6} borderColor="gray.400" />
               <Flex w="full" justify="flex-end" gap={4} mb={4}>
-                <Button type="submit" colorScheme="green" size="md" className="btn">
+                <SaveBtm type="submit" colorScheme="green" size="md" className="btn">
                   Salvar
-                </Button>
+                </SaveBtm>
                 <BotaoCancelar colorScheme="red" variant="outline" size="md" className="btn" />
               </Flex>
             </CardCreateUpdate.Form>
