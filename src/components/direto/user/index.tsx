@@ -1,6 +1,5 @@
 import { BugReport } from "@/components/bug";
 import { Flex, FormLabel, Text } from "@chakra-ui/react";
-
 import { BtnListNow } from "../imputs/BtnListNow";
 import { FinanceiraLinks } from "../data";
 import { mask } from "remask";
@@ -95,7 +94,7 @@ export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
 
           <BugReport />
 
-          {session.user.hierarquia !== "ADM" && <FinanceiraLinks userId={session.user.id} />}
+          {session.user.hierarquia !== "ADM" && <FinanceiraLinks />}
 
           <Flex flexDir="column" gap={3}>
             <Text fontSize="sm" fontWeight="bold" color="gray.600" textTransform="uppercase">

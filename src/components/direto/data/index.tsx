@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
+  Alert,
+  AlertIcon,
+  Button,
   Flex,
   FormLabel,
   Spinner,
   Text,
-  Alert,
-  AlertIcon,
+  useToast,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 interface FinanceiraItem {
   id: number;
@@ -16,25 +18,23 @@ interface FinanceiraItem {
 }
 
 interface FinanceiraLinksProps {
-  userId: number;
   label?: string;
 }
 
 
 export const FinanceiraLinks = ({
-  userId,
   label = "Links CCAs",
 }: FinanceiraLinksProps) => {
   const [financeiras, setFinanceiras] = useState<FinanceiraItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     async function fetchIds() {
       try {
 
         const res = await fetch(
-          `/api/direto/financeira/${userId}`,
-          { cache: "no-store" }
+          `/api/direto/financeira/url`
         );
 
         if (!res.ok) {
@@ -54,15 +54,8 @@ export const FinanceiraLinks = ({
         setError(err.message ?? "Falha inesperada");
       }
     }
-
-
-    if (userId) {
-      fetchIds();
-    }
-  }, [userId]);
-
-
-  if (!userId) return null;
+    fetchIds();
+  }, []);
 
 
   if (error)
@@ -80,6 +73,17 @@ export const FinanceiraLinks = ({
         <Text fontSize="sm" ml={2}>Carregando...</Text>
       </Flex>
     );
+  
+  const CopyLink = (url: string) => { 
+    navigator.clipboard.writeText(url);
+    toast({
+      title: "Link copiado",
+      description: "Link copiado para a área de transferência",
+      status: "success",
+      duration: 2000,
+    });
+  }
+    
 
 
   return (
@@ -96,7 +100,7 @@ export const FinanceiraLinks = ({
             <Text fontSize="xs" color="gray.600" fontWeight="semibold">
               {financeira.fantasia}
             </Text>
-            <Text
+            <Button
               fontSize="xs"
               color="blue.600"
               fontFamily="mono"
@@ -105,12 +109,12 @@ export const FinanceiraLinks = ({
               borderRadius="sm"
               border="1px solid"
               borderColor="gray.200"
-              cursor="text"
-              userSelect="all"
+              cursor="pointer"
               _hover={{ bg: "gray.100" }}
+              onClick={() => CopyLink(`${window.location.origin}/direto/cadastro/?idfinanceira=${financeira.id}`)}
             >
-              {`${window.location.origin}/direto/${financeira.id}`}
-            </Text>
+              {`${window.location.origin}/direto/cadastro/?idfinanceira=${financeira.id}`}
+            </Button>
           </Flex>
         ))
       )}
