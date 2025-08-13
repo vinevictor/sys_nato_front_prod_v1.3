@@ -55,14 +55,13 @@ export default function InputCnpj({ setValueCnpj, ...props }: InputCnpjProps) {
     props.onChange && props.onChange(e); // Mantém o evento original se passado
   };
 
-
   const handleOnClick = async () => {
     const valorLimpo = unMask(cnpjLocal);
     if (valorLimpo) {
       setLoading(true);
       try {
         const req = await ApiCpnj(valorLimpo);
-        setData(req);  
+        setData(req);
         setLoading(false);
         setError(false);
       } catch (error) {
@@ -75,52 +74,51 @@ export default function InputCnpj({ setValueCnpj, ...props }: InputCnpjProps) {
       }
     }
   };
-  console.log("🚀 ~ InputCnpj ~ setLoading:", Mask)
 
   return (
     <>
       <Flex direction={"row"} gap={2}>
-      {Loading && (
-        <Box
-          w={"100%"}
-          pt={5}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <PulseLoader color="#68D391" />
-        </Box>
-      )}
-      {!Loading && (
-        <Input
-          {...props}
-          value={Mask}
-          type="text"
-          color={"teal.500"}
-          _hover={{ color: "teal.500" }}
-          _focus={{ color: "teal.500", borderColor: "teal.500" }}
-          maxLength={18}
-          onChange={handleChange}
-        />
-      )}
-      {Error && (
-        <Text color={"red"} fontSize="xs">
-          CNPJ não encontrado
-        </Text>
-      )}
-      {!setValueCnpj && (
-        <IconButton
-        alignSelf={"center"}
-        size={"sm"}
-        colorScheme="green"
-        aria-label="Search database"
-        icon={<FaSearch />}
-        onClick={handleOnClick}
-      />
-      )}
-        
+        {Loading && (
+          <Box
+            w={"100%"}
+            pt={5}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <PulseLoader color="#68D391" />
+          </Box>
+        )}
+        {!Loading && (
+          <Input
+            {...props}
+            value={Mask}
+            type="text"
+            color={"teal.500"}
+            _hover={{ color: "teal.500" }}
+            _focus={{ color: "teal.500", borderColor: "teal.500" }}
+            maxLength={18}
+            onChange={handleChange}
+          />
+        )}
+        {Error && (
+          <Text color={"red"} fontSize="xs">
+            CNPJ não encontrado
+          </Text>
+        )}
+        {!setValueCnpj && (
+          <IconButton
+            alignSelf={"center"}
+            size={"sm"}
+            colorScheme="green"
+            aria-label="Search database"
+            icon={<FaSearch />}
+            onClick={handleOnClick}
+          />
+        )}
+
         <Box hidden>
-          <Input value={cnpjLocal} type="text" name="cnpj" hidden readOnly/>
+          <Input value={cnpjLocal} type="text" name="cnpj" hidden readOnly />
         </Box>
       </Flex>
     </>

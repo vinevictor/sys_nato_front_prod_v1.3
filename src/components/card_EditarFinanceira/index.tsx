@@ -1,6 +1,6 @@
 "use client";
 import UserRegisterProvider from "@/provider/UserRegister";
-import { Flex, Spacer, Divider, Button } from "@chakra-ui/react";
+import { Flex, Spacer, Divider, Button, Switch } from "@chakra-ui/react";
 import { UpdateFinanceira } from "@/actions/financeira/service/updateFinanceira";
 import BotaoCancelar from "../botoes/btn_cancelar";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
@@ -47,6 +47,16 @@ export function CardUpdateFinanceira({ id, setFinanceiraCard }: Props) {
               financeiroConstrutora={setFinanceiraCard?.construtoras ?? 0}
               w={"25rem"}
             />
+            <CardCreateUpdate.GridSwitch
+              label="Direto"
+              name="direto"
+              IsValue={setFinanceiraCard?.direto ?? false}
+            />
+            <CardCreateUpdate.GridValorcert
+              w={"10rem"}
+              valor_cert={setFinanceiraCard?.valor_cert ?? ""}
+            />
+
           </UserRegisterProvider>
           <Spacer />
           <SaveBtm

@@ -231,7 +231,7 @@ export default function DashFiltrado({
           <option value="">Construtora</option>
           {Array.isArray(construtoras) &&
             construtoras.map((c: any) => (
-              <option key={c?.id || Math.random()} value={c?.id || ""}>
+              <option key={c?.id ?? `constr-${String(c?.fantasia ?? "")}`} value={c?.id || ""}>
                 {c?.fantasia || "Nome não disponível"}
               </option>
             ))}
@@ -246,7 +246,7 @@ export default function DashFiltrado({
           <option value="">Empreendimento</option>
           {Array.isArray(empreendimentos) &&
             empreendimentos.map((epr: any) => (
-              <option key={epr?.id || Math.random()} value={epr?.id || ""}>
+              <option key={epr?.id ?? `epr-${String(epr?.nome ?? "")}`} value={epr?.id || ""}>
                 {epr?.nome || "Nome não disponível"}
               </option>
             ))}
@@ -262,7 +262,7 @@ export default function DashFiltrado({
             <option value="">Financeira</option>
             {Array.isArray(financeiras) &&
               financeiras.map((fin: any) => (
-                <option key={fin?.id || Math.random()} value={fin?.id || ""}>
+                <option key={fin?.id ?? `fin-${String(fin?.fantasia ?? "")}`} value={fin?.id || ""}>
                   {fin?.fantasia || "Nome não disponível"}
                 </option>
               ))}

@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, BoxProps, FormLabel, Input, Text } from "@chakra-ui/react";
 import InputCpf from "../imputs/inputCpf";
 import React from "react";
@@ -7,7 +9,7 @@ interface CardGridCpfProps extends BoxProps {
   idUser?: number;
 }
 
-export default async function CardGridCpf({
+export default function CardGridCpf({
   idUser,
   CPF,
   ...props

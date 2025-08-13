@@ -12,6 +12,8 @@ export async function UpdateFinanceira(_: any, data: FormData) {
   const fantasia = data.get("fantasia") as string;
   const construtora = data.get("construtora") as string;
   const construtoraArray = construtora.split(",");
+  const direto = data.get("direto") as string;
+  const valor_cert = data.get("valor_cert") as string;
   const construtoraFinal = construtoraArray.map((element) => {
     return Number(element);
   });
@@ -36,11 +38,13 @@ export async function UpdateFinanceira(_: any, data: FormData) {
         Authorization: `Bearer ${session?.token}`,
       },
       body: JSON.stringify({
-        razaosocial: razaoSocial,
+        direto: !direto ? false : true,
+        valor_cert: parseFloat(valor_cert.replace(",", ".").trim().replace("R$", "")).toFixed(2),
+        razaosocial: razaoSocial.trim(),
         tel: telefone,
-        email: email,
-        responsavel: responsavel,
-        fantasia: fantasia,
+        email: email.trim(),
+        responsavel: responsavel.trim(),
+        fantasia: fantasia.trim(),
         construtoras: construtoraFinal,
       }),
     }

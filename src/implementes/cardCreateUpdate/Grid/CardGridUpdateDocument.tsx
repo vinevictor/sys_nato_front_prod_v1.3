@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, BoxProps, Flex, FormLabel, Text } from "@chakra-ui/react";
 import InputUpdateCnh from "../imputs/inputUpdateCnh";
 import { ButtonsDownloadsCnh } from "../butons/butonsDowloadsCnh";
@@ -9,7 +11,7 @@ interface CardGridUpdateCnhProps extends BoxProps {
   suspenso: boolean;
 }
 
-export default async function CardGridUpdateDocument({
+export default function CardGridUpdateDocument({
   Url,
   tag,
   Hierarquia,
