@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, BoxProps, FormLabel, Link, Text } from "@chakra-ui/react";
 
 interface CardGridUpdateCnhProps extends BoxProps {
@@ -5,7 +7,7 @@ interface CardGridUpdateCnhProps extends BoxProps {
   user: any;
 }
 
-export default async function CardGridIdfcweb({
+export default function CardGridIdfcweb({
   DataSolicitacao,
   user,
   ...props

@@ -14,11 +14,11 @@ const { data} = useContext(FinanceiraContext);
 const [emailLocal, setEmailLocal] = useState<string>("");
 
   useEffect(() => {
+    if(!setValueEmail) return;
+    const isValidEmail = validateEmail(setValueEmail);
     if(data){
       setEmailLocal(data.email);
     }
-    if(!setValueEmail) return;
-    const isValidEmail = validateEmail(setValueEmail);
     if (isValidEmail) {
       setEmailLocal(setValueEmail);
     }
@@ -30,14 +30,31 @@ const [emailLocal, setEmailLocal] = useState<string>("");
     props.onChange && props.onChange(e); // Mantém o evento original se passado
   };
 
+  /**
+   * Valida um endereço de e-mail após sanitizar a entrada.
+   * Limpa espaços extras, quebras de linha (\r, \n), tabs, e caracteres de largura zero,
+   * então aplica a expressão regular robusta para verificar o formato.
+   * Não altera o estado do input, apenas valida a string recebida.
+   */
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    if (!email) return false;
+    // Remove quebras de linha, tabs, espaços e caracteres de largura zero; depois aplica trim
+    const sanitized = email
+      .replace(/[\r\n\t]/g, "")
+      .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "") // zero-width chars
+      .trim()
+      .replace(/\s+/g, ""); // remove quaisquer espaços restantes
+
+    // Expressão regular aprimorada (baseada na RFC 5322 simplificada)
+    const emailRegex = new RegExp(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+    return emailRegex.test(sanitized);
   };
 
   return (
   <>
-  <Input {...props} value={emailLocal} type="email" onChange={handleChange} />
+  <Input {...props} value={emailLocal.toLowerCase()} type="email" onChange={handleChange} />
   </>
   );
 }

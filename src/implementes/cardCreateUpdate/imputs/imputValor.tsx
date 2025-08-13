@@ -14,7 +14,6 @@ export default function InputValor({
 }: InputValorProps) {
   const [Mask, setMask] = useState<string>("");
   const [valor, setValor] = useState<string>("");
-  console.log("🚀 ~ InputValor ~ valor:", valor);
   const [init, setInit] = useState<boolean>(false);
 
   useEffect(() => {

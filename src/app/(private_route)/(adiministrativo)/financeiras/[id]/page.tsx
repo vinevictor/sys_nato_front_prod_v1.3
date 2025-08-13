@@ -1,7 +1,9 @@
+import Loading from "@/app/loading";
 import { BotaoRetorno } from "@/components/botoes/btm_retorno";
 import { CardUpdateFinanceira } from "@/components/card_EditarFinanceira";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { Box, Divider, Flex, Heading } from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
+import { Suspense } from "react";
 
 type Props = {
   params: { id: string };
@@ -26,7 +28,6 @@ const fetchFinanceira = async (id: number) => {
   }
   try {
     const res = await req.json();
-    console.log("🚀 ~ fetchFinanceira ~ res:", res);
     return res;
   } catch (error) {
     console.error("Falha ao processar JSON da financeira:", error);
@@ -58,18 +59,15 @@ export default async function EditarUsuario({ params }: Props) {
             <Box>
               <BotaoRetorno rota="/financeiras" />
             </Box>
-            <Heading>Editar Financeira</Heading>
-            <Box> </Box>
+            <Box>
+              <Heading>Editar Financeira</Heading>
+              <Text>id: {id}</Text>
+            </Box>
           </Flex>
           <Divider my={4} borderColor="gray.300" />
-          {/* Passamos os dados buscados diretamente como prop */}
-          {data ? (
+          <Suspense fallback={<Loading />}>
             <CardUpdateFinanceira id={id} setFinanceiraCard={data} />
-          ) : (
-            <Heading as="h3" size="md" textAlign="center">
-              Financeira não encontrada ou falha ao carregar.
-            </Heading> // Fallback caso os dados não sejam carregados
-          )}
+          </Suspense>
         </Box>
       </Flex>
     </>

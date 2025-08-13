@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 import SelectCorretor from "../dropdow/selectCorretor";
 import DropCorretor from "../dropdow/dropCorretor";
@@ -7,7 +9,7 @@ interface CardGridCorretorProps extends BoxProps {
   user: any;
 }
 
-export default async function CardGridCorretor({
+export default function CardGridCorretor({
   DataSolicitacao,
   user,
   ...props

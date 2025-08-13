@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionButton,
@@ -14,7 +16,7 @@ interface CardGridUpdateCnhProps extends BoxProps {
   user: any;
 }
 
-export default async function CardGridHistorico({
+export default function CardGridHistorico({
   DataSolicitacao,
   user,
   ...props

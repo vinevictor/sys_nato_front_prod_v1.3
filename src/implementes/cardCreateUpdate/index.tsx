@@ -56,6 +56,7 @@ import CardGridValorCd from "./Grid/CardGridValorcd";
 
         
 import CardGridValorcert from "./Grid/cardGridValorcert";
+import SwitchDireto from "./switch/direto";
 
 /**
  * @name CardCreateUpdate
@@ -148,4 +149,5 @@ export const CardCreateUpdate = {
   GridConstrutoraFantasia: CardGridConstrutoraFantasia,
   GridSuporte: CardGridSuport,
   GridValorcert: CardGridValorcert,
+  GridSwitch: SwitchDireto,
 };

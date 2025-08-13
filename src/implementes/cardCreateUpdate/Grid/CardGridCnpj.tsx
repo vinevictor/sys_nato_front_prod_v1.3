@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, BoxProps, FormLabel, Input, Text } from "@chakra-ui/react";
 import InputCnpj from "../imputs/inputCnpj";
 import React from "react";
@@ -7,7 +9,7 @@ interface CardGridCnpfProps extends BoxProps {
   idFinanc?: number;
 }
 
-export default async function CardGridCnpj({
+export default function CardGridCnpj({
   idFinanc,
   CNPJ,
   ...props

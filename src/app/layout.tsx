@@ -19,8 +19,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="pt-br"
+      suppressHydrationWarning
+      data-theme="light"
+      style={{ colorScheme: "light" } as React.CSSProperties}
+    >
+      <body
+        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} chakra-ui-light`}
+      >
           <ProvidersChakra>{children}</ProvidersChakra>
       </body>
     </html>
