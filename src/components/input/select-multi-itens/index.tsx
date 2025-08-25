@@ -15,27 +15,45 @@ import {
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { BeatLoader } from "react-spinners";
 
-interface Option {
-  id: string | number;
-  label: string;
+interface BaseOption {
+  /** Identificador único da opção */
+  [key: string]: any;
 }
 
-interface SelectMultiItemProps {
+interface SelectMultiItemProps<T extends BaseOption> {
+  /** ID do elemento select */
   id: string;
+  /** Rótulo do campo */
   label: string;
+  /** Indica se o campo é obrigatório */
   required?: boolean;
+  /** Largura do campo */
   boxWidth?: string;
-  options: Option[];
+  /** Lista de opções disponíveis */
+  options: T[];
+  /** URL para buscar os itens */
   fetchUrlGet?: string;
+  /** Função que retorna a URL para adicionar um item */
   fetchUrlPost?: (id: string | number) => string;
+  /** Função que retorna a URL para atualizar um item */
   fetchUrlPatch?: (id: string | number) => string;
+  /** Função que retorna a URL para excluir um item */
   fetchUrlDelete?: (id: string | number) => string;
-  onChange?: (items: Option[]) => void;
+  /** Função chamada quando os itens são alterados */
+  onChange?: (items: T[]) => void;
+  /** Propriedades adicionais para o select */
   selectProps?: SelectProps;
+  /** Nome do campo que será usado como valor (padrão: 'id') */
+  valueField?: string;
+  /** Nome do campo que será usado como label (padrão: 'label') */
+  labelField?: string;
+  /** Função para renderizar itens customizados */
+  renderItem?: (item: T) => React.ReactNode;
 }
 
-export default function SelectMultiItem({
+export default function SelectMultiItem<T extends BaseOption>({
   required = false,
   id,
   label,
@@ -46,22 +64,34 @@ export default function SelectMultiItem({
   fetchUrlPatch,
   fetchUrlDelete,
   onChange,
+  valueField = "id",
+  labelField = "label",
+  renderItem,
   ...selectProps
-}: SelectMultiItemProps) {
-  const [selected, setSelected] = useState<number | string>("");
-  const [items, setItems] = useState<Option[]>([]);
+}: SelectMultiItemProps<T>) {
+  const [selected, setSelected] = useState<string | number>("");
+  const [items, setItems] = useState<T[]>([]);
+  const [deletingItemId, setDeletingItemId] = useState<string | number | null>(
+    null
+  );
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddItem = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const find = options.find((item) => String(item.id) === String(selected));
-    if (find && !items.some((i) => String(i.id) === String(find.id))) {
+    const find = options.find(
+      (item) => String(item[valueField]) === String(selected)
+    );
+    if (
+      find &&
+      !items.some((i) => String(i[valueField]) === String(find[valueField]))
+    ) {
       if (fetchUrlPost || fetchUrlPatch) {
         try {
           const url = fetchUrlPatch
-            ? fetchUrlPatch(find.id)
-            : fetchUrlPost!(find.id);
+            ? fetchUrlPatch(find[valueField])
+            : fetchUrlPost!(find[valueField] as string | number);
           const method = fetchUrlPatch ? "PATCH" : "POST";
 
           const request = await fetch(url, {
@@ -104,10 +134,12 @@ export default function SelectMultiItem({
     }
   };
 
-  const handleDelete = async (item: Option) => {
+  const handleDelete = async (item: T) => {
+    setIsLoading(true);
     if (fetchUrlDelete) {
       try {
-        const request = await fetch(fetchUrlDelete(item.id), {
+        setDeletingItemId(item[valueField]);
+        const request = await fetch(fetchUrlDelete(item[valueField]), {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -117,7 +149,8 @@ export default function SelectMultiItem({
 
         const response = await request.json();
 
-        const updated = items.filter((i) => i.id !== item.id);
+        setDeletingItemId(null);
+        const updated = items.filter((i) => i[valueField] !== item[valueField]);
         setItems(updated);
         onChange && onChange(updated);
 
@@ -130,7 +163,9 @@ export default function SelectMultiItem({
           duration: 3000,
           isClosable: true,
         });
+        setIsLoading(false);
       } catch (error) {
+        setDeletingItemId(null);
         toast({
           title: "Erro",
           description: "Erro ao excluir o item.",
@@ -138,11 +173,13 @@ export default function SelectMultiItem({
           duration: 3000,
           isClosable: true,
         });
+        setIsLoading(false);
       }
     } else {
-      const updated = items.filter((i) => i.id !== item.id);
+      const updated = items.filter((i) => i[valueField] !== item[valueField]);
       setItems(updated);
       onChange && onChange(updated);
+      setIsLoading(false);
     }
   };
 
@@ -163,10 +200,13 @@ export default function SelectMultiItem({
 
           const data = resData
             .map((item: any) => ({
-              id: item.id,
-              label: item.descricao || item.label || item.fantasia,
+              [valueField]: item.id,
+              [labelField]: item.descricao || item.label || item.fantasia,
             }))
-            .filter((item: any) => item.id !== undefined && item.id !== null);
+            .filter(
+              (item: any) =>
+                item[valueField] !== undefined && item[valueField] !== null
+            ) as T[];
 
           setItems(data);
           onChange && onChange(data);
@@ -194,7 +234,6 @@ export default function SelectMultiItem({
           </Text>
         )}
       </FormLabel>
-
       <Flex gap={2}>
         <Select
           id={id}
@@ -203,9 +242,9 @@ export default function SelectMultiItem({
           size="md"
           {...selectProps}
         >
-          {options.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.label}
+          {options.map((item, index) => (
+            <option key={item[valueField] ?? index} value={item[valueField]}>
+              {renderItem ? renderItem(item) : item[labelField]}
             </option>
           ))}
         </Select>
@@ -217,20 +256,32 @@ export default function SelectMultiItem({
           colorScheme="blue"
           variant="outline"
           onClick={handleAddItem}
+          disabled={isLoading}
         />
       </Flex>
 
       <Flex gap={2} mt={3} flexWrap="wrap">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <Tag
-            key={item.id}
+            key={item[valueField] ?? index}
             size={"lg"}
             borderRadius="full"
             variant="solid"
             colorScheme="blue"
           >
-            <TagLabel>{item.label}</TagLabel>
-            <TagCloseButton onClick={() => handleDelete(item)} />
+            {deletingItemId === item[valueField] ? (
+              <BeatLoader size={8} color="white" />
+            ) : (
+              <>
+                <TagLabel>
+                  {renderItem ? renderItem(item) : item[labelField]}
+                </TagLabel>
+                <TagCloseButton
+                  onClick={() => handleDelete(item)}
+                  isDisabled={deletingItemId === item[valueField]}
+                />
+              </>
+            )}
           </Tag>
         ))}
       </Flex>

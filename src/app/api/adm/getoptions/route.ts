@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request, response: Response) {
+export async function GET() {
   try {
     const session = await GetSessionServer();
     if (!session) {
@@ -21,6 +21,7 @@ export async function GET(request: Request, response: Response) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        cache: "no-cache",
       }
     );
     const data = await req.json();
