@@ -12,6 +12,7 @@ export async function GET(
   try {
     const { id } = params;
     const session = await GetSessionServer();
+    console.log("🚀 ~ GET ~ session:", session)
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });

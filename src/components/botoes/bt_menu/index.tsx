@@ -23,7 +23,7 @@ export default function BotaoMenu({ name, path, icon }: BotaoMenuProps) {
             if (name === "Sair") {
               (async () => {
                 await fetch("/api/auth/logout");
-                // router.push("/login");
+                router.push("/login");
               })();
             }
             router.push(path);
