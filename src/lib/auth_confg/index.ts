@@ -11,6 +11,7 @@ export async function OpenSessionToken(token: string) {
 }
 
 export async function CreateSessionServer(payload = {}) {
+  console.log("🚀 ~ CreateSessionServer ~ payload:", payload)
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
   const jwt = await new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
@@ -54,6 +55,7 @@ export async function GetSessionClient() {
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`
     );
     const retorno = await response.json();
+    console.log("🚀 ~ GetSessionClient ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
@@ -77,8 +79,9 @@ export async function GetSessionServer() {
     }
 
     const data: any = await OpenSessionToken(token.value);
+    console.log("🚀 ~ GetSessionServer ~ token:", data);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`,
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${data.user.id}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +89,9 @@ export async function GetSessionServer() {
         },
       }
     );
+    console.log("🚀 ~ GetSessionServer ~ response:", response)
     const retorno = await response.json();
+    console.log("🚀 ~ GetSessionServer ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
