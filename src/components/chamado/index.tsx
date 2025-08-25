@@ -187,7 +187,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   const handleSave = async () => {
     try {
       const finalImages = await SaveImage();
-      let formattedDthQru = DadosChamado?.dth_qru || null;
+      let formattedDthQru = DadosChamado?.dth_qru || new Date().toISOString();
       if (dth_qru) {
         try {
           formattedDthQru = new Date(dth_qru).toISOString();

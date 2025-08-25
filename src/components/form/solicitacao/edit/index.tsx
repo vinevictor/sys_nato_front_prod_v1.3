@@ -27,6 +27,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
@@ -117,6 +118,7 @@ export default function FormSolicitacaoEdit({
   const [empreendimentosOptions, setEmpreendimentosOptions] = useState<any[]>(
     []
   );
+  const [isLoading, setIsLoading] = useState(false);
   const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
   const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
   const [isDireto, setIsDireto] = useState<boolean>(false);
@@ -131,6 +133,7 @@ export default function FormSolicitacaoEdit({
         try {
           const req = await fetch("/api/adm/getoptions");
           const optionsData = await req.json();
+          console.log("🚀 ~ fetchAndSetOptions ~ optionsData:", optionsData)
           setAllOptions(optionsData);
           fetchTags();
 
@@ -175,6 +178,12 @@ export default function FormSolicitacaoEdit({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  /**
+   * Manipula a seleção de uma construtora
+   * Atualiza o estado do formulário e carrega as opções relacionadas
+   * 
+   * @param value - ID da construtora selecionada
+   */
   const handleSelectConstrutora = (value: number) => {
     const construtoraId = Number(value);
     let construtoraSelecionada;
@@ -214,6 +223,12 @@ export default function FormSolicitacaoEdit({
     setCorretoresOptions([]);
   };
 
+  /**
+   * Manipula a seleção de um empreendimento
+   * Atualiza o estado do formulário e carrega os corretores relacionados
+   * 
+   * @param value - ID do empreendimento selecionado
+   */
   const handleSelectEmpreendimento = (value: number) => {
     const empreendimentoId = Number(value);
     const empreendimentoSelecionado = empreendimentosOptions.find(
@@ -234,6 +249,12 @@ export default function FormSolicitacaoEdit({
     handleChange("corretor", { id: null, nome: "" });
   };
 
+  /**
+   * Manipula a seleção de um corretor
+   * Atualiza o estado do formulário e carrega as financeiras relacionadas
+   * 
+   * @param value - ID do corretor selecionado
+   */
   const handleSelectCorretor = (value: number) => {
     const corretorId = Number(value);
     const corretorSelecionado = corretoresOptions.find(
@@ -252,6 +273,12 @@ export default function FormSolicitacaoEdit({
     handleChange("financeiro", { id: null, fantasia: "" });
   };
 
+  /**
+   * Busca os corretores e financeiras associados a um empreendimento
+   * Atualiza as opções disponíveis nos selects correspondentes
+   * 
+   * @param empreendimentoId - ID do empreendimento para buscar os corretores
+   */
   const fetchCorretores = async (empreendimentoId: number) => {
     try {
       const req = await fetch(`/api/adm/getcorretores/`, {
@@ -274,7 +301,12 @@ export default function FormSolicitacaoEdit({
     }
   };
 
+  /**
+   * Envia os dados do formulário para atualização da solicitação
+   * Exibe feedback ao usuário e recarrega a página após sucesso
+   */
   const handlesubmit = async () => {
+    setIsLoading(true);
     const req = await fetch(`/api/solicitacao/update/${id}`, {
       method: "PUT",
       body: JSON.stringify({ form, Tags }),
@@ -288,6 +320,7 @@ export default function FormSolicitacaoEdit({
         duration: 9000,
         isClosable: true,
       });
+      setIsLoading(false);
       return;
     }
     toast({
@@ -297,6 +330,7 @@ export default function FormSolicitacaoEdit({
       isClosable: true,
     });
     setTimeout(() => {
+      setIsLoading(false);
       window.location.reload();
     }, 2000);
   };
@@ -308,7 +342,9 @@ export default function FormSolicitacaoEdit({
       ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
       : !form?.andamento
       ? ""
-      : form?.andamento;
+        : form?.andamento;
+  
+  console.log(form)
 
   return (
     <>
@@ -444,7 +480,7 @@ export default function FormSolicitacaoEdit({
               <SelectBasic
                 id="construtora"
                 label="Construtora"
-                onvalue={(value) => handleSelectConstrutora(value)}
+                onvalue={(value) => handleSelectConstrutora(Number(value))}
                 value={form?.construtoraId || ""}
                 required
                 options={
@@ -464,7 +500,7 @@ export default function FormSolicitacaoEdit({
               <SelectBasic
                 id="empreendimento"
                 label="Empreendimento"
-                onvalue={(value) => handleSelectEmpreendimento(value)}
+                onvalue={(value) => handleSelectEmpreendimento(Number(value))}
                 value={form?.empreendimentoId || ""}
                 required
                 isDisabled={!form?.construtoraId}
@@ -499,9 +535,7 @@ export default function FormSolicitacaoEdit({
               <SelectBasic
                 id="corretor"
                 label="Corretor"
-                onvalue={(value) => {
-                  handleSelectCorretor(value);
-                }}
+                onvalue={(value) => handleSelectCorretor(Number(value))}
                 value={form?.corretorId || ""}
                 required
                 isDisabled={!form?.empreendimentoId}
@@ -541,7 +575,7 @@ export default function FormSolicitacaoEdit({
               />
             )}
           </Flex>
-          <Box>
+          {/* <Box>
             <Flex
               border="1px"
               borderColor="blue.200"
@@ -556,16 +590,7 @@ export default function FormSolicitacaoEdit({
                 Os processos com CNH anexada terão prioridade no atendimento
               </Text>
             </Flex>
-          </Box>
-
-          {/* <Flex gap={6}>
-          <InputFileUpload
-            id="cnh"
-            label="Documento de Identidade"
-            value={form?.uploadCnh}
-            onvalue={(value) => handleChange("uploadCnh", value)}
-          />
-        </Flex> */}
+          </Box> */}
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
@@ -622,6 +647,8 @@ export default function FormSolicitacaoEdit({
               color={"white"}
               onClick={handlesubmit}
               _hover={{ bg: "green.600" }}
+              spinner={<BeatLoader size={8} color="white" />}
+              isLoading={isLoading}
             >
               Salvar
             </BtnBasicSave>
