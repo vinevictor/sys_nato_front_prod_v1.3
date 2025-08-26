@@ -13,23 +13,16 @@ import {
   useDisclosure,
   ModalFooter,
   useToast,
-  Box,
 } from "@chakra-ui/react";
 
 interface BtnAlertNowProps {
   id: number;
-  andamento: string;
-  ativo: boolean;
-  distrato: boolean;
-  construtora: any;
   alertanow: boolean;
 }
 
 export default function BtnAlertNow({
   id,
-  construtora,
-    alertanow
-
+  alertanow,
 }: BtnAlertNowProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [checkedCNH, setCheckedCNH] = useState(false);
@@ -38,8 +31,7 @@ export default function BtnAlertNow({
     useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [alertaNowState, setAlertaNowState] = useState(alertanow);
-  const toast = useToast();
-  const idConstrutora = construtora.id
+  const toast = useToast()
 
   const handleCancel = async () => {
     // const req = await CancelAlertaNow(id);
@@ -51,48 +43,47 @@ export default function BtnAlertNow({
       body: JSON.stringify({
         alertanow: false,
       }),
-    })
+    });
+    const retorno = await req.json();
 
-    if(!req.ok){
+    if (!req.ok) {
       toast({
-        position: "top",
         title: "Erro ao cancelar alerta!",
         status: "error",
         duration: 9000,
         isClosable: true,
       });
-    }else{
-        toast({
-            position: "top",
-            title: "Alerta cancelado com sucesso!",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-        });
-        setAlertaNowState(false);
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
+    } else {
+      toast({
+        title: "Alerta cancelado com sucesso!",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      setAlertaNowState(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
-  }
+  };
 
   const handleConfirm = async () => {
     const now = new Date();
 
     const hora = now.getHours();
     const minutos = now.getMinutes();
-  
-    const dentroHorario = (hora > 9 || (hora === 9 && minutos >= 30)) && hora <= 18
 
-    if(!dentroHorario){
+    const dentroHorario =
+      (hora > 9 || (hora === 9 && minutos >= 30)) && hora <= 18;
+
+    if (!dentroHorario) {
       toast({
-        position: "top",
         title: "Somente entre 9:30 e 18:00",
         status: "error",
         duration: 9000,
         isClosable: true,
       });
-      return
+      return;
     }
     const req = await fetch(`/api/alertanow/putNow/${id}`, {
       method: "PUT",
@@ -100,12 +91,11 @@ export default function BtnAlertNow({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        alertanow: true
-      })
+        alertanow: true,
+      }),
     });
     if (!req.ok) {
       toast({
-        position: "top",
         title: "Erro ao criar alerta!",
         status: "error",
         duration: 9000,
@@ -113,7 +103,6 @@ export default function BtnAlertNow({
       });
     } else {
       toast({
-        position: "top",
         title: "Alerta criado com sucesso!",
         status: "success",
         duration: 9000,
@@ -128,94 +117,99 @@ export default function BtnAlertNow({
   };
 
   useEffect(() => {
-    
     if (checkedCNH && checkedClientePresente && checkedClienteDisponivel) {
       setIsButtonDisabled(false);
     } else {
       setIsButtonDisabled(true);
     }
-  }, [checkedCNH, checkedClientePresente, checkedClienteDisponivel,alertaNowState]);
+  }, [
+    checkedCNH,
+    checkedClientePresente,
+    checkedClienteDisponivel,
+    alertaNowState,
+  ]);
 
   return (
-    
-    <>{idConstrutora === 5 ? (<>{alertaNowState ? (<>
-    <Button
+    <>
+      {alertaNowState ? (
+        <>
+          <Button
             onClick={handleCancel}
             variant={"outline"}
             _hover={{ bg: "red.300", color: "white", border: "none" }}
             colorScheme="red"
-    >
-        CANCELAR NOW
-    </Button>
-    </>) :(
+          >
+            CANCELAR NOW
+          </Button>
+        </>
+      ) : (
         <>
-        <Button
-        onClick={onOpen}
-        variant={"outline"}
-        _hover={{ bg: "orange.300", color: "white", border: "none" }}
-        colorScheme="orange"
-      >
-        NOW
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Alerta NOW</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontSize={"sm"}>
-              {" "}
-              Caso documento seja RG estará sujeito a verificação.
-            </Text>
-            <Checkbox
-              isChecked={checkedCNH}
-              onChange={() => setCheckedCNH(!checkedCNH)}
-              colorScheme="teal"
-              size="lg"
-            >
-              CNH/RG anexado?
-            </Checkbox>
-            <br />
-            <Checkbox
-              isChecked={checkedClientePresente}
-              onChange={() =>
-                setCheckedClientePresente(!checkedClientePresente)
-              }
-              colorScheme="teal"
-              size="lg"
-            >
-              Cliente presente na loja?
-            </Checkbox>
-            <br />
-            <Checkbox
-              isChecked={checkedClienteDisponivel}
-              onChange={() =>
-                setCheckedClienteDisponivel(!checkedClienteDisponivel)
-              }
-              colorScheme="teal"
-              size="lg"
-            >
-              Cliente disponível para fazer agora?
-            </Checkbox>
-          </ModalBody>
+          <Button
+            onClick={onOpen}
+            variant={"outline"}
+            _hover={{ bg: "orange.300", color: "white", border: "none" }}
+            colorScheme="orange"
+          >
+            NOW
+          </Button>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Alerta NOW</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text fontSize={"sm"}>
+                  {" "}
+                  Caso documento seja RG estará sujeito a verificação.
+                </Text>
+                <Checkbox
+                  isChecked={checkedCNH}
+                  onChange={() => setCheckedCNH(!checkedCNH)}
+                  colorScheme="teal"
+                  size="lg"
+                >
+                  CNH/RG anexado?
+                </Checkbox>
+                <br />
+                <Checkbox
+                  isChecked={checkedClientePresente}
+                  onChange={() =>
+                    setCheckedClientePresente(!checkedClientePresente)
+                  }
+                  colorScheme="teal"
+                  size="lg"
+                >
+                  Cliente presente na loja?
+                </Checkbox>
+                <br />
+                <Checkbox
+                  isChecked={checkedClienteDisponivel}
+                  onChange={() =>
+                    setCheckedClienteDisponivel(!checkedClienteDisponivel)
+                  }
+                  colorScheme="teal"
+                  size="lg"
+                >
+                  Cliente disponível para fazer agora?
+                </Checkbox>
+              </ModalBody>
 
-          <ModalFooter gap={2}>
-            <Button variant="ghost" onClick={onClose}>
-              Fechar
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={handleConfirm}
-              isDisabled={isButtonDisabled}
-            >
-              Confirmar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      </>
-    )}</>) : <Box hidden></Box>}
-      
+              <ModalFooter gap={2}>
+                <Button variant="ghost" onClick={onClose}>
+                  Fechar
+                </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={handleConfirm}
+                  isDisabled={isButtonDisabled}
+                >
+                  Confirmar
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
+      )}
     </>
   );
 }

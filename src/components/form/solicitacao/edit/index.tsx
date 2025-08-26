@@ -7,6 +7,7 @@ import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
 import BotaoPausar from "@/components/botoes/btn_pausar";
 import { CriarFcweb } from "@/components/botoes/criarFcweb";
 import BoxBasic from "@/components/box/link";
+import BtnAlertNow from "@/components/btn_alerta_now";
 import ReativarButton from "@/components/buttons/reativar";
 import { ResendSms } from "@/components/buttons/resendSms";
 import BtnBasicSave from "@/components/buttons/save";
@@ -26,7 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiOutlineInfoCircle, AiOutlineWarning } from "react-icons/ai";
 import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
@@ -133,7 +134,6 @@ export default function FormSolicitacaoEdit({
         try {
           const req = await fetch("/api/adm/getoptions");
           const optionsData = await req.json();
-          console.log("🚀 ~ fetchAndSetOptions ~ optionsData:", optionsData)
           setAllOptions(optionsData);
           fetchTags();
 
@@ -181,7 +181,7 @@ export default function FormSolicitacaoEdit({
   /**
    * Manipula a seleção de uma construtora
    * Atualiza o estado do formulário e carrega as opções relacionadas
-   * 
+   *
    * @param value - ID da construtora selecionada
    */
   const handleSelectConstrutora = (value: number) => {
@@ -226,7 +226,7 @@ export default function FormSolicitacaoEdit({
   /**
    * Manipula a seleção de um empreendimento
    * Atualiza o estado do formulário e carrega os corretores relacionados
-   * 
+   *
    * @param value - ID do empreendimento selecionado
    */
   const handleSelectEmpreendimento = (value: number) => {
@@ -252,7 +252,7 @@ export default function FormSolicitacaoEdit({
   /**
    * Manipula a seleção de um corretor
    * Atualiza o estado do formulário e carrega as financeiras relacionadas
-   * 
+   *
    * @param value - ID do corretor selecionado
    */
   const handleSelectCorretor = (value: number) => {
@@ -276,7 +276,7 @@ export default function FormSolicitacaoEdit({
   /**
    * Busca os corretores e financeiras associados a um empreendimento
    * Atualiza as opções disponíveis nos selects correspondentes
-   * 
+   *
    * @param empreendimentoId - ID do empreendimento para buscar os corretores
    */
   const fetchCorretores = async (empreendimentoId: number) => {
@@ -342,9 +342,7 @@ export default function FormSolicitacaoEdit({
       ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
       : !form?.andamento
       ? ""
-        : form?.andamento;
-  
-  console.log(form)
+      : form?.andamento;
 
   return (
     <>
@@ -575,26 +573,43 @@ export default function FormSolicitacaoEdit({
               />
             )}
           </Flex>
-          {/* <Box>
-            <Flex
-              border="1px"
-              borderColor="blue.200"
-              bg="blue.50"
-              p={3}
-              borderRadius="md"
-              align="center"
-              gap={2}
-            >
-              <Icon as={AiOutlineInfoCircle} color="blue.500" boxSize={5} />
-              <Text color="blue.700" fontSize="sm">
-                Os processos com CNH anexada terão prioridade no atendimento
-              </Text>
-            </Flex>
-          </Box> */}
+          {session?.role.now && (
+            <Box>
+              <Flex
+                w={"full"}
+                border="1px"
+                borderColor="red.500"
+                bg="red.100"
+                p={3}
+                borderRadius="md"
+                align="center"
+                gap={2}
+                justify="space-between"
+              >
+                <Flex align="center" gap={2}>
+                  <Icon as={AiOutlineWarning} color="red.600" boxSize={7} />
+
+                  {form.alertanow ? (
+                    <Text color="red.700" fontSize="md">
+                      Alerta criado, se for necessário cancelar
+                    </Text>
+                  ) : (
+                    <Text color="red.700" fontSize="md">
+                      Somente em caso de cliente presente na unidade
+                    </Text>
+                  )}
+                </Flex>
+                <BtnAlertNow
+                  id={form.id || 0}
+                  alertanow={form.alertanow || false}
+                />
+              </Flex>
+            </Box>
+          )}
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-          <BotaoSisapp body={data} />
+          {hierarquia === "ADM" && <BotaoSisapp body={data} />}
           {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
           <Button
             colorScheme="orange"

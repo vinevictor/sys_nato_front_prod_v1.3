@@ -21,7 +21,7 @@ export async function PUT(
     const req = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/now/${id}`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
@@ -29,12 +29,12 @@ export async function PUT(
         body: JSON.stringify(data),
       }
     );
+    const retorno = await req.json();
     if (!req.ok) {
       throw new Error("Erro ao atualizar alerta!");
     }
     revalidateTag("alertanow-list");
     revalidateTag("alertanow-list-cont");
-    const retorno = await req.json();
 
     return NextResponse.json(
       {
