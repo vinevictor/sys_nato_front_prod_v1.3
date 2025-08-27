@@ -80,7 +80,6 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   const sidebarWidth = useBreakpointValue({ base: "full", lg: "30%" });
   const formWidth = useBreakpointValue({ base: "full", sm: "95%", md: "90%" });
   const headerPadding = useBreakpointValue({ base: 2, md: 4, lg: 8 });
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleRemoveExistingImage = useCallback(
     (imageId: string, imageUrl: string) => {
