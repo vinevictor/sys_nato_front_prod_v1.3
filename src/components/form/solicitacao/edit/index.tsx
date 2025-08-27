@@ -130,38 +130,45 @@ export default function FormSolicitacaoEdit({
     setTags(data.tags || []);
 
     const fetchAndSetOptions = async () => {
-      if (isAdmin) {
-        try {
-          const req = await fetch("/api/adm/getoptions");
-          const optionsData = await req.json();
-          setAllOptions(optionsData);
-          fetchTags();
+      setIsLoading(true);
+      const rota = isAdmin ? "/api/adm/getoptions" : "/api/adm/getuseroptions";
+      try {
+        const req = await fetch(rota);
+        const optionsData = await req.json();
+        console.log(data.construtoraId);
+        optionsData.map((c: any) => {
+          console.log(c.id);
+        });
+        setAllOptions(optionsData);
+        fetchTags();
 
-          if (data.construtoraId) {
-            const initialConstrutora = optionsData.find(
-              (c: any) => c.id === data.construtoraId
+        if (data.construtoraId) {
+          const initialConstrutora = optionsData.find(
+            (c: any) => c.id === data.construtoraId
+          );
+          handleChange("construtoraId", data.construtoraId);
+          if (initialConstrutora) {
+            const empreendimentos = initialConstrutora.empreendimentos || [];
+            setEmpreendimentosOptions(empreendimentos);
+            setFinanceirasOptions(
+              initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
+                []
             );
-            if (initialConstrutora) {
-              const empreendimentos = initialConstrutora.empreendimentos || [];
-              setEmpreendimentosOptions(empreendimentos);
-              setFinanceirasOptions(
-                initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
-                  []
-              );
 
-              if (data.empreendimentoId) {
-                fetchCorretores(+data.empreendimentoId);
-                handleChange("empreendimentoId", data.empreendimentoId);
-                handleChange("financeiroId", data.financeiroId);
-              }
+            if (data.empreendimentoId) {
+              fetchCorretores(+data.empreendimentoId);
+              handleChange("empreendimentoId", data.empreendimentoId);
+              handleChange("financeiroId", data.financeiroId);
             }
           }
-        } catch (error) {
-          console.error("Erro ao buscar opções de ADM:", error);
         }
-      } else {
-        setEmpreendimentosOptions(session.empreendimento || []);
-        setFinanceirasOptions(session.Financeira || []);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+      } catch (error) {
+        console.error("Erro ao buscar opções de ADM:", error);
+        toast({ title: "Erro ao carregar dados", status: "error" });
+        setIsLoading(false);
       }
     };
 
@@ -344,9 +351,12 @@ export default function FormSolicitacaoEdit({
       ? ""
       : form?.andamento;
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
-      {!form && <Loading />}
       <Flex
         w={"full"}
         rounded={"md"}
@@ -487,10 +497,10 @@ export default function FormSolicitacaoEdit({
                         id: c.id,
                         fantasia: c.fantasia,
                       }))
-                    : session?.construtora?.map((c) => ({
+                    : allOptions.map((c) => ({
                         id: c.id,
                         fantasia: c.fantasia,
-                      })) || []
+                      }))
                 }
               />
             )}
