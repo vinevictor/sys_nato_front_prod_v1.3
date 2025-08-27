@@ -11,6 +11,7 @@ export async function OpenSessionToken(token: string) {
 }
 
 export async function CreateSessionServer(payload = {}) {
+  console.log("🚀 ~ CreateSessionServer ~ payload:", payload)
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
   const jwt = await new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
@@ -59,9 +60,9 @@ export async function GetSessionClient() {
     data.user.termos = retorno.termos || false;
     data.user.status = retorno.status || false;
     data.user.hierarquia = retorno.hierarquia || "USER";
-    data.user.construtora = retorno.construtora || [];
-    data.user.empreendimento = retorno.empreendimento || [];
-    data.user.Financeira = retorno.Financeira || [];
+    data.user.construtora = retorno.construtoras || [];
+    data.user.empreendimento = retorno.empreendimentos || [];
+    data.user.Financeira = retorno.financeiros || [];
     return await Promise.resolve(data.user);
   } catch (error) {
     console.log(error);
@@ -87,14 +88,15 @@ export async function GetSessionServer() {
       }
     );
     const retorno = await response.json();
+    // console.log("🚀 ~ GetSessionServer ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
     data.user.status = retorno.status || false;
     data.user.hierarquia = retorno.hierarquia || "USER";
-    data.user.construtora = retorno.construtora || [];
-    data.user.empreendimento = retorno.empreendimento || [];
-    data.user.Financeira = retorno.Financeira || [];
+    data.user.construtora = retorno.construtoras || [];
+    data.user.empreendimento = retorno.empreendimentos || [];
+    data.user.Financeira = retorno.financeiros || [];
 
     return await Promise.resolve(data);
   } catch (error) {
