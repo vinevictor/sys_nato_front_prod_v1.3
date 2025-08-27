@@ -73,11 +73,14 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
   const router = useRouter();
-  const flexDirection = useBreakpointValue({ base: "column", lg: "row" }) as "column" | "row";
+  const flexDirection = useBreakpointValue({ base: "column", lg: "row" }) as
+    | "column"
+    | "row";
   const mainWidth = useBreakpointValue({ base: "full", lg: "70%" });
   const sidebarWidth = useBreakpointValue({ base: "full", lg: "30%" });
   const formWidth = useBreakpointValue({ base: "full", sm: "95%", md: "90%" });
   const headerPadding = useBreakpointValue({ base: 2, md: 4, lg: 8 });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRemoveExistingImage = useCallback(
     (imageId: string, imageUrl: string) => {
@@ -195,7 +198,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         try {
           formattedDthQru = new Date(dth_qru).toISOString();
         } catch (error) {
-          console.error('Data inválida:', error);
+          console.error("Data inválida:", error);
         }
       }
 
@@ -212,28 +215,30 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
           url_view: img.url_view,
           url_download: img.url_download,
         })) : [],
+
         temp: !DadosChamado?.id
           ? [
-            {
-              id: new Date().getTime().toString(),
-              descricao: `Chamado criado por ${session.nome}`,
-              createAt: new Date().toISOString(),
-            },
-          ]
+              {
+                id: new Date().getTime().toString(),
+                descricao: `Chamado criado por ${session.nome}`,
+                createAt: new Date().toISOString(),
+              },
+            ]
           : [
-            ...DadosChamado?.temp,
-            {
-              id: new Date().getTime().toString(),
-              descricao: `Chamado atualizado por ${session.nome}`,
-              createAt: new Date().toISOString(),
-            },
-          ],
+              ...DadosChamado?.temp,
+              {
+                id: new Date().getTime().toString(),
+                descricao: `Chamado atualizado por ${session.nome}`,
+                createAt: new Date().toISOString(),
+              },
+            ],
       };
 
       const url = !DadosChamado?.id
         ? "/api/chamado/post"
         : `/api/chamado/put/${DadosChamado?.id}`;
       const methodSet = !DadosChamado?.id ? "POST" : "PATCH";
+      setIsLoading(true);
       const response = await fetch(url, {
         method: methodSet,
         body: JSON.stringify(dados),
@@ -241,6 +246,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       const result = await response.json();
 
       if (!response.ok) {
+        setIsLoading(false);
         throw new Error(result.message);
       }
 
@@ -255,8 +261,10 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       if (methodSet === "POST") {
         router.push(`/chamado/${result.data.id}`);
       }
+
       setIsLoading(false);
       router.push(`/chamado`);
+
     } catch (error: any) {
       setIsLoading(false);
       toast({
@@ -315,7 +323,6 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       gap={{ base: 2, md: 4 }}
       flexDir={flexDirection}
     >
-
       <Box
         display="flex"
         flexDir="column"
@@ -330,7 +337,6 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         gap={{ base: 2, md: 4 }}
         justifyContent="space-between"
       >
-
         <Flex
           w="full"
           justifyContent="space-between"
@@ -472,20 +478,17 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
           </Stack>
         </VStack>
 
-
         <Flex
           w="full"
           justifyContent={{ base: "center", md: "flex-end" }}
           pt={{ base: 2, md: 4 }}
           gap={4}
         >
-          
-
           <Button
             colorScheme="red"
             variant="outline"
             _hover={{ bg: "red.300", color: "white", borderColor: "white" }}
-            onClick={() => router.push('/chamado')}
+            onClick={() => router.push("/chamado")}
             size={{ base: "md", md: "lg" }}
             w={{ base: "full", sm: "auto" }}
             maxW={{ base: "300px", sm: "none" }}
@@ -505,14 +508,12 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         </Flex>
       </Box>
 
-
       <Flex
         w={sidebarWidth}
         minH={{ base: "600px", lg: "full" }}
         flexDir="column"
         gap={{ base: 2, md: 4 }}
       >
-
         <Box
           h={{ base: "350px", md: "400px", lg: "65%" }}
           w="full"
@@ -525,7 +526,6 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
             onSend={SaveChat}
           />
         </Box>
-
 
         <Box
           h={{ base: "250px", md: "300px", lg: "35%" }}
