@@ -11,7 +11,6 @@ export default async function PrivateLayout({ children }: PrivateLayoutProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
-      
       <PrivateHeader session={session} />
       <div style={{ flex: 1, overflowY: "auto" }}>
         {children}
