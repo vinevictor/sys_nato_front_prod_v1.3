@@ -40,8 +40,10 @@ export default function PageSolicitacoes({ params }: Props) {
     try {
       const req = await fetch(`/api/solicitacao/get/${id}`);
       const res = await req.json();
+      console.log("🚀 ~ getData ~ res:", res)
       const logs = await fetch(`/api/solicitacao/logs/${id}`);
       const logsRes = await logs.json();
+
       setData(res);
       setLogs(logsRes);
       setDataMensagem(res.obs);

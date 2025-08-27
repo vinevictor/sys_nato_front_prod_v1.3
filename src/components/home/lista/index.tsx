@@ -29,6 +29,7 @@ import { TableComponent } from "./table";
 import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;
@@ -198,20 +199,25 @@ export const DadoCompomentList = ({
   const [Pagina, setPagina] = useState<number | null>(null);
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { data } = useHomeContex();
 
   useEffect(() => {
     if (dados) {
+      setIsLoading(true);
       setListaDados(dados.data);
       setTotal(dados.total);
+      setIsLoading(false);
     }
     if (data) {
+      setIsLoading(true);
       if (data.data?.length > 0) {
         setListaDados(data.data);
         setTotal(data.total);
       }
+      setIsLoading(false);
     }
     if (session?.user) {
       (async () => {
@@ -232,6 +238,7 @@ export const DadoCompomentList = ({
   }, [data, dados, session]);
 
   const filtroPrimario = async () => {
+    setIsLoading(true);
     if (!ListaDados) return;
     const filtro = await FirlterData(
       {
@@ -251,9 +258,11 @@ export const DadoCompomentList = ({
       setListaDados(null);
       setMesageError("Nenhum dado encontrado");
     }
+    setIsLoading(false);
   };
 
   const HandleFilterBlank = async () => {
+    setIsLoading(true);
     setNome(null);
     setAndamento(null);
     setConstrutora(null);
@@ -279,6 +288,7 @@ export const DadoCompomentList = ({
   };
 
   const NextPage = async () => {
+    setIsLoading(true);
     if (Pagina === null) return;
     const data = await FirlterData(
       {
@@ -294,6 +304,7 @@ export const DadoCompomentList = ({
     );
     setListaDados(data.data);
     setPagina(Pagina);
+    setIsLoading(false);
   };
 
   return (
@@ -366,7 +377,6 @@ export const DadoCompomentList = ({
         <Flex
           flexDir={{ base: "column", xl: "row" }}
           justifyContent="center"
-          
           gap={{ base: 2, xl: 4 }}
         >
           <Flex flexWrap="wrap" gap={4} justifyContent="flex-start" w="full">
@@ -406,7 +416,6 @@ export const DadoCompomentList = ({
                 value={Andamento ?? ""}
                 onChange={(e) => setAndamento(e.target.value)}
               >
-                <option></option>
                 <option value="VAZIO">VAZIO</option>
                 <option value="INICIADO">INICIADO</option>
                 <option value="APROVADO">APROVADO</option>
@@ -470,111 +479,118 @@ export const DadoCompomentList = ({
             </Button>
           </Box>
         </Flex>
-        <Flex
-          w={"full"}
-          bg={"gray.50"}
-          shadow={"lg"}
-          borderRadius={"15px"}
-          p={{ base: "10px", xl: "20px" }}
-          alignContent={"center"}
-          justifyContent={"space-evenly"}
-          flexDir={"column"}
-          border={"1px solid"}
-          borderColor={"gray.200"}
-        >
-          <Table
-            variant="simple"
-            size="sm"
-            bg={"gray.100"}
-            borderRadius={"15px"}
-          >
-            <Thead>
-              <Tr>
-                <Th
-                  fontSize={"lg"}
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"17rem"}
-                  textAlign="center"
-                >
-                  FUNÇÕES
-                </Th>
-                <Th
-                  fontSize={"lg"}
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"5rem"}
-                >
-                  ID
-                </Th>
-                <Th fontSize={"lg"} p={"0.8rem"} borderBottomColor={"gray.300"}>
-                  NOME
-                </Th>
-                <Th
-                  fontSize={"lg"}
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"15rem"}
-                >
-                  CONST - CCA
-                </Th>
-                <Th
-                  fontSize={"lg"}
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"13rem"}
-                >
-                  AGENDAMENTO
-                </Th>
-                <Th
-                  fontSize={"lg"}
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"8rem"}
-                >
-                  Andamento
-                </Th>
-                <Th
-                  p={"0.8rem"}
-                  borderBottomColor={"gray.300"}
-                  w={"5rem"}
-                  fontSize={"22px"}
-                >
-                  <Flex justifyContent="center">
-                    <ImClock />
-                  </Flex>
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {ListaDados?.map((item) => (
-                <TableComponent
-                  key={item.id}
-                  dados={item}
-                  session={session ?? null}
-                />
-              ))}
-            </Tbody>
-          </Table>
+        {IsLoading && <Loading />}
+        {!IsLoading && (
           <Flex
             w={"full"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            pt={3}
+            bg={"gray.50"}
+            shadow={"lg"}
+            borderRadius={"15px"}
+            p={{ base: "10px", xl: "20px" }}
+            alignContent={"center"}
+            justifyContent={"space-evenly"}
+            flexDir={"column"}
+            border={"1px solid"}
+            borderColor={"gray.200"}
           >
-            <Box>Total de registros: {Total}</Box>
-            <Flex gap={2}>
-              paginas:
-              <SelectPgComponent
-                total={Total || 0}
-                ClientQtd={dados?.data.length || 0}
-                SelectPage={Pagina || 1}
-                setSelectPage={setPagina}
-                SetVewPage={NextPage}
-              />
+            <Table
+              variant="simple"
+              size="sm"
+              bg={"gray.100"}
+              borderRadius={"15px"}
+            >
+              <Thead>
+                <Tr>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"17rem"}
+                    textAlign="center"
+                  >
+                    FUNÇÕES
+                  </Th>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"5rem"}
+                  >
+                    ID
+                  </Th>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                  >
+                    NOME
+                  </Th>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"15rem"}
+                  >
+                    CONST - CCA
+                  </Th>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"13rem"}
+                  >
+                    AGENDAMENTO
+                  </Th>
+                  <Th
+                    fontSize={"lg"}
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"8rem"}
+                  >
+                    Andamento
+                  </Th>
+                  <Th
+                    p={"0.8rem"}
+                    borderBottomColor={"gray.300"}
+                    w={"5rem"}
+                    fontSize={"22px"}
+                  >
+                    <Flex justifyContent="center">
+                      <ImClock />
+                    </Flex>
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {ListaDados?.map((item) => (
+                  <TableComponent
+                    key={item.id}
+                    dados={item}
+                    session={session ?? null}
+                  />
+                ))}
+              </Tbody>
+            </Table>
+            <Flex
+              w={"full"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              pt={3}
+            >
+              <Box>Total de registros: {Total}</Box>
+              <Flex gap={2}>
+                paginas:
+                <SelectPgComponent
+                  total={Total || 0}
+                  ClientQtd={dados?.data.length || 0}
+                  SelectPage={Pagina || 1}
+                  setSelectPage={setPagina}
+                  SetVewPage={NextPage}
+                />
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
+        )}
       </Box>
     </>
   );

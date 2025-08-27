@@ -70,6 +70,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   const [solicitacaoId, setSolicitacaoId] = useState<number>(0);
   const [DadosChamado, setDadosChamado] = useState<TypeChamado | null>(null);
   const [titulo, setTitulo] = useState<string>("");
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
   const router = useRouter();
   const flexDirection = useBreakpointValue({ base: "column", lg: "row" }) as
@@ -189,6 +190,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
       const finalImages = await SaveImage();
       let formattedDthQru = DadosChamado?.dth_qru || new Date().toISOString();
@@ -200,7 +202,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         }
       }
 
-      const data = {
+      const dados = {
         titulo,
         departamento,
         prioridade,
@@ -208,14 +210,12 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         descricao,
         status,
         solicitacaoId,
-        idUser: session.id,
-        images:
-          finalImages.length > 0
-            ? finalImages.map((img) => ({
-                url_view: img.url_view,
-                url_download: img.url_download,
-              }))
-            : [],
+        ...(!data?.idUser && {idUser: session.id}),
+        images: finalImages.length > 0 ? finalImages.map(img => ({
+          url_view: img.url_view,
+          url_download: img.url_download,
+        })) : [],
+
         temp: !DadosChamado?.id
           ? [
               {
@@ -241,7 +241,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       setIsLoading(true);
       const response = await fetch(url, {
         method: methodSet,
-        body: JSON.stringify(data),
+        body: JSON.stringify(dados),
       });
       const result = await response.json();
 
@@ -263,8 +263,10 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
       }
 
       setIsLoading(false);
-      router.refresh();
+      router.push(`/chamado`);
+
     } catch (error: any) {
+      setIsLoading(false);
       toast({
         title: "Erro",
         description: error.message,
@@ -280,6 +282,7 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (data) {
       if (data.titulo !== titulo) {
         setTitulo(data.titulo || "");
@@ -301,13 +304,17 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         setImagesView(data.images);
       }
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   }, [data]);
 
-  if (isLoading) {
+  if (IsLoading) {
     return <Loading />;
   }
 
   return (
+    <>
     <Flex
       w="full"
       minH={{ base: "100vh", lg: "full" }}
@@ -529,5 +536,6 @@ export const ChamadoRootComponent = ({ data, session }: ChamadoProps) => {
         </Box>
       </Flex>
     </Flex>
+    </>
   );
 };

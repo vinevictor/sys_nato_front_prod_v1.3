@@ -33,39 +33,41 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
     onClose();
     setLoading(true);
     try {
+      const Body = {
+        s_alerta: "ATIVADO",
+        referencia: `${new Date()
+          .toISOString()
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("-")}.${new Date().toLocaleTimeString()}`,
+        unidade: "1",
+        criou_fc: "API",
+        cpf: Dados?.cpf,
+        nome: Dados?.nome,
+        contador: "NATO_",
+        obscont: [
+          `Criado Por: ${user?.nome ?? "-"}`,
+          `Empreendimento: ${Dados?.empreendimento?.nome ?? "-"}`,
+          `vendedor: ${Dados?.corretor?.nome ?? "-"}`,
+          `(${new Date().toLocaleDateString(
+            "pt-BR"
+          )} ${new Date().toLocaleTimeString("pt-BR")})`,
+        ].join(" - "),
+        tipocd: "A3PF Bird5000",
+        valorcd: getData(),
+        formapgto: "PENDURA",
+        telefone: Dados?.telefone,
+        email: Dados?.email,
+        dtnascimento: Dados?.dt_nascimento,
+        id: Dados?.id,
+      };
+
       const response = await fetch("/api/fcweb", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
 
-        body: JSON.stringify({
-          s_alerta: "ATIVADO",
-          referencia: `${new Date()
-            .toISOString()
-            .split("T")[0]
-            .split("-")
-            .reverse()
-            .join("-")}.${new Date().toLocaleTimeString()}`,
-          unidade: "1",
-          criou_fc: "API",
-          cpf: Dados?.cpf,
-          nome: Dados?.nome,
-          contador: "NATO_",
-          obscont: [
-            `Criado Por: ${user?.nome ?? "-"}`,
-            `Empreendimento: ${Dados?.empreendimento?.nome ?? "-"}`,
-            `vendedor: ${Dados?.corretor?.nome ?? "-"}`,
-            `(${new Date().toLocaleDateString(
-              "pt-BR"
-            )} ${new Date().toLocaleTimeString("pt-BR")})`,
-          ].join(" - "),
-          tipocd: "A3PF Bird5000",
-          valorcd: Dados?.valorcd,
-          formapgto: "PENDURA",
-          telefone: Dados?.telefone,
-          email: Dados?.email,
-          dtnascimento: Dados?.dt_nascimento,
-          id: Dados?.id,
-        }),
+        body: JSON.stringify(Body),
       });
 
       if (!response.ok) {
@@ -89,7 +91,6 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
         duration: 6000,
         isClosable: true,
       });
-      
     } catch (error: any) {
       console.error(error);
       toast({
@@ -104,6 +105,16 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
       route.refresh();
     }
   };
+
+  function getData() {
+    if (!Dados.valorcd) {
+      return Dados.construtora.valor_cert
+        .toFixed(2)
+        .toString()
+        .replace(".", ",");
+    }
+    return Dados.valorcd.toString().replace(".", ",");
+  }
 
   return (
     <>
@@ -127,11 +138,9 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   Criar FCWEB
                 </AlertDialogHeader>
-
                 <AlertDialogBody>
                   Tem certeza que deseja criar o FCWEB?
                 </AlertDialogBody>
-
                 <AlertDialogFooter>
                   <Button
                     ref={cancelRef}

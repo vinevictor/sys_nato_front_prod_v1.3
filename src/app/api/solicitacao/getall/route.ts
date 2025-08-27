@@ -25,7 +25,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     const nome = searchParams.get("nome");
     const andamento = searchParams.get("andamento");
     const construtora = searchParams.get("construtora");
-    const empreedimento = searchParams.get("empreedimento");
+    const empreendimento = searchParams.get("empreendimento");
+    console.log("🚀 ~ GET ~ empreedimento:", empreendimento);
     const financeiro = searchParams.get("financeiro");
     const id = searchParams.get("id");
     const pagina = searchParams.get("pagina");
@@ -41,8 +42,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     if (Number(construtora) > 0) {
       Filter += `construtora=${construtora}&`;
     }
-    if (Number(empreedimento) > 0) {
-      Filter += `empreedimento=${empreedimento}&`;
+    if (Number(empreendimento) > 0) {
+      Filter += `empreendimento=${empreendimento}&`;
     }
     if (Number(financeiro) > 0) {
       Filter += `financeiro=${financeiro}&`;

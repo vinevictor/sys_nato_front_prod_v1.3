@@ -10,9 +10,21 @@ type HistoricoProps = {
   createAt: Date | string | any;
 };
 
+/**
+ * HistoricoComponent
+ * Renderiza uma linha do tempo com os itens de histórico.
+ * Os itens são ordenados por `createAt` em ordem decrescente antes da renderização.
+ */
 export default function HistoricoComponent({
   data,
 }: HistoricoPropsComponent) {
+  // Ordena os itens por createAt em ordem decrescente (mais recente primeiro)
+  const orderedData = [...(data ?? [])].sort((a, b) => {
+    const ta = new Date(a.createAt).getTime();
+    const tb = new Date(b.createAt).getTime();
+    return tb - ta;
+  });
+
   return (
     <Box
       h={{ base: "25rem", lg: "full" }}
@@ -37,7 +49,7 @@ export default function HistoricoComponent({
         w="full"
         pr={2} // padding-right para compensar a scrollbar
       >
-        {data.map((item) => (
+        {orderedData.map((item) => (
           <Box
             key={item.id}
             mb={2}
