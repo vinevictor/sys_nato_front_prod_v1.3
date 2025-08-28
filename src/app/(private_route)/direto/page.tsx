@@ -8,7 +8,7 @@ import HomeProvider from "@/provider/HomeProvider";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
 import { Suspense } from "react";
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "HOME DIRETO",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 const GetListaDados = async (
   session: SessionNext.Server | null
-): Promise<solictacao.SolicitacaoGetType | solictacao.SolicitacaoObjectType[] | null> => {
+): Promise<solictacao.SolicitacaoGetType | null> => {
   try {
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
     const user = await fetch(url, {
@@ -28,7 +28,7 @@ const GetListaDados = async (
       },
       cache: "no-store",
     });
-    
+
     if (!user.ok) {
       console.error("GetListaDados status:", user.status);
       return null;
@@ -41,12 +41,15 @@ const GetListaDados = async (
   }
 };
 
-async function DadosContent({ session }: { session: SessionNext.Server | null }) {
+interface Props {
+  session: SessionNext.Server | null;
+}
+
+async function DadosContent({ session }: Props) {
   const ListDados = await GetListaDados(session);
-  
-  // Seu delay de 4 segundos
+
   await new Promise((resolve) => setTimeout(resolve, 4000));
-  
+
   return (
     <>
       {session && <UserCompomentInfo session={session} />}
@@ -57,7 +60,7 @@ async function DadosContent({ session }: { session: SessionNext.Server | null })
 
 export default async function DiretoPage() {
   const session = await GetSessionServer();
-  
+
   return (
     <>
       <HomeProvider>
@@ -70,12 +73,11 @@ export default async function DiretoPage() {
         >
           <ModalPrimeAsses session={session as any} />
           <ModalTermos session={session as any} />
-        <Suspense fallback={<Loading /> }>
+          <Suspense fallback={<Loading />}>
             <DadosContent session={session} />
-        </Suspense>
+          </Suspense>
         </Flex>
       </HomeProvider>
     </>
   );
 }
-

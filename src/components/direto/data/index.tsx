@@ -1,123 +1,137 @@
 "use client";
-
 import {
-  Alert,
-  AlertIcon,
+  Box,
   Button,
   Flex,
   FormLabel,
-  Spinner,
+  Select,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-
-interface FinanceiraItem {
-  id: number;
-  fantasia: string;
-}
+import { useState } from "react";
+import { BeatLoader } from "react-spinners";
 
 interface FinanceiraLinksProps {
-  label?: string;
+  session: SessionNext.Server | null;
 }
 
-
-export const FinanceiraLinks = ({
-  label = "Links CCAs",
-}: FinanceiraLinksProps) => {
-  const [financeiras, setFinanceiras] = useState<FinanceiraItem[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export const FinanceiraLinks = ({ session }: FinanceiraLinksProps) => {
   const toast = useToast();
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
+  // lista fe id de financeira
+  const financeiraId =
+    session?.user?.Financeira?.map((item: any) => item.id) || [];
+  const empreendimentoId =
+    session?.user?.empreendimento?.map((item: any) => item.id) || [];
 
-  useEffect(() => {
-    async function fetchIds() {
-      try {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-        const res = await fetch(
-          `/api/direto/financeira/url`
-        );
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const cca = formData.get("financeira") as string;
+    const empreendimentos = formData.get("empreendimento") as string;
+    //pegar a base url atual
+    const baseUrl = window.location.origin;
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Erro ${res.status}: ${errorText}`);
-        }
-
-        const json = await res.json();
-
-        if (Array.isArray(json)) {
-          setFinanceiras(json);
-        } else {
-          throw new Error("Formato de resposta inválido");
-        }
-      } catch (err: any) {
-        console.error("Erro ao buscar financeiras:", err);
-        setError(err.message ?? "Falha inesperada");
+    try {
+      const response = await fetch("/api/direto/link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          financeiroId: Number(cca),
+          empreendimentoId: Number(empreendimentos),
+          baseUrl: `${baseUrl}/direto/cadastro`,
+        }),
+      });
+      const data = await response.json();
+      if (!data.link) {
+        toast({
+          title: "Erro",
+          description: "Não foi possível gerar o link",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
       }
+      navigator.clipboard.writeText(data.link);
+      toast({
+        title: "Link copiado",
+        description: data.link,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-    fetchIds();
-  }, []);
-
-
-  if (error)
-    return (
-      <Alert status="error" borderRadius="md" p={2}>
-        <AlertIcon />
-        <Text fontSize="sm">Erro ao carregar financeiras: {error}</Text>
-      </Alert>
-    );
-
-  if (financeiras === null)
-    return (
-      <Flex justify="center" align="center" py={2}>
-        <Spinner size="sm" />
-        <Text fontSize="sm" ml={2}>Carregando...</Text>
-      </Flex>
-    );
-  
-  const CopyLink = (url: string) => { 
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Link copiado",
-      description: "Link copiado para a área de transferência",
-      status: "success",
-      duration: 2000,
-    });
   }
-    
-
 
   return (
-    <Flex direction="column" px={2} lineHeight="1rem" gap={1}>
-      <FormLabel fontWeight="bold">{label}</FormLabel>
-
-      {financeiras.length === 0 ? (
-        <Text fontSize="sm" color="gray.500">
-          Nenhuma financeira encontrada
+    <form onSubmit={handleSubmit}>
+      <Flex direction="column" px={2} lineHeight="1rem" gap={1}>
+        <FormLabel fontWeight="bold">Gerar Link Direto</FormLabel>
+        <Text fontSize="xs" color="gray.500">
+          Selecione um CCa e um empreendimento para gerar o link direto
         </Text>
-      ) : (
-        financeiras.map((financeira) => (
-          <Flex key={financeira.id} direction="column" py={1}>
-            <Text fontSize="xs" color="gray.600" fontWeight="semibold">
-              {financeira.fantasia}
-            </Text>
-            <Button
-              fontSize="xs"
-              color="blue.600"
-              fontFamily="mono"
-              bg="gray.50"
-              p={1}
-              borderRadius="sm"
-              border="1px solid"
-              borderColor="gray.200"
-              cursor="pointer"
-              _hover={{ bg: "gray.100" }}
-              onClick={() => CopyLink(`${window.location.origin}/direto/cadastro/?idfinanceira=${financeira.id}`)}
-            >
-              {`${window.location.origin}/direto/cadastro/?idfinanceira=${financeira.id}`}
-            </Button>
-          </Flex>
-        ))
-      )}
-    </Flex>
+        <Text fontSize="xs" color="gray.500">
+          Esse link deve ser enviado para o cliente, e la ele pode fazer o
+          cadastro
+        </Text>
+
+        <FormLabel size={"sm"} mt={2}>
+          CCA
+        </FormLabel>
+        <Select
+          placeholder="Selecione uma financeira"
+          defaultValue={financeiraId[0]}
+          size="sm"
+          fontSize="xs"
+          name="financeira"
+        >
+          {session?.user?.Financeira?.map((item: any) => (
+            <option key={item.id} value={item.id}>
+              {item.fantasia}
+            </option>
+          ))}
+        </Select>
+
+        <FormLabel size={"sm"} mt={2}>
+          Empreendimento
+        </FormLabel>
+        <Select
+          placeholder="Selecione um empreendimento"
+          defaultValue={empreendimentoId[0]}
+          size="sm"
+          fontSize="xs"
+          name="empreendimento"
+        >
+          {session?.user?.empreendimento?.map((item: any) => (
+            <option key={item.id} value={item.id}>
+              {item.nome}
+            </option>
+          ))}
+        </Select>
+        <Box>
+          <Button
+            size="sm"
+            fontSize="xs"
+            w="full"
+            mt={2}
+            colorScheme="green"
+            type="submit"
+            isLoading={IsLoading}
+            spinner={<BeatLoader size={8} color="white" />}
+          >
+            Gerar Link
+          </Button>
+        </Box>
+      </Flex>
+    </form>
   );
 };

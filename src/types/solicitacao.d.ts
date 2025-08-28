@@ -38,6 +38,13 @@ declare namespace solictacao {
     statusAtendimento: boolean;
     pause: boolean;
     andamento: string;
+    pg_status: boolean;
+    pg_date: string | Date | null;
+    pg_andamento: string;
+    pixCopiaECola: string;
+    imagemQrcode: string;
+    txid: string;
+
     corretor: {
       id: number;
       nome: string;
