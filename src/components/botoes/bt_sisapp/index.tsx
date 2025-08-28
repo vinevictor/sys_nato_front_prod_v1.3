@@ -1,9 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button, useToast } from "@chakra-ui/react";
 
 export const BotaoSisapp = ({ body }: { body: any }) => {
   const toast = useToast();
+
+  const [isLoading, setIsLoading] = useState(false);
   const handleUpdateSolicitacao = async () => {
     try {
       const requestBody = {
@@ -13,9 +15,9 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
         telefone: body.telefone,
         dtNascimento: body.dt_nascimento,
         dtSolicitacao: body.createdAt,
-        idFcw: body.id_fcw,
+        ...(body.id_fcw && { idFcw: body.id_fcw }),
         ativo: body.ativo,
-        andamento: body.andamento,
+        andamento: body.andamento ? body.andamento : "SISAPP",
         statusPgto: body.situacao_pg,
         valorCd: body.construtora.valor_cert,
         docSuspenso: null,
@@ -44,6 +46,7 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
         }),
       };
 
+      setIsLoading(true);
       const response = await fetch(`/api/sisapp`, {
         method: "POST",
         headers: {
@@ -58,9 +61,13 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
           title: "Foram encontrados erros no formulário",
           description: (
             <>
-              {data.message.map((mensagem: string, index: number) => (
-                <p key={index}>{mensagem}</p>
-              ))}
+              {data.length > 1 ? (
+                data.map((mensagem: string, index: number) => (
+                  <p key={index}>{mensagem}</p>
+                ))
+              ) : (
+                <p>{data.message}</p>
+              )}
             </>
           ),
           status: "error",
@@ -68,6 +75,7 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
           isClosable: true,
           position: "top",
         });
+        setIsLoading(false);
       } else {
         toast({
           title: "Arquivo enviado com sucesso!",
@@ -75,15 +83,20 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
           duration: 3000,
           isClosable: true,
         });
+        setIsLoading(false);
       }
     } catch (error) {
-      console.log("Erro ao processar a requisição:", error);
       alert(`Erro ao processar a requisição: ${error}`);
     }
   };
 
   return (
-    <Button colorScheme="blue" size="sm" onClick={handleUpdateSolicitacao}>
+    <Button
+      colorScheme="blue"
+      size="sm"
+      onClick={handleUpdateSolicitacao}
+      isLoading={isLoading}
+    >
       SISAPP
     </Button>
   );
