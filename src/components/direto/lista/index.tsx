@@ -1,19 +1,18 @@
 "use client";
+import Loading from "@/app/loading";
 import { BugReport } from "@/components/bug";
 import useHomeContex from "@/hook/useHomeContex";
-import { SessionServer } from "@/types/session";
 import {
   Box,
   Button,
   Flex,
-  FormLabel,
   Select,
   Table,
   Tbody,
-  Text,
   Th,
   Thead,
   Tr,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImClock } from "react-icons/im";
@@ -24,79 +23,9 @@ import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 
 interface DadoCompomentListProps {
-  dados: solictacao.SolicitacaoGetType | solictacao.SolicitacaoObjectType[] | null;
+  dados: solictacao.SolicitacaoGetType | null;
   session: SessionNext.Server | null;
 }
-
-interface FirlterDataProps {
-  nome: string | null;
-  andamento: string | null;
-  construtora: number | null;
-  empreedimento: number | null;
-  financeiro: number | null;
-  id: number | null;
-  pagina: number | null;
-}
-
-const FirlterData = async (
-  {
-    nome,
-    andamento,
-    construtora,
-    empreedimento,
-    financeiro,
-    id,
-    pagina,
-  }: FirlterDataProps,
-  session: SessionServer | SessionNext.Server | null
-) => {
-  const filter = [];
-
-  nome && filter.push(`nome=${nome}`);
-  andamento && filter.push(`andamento=${andamento}`);
-  Number(construtora) > 0 && filter.push(`construtora=${construtora}`);
-  Number(empreedimento) > 0 && filter.push(`empreedimento=${empreedimento}`);
-  Number(financeiro) > 0 && filter.push(`financeiro=${financeiro}`);
-  Number(id) > 0 && filter.push(`id=${id}`);
-  Number(pagina) > 0 && filter.push(`pagina=${pagina}`);
-
-  const URL =
-    filter.length > 0
-      ? `/api/direto/get?${filter.join("&")}`
-      : `/api/direto/get`;
-
-  try {
-    const user = await fetch(URL, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.token}`,
-      },
-      cache: "no-store",
-    });
-
-    if (!user.ok) {
-      console.error("FirlterData status:", user.status);
-      return null;
-    }
-    const data = await user.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar dados:", error);
-    return null;
-  }
-};
-
-const fetchConstrutoraAll = async () => {
-  try {
-    const resq = await fetch(`/api/construtora/getall`);
-    const data = await resq.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar construtoras:", error);
-    return [];
-  }
-};
 
 const fetchEmpreendimentoAll = async () => {
   try {
@@ -125,21 +54,52 @@ const extractDataArray = (dados: any): solictacao.SolicitacaoObjectType[] => {
   if (Array.isArray(dados)) {
     return dados;
   }
-  if (dados && typeof dados === 'object' && Array.isArray(dados.data)) {
+  if (dados && typeof dados === "object" && Array.isArray(dados.data)) {
     return dados.data;
   }
   return [];
 };
 
-// Função helper para extrair informações de paginação
-const extractPaginationInfo = (dados: any) => {
-  if (dados && typeof dados === 'object' && !Array.isArray(dados)) {
-    return {
-      total: dados.total || 0,
-      pagina: dados.pagina || 1
-    };
+const RequestDataBlank = async () => {
+  try {
+    const req = await fetch(`/api/direto/findAll`);
+    const data = await req.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+    return null;
   }
-  return { total: 0, pagina: 1 };
+};
+
+const RequestDataFilter = async (filter: {
+  id?: number;
+  nome?: string;
+  andamento?: string;
+  empreendimento?: number;
+  financeiro?: number;
+  pagina?: number;
+}) => {
+  try {
+    const params: Record<string, string> = {};
+    if (filter.id !== undefined && filter.id !== null)
+      params.id = String(filter.id);
+    if (filter.nome) params.nome = String(filter.nome);
+    if (filter.andamento) params.andamento = String(filter.andamento);
+    if (filter.empreendimento !== undefined && filter.empreendimento !== null)
+      params.empreendimento = String(filter.empreendimento);
+    if (filter.financeiro !== undefined && filter.financeiro !== null)
+      params.financeiro = String(filter.financeiro);
+    if (filter.pagina !== undefined && filter.pagina !== null)
+      params.pagina = String(filter.pagina);
+    const req = await fetch(
+      `/api/direto/findAll?${new URLSearchParams(params).toString()}`
+    );
+    const data = await req.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+    return null;
+  }
 };
 
 export const DadoCompomentList = ({
@@ -151,53 +111,37 @@ export const DadoCompomentList = ({
   >(null);
   const [Nome, setNome] = useState<string | null>(null);
   const [Andamento, setAndamento] = useState<string | null>(null);
-  const [Construtora, setConstrutora] = useState<number | null>(null);
-  const [DataConstrutora, setDataConstrutora] = useState<any>([]);
   const [Empreendimento, setEmpreendimento] = useState<number | null>(null);
   const [DataEmpreendimento, setDataEmpreendimento] = useState<any>([]);
   const [Financeiro, setFinanceiro] = useState<number | null>(null);
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Id, setId] = useState<number | null>(null);
   const [Pagina, setPagina] = useState<number | null>(null);
-  const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
   const [PagAtual, setPagAtual] = useState<number>(0);
-  const [Loading, setLoading] = useState<boolean>(false);
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
+  const [IsGeralLoading, setIsGeralLoading] = useState<boolean>(false);
+  const toast = useToast();
 
   const { data } = useHomeContex();
 
   useEffect(() => {
-    // Inicializar dados usando as funções helper
-    const dadosArray = extractDataArray(dados) || extractDataArray(data);
-
-    if (dadosArray.length > 0) {
-      setListaDados(dadosArray);
-
-      // Tentar extrair informações de paginação dos dados originais
-      const paginationInfo = extractPaginationInfo(dados) || extractPaginationInfo(data);
-      setTotal(paginationInfo.total || dadosArray.length);
-      setPagAtual(paginationInfo.pagina);
-      setMesageError(null);
-    } else {
-      setListaDados(null);
-      setMesageError("Nenhum dado encontrado");
-    }
-
+    setIsGeralLoading(true);
+    setListaDados(dados?.data || []);
+    setTotal(dados?.total || 0);
+    setPagAtual(dados?.pagina || 0);
     // Carregar dados auxiliares
     if (session?.user) {
       (async () => {
         try {
           if (session?.user?.hierarquia === "ADM") {
-            const [construtoras, empreendimentos, financeiras] = await Promise.all([
-              fetchConstrutoraAll(),
+            const [empreendimentos, financeiras] = await Promise.all([
               fetchEmpreendimentoAll(),
-              fetchFinanceiroAll()
+              fetchFinanceiroAll(),
             ]);
-            setDataConstrutora(construtoras || []);
             setDataEmpreendimento(empreendimentos || []);
             setDataFinanceiro(financeiras || []);
           } else {
-            setDataConstrutora(session?.user?.construtora || []);
             setDataEmpreendimento(session?.user?.empreendimento || []);
             setDataFinanceiro(session?.user?.Financeira || []);
           }
@@ -206,184 +150,104 @@ export const DadoCompomentList = ({
         }
       })();
     }
+    setIsGeralLoading(false);
   }, [data, dados, session]);
 
   const filtroPrimario = async () => {
-    // Usar dados originais para filtrar
-    const dadosOriginais = extractDataArray(dados) || extractDataArray(data);
-
-    if (dadosOriginais.length === 0) {
-      setMesageError("Nenhum dado disponível para filtrar");
-      return;
-    }
-
-    const filtro = dadosOriginais.filter((item) => {
-      const nomeMatch = !Nome || item.nome.toLowerCase().includes(Nome.toLowerCase());
-      const andamentoMatch = !Andamento || item.andamento?.toLowerCase().includes(Andamento.toLowerCase());
-      const construtoraMatch = !Construtora || item.construtora?.id === Construtora;
-      const empreendimentoMatch = !Empreendimento || item.empreendimento?.id === Empreendimento;
-      const financeiroMatch = !Financeiro || item.financeiro?.id === Financeiro;
-      const idMatch = !Id || item.id === Id;
-
-      return nomeMatch && andamentoMatch && construtoraMatch && empreendimentoMatch && financeiroMatch && idMatch;
-    });
-
-    if (filtro.length > 0) {
-      setListaDados(filtro);
-      setTotal(filtro.length);
-      setMesageError(null);
-    } else {
-      setListaDados([]);
-      setMesageError("Nenhum dado encontrado com os filtros aplicados");
-    }
-  };
-
-  const filtroSecundario = async () => {
-    setLoading(true);
     try {
-      const filtro = await FirlterData(
-        {
-          nome: Nome,
-          andamento: Andamento,
-          construtora: Construtora,
-          empreedimento: Empreendimento,
-          financeiro: Financeiro,
-          id: Id,
-          pagina: Pagina,
-        },
-        session
-      );
-
-      if (filtro) {
-        const dadosArray = extractDataArray(filtro);
-        const paginationInfo = extractPaginationInfo(filtro);
-
-        if (dadosArray.length > 0) {
-          setListaDados(dadosArray);
-          setTotal(paginationInfo.total || dadosArray.length);
-          setPagAtual(paginationInfo.pagina);
-          setMesageError(null);
-        } else {
-          setListaDados([]);
-          setMesageError("Nenhum dado encontrado no banco de dados");
-        }
-      } else {
-        setListaDados([]);
-        setMesageError("Erro ao realizar busca avançada");
+      setIsLoading(true);
+      if (!Id && !Nome && !Andamento && !Empreendimento && !Financeiro) {
+        toast({
+          title: "Nenhum filtro selecionado.",
+          description:
+            "Por favor, selecione pelo menos um filtro para realizar a busca.",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
       }
+      const data = await RequestDataFilter({
+        ...(Id && { id: Id }),
+        ...(Nome && { nome: Nome }),
+        ...(Andamento && { andamento: Andamento }),
+        ...(Empreendimento && { empreendimento: Empreendimento }),
+        ...(Financeiro && { financeiro: Financeiro }),
+      });
+      setListaDados(data.data);
+      setTotal(data.total);
+      setPagAtual(data.pagina);
     } catch (error) {
-      console.error("Erro na busca avançada:", error);
-      setMesageError("Erro ao realizar busca avançada");
+      console.error("Erro ao buscar dados:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const HandleFilterBlank = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       setNome(null);
       setAndamento(null);
-      setConstrutora(null);
       setEmpreendimento(null);
       setFinanceiro(null);
       setId(null);
       setPagina(null);
-
-      const result = await FirlterData(
-        {
-          nome: null,
-          andamento: null,
-          construtora: null,
-          empreedimento: null,
-          financeiro: null,
-          id: null,
-          pagina: null,
-        },
-        session
-      );
-
-      if (result) {
-        const dadosArray = extractDataArray(result);
-        const paginationInfo = extractPaginationInfo(result);
-
-        setListaDados(dadosArray);
-        setTotal(paginationInfo.total || dadosArray.length);
-        setPagAtual(paginationInfo.pagina);
-      } else {
-        // Restaurar dados originais
-        const dadosOriginais = extractDataArray(dados) || extractDataArray(data);
-        const paginationOriginal = extractPaginationInfo(dados) || extractPaginationInfo(data);
-
-        setListaDados(dadosOriginais);
-        setTotal(paginationOriginal.total || dadosOriginais.length);
-        setPagAtual(paginationOriginal.pagina);
-      }
-      setMesageError(null);
+      const data = await RequestDataBlank();
+      setListaDados(data.data);
+      setTotal(data.total);
+      setPagAtual(data.pagina);
     } catch (error) {
       console.error("Erro ao limpar filtros:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const NextPage = async () => {
     if (Pagina === null) return;
-
-    setLoading(true);
     try {
-      const result = await FirlterData(
-        {
-          nome: null,
-          andamento: null,
-          construtora: null,
-          empreedimento: null,
-          financeiro: null,
-          id: null,
-          pagina: Pagina,
-        },
-        session
-      );
-
-      if (result) {
-        const dadosArray = extractDataArray(result);
-        const paginationInfo = extractPaginationInfo(result);
-
-        setListaDados(dadosArray);
-        setTotal(paginationInfo.total || dadosArray.length);
-        setPagAtual(paginationInfo.pagina);
-      }
+      setIsLoading(true);
+      const data = await RequestDataFilter({
+        pagina: Pagina,
+      });
+      setListaDados(data.data);
+      setTotal(data.total);
+      setPagAtual(data.pagina);
     } catch (error) {
       console.error("Erro ao navegar para próxima página:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  if (IsGeralLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
       <Box
         display={"flex"}
         flexDir={"column"}
-        gap={{ base: 2, "lg": 6 }}
-        w={{ base: "100%", "lg": "80%" }}
+        gap={{ base: 2, lg: 6 }}
+        w={{ base: "100%", lg: "80%" }}
         h={"100%"}
         px={4}
         justifyContent={"space-between"}
         py={3}
       >
-        <Box display={{ base: "block", "lg": "none" }}>
+        <Box display={{ base: "block", lg: "none" }}>
           <BugReport />
         </Box>
 
         <Flex
-          flexDir={{ base: "column", "lg": "row" }}
+          flexDir={{ base: "column", lg: "row" }}
           justifyContent="center"
           alignItems="flex-end"
-          gap={{ base: 2, "lg": 4 }}
+          gap={{ base: 2, lg: 4 }}
         >
-          <Box w={{ base: "100%", "lg": "5rem" }}>
-            
+          <Box w={{ base: "100%", lg: "5rem" }}>
             <InputComponentFilterHome
               textAlign={"start"}
               type="number"
@@ -399,8 +263,7 @@ export const DadoCompomentList = ({
               }}
             />
           </Box>
-          <Box w={{ base: "100%", "lg": "20rem" }}>
-            
+          <Box w={{ base: "100%", lg: "20rem" }}>
             <InputComponentFilterHome
               type="text"
               value={Nome ?? ""}
@@ -408,8 +271,7 @@ export const DadoCompomentList = ({
               onChange={(e) => setNome(e.target.value)}
             />
           </Box>
-          <Box w={{ base: "100%", "lg": "10rem" }}>
-          
+          <Box w={{ base: "100%", lg: "10rem" }}>
             <Select
               textColor={"#00713D"}
               _hover={{ borderColor: "#00613C" }}
@@ -428,46 +290,46 @@ export const DadoCompomentList = ({
               <option value="REVOGADO">REVOGADO</option>
             </Select>
           </Box>
-          <Box w={{ base: "100%", "lg": "15rem" }}>
-            
+          <Box w={{ base: "100%", lg: "15rem" }}>
             <SelectComponentFilterHome
               Data={DataEmpreendimento}
+              placeholder="Empreendimento"
               value={Empreendimento?.toString() ?? ""}
               onChange={(e) => setEmpreendimento(Number(e.target.value))}
             />
           </Box>
-          <Box w={{ base: "100%", "lg": "15rem" }}>
-            
+          <Box w={{ base: "100%", lg: "15rem" }}>
             <SelectComponentFilterHome
               Data={DataFinanceiro}
+              placeholder="Financeira"
               value={Financeiro?.toString() ?? ""}
               onChange={(e) => setFinanceiro(Number(e.target.value))}
             />
           </Box>
-          <Box w={{ base: "100%", "lg": "auto" }}>
+          <Box w={{ base: "100%", lg: "auto" }}>
             <Button
               bg="#00713D"
-              w={{ base: "100%", "lg": "auto" }}
+              w={{ base: "100%", lg: "auto" }}
               textColor="white"
               variant="solid"
               _hover={{ bg: "#00631B" }}
               size="md"
               onClick={filtroPrimario}
-              isLoading={Loading}
+              isLoading={IsLoading}
             >
               Filtrar
             </Button>
           </Box>
-          <Box w={{ base: "100%", "lg": "auto" }}>
+          <Box w={{ base: "100%", lg: "auto" }}>
             <Button
               bg="#00713D"
-              w={{ base: "100%", "lg": "auto" }}
+              w={{ base: "100%", lg: "auto" }}
               textColor="white"
               variant="solid"
               _hover={{ bg: "#00631B" }}
               size="md"
               onClick={HandleFilterBlank}
-              isLoading={Loading}
+              isLoading={IsLoading}
             >
               Limpar
             </Button>
@@ -475,54 +337,21 @@ export const DadoCompomentList = ({
         </Flex>
 
         {/* Mostrar loading */}
-        {Loading && (
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            w="100%"
-            h="200px"
-          >
-            <Text>Carregando...</Text>
-          </Flex>
-        )}
-
-        {/* Mostrar erro quando não há dados */}
-        {!Loading && (!ListaDados || ListaDados.length === 0) && MesageError && (
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            w="100%"
-            h="78vh"
-            gap={8}
-            p={4}
-            flexDirection="column"
-          >
-            <Text fontSize="lg" textAlign="center">{MesageError}</Text>
-            <Button
-              w={{ base: "100%", "lg": "auto" }}
-              size="lg"
-              colorScheme="green"
-              onClick={filtroSecundario}
-              isLoading={Loading}
-            >
-              Busca Avançada
-            </Button>
-          </Flex>
-        )}
+        {IsLoading && <Loading />}
 
         {/* Mostrar dados quando existem */}
-        {!Loading && ListaDados && ListaDados.length > 0 && (
+        {!IsLoading && ListaDados && ListaDados.length > 0 && (
           <>
             <Flex
               w={"full"}
               bg={"gray.50"}
               shadow={"lg"}
               borderRadius={"15px"}
-              p={{ base: "10px", "lg": "20px" }}
+              p={{ base: "10px", lg: "20px" }}
               alignContent={"center"}
               justifyContent={"space-evenly"}
               flexDir={"column"}
-              display={{ base: "none", "lg": "flex" }}
+              display={{ base: "none", lg: "flex" }}
               border={"1px solid"}
               borderColor={"gray.200"}
             >
@@ -562,7 +391,8 @@ export const DadoCompomentList = ({
                       fontSize={"lg"}
                       p={"0.8rem"}
                       borderBottomColor={"gray.300"}
-                      w={"13rem"}
+                      w={"10rem"}
+                      textAlign="center"
                     >
                       AGENDAMENTO
                     </Th>
@@ -571,13 +401,41 @@ export const DadoCompomentList = ({
                       p={"0.8rem"}
                       borderBottomColor={"gray.300"}
                       w={"8rem"}
+                      textAlign="center"
+                    >
+                      PG
+                    </Th>
+                    <Th
+                      fontSize={"lg"}
+                      p={"0.8rem"}
+                      borderBottomColor={"gray.300"}
+                      w={"10rem"}
+                      textAlign="center"
+                    >
+                      DATA PG
+                    </Th>
+                    <Th
+                      fontSize={"lg"}
+                      p={"0.8rem"}
+                      borderBottomColor={"gray.300"}
+                      w={"13rem"}
+                      textAlign="center"
+                    >
+                      CONFIRMADO PG
+                    </Th>
+                    <Th
+                      fontSize={"lg"}
+                      p={"0.8rem"}
+                      borderBottomColor={"gray.300"}
+                      w={"8rem"}
+                      textAlign="center"
                     >
                       Andamento
                     </Th>
                     <Th
                       p={"0.8rem"}
                       borderBottomColor={"gray.300"}
-                      w={"5rem"}
+                      w={"8rem"}
                       fontSize={"22px"}
                     >
                       <Flex justifyContent="center">
@@ -617,7 +475,7 @@ export const DadoCompomentList = ({
             </Flex>
 
             <Flex
-              display={{ base: "flex", "lg": "none" }}
+              display={{ base: "flex", lg: "none" }}
               w={"full"}
               flexDir={"column"}
               gap={3}

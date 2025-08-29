@@ -35,7 +35,6 @@ export async function GET(request: Request): Promise<NextResponse> {
     if (nome) {
       Filter += `nome=${nome}&`;
     }
-
     if (andamento) {
       Filter += `andamento=${andamento}&`;
     }

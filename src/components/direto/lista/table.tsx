@@ -17,22 +17,27 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
   const Gbcolor = dados.distrato
     ? "gray.600"
     : !dados.ativo
-      ? "red.500"
-      : dados.alertanow
-        ? "yellow.400"
-        : dados.andamento === "APROVADO"
-          ? "green.200"
-          : dados.andamento === "EMITIDO"
-            ? "green.200"
-            : "white";
+    ? "red.500"
+    : dados.alertanow
+    ? "yellow.400"
+    : dados.andamento === "APROVADO"
+    ? "green.200"
+    : dados.andamento === "EMITIDO"
+    ? "green.200"
+    : "white";
 
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
 
   const agendamento =
     dados.dt_agendamento && dados.hr_agendamento
-      ? dados.dt_agendamento.toString().split("T")[0].split("-").reverse().join("/") +
-      " " +
-      dados.hr_agendamento.toString().split("T")[1].split(".")[0]
+      ? dados.dt_agendamento
+          .toString()
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("/") +
+        " " +
+        dados.hr_agendamento.toString().split("T")[1].split(".")[0]
       : "";
 
   const timeOut = calcTimeOut(
@@ -40,7 +45,6 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     dados.dt_aprovacao?.toString() || null,
     dados.hr_aprovacao?.toString() || null
   );
-
 
   return (
     <>
@@ -82,7 +86,6 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
                 })();
               }}
             />
-
           </Flex>
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
@@ -91,16 +94,35 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {dados.nome}
         </Td>
-        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
           {agendamento}
         </Td>
-        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+
+        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+          {dados.pg_andamento}
+        </Td>
+        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+          {dados.pg_date && new Date(dados.pg_date).toLocaleDateString("pt-BR")}
+        </Td>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
+          {dados.pg_status ? "✅" : "❌"}
+        </Td>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
           {dados.andamento}
         </Td>
-        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
           {timeOut}
         </Td>
-
       </Tr>
     </>
   );
