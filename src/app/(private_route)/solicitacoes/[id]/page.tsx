@@ -1,11 +1,11 @@
-"use client";
-
 import Loading from "@/app/loading";
+import MensagensChatDireto from "@/components/direto/mesage";
 import FormSolicitacaoEdit from "@/components/form/solicitacao/edit";
 import LogsComponent from "@/components/logsComponent";
 import MensagensChat from "@/components/mensagensChat";
 import ListAlertas from "@/components/solicitacao/alert";
 import { useSession } from "@/hook/useSession";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { Flex, Box, Container } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
@@ -24,55 +24,57 @@ type MensagemObj = {
   autor_id: number;
 };
 
-export default function PageSolicitacoes({ params }: Props) {
+const requestData = async (id: number, token: string) => {
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/${id}`;
+  const request = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!request.ok)
+    return { error: true, message: "Solicitação não encontrada", data: null };
+  const data = await request.json();
+  return { error: false, message: "Solicitação encontrada", data };
+};
+
+const requestLogs = async (id: number, token: string) => {
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/getlogs/${id}`;
+  const request = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await request.json();
+  if (!request.ok)
+    return { error: true, message: "Solicitação não encontrada", data: null };
+  return { error: false, message: "Logs encontrado", data };
+};
+
+const requestAlertas = async (id: number, token: string) => {
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert/get/cadastro/${id}`;
+  const request = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await request.json();
+  if (!request.ok)
+    return { error: true, message: "Solicitação não encontrada", data: null };
+  return { error: false, message: "Alertas encontrado", data };
+};
+
+export default async function PageSolicitacoes({ params }: Props) {
   const { id } = params;
-  const [data, setData] = useState<any>(null);
-  const [dataMensagem, setDataMensagem] = useState<any>(null);
-  const [Logs, setLogs] = useState<any>(null);
-  const user: any = useSession();
-  const [isLoadingMensagem, setIsLoadingMensagem] = useState(false);
+  const session = await GetSessionServer();
+  const user = session?.user;
+  const data = await requestData(+id, session?.token);
+  const logs = await requestLogs(+id, session?.token);
+  const alertas = await requestAlertas(+id, session?.token);
 
-  useEffect(() => {
-    getData();
-  }, [id]);
-
-  const getData = async () => {
-    try {
-      const req = await fetch(`/api/solicitacao/get/${id}`);
-      const res = await req.json();
-      console.log("🚀 ~ getData ~ res:", res)
-      const logs = await fetch(`/api/solicitacao/logs/${id}`);
-      const logsRes = await logs.json();
-
-      setData(res);
-      setLogs(logsRes);
-      setDataMensagem(res.obs);
-    } catch (error) {
-      console.error("Erro ao buscar dados", error);
-    }
-  };
-
-  const handleMsg = async (value: MensagemObj[]) => {
-    setIsLoadingMensagem(true);
-    const req = await fetch(`/api/solicitacao/chat/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        obs: value,
-      }),
-    });
-    if (req.ok) {
-      getData();
-    }
-    setIsLoadingMensagem(false);
-  };
-
-  if (!data) {
-    return (
-      <Container maxW="full" p={4}>
-        <Loading />
-      </Container>
-    );
-  }
 
   return (
     <Container maxW="full" p={{ base: 2, md: 4 }}>
@@ -89,7 +91,8 @@ export default function PageSolicitacoes({ params }: Props) {
           w={{ base: "full", lg: "auto" }}
           minW={0} // Permite que o flex item encolha
         >
-          <FormSolicitacaoEdit id={+id} data={data} />
+          {data.data && <FormSolicitacaoEdit id={+id} data={data.data} />}
+          
         </Box>
 
         {/* Seção lateral - Chat e Alertas */}
@@ -107,26 +110,7 @@ export default function PageSolicitacoes({ params }: Props) {
             minH={{ base: "400px", md: "500px", lg: "60%" }}
             maxH={{ base: "600px", lg: "none" }}
           >
-            {isLoadingMensagem ? (
-              <Flex
-                w="full"
-                h="full"
-                bg="gray.100"
-                rounded="md"
-                justify="center"
-                align="center"
-                minH="400px"
-              >
-                <Loading />
-              </Flex>
-            ) : (
-              <MensagensChat
-                id={+id}
-                data={dataMensagem}
-                session={user}
-                onSend={handleMsg}
-              />
-            )}
+             <MensagensChatDireto Id={+id} messages={data.data.obs} session={user} />
           </Box>
 
           {/* Alertas */}
@@ -135,7 +119,7 @@ export default function PageSolicitacoes({ params }: Props) {
             minH={{ base: "250px", md: "300px", lg: "40%" }}
             maxH={{ base: "400px", lg: "none" }}
           >
-            <ListAlertas id={+id} />
+            <ListAlertas id={+id} data={alertas.data}/>
           </Box>
         </Flex>
       </Flex>
@@ -143,7 +127,7 @@ export default function PageSolicitacoes({ params }: Props) {
       {/* Logs - Sempre em uma nova linha */}
       {user?.hierarquia === "ADM" && (
         <Box mt={{ base: 6, md: 8 }} w="full">
-          <LogsComponent logs={Logs} />
+          <LogsComponent logs={logs.data} />
         </Box>
       )}
     </Container>

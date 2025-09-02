@@ -1,542 +1,543 @@
+"use client";
+import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_cliente";
+import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
+import BotaoSisapp from "@/components/botoes/bt_sisapp";
+import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
+import BotaoPausar from "@/components/botoes/btn_pausar";
+import { CriarFcweb } from "@/components/botoes/criarFcweb";
+import BoxBasic from "@/components/box/link";
+import BtnAlertNow from "@/components/btn_alerta_now";
+import ReativarButton from "@/components/buttons/reativar";
+import { ResendSms } from "@/components/buttons/resendSms";
+import BtnBasicSave from "@/components/buttons/save";
 import InputBasic from "@/components/input/basic";
-import InputFileUpload from "@/components/input/doc";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
+import SelectMultiItem from "@/components/input/select-multi-itens";
 import { useSession } from "@/hook/useSession";
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
   Button,
+  Divider,
   Flex,
-  FormLabel,
   Icon,
-  Select,
-  Spinner,
-  Switch,
   Text,
-  Tooltip,
   useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AiOutlineWarning } from "react-icons/ai";
+import { BeatLoader } from "react-spinners";
 
-
-interface FormSolicitacaoProps {
-  cpf?: string;
-  onSuccess?: () => void; // Callback para quando o formulário for enviado com sucesso
-  solicitacao?: any;
+interface GetSolicitacao {
+  error: boolean;
+  message: string;
+  data: {
+    id: number;
+    nome: string;
+    email: string;
+    cpf: string;
+    telefone: string;
+    telefone2: string | null;
+    dt_nascimento: string;
+    id_fcw: number;
+    cnh: string | null;
+    ativo: boolean;
+    rela_quest: boolean;
+    distrato: boolean;
+    dt_distrato: string | null;
+    status_aprovacao: boolean;
+    distrato_id: number | null;
+    andamento: string | null;
+    type_validacao: string | null;
+    dt_aprovacao: string | null;
+    hr_aprovacao: string | null;
+    dt_agendamento: string | null;
+    hr_agendamento: string | null;
+    estatos_pgto: string | null;
+    valorcd: number;
+    situacao_pg: number;
+    freqSms: number;
+    alertanow: boolean;
+    dt_criacao_now: string | null;
+    statusAtendimento: boolean;
+    pause: boolean;
+    corretorId: number;
+    construtoraId: number;
+    financeiroId: number;
+    empreendimentoId: number;
+    createdAt: string;
+    updatedAt: string;
+    relacionamentos: string[];
+    dt_revogacao: string | null;
+    direto: boolean;
+    txid: string;
+    pixCopiaECola: string;
+    imagemQrcode: string;
+    pg_status: boolean;
+    pg_andamento: string;
+    pg_date: string | null;
+    uploadCnh: string | null;
+    uploadRg: string | null;
+    obs: any[];
+    corretor: GetCorretor;
+    construtora: null;
+    empreendimento: GetEmpreendimentos;
+    financeiro: GetFinanceiras;
+    alerts: [];
+    tags: [];
+  };
 }
 
-export default function FormSolicitacao({
-  cpf,
-  onSuccess,
-  solicitacao,
+interface GetEmpreendimentos {
+  id: number;
+  nome: string;
+}
+
+interface GetFinanceiras {
+  id: number;
+  fantasia: string;
+}
+
+interface GetCorretor {
+  id: number;
+  nome: string;
+}
+
+interface FormSolicitacaoProps {
+  dados: GetSolicitacao;
+  Id: number;
+}
+
+export default function FormSolicitacaoDireto({
+  dados,
+  Id,
 }: FormSolicitacaoProps) {
   const [form, setForm] = useState({
-    cpf: cpf,
-    nome: "",
-    datanascimento: "",
-    telefone: "",
-    telefone2: "",
-    email: "",
-    construtora: 0 as number,
-    empreendimento: 0 as number,
-    financeira: 0 as number,
-    corretor: 0 as number,
-    uploadRg: "",
-    uploadCnh: "",
-    relacionamento: "",
+    cpf: dados.data.cpf,
+    nome: dados.data.nome,
+    datanascimento: dados.data.dt_nascimento,
+    telefone: dados.data.telefone,
+    telefone2: dados.data.telefone2,
+    email: dados.data.email,
+    empreendimento: dados.data.empreendimentoId,
+    financeira: dados.data.financeiroId,
+    corretor: dados.data.corretorId,
+    relacionamento: dados.data.relacionamentos,
+    dt_nascimento: dados.data.dt_nascimento,
+    tags: dados.data.tags,
   });
 
-  const [Logwhats, setLogwhats] = useState<string>("");
-  const [load, setLoad] = useState<boolean>(false);
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
-  const [options, setOptions] = useState([
-    {
-      id: null as number | null,
-      fantasia: null as string | null,
-      empreendimentos: [
-        {
-          id: null as number | null,
-          nome: null as string | null,
-        },
-      ] as any[],
-      financeiros: [
-        {
-          financeiro: {
-            id: null as number | null,
-            fantasia: null as string | null,
-          },
-        },
-      ] as any[],
-      colaboradores: [
-        {
-          id: null as number | null,
-          nome: null as string | null,
-        },
-      ],
-    },
-  ]);
-  const [empreendimentos, setEmpreendimentos] = useState([
-    {
-      id: null as number | null,
-      nome: null as string | null,
-    },
-  ]);
-  const [financeiras, setFinanceiras] = useState([
-    {
-      id: null as number | null,
-      fantasia: null as string | null,
-    },
-  ]);
-  const [corretores, setCorretores] = useState([
-    {
-      id: null as number | null,
-      nome: null as string | null,
-    },
-  ]);
+  const router = useRouter();
   const [relacionamento, setrelacionamento] = useState<boolean>(false);
-  const [Sms, setSms] = useState<boolean>(true);
-
+  const [Empreendimentos, setEmpreendimentos] = useState<GetEmpreendimentos[]>([
+    dados.data.empreendimento,
+  ]);
+  const [Financeiras, setFinanceiras] = useState<GetFinanceiras[]>([
+    dados.data.financeiro,
+  ]);
+  const [Corretores, setCorretores] = useState<GetCorretor[]>([
+    dados.data.corretor,
+  ]);
   const session = useSession();
+  const isAdmin = session?.hierarquia === "ADM";
 
   useEffect(() => {
-    setForm((prev) => ({ ...prev, cpf: cpf }));
-    if (session) {
-      if (session.hierarquia === "ADM") {
-        fetchADM();
-      }
-    }
-    if (solicitacao) {
-      setForm((form) => ({
-        ...form,
-        nome: solicitacao?.nome,
-        datanascimento: solicitacao?.dt_nascimento.split("T")[0],
-        telefone: solicitacao?.telefone,
-        email: solicitacao?.email,
-      }));
-    }
-  }, [session, cpf, solicitacao]);
+    if (isAdmin) {
+      (async () => {
+        const req = await fetch("/api/empreendimento/getall");
+        const res = await req.json();
+        setEmpreendimentos(res);
 
-  const fetchADM = async () => {
-    const req = await fetch("/api/adm/getoptions");
-    const data = await req.json();
-    setOptions(data);
-  };
+        const req2 = await fetch("/api/financeira/getall");
+        const res2 = await req2.json();
+        setFinanceiras(res2);
 
+        const req3 = await fetch("/api/usuario/getAll");
+        const res3 = await req3.json();
+        setCorretores(res3);
+      })();
+    }
+    setEmpreendimentos(session?.empreendimento || []);
+    setFinanceiras(session?.Financeira || []);
+  }, [isAdmin]);
+
+  /**
+   * A função handleChange é responsável por atualizar o estado do formulário
+   * ao alterar um campo de entrada.
+   *
+   * @param {keyof typeof form} field - O nome do campo do formulário que foi alterado.
+   * @param {any} value - O novo valor do campo.
+   */
   const handleChange = (field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSelectConstrutora = (value: number) => {
-    handleChange("construtora", value);
-    handleChange("empreendimento", null);
-    handleChange("financeira", null);
-    handleChange("corretor", null);
-
-    const construtoraSelecionada = options.find((e) => e.id === Number(value));
-
-    if (construtoraSelecionada) {
-      setEmpreendimentos(construtoraSelecionada.empreendimentos || []);
-      setFinanceiras(
-        construtoraSelecionada.financeiros.map((f: any) => f.financeiro) || []
-      );
-      setCorretores(
-        construtoraSelecionada.colaboradores.map((colab: any) => ({
-          id: colab.user.id,
-          nome: colab.user.nome,
-        })) || []
-      );
-    } else {
-      setEmpreendimentos([]);
-      setFinanceiras([]);
-      setCorretores([]);
-    }
-  };
-
-  // Função para redirecionamento seguro
-  const redirectToHome = () => {
-    if (onSuccess) {
-      onSuccess();
-    } else if (typeof window !== "undefined") {
-      // Tentar usar o router do Next.js se disponível
-      const tryNextRouter = async () => {
-        try {
-          const { useRouter } = await import("next/router");
-          const router = useRouter();
-          if (router?.push) {
-            router.push("/");
-          } else {
-            window.location.href = "/";
-          }
-        } catch {
-          window.location.href = "/";
-        }
-      };
-      tryNextRouter();
-    }
+  const DadosAlert: solictacao.SolicitacaoObjectCompleteType = {
+    id: dados.data.id,
+    nome: dados.data.nome,
+    email: dados.data.email,
+    cpf: dados.data.cpf || "",
+    telefone: dados.data.telefone || "",
+    telefone2: dados.data.telefone2 || "",
+    dt_nascimento: dados.data.dt_nascimento || "",
+    id_fcw: dados.data.id_fcw || 0,
+    ativo: dados.data.ativo || false,
+    distrato: dados.data.distrato || false,
+    distrato_id: dados.data.distrato_id || null,
+    andamento: dados.data.andamento || "",
+    dt_aprovacao: dados.data.dt_aprovacao,
+    hr_aprovacao: dados.data.hr_aprovacao,
+    dt_agendamento: dados.data.dt_agendamento,
+    hr_agendamento: dados.data.hr_agendamento,
+    valorcd: dados.data.valorcd,
+    alertanow: dados.data.alertanow,
+    statusAtendimento: dados.data.statusAtendimento,
+    pause: dados.data.pause,
+    createdAt: dados.data.createdAt,
+    tags: [],
   };
 
   const handlesubmit = async () => {
-    if (
-      !form.nome ||
-      !form.cpf ||
-      !form.email ||
-      !form.telefone ||
-      !form.construtora ||
-      !form.empreendimento ||
-      !form.financeira ||
-      !form.datanascimento
-    ) {
-      const capos = [];
-      if (!form.nome) {
-        capos.push("Nome");
-      }
-      if (!form.cpf) {
-        capos.push("CPF");
-      }
-      if (!form.email) {
-        capos.push("Email");
-      }
-      if (!form.telefone) {
-        capos.push("Telefone");
-      }
-      if (!form.construtora) {
-        capos.push("Construtora");
-      }
-      if (!form.empreendimento) {
-        capos.push("Empreendimento");
-      }
-      if (!form.financeira) {
-        capos.push("Financeira");
-      }
-      if (!form.datanascimento) {
-        capos.push("Data de Nascimento");
+    try {
+      setIsLoading(true);
+      const req = await fetch(`/api/solicitacao/update/${Id}`, {
+        method: "PUT",
+        body: JSON.stringify({ form }),
+      });
+      const res = await req.json();
+      if (!req.ok) {
+        toast({
+          title: "Erro ao editar solicitação",
+          description: res.message,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
       }
       toast({
-        title: "Preencha todos os campos",
-        description:
-          "os seguintes campos não foram preenchidos:" + capos.join(", "),
-        status: "error",
-        duration: 15000,
+        title: "Solicitação editada com sucesso",
+        status: "success",
+        duration: 9000,
         isClosable: true,
-        position: "top-right",
       });
-    } else {
-      const request = await fetch(
-        `/api/consulta/cpf/${form.cpf.replace(/\W+/g, "")}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!request.ok) {
-        toast({
-          title: "Erro!",
-          description: "Erro ao verificar CPF!",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-      const response = await request.json();
-      if (response.cpf) {
-        toast({
-          title: "CPF já cadastrado!",
-          description: response.message,
-          status: "warning",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        const data: any = {
-          url: typeof window !== "undefined" ? window.location.origin : "",
-          nome: form.nome.toUpperCase(),
-          telefone: form.telefone.replace(/\W+/g, ""),
-          cpf: form.cpf.replace(/\W+/g, ""),
-          ...(form.telefone2 && {
-            telefone2: form.telefone2?.replace(/\W+/g, ""),
-          }),
-          email: form.email.replace(/\s+/g, "").toLowerCase(),
-          ...(form.uploadRg && { uploadRg: form.uploadRg }),
-          ...(form.uploadCnh && { uploadCnh: form.uploadCnh }),
-          corretor:
-            session?.hierarquia === "ADM"
-              ? Number(form.corretor)
-              : Number(session?.id),
-          construtora: Number(form.construtora),
-          empreendimento: Number(form.empreendimento),
-          dt_nascimento: new Date(form.datanascimento),
-          relacionamentos:
-            form.relacionamento && relacionamento ? [form.relacionamento] : [],
-          rela_quest: relacionamento,
-          financeiro: Number(form.financeira),
-          ...(Logwhats && { obs: Logwhats }),
-        };
-        const vendedor =
-          session?.hierarquia === "ADM"
-            ? corretores.find((c) => c.id === form.corretor)?.nome
-            : session?.nome;
-
-        try {
-          setLoad(true);
-          const response = await fetch(
-            `/api/solicitacao?sms=${Sms}&vendedor=${vendedor}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(data),
-            }
-          );
-
-          const retorno = await response.json();
-          if (response.ok) {
-            toast({
-              title: "Sucesso",
-              description: "Solicitacao enviada com sucesso",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-            setLoad(false);
-            redirectToHome();
-          } else {
-            toast({
-              title: "Erro",
-              description: retorno.message,
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-            setLoad(false);
-          }
-        } catch (error) {
-          toast({
-            title: "Erro",
-            description: "Erro ao enviar solicitacao",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          setLoad(false);
-        }
-      }
+      setTimeout(() => {
+        setIsLoading(false);
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      toast({
+        title: "Erro ao editar solicitação",
+        description: "Ocorreu um erro ao editar a solicitação",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      setIsLoading(false);
     }
   };
 
   return (
     <Flex
-      w={"100%"}
+      w={"full"}
       rounded={"md"}
-      margin={"1"}
       border={"1px solid #E8E8E8"}
       alignItems={"center"}
       flexDir={{ base: "column", md: "column" }}
       flexWrap={{ base: "nowrap", md: "nowrap" }}
       gap={2}
       shadow={"lg"}
+      h={"fit-content"}
     >
-      <Text fontSize={"2xl"} fontWeight={"bold"}>
-        Cadastro Nova Solicitação
-      </Text>
       <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
-        gap={4}
-        mb={2}
-      >
-        <MaskedInput
-          label="CPF"
-          id="cpf"
-          mask={"999.999.999-99"}
-          placeholder="CPF"
-          isCpf
-          onvalue={(value) => handleChange("cpf", value)}
-          Disable
-          value={form.cpf ? form.cpf : ""}
-          required
-          boxWidth="15%"
-        />
-        <InputBasic
-          label="Nome Completo"
-          id="nome"
-          placeholder="Nome Completo"
-          onvalue={(value) => handleChange("nome", value)}
-          value={form.nome}
-          required
-          boxWidth="50%"
-        />
-        <InputBasic
-          label="Data de Nascimento"
-          id="datanascimento"
-          type="date"
-          onvalue={(value) =>
-            handleChange(
-              "datanascimento",
-              new Date(value).toISOString().split("T")[0]
-            )
-          }
-          value={form.datanascimento ? form.datanascimento : ""}
-          required
-          boxWidth="15%"
-        />
-      </Flex>
-      <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
-        gap={4}
-        mb={2}
-      >
-        <MaskedInput
-          label="Whatsapp com DDD"
-          id="telefone"
-          mask={"(99) 99999-9999"}
-          placeholder="Whatsapp com DDD"
-          onvalue={(value) => handleChange("telefone", value)}
-          value={form.telefone}
-          required
-          isWhatsapp
-          boxWidth="15%"
-          retornoLog={(log) => setLogwhats(log)}
-        />
-
-        <MaskedInput
-          label="Whatsapp com DDD 2"
-          id="telefone2"
-          mask={"(99) 99999-9999"}
-          placeholder="Whatsapp com DDD"
-          onvalue={(value) => handleChange("telefone2", value)}
-          value={form.telefone2}
-          boxWidth="15%"
-        />
-        <InputBasic
-          label="Email"
-          id="email"
-          placeholder="Email"
-          onvalue={(value) => handleChange("email", value)}
-          value={form.email}
-          required
-          boxWidth="50%"
-        />
-      </Flex>
-      <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
-        gap={4}
-        mb={2}
-      >
-        <SelectBasic
-          label="Construtora"
-          id="construtora"
-          onvalue={(value) => handleSelectConstrutora(value)}
-          value={form.construtora}
-          required
-          options={options.map((construtora: any) => ({
-            id: construtora.id,
-            fantasia: construtora.fantasia,
-          }))}
-          boxWidth="15%"
-        />
-        <SelectBasic
-          label="Empreendimento"
-          id="empreendimento"
-          onvalue={(value) => handleChange("empreendimento", value)}
-          value={form.empreendimento}
-          required
-          isDisabled={!form.construtora}
-          options={empreendimentos.map((e) => ({
-            id: e.id!,
-            fantasia: e.nome!,
-          }))}
-          boxWidth="25%"
-        />
-
-        <SelectBasic
-          label="Financeira"
-          id="financeira"
-          onvalue={(value) => handleChange("financeira", value)}
-          value={form.financeira}
-          required
-          isDisabled={!form.construtora}
-          options={financeiras.map((f) => ({
-            id: f.id!,
-            fantasia: f.fantasia!,
-          }))}
-          boxWidth="15%"
-        />
-        {session?.hierarquia === "ADM" && (
-          <SelectBasic
-            label="Corretor"
-            id="corretor"
-            onvalue={(value) => {
-              handleChange("corretor", value);
-            }}
-            value={form.corretor}
-            required
-            isDisabled={!form.construtora}
-            options={corretores.map((c) => ({
-              id: c.id!,
-              fantasia: c.nome!,
-            }))}
-            boxWidth="24%"
-          />
-        )}
-        <FormLabel>
-          Relacionamento
-          <Tooltip
-            label="Preencha este campo caso o Contrato contenha mais de um proprietário"
-            aria-label="A tooltip"
-          >
-            <Icon ml={2} color="black" cursor="pointer" boxSize={3} />
-          </Tooltip>
-          <Select
-            onChange={(e) => setrelacionamento(e.target.value === "true")}
-            value={String(relacionamento)}
-          >
-            <option value="true">Sim</option>
-            <option value="false">Não</option>
-          </Select>
-        </FormLabel>
-      </Flex>
-      
-      <Flex w={"60%"} gap={4}>
-        {relacionamento && (
-          <MaskedInput
-            label="CPF"
-            id="relacionamento"
-            mask={"999.999.999-99"}
-            isCpf
-            value={form.relacionamento}
-            onvalue={(value) => handleChange("relacionamento", value)}
-            required
-            boxWidth="%"
-          />
-        )}
-       
-      </Flex>
-      <Flex
-        roundedBottom={"md"}
-        bg={"gray.100"}
-        justifyContent={"space-around"}
-        p={2}
+        p={4}
+        rounded={"md"}
+        flexDir={"row"}
+        justifyContent={"space-between"}
         w={"full"}
       >
-        {load ? (
-          <Spinner size={"sm"} />
-        ) : (
-          <Button onClick={handlesubmit} colorScheme="green" isLoading={load}>
-            {load ? "Enviando..." : "Salvar Alterações"}
-          </Button>
+        <Flex flexDir={"column"}>
+          <Text fontSize={"md"}>
+            Criado Em:
+            {` ${
+              dados.data.createdAt &&
+              dados.data.createdAt.split("T")[0].split("-").reverse().join("/")
+            }, ${
+              dados.data.createdAt &&
+              dados.data.createdAt.split("T")[1].split(".")[0]
+            }`}
+          </Text>
+          {dados.data.updatedAt && (
+            <Text fontSize={"md"}>
+              Atualizado Em:
+              {` ${
+                dados.data.updatedAt &&
+                dados.data.updatedAt
+                  .split("T")[0]
+                  .split("-")
+                  .reverse()
+                  .join("/")
+              }, ${
+                dados.data.updatedAt &&
+                dados.data.updatedAt.split("T")[1].split(".")[0]
+              }`}
+            </Text>
+          )}
+          <Text fontSize={{ base: "sm", md: "md" }}>Id: {Id}</Text>
+        </Flex>
+        <Flex flexDir={"column"}>
+          <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
+          <Text fontSize={{ base: "md", md: "md" }}>
+            Corretor:{" "}
+            {dados.data.corretor?.nome
+              ? dados.data.corretor.nome
+              : "Corretor Não Cadastrado"}
+          </Text>
+          <Text fontSize={{ base: "md", md: "md" }}>
+            Andamento: {dados.data.andamento}
+          </Text>
+        </Flex>
+      </Flex>
+      <Divider borderColor="#00713D" />
+      <Flex
+        w={"100%"}
+        justifyContent={"center"}
+        flexDir={"column"}
+        gap={4}
+        p={4}
+        mb={2}
+      >
+        <Flex gap={2}>
+          <MaskedInput
+            boxWidth="40%"
+            id="cpf"
+            label="CPF"
+            type="text"
+            mask="999.999.999-99"
+            value={form?.cpf || ""}
+            onvalue={(value) => handleChange("cpf", value)}
+            required
+            Disable={!isAdmin}
+          />
+          <InputBasic
+            id="nome"
+            type="text"
+            label="Nome"
+            value={form?.nome || ""}
+            onvalue={(value) => handleChange("nome", value)}
+            required
+            isReadOnly={!isAdmin}
+          />
+          <InputBasic
+            boxWidth="40%"
+            id="dt_nascimento"
+            type="date"
+            label="Data de Nascimento"
+            value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
+            onvalue={(value) => handleChange("dt_nascimento", value)}
+            required
+            isReadOnly={!isAdmin}
+          />
+        </Flex>
+        <Flex gap={2}>
+          <InputBasic
+            id="email"
+            type="email"
+            label="Email"
+            value={form?.email || ""}
+            onvalue={(value) => handleChange("email", value)}
+            required
+            isReadOnly={!isAdmin}
+          />
+          <MaskedInput
+            id="telefone"
+            label="Whatsapp Com DDD"
+            type="text"
+            mask="(99) 99999-9999"
+            value={form?.telefone || ""}
+            onvalue={(value) => handleChange("telefone", value)}
+            required
+            isWhatsapp
+            isReadOnly={!isAdmin}
+          />
+          <MaskedInput
+            id="telefone2"
+            label="Whatsapp Com DDD 2"
+            type="text"
+            mask="(99) 99999-9999"
+            value={form?.telefone2 || ""}
+            onvalue={(value) => handleChange("telefone2", value)}
+            isWhatsapp
+          />
+        </Flex>
+        <Flex gap={2}>
+          <SelectBasic
+            id="empreendimento"
+            label="Empreendimento"
+            onvalue={(value) => handleChange("empreendimento", Number(value))}
+            value={form?.empreendimento || ""}
+            required
+            options={Empreendimentos.map((e) => ({
+              id: e.id,
+              fantasia: e.nome,
+            }))}
+            isDisabled={!isAdmin}
+          />
+
+          <SelectBasic
+            id="financeira"
+            label="Financeira"
+            onvalue={(value) => {
+              const id = Number(value);
+              handleChange("financeira", id);
+            }}
+            value={form?.financeira || ""}
+            required
+            isDisabled={!form?.empreendimento || !isAdmin}
+            options={Financeiras.map((f) => ({
+              id: f.id,
+              fantasia: f.fantasia,
+            }))}
+          />
+
+          <SelectBasic
+            id="corretor"
+            label="Corretor"
+            onvalue={(value) => handleChange("corretor", Number(value))}
+            value={form?.corretor || ""}
+            required
+            isDisabled={!form?.empreendimento || !isAdmin}
+            options={Corretores.map((c) => ({
+              id: c.id,
+              fantasia: c.nome,
+            }))}
+          />
+        </Flex>
+        <Flex gap={2}>
+          <BoxBasic
+            id="idfcweb"
+            label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
+            value={dados.data.id_fcw || ""}
+            isLink={isAdmin}
+            href={
+              isAdmin
+                ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${dados.data.id_fcw}`
+                : undefined
+            }
+          />
+          <BoxBasic
+            id="andamento"
+            label="Andamento"
+            value={dados.data.andamento || ""}
+          />
+
+          <SelectMultiItem
+            Id={Id}
+            label="Tags"
+            isAdmin={isAdmin}
+            Tags={dados.data.tags}
+            required
+            OnRetorno={(tags) => handleChange("tags", tags)}
+          />
+        </Flex>
+        {session?.role.now && (
+          <Box>
+            <Flex
+              w={"full"}
+              border="1px"
+              borderColor="red.500"
+              bg="red.100"
+              p={3}
+              borderRadius="md"
+              align="center"
+              gap={2}
+              justify="space-between"
+            >
+              <Flex align="center" gap={2}>
+                <Icon as={AiOutlineWarning} color="red.600" boxSize={7} />
+
+                {dados.data.alertanow ? (
+                  <Text color="red.700" fontSize="md">
+                    Alerta criado, se for necessário cancelar
+                  </Text>
+                ) : (
+                  <Text color="red.700" fontSize="md">
+                    Somente em caso de cliente presente na unidade
+                  </Text>
+                )}
+              </Flex>
+              <BtnAlertNow
+                id={Id || 0}
+                alertanow={dados.data.alertanow || false}
+              />
+            </Flex>
+          </Box>
         )}
       </Flex>
-    </Flex> 
+
+      <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
+        {session?.hierarquia === "ADM" && <BotaoSisapp body={dados.data} />}
+        {dados.data?.ativo && isAdmin && <ResendSms id={Id} />}
+        <Button
+          colorScheme="orange"
+          size={"sm"}
+          onClick={() => router.push(`/chamado/novo?id=${Id}`)}
+        >
+          Chamado
+        </Button>
+        <BtCreateAlertCliente DataSolicitacao={DadosAlert} user={session} />
+        {dados.data?.distrato &&
+          dados.data?.ativo &&
+          ((session?.hierarquia === "ADM" && (
+            <>
+              <BtRemoverDistrato id={Id} />
+            </>
+          )) ||
+            (session?.hierarquia === "CCA" && (
+              <>
+                <BtRemoverDistrato id={Id} />
+              </>
+            )))}
+        {!dados.data?.id_fcw && dados.data?.ativo && (
+          <CriarFcweb Dados={form} user={session!} />
+        )}
+        <BotaoPausar id={Id} statusPause={dados.data?.pause} />
+        <BtnIniciarAtendimento
+          hierarquia={session?.hierarquia || ""}
+          status={
+            dados.data?.statusAtendimento
+              ? dados.data.statusAtendimento
+              : dados.data?.statusAtendimento
+          }
+          aprovacao={dados.data?.andamento}
+          id={Id}
+        />
+        {session?.hierarquia === "ADM" && !dados.data?.ativo && (
+          <ReativarButton
+            size={"sm"}
+            px={8}
+            colorScheme="red"
+            solicitacaoId={Id}
+          >
+            Reativar
+          </ReativarButton>
+        )}
+        {!dados.data?.distrato && (
+          <BtnBasicSave
+            size={"sm"}
+            bg={"green.500"}
+            color={"white"}
+            onClick={handlesubmit}
+            _hover={{ bg: "green.600" }}
+            spinner={<BeatLoader size={8} color="white" />}
+            isLoading={IsLoading}
+          >
+            Salvar
+          </BtnBasicSave>
+        )}
+      </Flex>
+    </Flex>
   );
 }

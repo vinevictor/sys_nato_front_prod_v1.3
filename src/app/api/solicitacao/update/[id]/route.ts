@@ -10,8 +10,8 @@ export async function PUT(
   try {
     const { id } = params;
     const req = await request.json();
-    const body = req.form ? req.form : req;
-    const tags = req.Tags ? req.Tags : [];
+    const body = req.form || req;
+    const tags = body.tags || [];
 
     const dataSend = {
       ...(body.nome && { nome: body.nome }),
@@ -29,32 +29,38 @@ export async function PUT(
     };
     const session = await GetSessionServer();
 
-    if (tags && tags.length > 0) {
+    /**
+     *  verificar se existe tags para essa solicitação
+     */
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/solicitacao/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar tags salvas: ${response.statusText}`);
+    }
+    const tagsSalvas = await response.json();
+
+    if (tagsSalvas.length < tags.length) {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/solicitacao/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Erro ao buscar tags salvas: ${response.statusText}`);
-        }
-        const tagsSalvas = await response.json();
-
+        // selecionar ids das tags salvas
         const tagsSalvasDescriptions = new Set(
           tagsSalvas.map((tagSalva: any) => tagSalva.descricao)
         );
 
+        // selecionar tags novas
         const newTagsToCreate = tags.filter(
           (novaTag: any) => !tagsSalvasDescriptions.has(novaTag.label)
         );
 
+        // criar tags novas
         if (newTagsToCreate.length > 0) {
           newTagsToCreate.map(async (tagToCreate: any) => {
             const createResponse = await fetch(
@@ -85,6 +91,39 @@ export async function PUT(
         console.error("Erro no processo de gerenciamento de tags:", error);
       }
     }
+
+    if (tagsSalvas.length > tags.length) {
+      // verificar quais a tags que foram removidas
+      const tagsRemovidas = tagsSalvas.filter(
+        (tagSalva: any) => !tags.some((tag: any) => tag.id === tagSalva.id)
+      );
+
+      // selecionar ids das tags removidas
+      const idsTagsRemovidas = tagsRemovidas.map((tag: any) => tag.id);
+
+      // deletar tags removidas
+      idsTagsRemovidas.map(async (id: number) => {
+        const deleteResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.token}`,
+            },
+          }
+        );
+
+        if (!deleteResponse.ok) {
+          throw new Error(
+            `Erro ao deletar tag "${id}": ${deleteResponse.statusText}`
+          );
+        }
+
+        return deleteResponse.json();
+      });
+    }
+
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

@@ -1,30 +1,38 @@
-import { Box, Divider, Flex, Text } from "@chakra-ui/react";
+"use client";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
 interface ListAlertasProps {
   id: number;
+  data?: any;
 }
 
-export default function ListAlertas({ id }: ListAlertasProps) {
-  const [data, setData] = useState([]);
-
+export default function ListAlertas({ id, data }: ListAlertasProps) {
+  const [dataAlert, setDataAlert] = useState([]);
+  
   useEffect(() => {
-    (async () => {
-      const req = await fetch(`/api/alerts/solicitacao/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      });
-      if (req.ok) {
-        const res = await req.json();
-        setData(res);
-      }
-    })();
-  }, [id]);
-
+    if (data) {
+      setDataAlert(data);
+    }
+    if (!data || data.length === 0) {
+      (async () => {
+        const req = await fetch(`/api/alerts/solicitacao/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        });
+        if (req.ok) {
+          const res = await req.json();
+          setDataAlert(res || []);
+        }
+      })();
+    }
+  }, [id, data]);
+  
+  console.log("🚀 ~ ListAlertas ~ dataAlert:", dataAlert)
   return (
     <Flex
       w="full"
@@ -38,10 +46,9 @@ export default function ListAlertas({ id }: ListAlertasProps) {
       border="1px solid"
       borderColor="gray.200"
     >
-     
       <Box flexShrink={0}>
-        <Text 
-          fontSize={{ base: "lg", md: "xl", lg: "2xl" }} 
+        <Text
+          fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
           fontWeight="semibold"
           color="gray.700"
         >
@@ -49,28 +56,27 @@ export default function ListAlertas({ id }: ListAlertasProps) {
         </Text>
       </Box>
 
-     
       <Box
         flex="1"
         overflow="auto"
         css={{
-          '&::-webkit-scrollbar': {
-            width: '6px',
+          "&::-webkit-scrollbar": {
+            width: "6px",
           },
-          '&::-webkit-scrollbar-track': {
-            background: '#f1f1f1',
-            borderRadius: '3px',
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+            borderRadius: "3px",
           },
-          '&::-webkit-scrollbar-thumb': {
-            background: '#c1c1c1',
-            borderRadius: '3px',
+          "&::-webkit-scrollbar-thumb": {
+            background: "#c1c1c1",
+            borderRadius: "3px",
           },
-          '&::-webkit-scrollbar-thumb:hover': {
-            background: '#a8a8a8',
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#a8a8a8",
           },
         }}
       >
-        {data.length === 0 ? (
+        {dataAlert.length === 0 ? (
           <Flex
             h="full"
             align="center"
@@ -85,12 +91,8 @@ export default function ListAlertas({ id }: ListAlertasProps) {
             </Text>
           </Flex>
         ) : (
-          <Flex 
-            gap={2} 
-            flexDir="column"
-            pr={1} 
-          >
-            {data.map((item: any) => (
+          <Flex gap={2} flexDir="column" pr={1}>
+            {dataAlert.map((item: any) => (
               <Flex
                 key={item.id}
                 direction={{ base: "column", sm: "row" }}
@@ -105,40 +107,31 @@ export default function ListAlertas({ id }: ListAlertasProps) {
                 borderColor="yellow.200"
                 cursor="pointer"
                 transition="all 0.2s"
-                _hover={{ 
+                _hover={{
                   bg: "yellow.100",
                   transform: "translateY(-1px)",
-                  shadow: "sm"
+                  shadow: "sm",
                 }}
-                minW={0} 
+                minW={0}
               >
-                <Flex 
-                  gap={3} 
-                  align="center" 
-                  flex="1"
-                  minW={0}
-                >
+                <Flex gap={3} align="center" flex="1" minW={0}>
                   <Box flexShrink={0}>
-                    <FaExclamationTriangle
-                      size={16}
-                      color="#d69e2e"
-                    />
+                    <FaExclamationTriangle size={16} color="#d69e2e" />
                   </Box>
-                  <Text 
+                  <Text
                     fontSize={{ base: "xs", md: "sm" }}
                     color="gray.700"
                     noOfLines={{ base: 2, sm: 1 }}
                     wordBreak="break-word"
                     flex="1"
                   >
-                    {item.descricao.length > 60 
-                      ? `${item.descricao.slice(0, 60)}...` 
-                      : item.descricao
-                    }
+                    {item.descricao.length > 60
+                      ? `${item.descricao.slice(0, 60)}...`
+                      : item.descricao}
                   </Text>
                 </Flex>
-                
-                <Text 
+
+                <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   color="gray.500"
                   flexShrink={0}
@@ -152,8 +145,7 @@ export default function ListAlertas({ id }: ListAlertasProps) {
                         hour: "2-digit",
                         minute: "2-digit",
                       })
-                    : ""
-                  }
+                    : ""}
                 </Text>
               </Flex>
             ))}

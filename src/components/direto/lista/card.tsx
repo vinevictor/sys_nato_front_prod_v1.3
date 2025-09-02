@@ -96,7 +96,7 @@ export const CardComponentHome = ({
               <NowIconComponent now={dados.alertanow} />
               <EditarIconComponent
                 aria-label="Editar solicitação"
-                onClick={() => router.push(`/solicitacoes/${dados.id}`)}
+                onClick={() => router.push(`/direto/${dados.id}`)}
               />
 
               <DeletarIconComponent

@@ -17,6 +17,10 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  if(session && pathname.startsWith("/api")){
+    return NextResponse.next();
+  }
+
   if (pathname === "/") {
     if (!session) {
       return NextResponse.redirect(new URL("/login", req.url));

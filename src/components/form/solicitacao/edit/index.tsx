@@ -16,6 +16,7 @@ import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
 import { useSession } from "@/hook/useSession";
+import { SessionClient } from "@/types/session";
 import {
   Box,
   Button,
@@ -27,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AiOutlineInfoCircle, AiOutlineWarning } from "react-icons/ai";
+import { AiOutlineWarning } from "react-icons/ai";
 import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
@@ -35,72 +36,78 @@ interface FormSolicitacaoEditProps {
 }
 
 interface SolicitacaoType {
-  id: number | null;
-  nome: string | null;
-  email: string | null;
-  cpf: string | null;
-  telefone: string | null;
+  id: number;
+  nome: string;
+  email: string;
+  cpf: string;
+  telefone: string;
   telefone2: string | null;
-  dt_nascimento: string | null;
-  id_fcw: number | null;
-  obs: string | null;
-  ativo: boolean | null;
-  rela_quest: boolean | null;
-  dt_distrato: Date | null;
-  status_aprovacao: Boolean | null;
+  dt_nascimento: string;
+  id_fcw: number;
+  cnh: string | null;
+  ativo: boolean;
+  rela_quest: boolean;
+  distrato: boolean;
+  dt_distrato: string | null;
+  status_aprovacao: boolean;
   distrato_id: number | null;
   andamento: string | null;
   type_validacao: string | null;
-  dt_aprovacao: Date | null;
-  ht_aprovacao: Date | null;
-  dt_agendamento: Date | null;
-  hr_agendamento: Date | null;
+  dt_aprovacao: string | null;
+  hr_aprovacao: string | null;
+  dt_agendamento: string | null;
+  hr_agendamento: string | null;
   estatos_pgto: string | null;
-  valorcd: number | null;
-  situacao_pgto: number | null;
-  freqSms: number | null;
-  alertanow: boolean | null;
-  dt_criacao_now: Date | null;
-  statusAtendimento: boolean | null;
-  pause: boolean | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-  relacionamento: {
-    id: number | null;
-    nome: string | null;
-  };
-  dt_revogacao: Date | null | string;
-  direto: boolean | null;
-  txid: string | null;
-  chamados: [
-    {
-      id: number | null;
-      descricao: string | null;
-    }
-  ];
-  construtora: {
-    id: number;
-    fantasia: string;
-  };
-  empreendimento: {
-    id: number;
-    nome: string;
-  };
-  financeiro: {
-    id: number;
-    fantasia: string;
-  };
-  corretor: {
-    id: number;
-    nome: string;
-  };
-  construtoraId: number | null;
-  empreendimentoId: number | null;
-  financeiroId: number | null;
-  corretorId: number | null;
-  uploadCnh: any | null;
-  uploadRg: any | null;
-  distrato: boolean | null;
+  valorcd: number;
+  situacao_pg: number;
+  freqSms: number;
+  alertanow: boolean;
+  dt_criacao_now: string | null;
+  statusAtendimento: boolean;
+  pause: boolean;
+  corretorId: number;
+  construtoraId: number;
+  financeiroId: number;
+  empreendimentoId: number;
+  createdAt: string;
+  updatedAt: string;
+  relacionamentos: string[];
+  dt_revogacao: string | null;
+  direto: boolean;
+  txid: string;
+  pixCopiaECola: string;
+  imagemQrcode: string;
+  pg_status: boolean;
+  pg_andamento: string;
+  pg_date: string | null;
+  uploadCnh: string | null;
+  uploadRg: string | null;
+  obs: any[];
+  corretor: GetCorretor;
+  construtora: GetConstrutora;
+  empreendimento: GetEmpreendimentos;
+  financeiro: GetFinanceiras;
+  alerts: [];
+  tags: [];
+}
+
+interface GetEmpreendimentos {
+  id: number;
+  nome: string;
+}
+
+interface GetFinanceiras {
+  id: number;
+  fantasia: string;
+}
+interface GetConstrutora {
+  id: number;
+  fantasia: string;
+}
+
+interface GetCorretor {
+  id: number;
+  nome: string;
 }
 
 export default function FormSolicitacaoEdit({
@@ -110,24 +117,18 @@ export default function FormSolicitacaoEdit({
   const session = useSession();
   const toast = useToast();
   const router = useRouter();
-  const hierarquia = session?.hierarquia ? session.hierarquia : null;
-  const isAdmin = session?.hierarquia === "ADM";
-  const [tagsOptions, setTagsOptions] = useState([] as any[]);
-  const [Tags, setTags] = useState([] as any[]);
+  const Hierarquia = session?.hierarquia || null;
+  const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
   const [allOptions, setAllOptions] = useState<any[]>([]);
-  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<any[]>(
-    []
-  );
+  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<GetEmpreendimentos[]>([
+    data.empreendimento,
+  ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [financeirasOptions, setFinanceirasOptions] = useState<any[]>([]);
-  const [corretoresOptions, setCorretoresOptions] = useState<any[]>([]);
-  const [isDireto, setIsDireto] = useState<boolean>(false);
+  const [financeirasOptions, setFinanceirasOptions] = useState<GetFinanceiras[]>([data.financeiro]);
+  const [corretoresOptions, setCorretoresOptions] = useState<GetCorretor[]>([data.corretor]);
   useEffect(() => {
     if (!session || !data) return;
-    if (data.direto) setIsDireto(true);
-    setForm(data);
-    setTags(data.tags || []);
 
     const fetchAndSetOptions = async () => {
       setIsLoading(true);
@@ -140,7 +141,6 @@ export default function FormSolicitacaoEdit({
           console.log(c.id);
         });
         setAllOptions(optionsData);
-        fetchTags();
 
         if (data.construtoraId) {
           const initialConstrutora = optionsData.find(
@@ -174,12 +174,6 @@ export default function FormSolicitacaoEdit({
 
     fetchAndSetOptions();
   }, [id, session, data, isAdmin]);
-
-  const fetchTags = async () => {
-    const req = await fetch("/api/tags/getall");
-    const res = await req.json();
-    setTagsOptions(res);
-  };
 
   const handleChange = (field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -267,8 +261,10 @@ export default function FormSolicitacaoEdit({
     const corretorSelecionado = corretoresOptions.find(
       (c) => c.id === corretorId
     );
+    console.log("🚀 ~ handleSelectCorretor ~ corretorSelecionado:", corretorSelecionado)
     if (corretorSelecionado) {
-      setFinanceirasOptions(corretorSelecionado.financeiros || []);
+      
+      setFinanceirasOptions(corretorSelecionado.financeiro || []);
     }
     handleChange("corretorId", corretorId);
     handleChange("corretor", {
@@ -316,7 +312,7 @@ export default function FormSolicitacaoEdit({
     setIsLoading(true);
     const req = await fetch(`/api/solicitacao/update/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ form, Tags }),
+      body: JSON.stringify({ form }),
     });
     const res = await req.json();
     if (!req.ok) {
@@ -351,9 +347,9 @@ export default function FormSolicitacaoEdit({
       ? ""
       : form?.andamento;
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
 
   return (
     <>
@@ -484,7 +480,6 @@ export default function FormSolicitacaoEdit({
             />
           </Flex>
           <Flex gap={2}>
-            {!isDireto && (
               <SelectBasic
                 id="construtora"
                 label="Construtora"
@@ -503,21 +498,18 @@ export default function FormSolicitacaoEdit({
                       }))
                 }
               />
-            )}
-            {!isDireto && (
-              <SelectBasic
-                id="empreendimento"
-                label="Empreendimento"
-                onvalue={(value) => handleSelectEmpreendimento(Number(value))}
-                value={form?.empreendimentoId || ""}
-                required
-                isDisabled={!form?.construtoraId}
-                options={empreendimentosOptions.map((e) => ({
-                  id: e.id,
-                  fantasia: e.nome,
-                }))}
-              />
-            )}
+            <SelectBasic
+              id="empreendimento"
+              label="Empreendimento"
+              onvalue={(value) => handleSelectEmpreendimento(Number(value))}
+              value={form?.empreendimentoId || ""}
+              required
+              isDisabled={!form?.construtoraId}
+              options={empreendimentosOptions.map((e) => ({
+                id: e.id,
+                fantasia: e.nome,
+              }))}
+            />
 
             <SelectBasic
               id="financeira"
@@ -539,20 +531,18 @@ export default function FormSolicitacaoEdit({
               }))}
             />
 
-            {!isDireto && (
-              <SelectBasic
-                id="corretor"
-                label="Corretor"
-                onvalue={(value) => handleSelectCorretor(Number(value))}
-                value={form?.corretorId || ""}
-                required
-                isDisabled={!form?.empreendimentoId}
-                options={corretoresOptions.map((c) => ({
-                  id: c.id,
-                  fantasia: c.nome,
-                }))}
-              />
-            )}
+            <SelectBasic
+              id="corretor"
+              label="Corretor"
+              onvalue={(value) => handleSelectCorretor(Number(value))}
+              value={form?.corretorId || ""}
+              required
+              isDisabled={!form?.empreendimentoId}
+              options={corretoresOptions.map((c) => ({
+                id: c.id,
+                fantasia: c.nome,
+              }))}
+            />
           </Flex>
           <Flex gap={2}>
             <BoxBasic
@@ -573,12 +563,11 @@ export default function FormSolicitacaoEdit({
             />
             {isAdmin && (
               <SelectMultiItem
-                id="tags"
+                Id={id || 0}
+                isAdmin={isAdmin}
                 label="Tags"
-                fetchUrlGet={`/api/tags/getallid/${id}`}
-                fetchUrlDelete={(id) => `/api/tags/delete/${id}`}
-                options={tagsOptions}
-                onChange={(items) => setTags(items)}
+                Tags={data.tags}
+                OnRetorno={(tags) => handleChange("tags", tags)}
                 required
               />
             )}
@@ -619,8 +608,8 @@ export default function FormSolicitacaoEdit({
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-          {hierarquia === "ADM" && <BotaoSisapp body={data} />}
-          {form?.ativo && hierarquia === "ADM" && <ResendSms id={form?.id} />}
+          {Hierarquia === "ADM" && <BotaoSisapp body={data} />}
+          {form?.ativo && Hierarquia === "ADM" && <ResendSms id={form?.id} />}
           <Button
             colorScheme="orange"
             size={"sm"}
@@ -631,12 +620,12 @@ export default function FormSolicitacaoEdit({
           <BtCreateAlertCliente DataSolicitacao={data} user={session} />
           {form?.distrato &&
             form?.ativo &&
-            ((hierarquia === "ADM" && (
+            ((Hierarquia === "ADM" && (
               <>
                 <BtRemoverDistrato id={form?.id} />
               </>
             )) ||
-              (hierarquia === "CCA" && (
+              (Hierarquia === "CCA" && (
                 <>
                   <BtRemoverDistrato id={form?.id} />
                 </>
@@ -646,7 +635,7 @@ export default function FormSolicitacaoEdit({
           )}
           <BotaoPausar id={form?.id} statusPause={data?.pause} />
           <BtnIniciarAtendimento
-            hierarquia={hierarquia}
+            hierarquia={Hierarquia}
             status={
               data?.statusAtendimento
                 ? data.statusAtendimento

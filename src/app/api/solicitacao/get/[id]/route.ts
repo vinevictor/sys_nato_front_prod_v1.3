@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request,{ params }: { params: { id: string } }) {
   try {
+    console.log("🚀 ~ GET ~ aki")
     const { id } = params;
     const session = await GetSessionServer();
     if (!session) {
