@@ -186,6 +186,7 @@
     "getall",
     "getallid",
     "getcorretores",
+    "getlogs",
     "getone",
     "getoptions",
     "getpgid",

@@ -3,7 +3,6 @@ import { Box, Button, Flex, Text, Textarea } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { FiSend } from "react-icons/fi";
 import React from "react";
-import Loading from "@/app/loading";
 
 interface MensagensProps {
   id: number;

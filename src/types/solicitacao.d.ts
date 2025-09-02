@@ -74,73 +74,72 @@ declare namespace solictacao {
     createdAt: string | Date;
   }
   interface SolicitacaoObjectCompleteType {
-  id: number;
-  nome: string;
-  cpf: string;
-
-  ativo: boolean;
-  statusAtendimento: boolean;
-  pause: boolean;
-  andamento: string;
-
-  valorcd: number | null;
-  dt_nascimento: string;               // ISO string recebida do back-end
-  telefone?: string | null;
-  telefone2?: string | null;
-  email?: string | null;
-
-  corretor?: {
     id: number;
     nome: string;
-  } | null;
+    cpf: string;
 
-  construtora?: {
-    id: number;
-    fantasia: string;
-  } | null;
+    ativo: boolean;
+    statusAtendimento: boolean;
+    pause: boolean;
+    andamento: string;
 
-  empreendimento?: {
-    id: number;
-    nome: string;
-    cidade?: string;
-  } | null;
+    valorcd: number | null;
+    dt_nascimento: string; // ISO string recebida do back-end
+    telefone?: string | null;
+    telefone2?: string | null;
+    email?: string | null;
 
-  financeiro?: {
-    id: number;
-    fantasia: string;
-  } | null;
+    corretor?: {
+      id: number;
+      nome: string;
+    } | null;
 
-  id_fcw: number | null;
+    construtora?: {
+      id: number;
+      fantasia: string;
+    } | null;
 
-  distrato?: boolean;
-  distrato_id?: number | null;
-  distrato_dt?: string | null;
+    empreendimento?: {
+      id: number;
+      nome: string;
+      cidade?: string;
+    } | null;
 
-  alertanow: boolean;
+    financeiro?: {
+      id: number;
+      fantasia: string;
+    } | null;
 
-  // coleções
-  tags: {
-    id: number;
-    solicitacao: number;
-    descricao: string;
+    id_fcw: number | null;
+
+    distrato?: boolean;
+    distrato_id?: number | null;
+    distrato_dt?: string | null;
+
+    alertanow: boolean;
+
+    // coleções
+    tags: {
+      id: number;
+      solicitacao: number;
+      descricao: string;
+      createdAt: string;
+    }[];
+
+    // datas
     createdAt: string;
-  }[];
+    dt_agendamento: string | null;
+    hr_agendamento: string | null;
+    dt_aprovacao: string | null;
+    hr_aprovacao: string | null;
 
-  // datas
-  createdAt: string;
-  dt_agendamento: string | null;
-  hr_agendamento: string | null;
-  dt_aprovacao: string | null;
-  hr_aprovacao: string | null;
+    // uploads & docs
+    docSuspenso?: boolean;
+    uploadCnh?: string | null;
+    uploadRg?: string | null;
 
-  // uploads & docs
-  docSuspenso?: boolean;
-  uploadCnh?: string | null;
-  uploadRg?: string | null;
-
-  // logs
-  logDelete?: React.JSX.Element;
-
+    // logs
+    logDelete?: React.JSX.Element;
   }
 
   /**
@@ -271,7 +270,6 @@ declare namespace solictacao {
     pagina: number;
     limite: number;
   }
-  
 }
 
 interface DadosApi {

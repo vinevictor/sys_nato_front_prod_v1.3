@@ -54,7 +54,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
             <AlertIcomCompoment tag={dados.tags} />
             <EditarIconComponent
               aria-label="Editar solicitação"
-              onClick={() => router.push(`/solicitacoes/${dados.id}`)}
+              onClick={() => router.push(`/direto/${dados.id}`)}
             />
             <DeletarIconComponent
               aria-label="Deletar solicitação"
