@@ -258,13 +258,13 @@ export default function FormSolicitacaoEdit({
    */
   const handleSelectCorretor = (value: number) => {
     const corretorId = Number(value);
-    const corretorSelecionado = corretoresOptions.find(
+    const corretorSelecionado: any = corretoresOptions.find(
       (c) => c.id === corretorId
     );
     console.log("🚀 ~ handleSelectCorretor ~ corretorSelecionado:", corretorSelecionado)
     if (corretorSelecionado) {
       
-      setFinanceirasOptions(corretorSelecionado.financeiro || []);
+      setFinanceirasOptions(corretorSelecionado.financeiro as any || []);
     }
     handleChange("corretorId", corretorId);
     handleChange("corretor", {
