@@ -194,7 +194,6 @@ export default function FormSolicitacaoEdit({
         default:
           break;
       }
-
       return newForm;
     });
   };
