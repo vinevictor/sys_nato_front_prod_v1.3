@@ -138,8 +138,6 @@ export default function FormSolicitacaoEdit({
   useEffect(() => {
     const fetchOptions = async () => {
       setLoading(true);
-
-      // Constrói a query string dinamicamente
       const params = new URLSearchParams();
       if (form.construtoraId) {
         params.append("construtoraId", String(form.construtoraId));
@@ -152,13 +150,11 @@ export default function FormSolicitacaoEdit({
       }
 
       try {
-        // Substitua pela sua chamada de API real
         const response = await fetch(`/api/infos/options?${params.toString()}`);
         const data = await response.json();
-        setOptions(data); // Atualiza o estado com os novos dados
+        setOptions(data);
       } catch (error) {
         console.error("Erro ao buscar opções:", error);
-        // Opcional: resetar opções em caso de erro
         setOptions({
           construtoras: [],
           empreendimentos: [],
@@ -383,7 +379,6 @@ export default function FormSolicitacaoEdit({
               }
               value={form.construtoraId || ""}
               required
-              // A API já filtra por permissão, então não precisa da lógica 'isAdmin' aqui
               options={options.construtoras.map((c) => ({
                 id: c.id,
                 fantasia: c.fantasia,
@@ -403,7 +398,7 @@ export default function FormSolicitacaoEdit({
               isDisabled={loading || !form.construtoraId}
               options={options.empreendimentos.map((e) => ({
                 id: e.id,
-                fantasia: e.nome, // Atenção: a propriedade é 'nome'
+                fantasia: e.nome,
               }))}
               isLoading={loading}
             />
@@ -435,7 +430,7 @@ export default function FormSolicitacaoEdit({
               isDisabled={loading || !form.financeiroId}
               options={options.corretores.map((c) => ({
                 id: c.id,
-                fantasia: c.nome, // Atenção: a propriedade é 'nome'
+                fantasia: c.nome,
               }))}
               isLoading={loading}
             />
