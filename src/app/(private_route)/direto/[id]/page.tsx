@@ -59,7 +59,6 @@ export default async function PageDireto({ params }: Props) {
   const session = await GetSessionServer();
   const user = session?.user;
   const data = await requestData(+id, session?.token);
-  console.log("🚀 ~ PageDireto ~ data:", data.data.tags)
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
 

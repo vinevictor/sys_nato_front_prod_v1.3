@@ -12,13 +12,16 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
   const responsavel = data.get("nome") as string;
   const fantasia = data.get("fantasia") as string;
   const construtora = data.get("construtora") as string;
+  const direto = data.get("direto") as string;
+  const valor_cert = data.get("valor_cert") as string;
   const construtoraArray = construtora.split(",");
   const construtoraFinal = construtoraArray.map((element) => {
     return Number(element);
   });
+
   console.log(construtoraFinal);
 
-  if(construtoraFinal.length === 1 && construtoraFinal[0] === 0){
+  if (construtoraFinal.length === 1 && construtoraFinal[0] === 0) {
     return {
       error: true,
       message: "Selecione pelo menos uma construtora",
@@ -50,6 +53,10 @@ export default async function FinanceiraCreate(_: any, data: FormData) {
         responsavel: responsavel,
         fantasia: fantasia,
         construtoras: construtoraFinal,
+        direto: !direto ? false : true,
+        valor_cert: parseFloat(
+          valor_cert.replace(",", ".").trim().replace("R$", "")
+        ).toFixed(2),
       }),
     }
   );
