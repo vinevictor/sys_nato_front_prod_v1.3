@@ -43,7 +43,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (pathname.startsWith("/api/")) {
+  if (session && pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
