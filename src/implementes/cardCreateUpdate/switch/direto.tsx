@@ -10,7 +10,7 @@ interface SwitchDiretoProps extends SwitchProps {
 export default function SwitchDireto({ label, IsValue, ...props }: SwitchDiretoProps) {
   const [value, setValue] = useState(IsValue ?? false);
   return (
-    <Box>
+    <Box mx={3}>
       <FormLabel fontSize="sm" fontWeight="md" m={0} mb={2}>
         {label}
       </FormLabel>

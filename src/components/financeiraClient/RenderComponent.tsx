@@ -64,6 +64,15 @@ export default async function CadastrarFinanceiraClient() {
                 <CardCreateUpdate.GridFinanceiraConstrutora
                   w={{ base: "100%", md: "25rem" }}
                 />
+                <CardCreateUpdate.GridSwitch
+                  label="Direto"
+                  name="direto"
+                  IsValue={false}
+                />
+                <CardCreateUpdate.GridValorcert
+                  w={"10rem"}
+                  valor_cert={""}
+                />
               </FinanceiraProvider>
               <Spacer display={{ base: "none", md: "block" }} />
             </Flex>
