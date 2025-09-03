@@ -4,8 +4,10 @@ import {
   Select,
   Text,
   SelectProps,
+  Spinner, // 👈 1. Importe o Spinner do Chakra
 } from "@chakra-ui/react";
-import { BeatLoader } from "react-spinners";
+// O BeatLoader não é mais necessário aqui
+// import { BeatLoader } from "react-spinners";
 
 interface Option {
   id: string | number;
@@ -20,7 +22,7 @@ interface SelectBasicProps extends SelectProps {
   required?: boolean;
   boxWidth?: string;
   options: Option[];
-  isLoading?: boolean;
+  isLoading?: boolean; // Renomeado de 'Disable' para ser mais claro
 }
 
 export default function SelectBasic({
@@ -54,16 +56,14 @@ export default function SelectBasic({
         )}
       </FormLabel>
 
-     {isLoading ? (
-      <BeatLoader size={8} color="#38A169" cssOverride={{ display: 'flex', justifyContent: 'center', margin: '8px 0' }} />
-     ) : (
       <Select
         {...props}
         id={id}
-        isDisabled={Disable}
+        isDisabled={Disable || isLoading}
         border="1px solid #b8b8b8cc"
         onChange={handleOnChange}
         placeholder="Selecione"
+        icon={isLoading ? <Spinner size="sm" /> : undefined}
       >
         {options.map((item) => (
           <option key={item.id} value={item.id}>
@@ -71,7 +71,6 @@ export default function SelectBasic({
           </option>
         ))}
       </Select>
-     )}
     </FormControl>
   );
 }
