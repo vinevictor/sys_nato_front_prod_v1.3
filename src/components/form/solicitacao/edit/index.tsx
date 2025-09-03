@@ -418,21 +418,23 @@ export default function FormSolicitacaoEdit({
               isLoading={loading}
             />
 
-            <SelectBasic
-              id="corretor"
-              label="Corretor"
-              onvalue={(value) =>
-                handleSelectChange("corretorId", Number(value))
-              }
-              value={form.corretorId || ""}
-              required
-              isDisabled={loading || !form.financeiroId}
-              options={options.corretores.map((c) => ({
-                id: c.id,
-                fantasia: c.nome,
-              }))}
-              isLoading={loading}
-            />
+            {isAdmin && (
+              <SelectBasic
+                id="corretor"
+                label="Corretor"
+                onvalue={(value) =>
+                  handleSelectChange("corretorId", Number(value))
+                }
+                value={form.corretorId || ""}
+                required
+                isDisabled={loading || !form.financeiroId}
+                options={options.corretores.map((c) => ({
+                  id: c.id,
+                  fantasia: c.nome,
+                }))}
+                isLoading={loading}
+              />
+            )}
           </Flex>
           <Flex gap={2}>
             <BoxBasic
