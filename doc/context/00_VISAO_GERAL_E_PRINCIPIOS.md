@@ -6,7 +6,7 @@ O sistema SysNato tem como missão digitalizar, organizar e facilitar o fluxo de
 ## Visão Geral
 - Plataforma web desenvolvida em Next.js com TypeScript, arquitetura modular e foco em escalabilidade.
 - Interface moderna, responsiva e acessível, utilizando Chakra UI e princípios de UX/UI.
-- Integração segura com backend Strapi e APIs externas para autenticação, consulta e gestão de dados.
+- Integração segura com backend Node.js/Express (API própria) e APIs externas para autenticação, consulta e gestão de dados, acessadas via a variável de ambiente `NEXT_PUBLIC_STRAPI_API_URL`.
 
 ## Princípios de Design
 - **Clean Code:** Código limpo, legível, testável e modular.
