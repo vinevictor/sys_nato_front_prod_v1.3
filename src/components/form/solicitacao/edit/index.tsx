@@ -1,5 +1,4 @@
 "use client";
-import Loading from "@/app/loading";
 import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_cliente";
 import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
 import BotaoSisapp from "@/components/botoes/bt_sisapp";
@@ -15,8 +14,7 @@ import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
-import { useSession } from "@/hook/useSession";
-import { SessionClient } from "@/types/session";
+import { Session } from "@/types/session";
 import {
   Box,
   Button,
@@ -33,6 +31,7 @@ import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
+  session: Session.AuthUser;
 }
 
 interface SolicitacaoType {
@@ -113,20 +112,24 @@ interface GetCorretor {
 export default function FormSolicitacaoEdit({
   id,
   data,
+  session,
 }: FormSolicitacaoEditProps) {
-  const session = useSession();
   const toast = useToast();
   const router = useRouter();
   const Hierarquia = session?.hierarquia || null;
   const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
   const [allOptions, setAllOptions] = useState<any[]>([]);
-  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<GetEmpreendimentos[]>([
-    data.empreendimento,
-  ]);
+  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<
+    GetEmpreendimentos[]
+  >([data.empreendimento]);
   const [isLoading, setIsLoading] = useState(false);
-  const [financeirasOptions, setFinanceirasOptions] = useState<GetFinanceiras[]>([data.financeiro]);
-  const [corretoresOptions, setCorretoresOptions] = useState<GetCorretor[]>([data.corretor]);
+  const [financeirasOptions, setFinanceirasOptions] = useState<
+    GetFinanceiras[]
+  >([data.financeiro]);
+  const [corretoresOptions, setCorretoresOptions] = useState<GetCorretor[]>(
+    data.corretor ? [data.corretor] : []
+  );
   useEffect(() => {
     if (!session || !data) return;
 
@@ -136,10 +139,6 @@ export default function FormSolicitacaoEdit({
       try {
         const req = await fetch(rota);
         const optionsData = await req.json();
-        console.log(data.construtoraId);
-        optionsData.map((c: any) => {
-          console.log(c.id);
-        });
         setAllOptions(optionsData);
 
         if (data.construtoraId) {
@@ -154,7 +153,6 @@ export default function FormSolicitacaoEdit({
               initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
                 []
             );
-
             if (data.empreendimentoId) {
               fetchCorretores(+data.empreendimentoId);
               handleChange("empreendimentoId", data.empreendimentoId);
@@ -261,10 +259,8 @@ export default function FormSolicitacaoEdit({
     const corretorSelecionado: any = corretoresOptions.find(
       (c) => c.id === corretorId
     );
-    console.log("🚀 ~ handleSelectCorretor ~ corretorSelecionado:", corretorSelecionado)
     if (corretorSelecionado) {
-      
-      setFinanceirasOptions(corretorSelecionado.financeiro as any || []);
+      setFinanceirasOptions((corretorSelecionado.financeiro as any) || []);
     }
     handleChange("corretorId", corretorId);
     handleChange("corretor", {
@@ -296,8 +292,18 @@ export default function FormSolicitacaoEdit({
       });
       const data = await req.json();
 
-      setCorretoresOptions(data.corretores || []);
-      setFinanceirasOptions(data.financeiros || []);
+      if (Hierarquia !== "ADM") {
+        setCorretoresOptions([
+          {
+            id: session?.id || 0,
+            nome: session?.nome || "",
+          },
+        ]);
+        setFinanceirasOptions(data.financeiros || []);
+      } else {
+        setCorretoresOptions(data.corretores || []);
+        setFinanceirasOptions(data.financeiros || []);
+      }
     } catch (error) {
       console.error("Erro ao buscar corretores:", error);
       toast({ title: "Erro ao carregar corretores", status: "error" });
@@ -342,14 +348,14 @@ export default function FormSolicitacaoEdit({
     form?.andamento !== "EMITIDO" &&
     form?.andamento !== "APROVADO" &&
     form?.dt_agendamento
-      ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
+      ? `Atendido em ${form?.dt_agendamento
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("/")} as ${form?.hr_agendamento?.split("T")[1].split(".")[0]}`
       : !form?.andamento
       ? ""
       : form?.andamento;
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
 
   return (
     <>
@@ -480,24 +486,24 @@ export default function FormSolicitacaoEdit({
             />
           </Flex>
           <Flex gap={2}>
-              <SelectBasic
-                id="construtora"
-                label="Construtora"
-                onvalue={(value) => handleSelectConstrutora(Number(value))}
-                value={form?.construtoraId || ""}
-                required
-                options={
-                  isAdmin
-                    ? allOptions.map((c) => ({
-                        id: c.id,
-                        fantasia: c.fantasia,
-                      }))
-                    : allOptions.map((c) => ({
-                        id: c.id,
-                        fantasia: c.fantasia,
-                      }))
-                }
-              />
+            <SelectBasic
+              id="construtora"
+              label="Construtora"
+              onvalue={(value) => handleSelectConstrutora(Number(value))}
+              value={form?.construtoraId || ""}
+              required
+              options={
+                isAdmin
+                  ? allOptions.map((c) => ({
+                      id: c.id,
+                      fantasia: c.fantasia,
+                    }))
+                  : allOptions.map((c) => ({
+                      id: c.id,
+                      fantasia: c.fantasia,
+                    }))
+              }
+            />
             <SelectBasic
               id="empreendimento"
               label="Empreendimento"

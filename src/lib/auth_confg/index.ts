@@ -11,7 +11,6 @@ export async function OpenSessionToken(token: string) {
 }
 
 export async function CreateSessionServer(payload = {}) {
-  console.log("🚀 ~ CreateSessionServer ~ payload:", payload)
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
   const jwt = await new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })

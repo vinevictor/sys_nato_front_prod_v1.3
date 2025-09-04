@@ -8,10 +8,8 @@ export const useSession = (): SessionClient | null => {
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/auth/session");
-      if (res.ok) {
-        const json = await res.json();
-        setSession(json.session);
-      }
+      const json = await res.json();
+      setSession(json.session);
     })();
   }, []);
 
