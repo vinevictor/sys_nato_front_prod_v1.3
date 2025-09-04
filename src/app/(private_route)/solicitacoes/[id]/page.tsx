@@ -1,13 +1,9 @@
-import Loading from "@/app/loading";
 import MensagensChatDireto from "@/components/direto/mesage";
 import FormSolicitacaoEdit from "@/components/form/solicitacao/edit";
 import LogsComponent from "@/components/logsComponent";
-import MensagensChat from "@/components/mensagensChat";
 import ListAlertas from "@/components/solicitacao/alert";
-import { useSession } from "@/hook/useSession";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { Flex, Box, Container } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Flex, Box, Container, Text } from "@chakra-ui/react";
 
 interface Props {
   params: {
@@ -75,7 +71,13 @@ export default async function PageSolicitacoes({ params }: Props) {
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
 
-
+  if (data && data.error) {
+    return (
+      <Container w="full" h="full" display="flex" justifyContent="center" alignItems="center">
+        <Text fontSize="xl" fontWeight="bold" color="red">{data.message}</Text>
+      </Container>
+    );
+  }
   return (
     <Container maxW="full" p={{ base: 2, md: 4 }}>
       {/* Layout principal - Stack vertical em mobile, horizontal em desktop */}
@@ -91,7 +93,7 @@ export default async function PageSolicitacoes({ params }: Props) {
           w={{ base: "full", lg: "auto" }}
           minW={0} // Permite que o flex item encolha
         >
-          {data.data && <FormSolicitacaoEdit id={+id} data={data.data} />}
+          {data.data && <FormSolicitacaoEdit id={+id} data={data.data} session={user} />}
           
         </Box>
 
@@ -110,7 +112,7 @@ export default async function PageSolicitacoes({ params }: Props) {
             minH={{ base: "400px", md: "500px", lg: "60%" }}
             maxH={{ base: "600px", lg: "none" }}
           >
-             <MensagensChatDireto Id={+id} messages={data.data.obs} session={user} />
+             <MensagensChatDireto Id={+id} messages={data.data.obs || []} session={user} />
           </Box>
 
           {/* Alertas */}

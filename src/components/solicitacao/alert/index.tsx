@@ -32,7 +32,6 @@ export default function ListAlertas({ id, data }: ListAlertasProps) {
     }
   }, [id, data]);
   
-  console.log("🚀 ~ ListAlertas ~ dataAlert:", dataAlert)
   return (
     <Flex
       w="full"

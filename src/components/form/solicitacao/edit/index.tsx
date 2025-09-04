@@ -14,7 +14,8 @@ import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
-import { useSession } from "@/hook/useSession";
+
+import { Session } from "@/types/session";
 import {
   Box,
   Button,
@@ -31,6 +32,7 @@ import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
+  session: Session.AuthUser;
 }
 
 interface SolicitacaoType {
@@ -118,23 +120,25 @@ interface ApiOptions {
 export default function FormSolicitacaoEdit({
   id,
   data,
+  session,
 }: FormSolicitacaoEditProps) {
-  const session = useSession();
   const toast = useToast();
   const router = useRouter();
   const Hierarquia = session?.hierarquia || null;
   const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
-
+  const [allOptions, setAllOptions] = useState<any[]>([]);
+  const [empreendimentosOptions, setEmpreendimentosOptions] = useState<
+    GetEmpreendimentos[]
+  >([data.empreendimento]);
   const [isLoading, setIsLoading] = useState(false);
+  const [financeirasOptions, setFinanceirasOptions] = useState<
+    GetFinanceiras[]
+  >([data.financeiro]);
+  const [corretoresOptions, setCorretoresOptions] = useState<GetCorretor[]>(
+    data.corretor ? [data.corretor] : []
+  );
 
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<ApiOptions>({
-    construtoras: [],
-    empreendimentos: [],
-    financeiras: [],
-    corretores: [],
-  });
   useEffect(() => {
     const fetchOptions = async () => {
       setLoading(true);
@@ -150,9 +154,33 @@ export default function FormSolicitacaoEdit({
       }
 
       try {
-        const response = await fetch(`/api/infos/options?${params.toString()}`);
-        const data = await response.json();
-        setOptions(data);
+        const req = await fetch(rota);
+        const optionsData = await req.json();
+        setAllOptions(optionsData);
+
+        if (data.construtoraId) {
+          const initialConstrutora = optionsData.find(
+            (c: any) => c.id === data.construtoraId
+          );
+          handleChange("construtoraId", data.construtoraId);
+          if (initialConstrutora) {
+            const empreendimentos = initialConstrutora.empreendimentos || [];
+            setEmpreendimentosOptions(empreendimentos);
+            setFinanceirasOptions(
+              initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
+                []
+            );
+            if (data.empreendimentoId) {
+              fetchCorretores(+data.empreendimentoId);
+              handleChange("empreendimentoId", data.empreendimentoId);
+              handleChange("financeiroId", data.financeiroId);
+            }
+          }
+        }
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+
       } catch (error) {
         console.error("Erro ao buscar opções:", error);
         setOptions({
@@ -176,27 +204,79 @@ export default function FormSolicitacaoEdit({
   const handleSelectChange = (fieldName: any, value: any) => {
     setForm((prevForm) => {
       const newForm = { ...prevForm, [fieldName]: value };
+    if (isAdmin) {
+      fetchCorretores(value);
+    }
 
-      // Lógica para reiniciar campos dependentes
-      switch (fieldName) {
-        case "construtoraId":
-          newForm.empreendimentoId = null;
-          newForm.financeiroId = null;
-          newForm.corretorId = null;
-          break;
-        case "empreendimentoId":
-          newForm.financeiroId = null;
-          newForm.corretorId = null;
-          break;
-        case "financeiroId":
-          newForm.corretorId = null;
-          break;
-        default:
-          break;
-      }
-      return newForm;
+    handleChange("corretorId", null);
+    handleChange("corretor", { id: null, nome: "" });
+  };
+
+  /**
+   * Manipula a seleção de um corretor
+   * Atualiza o estado do formulário e carrega as financeiras relacionadas
+   *
+   * @param value - ID do corretor selecionado
+   */
+  const handleSelectCorretor = (value: number) => {
+    const corretorId = Number(value);
+    const corretorSelecionado: any = corretoresOptions.find(
+      (c) => c.id === corretorId
+    );
+    if (corretorSelecionado) {
+      setFinanceirasOptions((corretorSelecionado.financeiro as any) || []);
+    }
+    handleChange("corretorId", corretorId);
+    handleChange("corretor", {
+      id: corretorSelecionado?.id || null,
+      nome: corretorSelecionado?.nome || "",
+
     });
   };
+
+
+  /**
+   * Busca os corretores e financeiras associados a um empreendimento
+   * Atualiza as opções disponíveis nos selects correspondentes
+   *
+   * @param empreendimentoId - ID do empreendimento para buscar os corretores
+   */
+  const fetchCorretores = async (empreendimentoId: number) => {
+    try {
+      const req = await fetch(`/api/adm/getcorretores/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          empreendimentoId: +empreendimentoId,
+          construtoraId: form.construtora.id,
+        }),
+      });
+      const data = await req.json();
+
+      if (Hierarquia !== "ADM") {
+        setCorretoresOptions([
+          {
+            id: session?.id || 0,
+            nome: session?.nome || "",
+          },
+        ]);
+        setFinanceirasOptions(data.financeiros || []);
+      } else {
+        setCorretoresOptions(data.corretores || []);
+        setFinanceirasOptions(data.financeiros || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar corretores:", error);
+      toast({ title: "Erro ao carregar corretores", status: "error" });
+    }
+  };
+
+  /**
+   * Envia os dados do formulário para atualização da solicitação
+   * Exibe feedback ao usuário e recarrega a página após sucesso
+   */
 
   const handlesubmit = async () => {
     setIsLoading(true);
@@ -232,14 +312,14 @@ export default function FormSolicitacaoEdit({
     form?.andamento !== "EMITIDO" &&
     form?.andamento !== "APROVADO" &&
     form?.dt_agendamento
-      ? `Atendido em ${form?.dt_agendamento} as ${form?.hr_agendamento}`
+      ? `Atendido em ${form?.dt_agendamento
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("/")} as ${form?.hr_agendamento?.split("T")[1].split(".")[0]}`
       : !form?.andamento
       ? ""
       : form?.andamento;
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
 
   return (
     <>
@@ -373,17 +453,20 @@ export default function FormSolicitacaoEdit({
             <SelectBasic
               id="construtora"
               label="Construtora"
-              onvalue={(value) =>
-                handleSelectChange("construtoraId", Number(value))
-              }
-              value={form.construtoraId || ""}
+              onvalue={(value) => handleSelectConstrutora(Number(value))}
+              value={form?.construtoraId || ""}
               required
-              options={options.construtoras.map((c) => ({
-                id: c.id,
-                fantasia: c.fantasia,
-              }))}
-              isDisabled={loading}
-              isLoading={loading}
+              options={
+                isAdmin
+                  ? allOptions.map((c) => ({
+                      id: c.id,
+                      fantasia: c.fantasia,
+                    }))
+                  : allOptions.map((c) => ({
+                      id: c.id,
+                      fantasia: c.fantasia,
+                    }))
+              }
             />
 
             <SelectBasic
