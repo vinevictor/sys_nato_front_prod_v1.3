@@ -55,7 +55,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
               variant="outline"
             />
             <MenuList>
-              <BotaoMobileMenu name="Home" path="/" icon={<FiHome />} />
+              <BotaoMobileMenu name="Home" path="/home" icon={<FiHome />} />
               <BotaoMobileMenu
                 name="Nova Solicitação"
                 path="/solicitacoes"
@@ -81,7 +81,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
       <Box display={{ base: "none", md: "flex" }} gap={1} w={"85%"}>
         {mounted && session ? (
           <>
-            <BotaoMenu name="Home" path="/" icon={<FiHome />} />
+            <BotaoMenu name="Home" path="/home" icon={<FiHome />} />
             <BotaoMenu name="Nova Solicitação" path="/solicitacoes" icon={<FiFilePlus />} />
             {session?.role?.adm && (
               <BotaoMenu name="Painel adm" path="/adm" icon={<FiSettings />} />

@@ -30,6 +30,8 @@ export async function DELETE(
     );
 
     const data = await reqest.json();
+    revalidateTag("user-get");
+    revalidateTag("user-role");
     console.log("🚀 ~ file: route.ts:PUT ~ data:", data);
     if (!reqest.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });

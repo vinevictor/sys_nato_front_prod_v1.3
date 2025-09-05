@@ -51,7 +51,18 @@ export async function GetSessionClient() {
     }
     const data: any = await OpenSessionToken(token.value);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/role/${data.user.id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token.value}`,
+        },
+        next: {
+          // revalidar a cada 20 minutos
+          revalidate: 1200,
+          tags: ["user-role"],
+        },
+      }
     );
     const retorno = await response.json();
     data.user.role = retorno.role || null;
@@ -83,6 +94,11 @@ export async function GetSessionServer() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token.value}`,
+        },
+        next: {
+          // revalidar a cada 20 minutos
+          revalidate: 1200,
+          tags: ["user-get"],
         },
       }
     );

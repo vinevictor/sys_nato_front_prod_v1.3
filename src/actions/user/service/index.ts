@@ -89,6 +89,8 @@ export async function UpdateUser(_: any, data: FormData) {
       status: req.status,
     };
   }
+  revalidateTag("user-get");
+  revalidateTag("user-role");
   revalidateTag("usuarios_list");
   revalidateTag("Usuarios-list-page");
   await new Promise((resolve) => setTimeout(resolve, 2000));

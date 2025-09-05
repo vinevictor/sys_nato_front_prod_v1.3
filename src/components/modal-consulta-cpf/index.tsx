@@ -59,7 +59,7 @@ export default function ModalConsultaRegistro({
   }, [isOpen, setCpfChange]);
 
   const handleClose = () => {
-    router.push("/");
+    router.push("/home");
   };
 
   const handleSubmit = async () => {
