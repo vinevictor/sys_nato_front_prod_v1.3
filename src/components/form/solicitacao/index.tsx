@@ -286,7 +286,7 @@ export default function FormSolicitacao({
             });
             setLoad(false);
             if (retorno.id) {
-              router.push("/");
+              router.push("/home");
             }
           } else {
             toast({
@@ -296,6 +296,7 @@ export default function FormSolicitacao({
               duration: 3000,
               isClosable: true,
             });
+            router.push("/home");
           }
           setLoad(false);
         } catch (error) {

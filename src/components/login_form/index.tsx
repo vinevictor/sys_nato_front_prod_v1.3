@@ -36,7 +36,7 @@ export const FormLogin = () => {
       });
       setLoading(false);
     } else {
-      router.replace("/");
+      router.replace("/home");
     }
   };
 

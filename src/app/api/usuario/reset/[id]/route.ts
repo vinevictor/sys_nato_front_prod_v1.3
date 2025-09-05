@@ -36,6 +36,8 @@ export async function PUT(
     if (!reqest.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });
     }
+    revalidateTag("user-get");
+    revalidateTag("user-role");
     revalidateTag("usuarios_list");
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {

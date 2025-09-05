@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GetSessionServer } from "./lib/auth_confg";
 
 const publicRoutes = [
+  "/",
   "/login",
   "/faq",
   "/termos/privacidade",
@@ -32,8 +33,11 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (pathname === "/" && !session) {
+  if (pathname === "/home" && !session) {
     return NextResponse.redirect(new URL("/login", req.url));
+  }
+  if (pathname === "/login" && session) {
+    return NextResponse.redirect(new URL("/home", req.url));
   }
 
   if (!session) {
