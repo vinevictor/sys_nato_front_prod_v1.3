@@ -21,10 +21,11 @@ import { SelectComponentFilterHome } from "../imputs/select";
 import { SelectPgComponent } from "../imputs/selectPg";
 import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
+import { Session } from "@/types/session";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;
-  session: SessionNext.Server | null;
+  session: Session.SessionServer | null;
 }
 
 const fetchEmpreendimentoAll = async () => {
