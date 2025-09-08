@@ -15,6 +15,7 @@ import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
 import { useSession } from "@/hook/useSession";
+import { Session } from "@/types/session";
 import {
   Box,
   Button,
@@ -107,11 +108,13 @@ interface GetCorretor {
 interface FormSolicitacaoProps {
   dados: GetSolicitacao;
   Id: number;
+  session: Session.AuthUser;
 }
 
 export default function FormSolicitacaoDireto({
   dados,
   Id,
+  session,
 }: FormSolicitacaoProps) {
   const [form, setForm] = useState({
     cpf: dados.data.cpf,
@@ -131,7 +134,6 @@ export default function FormSolicitacaoDireto({
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
   const router = useRouter();
-  const [relacionamento, setrelacionamento] = useState<boolean>(false);
   const [Empreendimentos, setEmpreendimentos] = useState<GetEmpreendimentos[]>([
     dados.data.empreendimento,
   ]);
@@ -141,7 +143,7 @@ export default function FormSolicitacaoDireto({
   const [Corretores, setCorretores] = useState<GetCorretor[]>([
     dados.data.corretor,
   ]);
-  const session = useSession();
+
   const isAdmin = session?.hierarquia === "ADM";
 
   useEffect(() => {

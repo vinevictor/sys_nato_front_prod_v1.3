@@ -10,9 +10,10 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BeatLoader } from "react-spinners";
+import { Session } from "@/types/session";
 
 interface FinanceiraLinksProps {
-  session: SessionNext.Server | null;
+  session: Session.SessionServer | null;
 }
 
 export const FinanceiraLinks = ({ session }: FinanceiraLinksProps) => {

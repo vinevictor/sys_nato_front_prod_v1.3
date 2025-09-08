@@ -79,7 +79,7 @@ export default async function PageDireto({ params }: Props) {
             minW={0} // Permite que o flex item encolha
           >
             {/* <FormSolicitacaoEdit id={+id} data={data} /> */}
-            <FormSolicitacaoDireto dados={data} Id={+id} />
+            <FormSolicitacaoDireto dados={data} Id={+id} session={user} />
           </Box>
 
           {/* Seção lateral - Chat e Alertas */}

@@ -130,6 +130,14 @@ export default function FormSolicitacaoEdit({
   const [corretoresOptions, setCorretoresOptions] = useState<GetCorretor[]>(
     data.corretor ? [data.corretor] : []
   );
+
+  console.log("session", JSON.stringify(session, null, 2));
+  console.log("data", JSON.stringify(data, null, 2));
+  console.log("empreendimento", JSON.stringify(empreendimentosOptions, null, 2));
+  console.log("corretor", JSON.stringify(corretoresOptions, null, 2));
+  console.log("financeiro", JSON.stringify(financeirasOptions, null, 2));
+
+  
   useEffect(() => {
     if (!session || !data) return;
 
