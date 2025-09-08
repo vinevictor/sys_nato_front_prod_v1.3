@@ -1,6 +1,6 @@
 import Loading from "@/app/loading";
+import { DadoCompomentList } from "@/components/direto/lista";
 import { UserCompomentInfo } from "@/components/direto/user";
-import FormSolicitacaoDireto from "@/components/form/direto";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
@@ -35,6 +35,7 @@ const GetListaDados = async (
       return null;
     }
     const data = await user.json();
+    console.log("🚀 ~ GetListaDados ~ data:", data)
     return data;
   } catch (error) {
     console.error("Erro ao buscar dados:", error);
@@ -54,7 +55,12 @@ async function DadosContent({ session }: Props) {
   return (
     <>
       {session && <UserCompomentInfo session={session} />}
-      {session && <FormSolicitacaoDireto dados={ListDados} session={session.user} Id={ListDados.id} />}
+      {session && (
+        <DadoCompomentList
+          dados={ListDados}
+          session={session}
+        />
+      )}
     </>
   );
 }

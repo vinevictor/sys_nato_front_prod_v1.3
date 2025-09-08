@@ -116,6 +116,7 @@ export default function FormSolicitacaoDireto({
   Id,
   session,
 }: FormSolicitacaoProps) {
+  console.log("🚀 ~ FormSolicitacaoDireto ~ dados:", dados)
   const [form, setForm] = useState({
     cpf: dados.data.cpf,
     nome: dados.data.nome,
