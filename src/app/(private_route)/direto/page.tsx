@@ -1,10 +1,11 @@
 import Loading from "@/app/loading";
-import { DadoCompomentList } from "@/components/direto/lista";
 import { UserCompomentInfo } from "@/components/direto/user";
+import FormSolicitacaoDireto from "@/components/form/direto";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
+import { Session } from "@/types/session";
 import { Flex } from "@chakra-ui/react";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -16,8 +17,8 @@ export const metadata: Metadata = {
 };
 
 const GetListaDados = async (
-  session: SessionNext.Server | null
-): Promise<solictacao.SolicitacaoGetType | null> => {
+  session: Session.SessionServer | null
+): Promise<any | null> => {
   try {
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
     const user = await fetch(url, {
@@ -42,7 +43,7 @@ const GetListaDados = async (
 };
 
 interface Props {
-  session: SessionNext.Server | null;
+  session: Session.SessionServer | null;
 }
 
 async function DadosContent({ session }: Props) {
@@ -53,7 +54,7 @@ async function DadosContent({ session }: Props) {
   return (
     <>
       {session && <UserCompomentInfo session={session} />}
-      {session && <DadoCompomentList dados={ListDados} session={session} />}
+      {session && <FormSolicitacaoDireto dados={ListDados} session={session.user} Id={ListDados.id} />}
     </>
   );
 }

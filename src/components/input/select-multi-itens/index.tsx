@@ -78,7 +78,7 @@ export default function SelectMultiItem({
       setTagsValue(TagsValue.filter((item) => item.id !== id));
       OnRetorno(TagsValue.filter((item) => item.id !== id));
     }
-  }
+  };
 
   useEffect(() => {
     fetchTags();
@@ -87,94 +87,101 @@ export default function SelectMultiItem({
   return (
     <>
       <Box w={"full"} minH={"6rem"}>
-        {IsLoadingGeral && (
+        {isAdmin && (
           <>
-            <Flex
-              w={"full"}
-              h={"6rem"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Box>
-                <Center>
-                  <CircularProgress
-                    color="green.300"
-                    isIndeterminate
-                    size="5rem"
-                  />
-                </Center>
-              </Box>
-            </Flex>
-          </>
-        )}
-        {!IsLoadingGeral && isAdmin && (
-          <FormControl w={"full"}>
-            <FormLabel fontSize="sm" display="flex" alignItems="center" gap={1}>
-              {label}
-              {required && (
-                <Text as="span" fontSize="xs" color="red.500">
-                  *
-                </Text>
-              )}
-            </FormLabel>
-            <Flex gap={2}>
-              <Select
-                onChange={(e) => setSelected(Number(e.target.value))}
-                placeholder="Selecione"
-                size="md"
-                {...props}
-              >
-                {Options.map((item: any, index: number) => (
-                  <option key={index} value={item.id}>
-                    {item.label}
-                  </option>
-                ))}
-              </Select>
-
-              <IconButton
-                aria-label={"Adicionar"}
-                icon={<FaPlus />}
-                size={"md"}
-                colorScheme="blue"
-                variant="outline"
-                onClick={handleAddItem}
-              />
-            </Flex>
-
-            <Flex gap={2} mt={3} flexWrap="wrap">
-              {TagsValue?.map((item) => (
-                <Tag
-                  key={item.id}
-                  size={"lg"}
-                  borderRadius="full"
-                  variant="solid"
-                  colorScheme="blue"
+            {IsLoadingGeral && (
+              <>
+                <Flex
+                  w={"full"}
+                  h={"6rem"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
                 >
-                  <TagLabel>{item.label || item.descricao}</TagLabel>
-                  <TagCloseButton onClick={() => handleDeleteItem(item.id)} />
-                </Tag>
-              ))}
-            </Flex>
-          </FormControl>
-        )}
-        {!IsLoadingGeral && !isAdmin && (
-          <Flex
-            w={"full"}
-            h={"6rem"}
-            flexWrap={"wrap"}
-          >
-           {TagsValue?.map((item) => (
-            <Tag
-              key={item.id}
-              size={"lg"}
-              borderRadius="full"
-              variant="solid"
-              colorScheme="blue"
-            >
-              <TagLabel>{item.label || item.descricao}</TagLabel>
-            </Tag>
-           ))}
-          </Flex>
+                  <Box>
+                    <Center>
+                      <CircularProgress
+                        color="green.300"
+                        isIndeterminate
+                        size="5rem"
+                      />
+                    </Center>
+                  </Box>
+                </Flex>
+              </>
+            )}
+            {!IsLoadingGeral && isAdmin && (
+              <FormControl w={"full"}>
+                <FormLabel
+                  fontSize="sm"
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                >
+                  {label}
+                  {required && (
+                    <Text as="span" fontSize="xs" color="red.500">
+                      *
+                    </Text>
+                  )}
+                </FormLabel>
+                <Flex gap={2}>
+                  <Select
+                    onChange={(e) => setSelected(Number(e.target.value))}
+                    placeholder="Selecione"
+                    size="md"
+                    {...props}
+                  >
+                    {Options.map((item: any, index: number) => (
+                      <option key={index} value={item.id}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </Select>
+
+                  <IconButton
+                    aria-label={"Adicionar"}
+                    icon={<FaPlus />}
+                    size={"md"}
+                    colorScheme="blue"
+                    variant="outline"
+                    onClick={handleAddItem}
+                  />
+                </Flex>
+
+                <Flex gap={2} mt={3} flexWrap="wrap">
+                  {TagsValue?.map((item) => (
+                    <Tag
+                      key={item.id}
+                      size={"lg"}
+                      borderRadius="full"
+                      variant="solid"
+                      colorScheme="blue"
+                    >
+                      <TagLabel>{item.label || item.descricao}</TagLabel>
+                      <TagCloseButton
+                        onClick={() => handleDeleteItem(item.id)}
+                      />
+                    </Tag>
+                  ))}
+                </Flex>
+              </FormControl>
+            )}
+            {!IsLoadingGeral && !isAdmin && (
+              <Flex w={"full"} h={"6rem"} flexWrap={"wrap"}>
+                {TagsValue?.map((item) => (
+                  <Tag
+                    key={item.id}
+                    size={"lg"}
+                    borderRadius="full"
+                    variant="solid"
+                    colorScheme="blue"
+                  >
+                    <TagLabel>{item.label || item.descricao}</TagLabel>
+                  </Tag>
+                ))}
+              </Flex>
+            )}
+          </>
         )}
       </Box>
     </>

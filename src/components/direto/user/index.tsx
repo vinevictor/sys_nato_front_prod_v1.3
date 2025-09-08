@@ -3,9 +3,10 @@ import { Flex, FormLabel, Text } from "@chakra-ui/react";
 import { BtnListNow } from "../imputs/BtnListNow";
 import { FinanceiraLinks } from "../data";
 import { mask } from "remask";
+import { Session } from "@/types/session";
 
 interface UserCompomentInfoProps {
-  session: SessionNext.Server | null;
+  session: Session.SessionServer | null;
 }
 
 export const UserCompomentInfo = ({ session }: UserCompomentInfoProps) => {
