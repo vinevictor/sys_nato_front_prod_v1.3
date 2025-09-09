@@ -2,9 +2,12 @@
 import React, { useState } from "react";
 import { Button, useToast } from "@chakra-ui/react";
 
-export const BotaoSisapp = ({ body }: { body: any }) => {
-  const toast = useToast();
+interface BotaoSisappProps {
+  body: solictacao.SolicitacaoObjectDiretoType;
+}
 
+export const BotaoSisapp = ({ body }: BotaoSisappProps) => {
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const handleUpdateSolicitacao = async () => {
     try {
@@ -19,7 +22,11 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
         ativo: body.ativo,
         andamento: body.andamento ? body.andamento : "SISAPP",
         statusPgto: body.situacao_pg,
-        valorCd: body.construtora.valor_cert,
+        valorCd: body.construtora
+          ? body.construtora.valor_cert
+          : body.financeiro.valor_cert
+          ? body.financeiro.valor_cert
+          : body.valorcd,
         docSuspenso: null,
         alertaNow: body.alertanow || false,
         dtCriacaoNow: body.dt_criacao_now || null,
@@ -30,8 +37,8 @@ export const BotaoSisapp = ({ body }: { body: any }) => {
           telefone: body.corretor.telefone,
         }),
         construtora: JSON.stringify({
-          id: body.construtora.id,
-          fantasia: body.construtora.fantasia,
+          id: body.construtora?.id,
+          fantasia: body.construtora?.fantasia,
         }),
         empreendimento: JSON.stringify({
           id: body.empreendimento.id,
