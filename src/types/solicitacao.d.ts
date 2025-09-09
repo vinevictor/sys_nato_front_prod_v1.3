@@ -73,6 +73,7 @@ declare namespace solictacao {
     ];
     createdAt: string | Date;
   }
+
   interface SolicitacaoObjectCompleteType {
     id: number;
     nome: string;
@@ -269,6 +270,106 @@ declare namespace solictacao {
     total: number;
     pagina: number;
     limite: number;
+  }
+
+  interface SolicitacaoObjectDiretoType {
+    alertanow: boolean;
+    alerts: [];
+    andamento: string | null;
+    ativo: boolean;
+    cnh: string | null;
+    construtora: {
+      id: number;
+      fantasia: string;
+      valor_cert: number;
+    } | null;
+    construtoraId: number | null;
+    corretor: {
+      id: number;
+      nome: string;
+      telefone: string;
+    };
+    corretorId: number;
+    cpf: string;
+    direto: boolean;
+    distrato: boolean;
+    distrato_id: number | null;
+    dt_agendamento: string | null;
+    dt_aprovacao: string | null;
+    dt_criacao_now: string | null;
+    dt_distrato: string | null;
+    dt_nascimento: string | null;
+    dt_revogacao: string | null;
+    direto: boolean;
+    distrato: boolean;
+    distrato_id: number | null;
+    dt_agendamento: string | null;
+    dt_aprovacao: string | null;
+    dt_criacao_now: string | null;
+    dt_distrato: string | null;
+    dt_nascimento: string | null;
+    dt_revogacao: string | null;
+    direto: boolean;
+    distrato: boolean;
+    distrato_id: number | null;
+    dt_agendamento: string | null;
+    dt_aprovacao: string | null;
+    dt_criacao_now: string | null;
+    dt_distrato: string | null;
+    dt_nascimento: string | null;
+    dt_revogacao: string | null;
+    direto: boolean;
+    distrato: boolean;
+    distrato_id: number | null;
+    dt_agendamento: string | null;
+    dt_aprovacao: string | null;
+    dt_criacao_now: string | null;
+    dt_distrato: string | null;
+    dt_nascimento: string | null;
+    dt_revogacao: string | null;
+    email: string;
+    empreendimento: {
+      id: number;
+      nome: string;
+      cidade: string;
+      estado: string;
+      tag: string;
+    };
+    empreendimentoId: number;
+    estatos_pgto: string;
+    financeiro: {
+      id: number;
+      fantasia: string;
+      tel: string | null;
+      valor_cert: number | null;
+    };
+    financeiroId: number;
+    freqSms: number;
+    hr_agendamento: string | null;
+    hr_aprovacao: string | null;
+    id: number;
+    id_fcw: number | null;
+    imagemQrcode: string | null;
+    nome: string;
+    obs: [];
+    pause: boolean;
+    pg_andamento: string;
+    pg_date: string;
+    pg_status: boolean;
+    pixCopiaECola: string;
+    rela_quest: boolean;
+    relacionamentos: [];
+    situacao_pg: number;
+    statusAtendimento: boolean;
+    status_aprovacao: boolean;
+    tags: [];
+    telefone: string;
+    telefone2: string | null;
+    txid: string | null;
+    type_validacao: string | null;
+    updatedAt: string;
+    valorcd: number | null;
+    createdAt: Date | string | any;
   }
 }
 

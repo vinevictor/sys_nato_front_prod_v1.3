@@ -12,8 +12,12 @@ export async function POST(request: Request) {
       body: JSON.stringify(data),
     });
 
+    const res = await response.json();
     if (!response.ok) {
-      const res = await response.json();
+      //indentificar se no retorno tem o termo 'Unique constraint failed on the fields: (`email`)'
+      if (res.message.includes("Unique constraint failed on the fields: (`email`)")) {
+        return NextResponse.json({message: "Email ja cadastrado"}, { status: 400 });
+      }
       return NextResponse.json(res, { status: 500 });
     }
 

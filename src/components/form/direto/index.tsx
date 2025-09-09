@@ -481,7 +481,7 @@ export default function FormSolicitacaoDireto({
       </Flex>
 
       <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-        {session?.hierarquia === "ADM" && <BotaoSisapp body={dados.data} />}
+        {session?.hierarquia === "ADM" && <BotaoSisapp body={dados.data as any} />}
         {dados.data?.ativo && isAdmin && <ResendSms id={Id} />}
         <Button
           colorScheme="orange"
