@@ -74,51 +74,43 @@ declare namespace solictacao {
     createdAt: string | Date;
   }
 
-  interface SolicitacaoObjectCompleteType {
+  type SolicitacaoObjectCompleteType = {
     id: number;
     nome: string;
     cpf: string;
-
     ativo: boolean;
     statusAtendimento: boolean;
     pause: boolean;
     andamento: string;
-
     valorcd: number | null;
     dt_nascimento: string; // ISO string recebida do back-end
     telefone?: string | null;
     telefone2?: string | null;
     email?: string | null;
-
     corretor?: {
       id: number;
       nome: string;
     } | null;
-
     construtora?: {
       id: number;
       fantasia: string;
+      valor_cert: number;
     } | null;
-
     empreendimento?: {
       id: number;
       nome: string;
       cidade?: string;
     } | null;
-
     financeiro?: {
       id: number;
       fantasia: string;
+      valor_cert: number;
     } | null;
-
     id_fcw: number | null;
-
     distrato?: boolean;
     distrato_id?: number | null;
     distrato_dt?: string | null;
-
     alertanow: boolean;
-
     // coleções
     tags: {
       id: number;

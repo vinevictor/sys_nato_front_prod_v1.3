@@ -504,7 +504,7 @@ export default function FormSolicitacaoDireto({
               </>
             )))}
         {!dados.data?.id_fcw && dados.data?.ativo && (
-          <CriarFcweb Dados={form} user={session!} />
+          <CriarFcweb Dados={dados.data} user={session!} />
         )}
         <BotaoPausar id={Id} statusPause={dados.data?.pause} />
         <BtnIniciarAtendimento

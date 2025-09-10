@@ -21,6 +21,7 @@ interface CriarFcwebProps {
 }
 
 export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
+  console.log("🚀 ~ CriarFcweb ~ Dados:", Dados)
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [Loading, setLoading] = useState(false);
@@ -55,7 +56,13 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
           )} ${new Date().toLocaleTimeString("pt-BR")})`,
         ].join(" - "),
         tipocd: "A3PF Bird5000",
-        valorcd: getData(),
+        valorcd: getData(
+          Dados.valorcd
+            ? Dados.valorcd
+            : Dados.construtora.valor_cert
+            ? Dados.construtora.valor_cert
+            : Dados.financeira.valor_cert
+        ),
         formapgto: "PENDURA",
         telefone: Dados?.telefone,
         email: Dados?.email,
@@ -106,14 +113,9 @@ export function CriarFcweb({ Dados, user }: CriarFcwebProps) {
     }
   };
 
-  function getData() {
-    if (!Dados.valorcd) {
-      return Dados.construtora.valor_cert
-        .toFixed(2)
-        .toString()
-        .replace(".", ",");
-    }
-    return Dados.valorcd.toString().replace(".", ",");
+  function getData(valor: number) {
+    console.log("🚀 ~ getData ~ valor:", valor)
+    return valor.toString().replace(".", ",");
   }
 
   return (
