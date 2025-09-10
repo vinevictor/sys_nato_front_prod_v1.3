@@ -97,7 +97,7 @@ export default async function PageDireto({ params }: Props) {
               minH={{ base: "400px", md: "500px", lg: "45%" }}
               maxH={{ base: "600px", lg: "none" }}
             >
-              <MensagensChatDireto Id={+id} messages={data.data.obs} session={user} />
+              <MensagensChatDireto Id={+id} messages={data.data.obs || []} session={user} />
             </Box>
 
             {/* Alertas */}
