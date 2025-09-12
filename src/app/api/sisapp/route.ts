@@ -1,15 +1,25 @@
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
+    const session = await GetSessionServer();
     const data = await request.json();
+    const { id, ...body } = data;
+    
+    if (!session) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: 401 }
+      );
+    }
 
     const response = await fetch(`${process.env.API_URL_SISAPP}/cliente`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
     });
 
     const res = await response.json();
@@ -20,6 +30,22 @@ export async function POST(request: Request) {
       }
       return NextResponse.json(res, { status: 500 });
     }
+
+    const updateResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/sisapp/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.token}`,
+        },
+        body: JSON.stringify({ sisapp: true }),
+      }
+    );
+
+    const updateRes = await updateResponse.json();
+    console.log("🚀 ~ POST ~ updateRes:", updateRes)
+    
 
     return NextResponse.json(
       { data: data, message: "Arquivo enviado com sucesso" },

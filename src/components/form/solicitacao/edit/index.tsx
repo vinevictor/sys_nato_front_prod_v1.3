@@ -27,6 +27,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
+import { TbDeviceMobileMessage } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
 interface FormSolicitacaoEditProps {
   id?: number;
@@ -131,13 +132,6 @@ export default function FormSolicitacaoEdit({
     data.corretor ? [data.corretor] : []
   );
 
-  console.log("session", JSON.stringify(session, null, 2));
-  console.log("data", JSON.stringify(data, null, 2));
-  console.log("empreendimento", JSON.stringify(empreendimentosOptions, null, 2));
-  console.log("corretor", JSON.stringify(corretoresOptions, null, 2));
-  console.log("financeiro", JSON.stringify(financeirasOptions, null, 2));
-
-  
   useEffect(() => {
     if (!session || !data) return;
 
@@ -147,7 +141,9 @@ export default function FormSolicitacaoEdit({
       try {
         const req = await fetch(rota);
         const optionsData = await req.json();
-        setAllOptions(optionsData);
+        if (optionsData.length > 0) {
+          setAllOptions(optionsData);
+        }
 
         if (data.construtoraId) {
           const initialConstrutora = optionsData.find(
@@ -155,12 +151,16 @@ export default function FormSolicitacaoEdit({
           );
           handleChange("construtoraId", data.construtoraId);
           if (initialConstrutora) {
-            const empreendimentos = initialConstrutora.empreendimentos || [];
-            setEmpreendimentosOptions(empreendimentos);
-            setFinanceirasOptions(
-              initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
-                []
-            );
+            if (initialConstrutora.empreendimentos.length > 0) {
+              const empreendimentos = initialConstrutora.empreendimentos || [];
+              setEmpreendimentosOptions(empreendimentos);
+            }
+            if (initialConstrutora.financeiros.length > 0) {
+              setFinanceirasOptions(
+                initialConstrutora.financeiros?.map((f: any) => f.financeiro) ||
+                  []
+              );
+            }
             if (data.empreendimentoId) {
               fetchCorretores(+data.empreendimentoId);
               handleChange("empreendimentoId", data.empreendimentoId);
@@ -173,7 +173,7 @@ export default function FormSolicitacaoEdit({
         }, 3000);
       } catch (error) {
         console.error("Erro ao buscar opções de ADM:", error);
-        toast({ title: "Erro ao carregar dados", status: "error" });
+        // toast({ title: "Erro ao carregar dados", status: "error" });
         setIsLoading(false);
       }
     };
@@ -307,10 +307,16 @@ export default function FormSolicitacaoEdit({
             nome: session?.nome || "",
           },
         ]);
-        setFinanceirasOptions(data.financeiros || []);
+        if (data.financeiros.length > 0) {
+          setFinanceirasOptions(data.financeiros || []);
+        }
       } else {
-        setCorretoresOptions(data.corretores || []);
-        setFinanceirasOptions(data.financeiros || []);
+        if (data.corretores.length > 0) {
+          setCorretoresOptions(data.corretores || []);
+        }
+        if (data.financeiros.length > 0) {
+          setFinanceirasOptions(data.financeiros || []);
+        }
       }
     } catch (error) {
       console.error("Erro ao buscar corretores:", error);
@@ -619,10 +625,41 @@ export default function FormSolicitacaoEdit({
               </Flex>
             </Box>
           )}
+          {data.sisapp && (
+            <Box>
+              <Flex
+                w={"full"}
+                border="1px"
+                borderColor="blue.500"
+                bg="blue.100"
+                p={2}
+                borderRadius="md"
+                align="center"
+                gap={3}
+                justify="center"
+              >
+                <Flex align="center" gap={2}>
+                  <Icon
+                    as={TbDeviceMobileMessage}
+                    color="blue.600"
+                    boxSize={7}
+                  />
+                  <Text color="blue.700" fontSize="md">
+                    Cliente atendido via Aplicativo NatoId
+                  </Text>
+                </Flex>
+              </Flex>
+            </Box>
+          )}
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-          {Hierarquia === "ADM" && <BotaoSisapp body={data} />}
+          {Hierarquia === "ADM" && (
+            <BotaoSisapp
+              body={data}
+              ativo={data.sisapp ? data.sisapp : false}
+            />
+          )}
           {form?.ativo && Hierarquia === "ADM" && <ResendSms id={form?.id} />}
           <Button
             colorScheme="orange"

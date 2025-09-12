@@ -14,6 +14,7 @@ import {
   Box,
   Center,
   CircularProgress,
+  useToast,
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -52,11 +53,23 @@ export default function SelectMultiItem({
   const [IsLoadingGeral, setIsLoadingGeral] = useState<boolean>(true);
   const [selected, setSelected] = useState<number>(0);
   const [TagsValue, setTagsValue] = useState<GetTagsProps[]>(Tags || []);
+  const toast = useToast();
 
   const fetchTags = async () => {
     const req = await fetch("/api/tags/getall");
-    const res = await req.json();
-    setOptions(res);
+    if (req.ok) {
+      const res = await req.json();
+      setOptions(res);
+      setIsLoadingGeral(false);
+    } else {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar as tags",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
     setIsLoadingGeral(false);
   };
 
