@@ -68,6 +68,7 @@ export default async function PageSolicitacoes({ params }: Props) {
   const session = await GetSessionServer();
   const user = session?.user;
   const data = await requestData(+id, session?.token);
+  console.log("🚀 ~ PageSolicitacoes ~ data:", data)
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
 

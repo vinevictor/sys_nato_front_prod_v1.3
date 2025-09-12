@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 // por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await GetSessionServer();
     if (!session) {
@@ -17,6 +17,10 @@ export async function GET(request: Request) {
       method: "GET",
       headers: {
         Authorization: `Bearer ${session?.token}`,
+      },
+      next: {
+        // revalida a cada 2 minutos
+        revalidate: 60 * 2,
       },
     });
     const data = await request.json();

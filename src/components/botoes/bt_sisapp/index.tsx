@@ -4,14 +4,16 @@ import { Button, useToast } from "@chakra-ui/react";
 
 interface BotaoSisappProps {
   body: solictacao.SolicitacaoObjectDiretoType;
+  ativo?: boolean;
 }
 
-export const BotaoSisapp = ({ body }: BotaoSisappProps) => {
+export const BotaoSisapp = ({ body, ativo = false }: BotaoSisappProps) => {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const handleUpdateSolicitacao = async () => {
     try {
       const requestBody = {
+        id: body.id,
         nome: body.nome,
         cpf: body.cpf,
         email: body.email,
@@ -91,11 +93,16 @@ export const BotaoSisapp = ({ body }: BotaoSisappProps) => {
           isClosable: true,
         });
         setIsLoading(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       }
     } catch (error) {
       alert(`Erro ao processar a requisição: ${error}`);
     }
   };
+
+  // TODO: verificar se a solicitação ja foi enviada para o sisapp
 
   return (
     <Button
@@ -103,6 +110,7 @@ export const BotaoSisapp = ({ body }: BotaoSisappProps) => {
       size="sm"
       onClick={handleUpdateSolicitacao}
       isLoading={isLoading}
+      disabled={ativo}
     >
       SISAPP
     </Button>
