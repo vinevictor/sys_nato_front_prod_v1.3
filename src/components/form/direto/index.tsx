@@ -14,7 +14,6 @@ import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
-import { useSession } from "@/hook/useSession";
 import { Session } from "@/types/session";
 import {
   Box,
@@ -29,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { BeatLoader } from "react-spinners";
+import SelectConstEmpFinCor from "../select";
 
 interface GetSolicitacao {
   error: boolean;
@@ -116,7 +116,6 @@ export default function FormSolicitacaoDireto({
   Id,
   session,
 }: FormSolicitacaoProps) {
-  console.log("🚀 ~ FormSolicitacaoDireto ~ dados:", dados)
   const [form, setForm] = useState({
     cpf: dados.data.cpf,
     nome: dados.data.nome,
@@ -418,6 +417,7 @@ export default function FormSolicitacaoDireto({
             }))}
           />
         </Flex>
+      
         <Flex gap={2}>
           <BoxBasic
             id="idfcweb"
@@ -481,7 +481,9 @@ export default function FormSolicitacaoDireto({
       </Flex>
 
       <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
-        {session?.hierarquia === "ADM" && <BotaoSisapp body={dados.data as any} />}
+        {session?.hierarquia === "ADM" && (
+          <BotaoSisapp body={dados.data as any} />
+        )}
         {dados.data?.ativo && isAdmin && <ResendSms id={Id} />}
         <Button
           colorScheme="orange"

@@ -1,10 +1,11 @@
 import { GetSessionServer } from "@/lib/auth_confg";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
     const session = await GetSessionServer();
     if (!session) {
       return NextResponse.json(
@@ -13,9 +14,43 @@ export async function GET() {
       );
     }
 
-    const req = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/options-admin`,
-      {
+    const construtoraId = searchParams.get("construtoraId");
+    const empreendimentoId = searchParams.get("empreendimentoId");
+    const financeiraId = searchParams.get("financeiraId");
+    const corretorId = searchParams.get("corretorId");
+
+    let params = "";
+    if (construtoraId) {
+      params =
+        params.length > 0
+          ? params + `&construtoraId=${construtoraId}`
+          : `construtoraId=${construtoraId}`;
+    }
+    if (empreendimentoId) {
+      params =
+        params.length > 0
+          ? params + `&empreendimentoId=${empreendimentoId}`
+          : `empreendimentoId=${empreendimentoId}`;
+    }
+    if (financeiraId) {
+      params =
+        params.length > 0
+          ? params + `&financeiraId=${financeiraId}`
+          : `financeiraId=${financeiraId}`;
+    }
+    if (corretorId) {
+      params =
+        params.length > 0
+          ? params + `&corretorId=${corretorId}`
+          : `corretorId=${corretorId}`;
+    }
+
+    const url =
+      params.length > 0
+        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/options-admin?${params}`
+        : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/options-admin`;
+
+    const req = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
