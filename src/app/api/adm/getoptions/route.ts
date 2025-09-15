@@ -51,14 +51,16 @@ export async function GET(request: NextRequest) {
         : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/get-infos/options-admin`;
 
     const req = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`,
-        },
-        cache: "no-cache",
-      }
-    );
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.token}`,
+      },
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 30,
+      },
+    });
     const data = await req.json();
     if (!req.ok) {
       throw new Error(data.message);

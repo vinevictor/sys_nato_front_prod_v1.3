@@ -43,7 +43,10 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      cache: "no-store",
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 60,
+      },
     });
 
     const data = await user.json();

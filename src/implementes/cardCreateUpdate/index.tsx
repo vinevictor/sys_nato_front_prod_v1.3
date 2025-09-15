@@ -11,7 +11,7 @@ import CardGridRegisterEmail from "./Grid/CardGridEmail";
 import CardGridConstrutora from "./Grid/CardGridConstrutora";
 import CardGridEmpreedimentoCliente from "./Grid/CardGridEmpreedimentoCliente";
 import CardGridFinanceiraCliente from "./Grid/CardGridFinanceiraCliente";
-import CardGridUpdateDocument from "./Grid/CardGridUpdateDocument";
+
 import CardGridIdfcweb from "./Grid/CardGridIdfcweb";
 import CardGridAndamento from "./Grid/CardGridAndmento";
 import CardGridMultLink from "./Grid/CardGridMiltLink";
@@ -103,7 +103,6 @@ export const CardCreateUpdate = {
   GridConstrutora: CardGridConstrutora,
   GridEmpreedimentoCL: CardGridEmpreedimentoCliente,
   GridFinanceiraCl: CardGridFinanceiraCliente,
-  GridUpdateDocument: CardGridUpdateDocument,
   GridProtocolo: CardGridIdfcweb,
   GridStatus: CardGridAndamento,
   GridLink: CardGridMultLink,

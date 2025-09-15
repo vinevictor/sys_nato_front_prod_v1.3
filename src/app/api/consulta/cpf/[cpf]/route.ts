@@ -22,6 +22,10 @@ export async function GET(
         headers: {
           Authorization: `Bearer ${session?.token}`,
         },
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 30,
+        },
       }
     );
     const response = await data.json();

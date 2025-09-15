@@ -24,6 +24,10 @@ export async function POST(request: Request, response: Response) {
           Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify(body),
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 30,
+        },
       }
     );
     const data = await req.json();

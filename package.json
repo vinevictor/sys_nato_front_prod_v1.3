@@ -21,8 +21,6 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "cpf-cnpj-validator": "^1.0.3",
     "framer-motion": "^12.7.4",
-    "html-pdf": "^3.0.1",
-    "html2canvas": "^1.4.1",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.1",
@@ -34,12 +32,11 @@
     "react-icons": "^5.5.0",
     "react-input-mask": "^2.0.4",
     "react-spinners": "^0.17.0",
-    "recharts": "^3.1.0",
-    "remask": "^1.2.2"
+    "remask": "^1.2.2",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/html-pdf": "^3.0.3",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.11",
     "@types/react": "^19.0.12",

@@ -78,7 +78,11 @@ export async function GET(request: Request): Promise<NextResponse> {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 10,
+      },
     });
 
     if (!user.ok) {

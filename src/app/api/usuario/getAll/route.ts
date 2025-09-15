@@ -21,7 +21,7 @@ export async function GET() {
           Authorization: `Bearer ${session?.token}`,
         },
         next: {
-          revalidate: 60,
+          revalidate: 10,
         },
       }
     );

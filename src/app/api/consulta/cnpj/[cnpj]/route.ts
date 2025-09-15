@@ -22,6 +22,10 @@ export async function GET(
           "Content-Type": "application/json",
           "User-Agent": "PostmanRuntime/7.30.0",
         },
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 30,
+        },
       }
     );
     const data = await response.json();
