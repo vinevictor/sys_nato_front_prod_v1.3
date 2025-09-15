@@ -3,8 +3,13 @@ import { Flex } from "@chakra-ui/react";
 import ModalConsultaRegistro from "@/components/modal-consulta-cpf";
 import FormSolicitacao from "@/components/form/solicitacao";
 import { useState } from "react";
+import { Session } from "@/types/session";
 
-export default function SolicitacaoSWITCH() {
+interface switchProps {
+  session: Session.SessionServer;
+}
+
+export default function SolicitacaoSWITCH({ session }: switchProps) {
   const [cpfChange, setCpfChange] = useState<string>("");
   const [isOpen, setIsOpen] = useState<Boolean>(true);
   const [solicitacao, setSolicitacao] = useState<any>(null);
@@ -27,7 +32,7 @@ export default function SolicitacaoSWITCH() {
         />
         {isOpen === true && (
           <Flex w={"full"} h={"full"} justifyContent={"center"}>
-            <FormSolicitacao cpf={cpfChange} solicitacao={solicitacao} />
+            <FormSolicitacao cpf={cpfChange} solicitacao={solicitacao} session={session} />
           </Flex>
         )}
       </Flex>
