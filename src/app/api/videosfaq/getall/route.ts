@@ -9,6 +9,10 @@ export async function GET() {
       headers: {
         "Content-Type": "application/json",
       },
+      next: {
+        // revalida a cada 5 dias
+        revalidate: 60 * 60 * 24 * 5,
+      },
     });
 
     if (!reqest.ok) {

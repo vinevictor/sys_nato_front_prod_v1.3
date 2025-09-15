@@ -16,6 +16,10 @@ export async function GET(req: Request) {
 
     const resp = await fetch(upstream.toString(), {
       headers: { Authorization: `Bearer ${session.token}` },
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 60,
+      },
     });
 
     if (!resp.ok) {

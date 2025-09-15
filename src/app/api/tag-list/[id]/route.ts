@@ -23,6 +23,10 @@ export const DELETE = async (
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 10,
+        },
       }
     );
     revalidateTag("get_tags");

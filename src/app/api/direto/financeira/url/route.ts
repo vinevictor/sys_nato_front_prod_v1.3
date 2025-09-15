@@ -15,6 +15,10 @@ export async function GET(_req: NextRequest) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session.token}`,
       },
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 60,
+      },
     });
 
     const data = await res.json();

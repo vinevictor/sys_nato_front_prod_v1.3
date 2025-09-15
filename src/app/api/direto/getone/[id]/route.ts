@@ -16,7 +16,11 @@ export async function GET(request: Request,{ params }: { params: { id: string } 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`
-      }
+      },
+      next: {
+        // revalida a cada 1 minuto
+        revalidate: 60,
+      },
     });
     const data = await request.json();
     if (!request.ok)

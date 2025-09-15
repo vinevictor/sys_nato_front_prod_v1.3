@@ -19,7 +19,11 @@ export async function POST(request: Request) {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
-        }
+        },
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 30,
+        },
       }
     );
     const data = await api.json();

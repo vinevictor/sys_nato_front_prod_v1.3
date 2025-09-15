@@ -24,6 +24,10 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        next: {
+          // revalida a cada 1 minuto
+          revalidate: 60,
+        },
       }
     );
     console.log("🚀 ~ reqest:", reqest);
