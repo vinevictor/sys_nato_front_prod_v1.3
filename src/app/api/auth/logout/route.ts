@@ -1,9 +1,13 @@
-import { DeleteSession } from "@/lib/auth_confg";
-import { NextRequest, NextResponse } from "next/server";
+import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   await DeleteSession();
-  return NextResponse.redirect(new URL("/login", req.url));
+  const session = await GetSessionServer();
+  if (!session) {
+    return NextResponse.json({ message: "Logout successful" }, { status: 200 });
+  }
+  return NextResponse.json({ message: "Logout failed" }, { status: 401 });
 }
