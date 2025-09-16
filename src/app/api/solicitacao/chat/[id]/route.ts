@@ -10,8 +10,7 @@ export async function PUT(
   try {
     const { id } = params;
     const req = await request.json();
-    console.log("🚀 ~ req:", req);
-
+ 
     const session = await GetSessionServer();
 
     if (!session) {
@@ -34,9 +33,8 @@ export async function PUT(
       return new NextResponse("Invalid credentials", { status: 401 });
     }
     const data = await user.json();
-    console.log("🚀 ~ data:", data);
 
-    return NextResponse.json({ status: 200 });
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     console.log("🚀 ~ error:", error);
     return NextResponse.json(error, { status: 500 });
