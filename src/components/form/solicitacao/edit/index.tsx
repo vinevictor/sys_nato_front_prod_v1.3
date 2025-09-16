@@ -307,15 +307,15 @@ export default function FormSolicitacaoEdit({
             isAdmin={isAdmin}
             Form={form}
             ValueConstrutora={(value: number) =>
-              handleChange("construtoraId", value)
+              handleChange("construtoraId", Number(value))
             }
             ValueEmpreendimento={(value: number) =>
-              handleChange("empreendimentoId", value)
+              handleChange("empreendimentoId", Number(value))
             }
             ValueFinanceira={(value: number) =>
-              handleChange("financeiroId", value)
+              handleChange("financeiroId", Number(value))
             }
-            ValueCorretor={(value: number) => handleChange("corretorId", value)}
+            ValueCorretor={(value: number) => handleChange("corretorId", Number(value))}
           />
           <Flex gap={2}>
             <BoxBasic
