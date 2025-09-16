@@ -1,4 +1,5 @@
 import MensagensChatDireto from "@/components/direto/mesage";
+import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
 import LogsComponent from "@/components/logsComponent";
 import ListAlertas from "@/components/solicitacao/alert";
@@ -19,10 +20,10 @@ const requestData = async (id: number, token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!request.ok)
-    return { error: true, message: "Solicitação não encontrada", data: null };
   const data = await request.json();
-  return { error: false, message: "Solicitação encontrada", data };
+  if (!request.ok)
+    return { error: true, message: data.message || "Solicitação não encontrada", data: null, status: request.status };
+  return { error: false, message: "Solicitação encontrada", data, status: request.status };
 };
 
 const requestLogs = async (id: number, token: string) => {
@@ -61,6 +62,9 @@ export default async function PageDireto({ params }: Props) {
   const data = await requestData(+id, session?.token);
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
+  if (data.status === 404) {
+    return <Error404 />;
+  }
 
   return (
     <>
@@ -79,7 +83,7 @@ export default async function PageDireto({ params }: Props) {
             minW={0} // Permite que o flex item encolha
           >
             {/* <FormSolicitacaoEdit id={+id} data={data} /> */}
-            <FormSolicitacaoDireto dados={data} Id={+id} session={user} />
+            {data.data && <FormSolicitacaoDireto dados={data.data} Id={+id} session={user} />}
           </Box>
 
           {/* Seção lateral - Chat e Alertas */}
