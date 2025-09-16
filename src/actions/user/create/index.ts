@@ -104,5 +104,7 @@ export default async function UserCreate(_: any, data: FormData) {
   revalidateTag("user-role");
   revalidateTag("usuarios_list");
   revalidateTag("Usuarios-list-page");
+  revalidateTag("usuarios-list-page");
+  
   redirect(`/usuarios`);
 }

@@ -22,6 +22,7 @@ export function BtnAtivarUser({ id }: BtnAtivarUserProps) {
         duration: 2000,
         position: "top-right",
       });
+      
       setTimeout(() => {
         window.location.reload();
       }, 1000);

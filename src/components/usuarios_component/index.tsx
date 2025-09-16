@@ -17,6 +17,7 @@ interface UsuariosType {
 
 export default function Usuarios({ data }: UsuariosType) {
   const [Usuarios, setUsuarios] = useState<any[]>([]);
+  console.log("🚀 ~ Usuarios ~ Usuarios:", Usuarios)
   const toast = useToast();
 
   const { id, nome, construtora, financeira } = useContext(FiltroContext);
