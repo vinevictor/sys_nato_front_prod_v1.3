@@ -28,11 +28,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { BeatLoader } from "react-spinners";
-import SelectConstEmpFinCor from "../select";
 
 interface GetSolicitacao {
   error: boolean;
   message: string;
+  status: number;
   data: {
     id: number;
     nome: string;
