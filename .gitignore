@@ -41,3 +41,6 @@ yarn.lock
 
 certificate
 build-log.txt
+
+logs
+log.txt
