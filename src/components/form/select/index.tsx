@@ -59,7 +59,6 @@ export default function SelectConstEmpFinCor({
   const [ListConst, setListConst] = useState<any[]>(initialLists.construtoras);
   const [ListEmp, setListEmp] = useState<any[]>(initialLists.empreendimentos);
   const [ListFin, setListFin] = useState<any[]>(initialLists.financeiras);
-  console.log("🚀 ~ SelectConstEmpFinCor ~ ListFin:", ListFin)
   const [ListCor, setListCor] = useState<any[]>(initialLists.corretores);
 
   const [loadingStates, setLoadingStates] = useState({
@@ -74,7 +73,6 @@ export default function SelectConstEmpFinCor({
     financeira: Form?.financeiroId || 0,
     corretor: Form?.corretorId || 0,
   });
-  console.log("🚀 ~ SelectConstEmpFinCor ~ Form:", Form?.financeiroId);
 
   const toast = useToast();
 
@@ -90,10 +88,15 @@ export default function SelectConstEmpFinCor({
   );
 
   const RequestFetchAll = useCallback(async () => {
-    await RequestFetch();
-    await RequestFetch(form.construtora);
-    await RequestFetch(form.construtora, form.empreendimento);
-    await RequestFetch(form.construtora, form.empreendimento, form.financeira);
+    const constlist = await RequestFetch();
+    setListConst(constlist);
+    
+    const emplist = await RequestFetch(form.construtora);
+    setListEmp(emplist);
+    const finlist = await RequestFetch(form.construtora, form.empreendimento);
+    setListFin(finlist);
+    const corlist = await RequestFetch(form.construtora, form.empreendimento, form.financeira);
+    setListCor(corlist);
   }, [form]);
 
 
@@ -136,8 +139,10 @@ export default function SelectConstEmpFinCor({
 
         setListFin([]);
         setListCor([]);
-        if (!Form) SetPropForm("financeira", 0);
-        if (!Form) SetPropForm("corretor", 0);
+
+        if (Form.construtoraId !== form.construtora) SetPropForm("construtora", 0);
+        if (Form.empreendimentoId !== form.empreendimento) SetPropForm("financeira", 0);
+        if (Form.corretorId !== form.corretor) SetPropForm("corretor", 0);
 
         try {
           const data = await RequestFetch(form.construtora);
@@ -171,7 +176,7 @@ export default function SelectConstEmpFinCor({
         updateLoadingState("financeira", true);
         updateLoadingState("corretor", true);
         setListCor([]);
-        if (!Form) SetPropForm("corretor", 0);
+        if (Form.financeiroId !== form.financeira) SetPropForm("corretor", 0);
 
         try {
           const data = await RequestFetch(

@@ -4,6 +4,7 @@ import Loading from "@/app/loading";
 import MensagensChat from "@/components/mensagensChat";
 import { SessionClient } from "@/types/session";
 import { Flex, useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface Props {
@@ -25,10 +26,11 @@ export default function MensagensChatDireto({ Id, messages, session }: Props) {
   const [isLoadingMensagem, setIsLoadingMensagem] = useState(false);
   const [dataMensagem, setDataMensagem] = useState<MensagemObj[]>(messages);
   const toast = useToast();
+  const router = useRouter();
 
   const handleMsg = async (value: MensagemObj[]) => {
     setIsLoadingMensagem(true);
-    const req = await fetch(`/api/solicitacao/update/${Id}`, {
+    const req = await fetch(`/api/solicitacao/chat/${Id}`, {
       method: "PUT",
       body: JSON.stringify({
         obs: value,
@@ -46,7 +48,10 @@ export default function MensagensChatDireto({ Id, messages, session }: Props) {
     }
     setDataMensagem(res.obs);
     setIsLoadingMensagem(false);
+    router.refresh();
   };
+
+  
   return (
     <>
       {isLoadingMensagem ? (

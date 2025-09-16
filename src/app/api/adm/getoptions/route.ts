@@ -56,10 +56,6 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      next: {
-        // revalida a cada 1 minuto
-        revalidate: 30,
-      },
     });
     const data = await req.json();
     if (!req.ok) {
