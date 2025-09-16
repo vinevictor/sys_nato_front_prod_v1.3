@@ -2,7 +2,7 @@
 import SelectBasic from "@/components/input/select-basic";
 import { Session } from "@/types/session";
 import { Flex, useToast } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 interface SelectConstEmpFinCorProps {
   session: Session.AuthUser;
@@ -38,189 +38,164 @@ export default function SelectConstEmpFinCor({
   ValueCorretor,
   Form,
 }: SelectConstEmpFinCorProps) {
-  const [ListConst, setListConst] = useState<any[]>([]);
-  const [ListEmp, setListEmp] = useState<any[]>([]);
-  const [ListFin, setListFin] = useState<any[]>([]);
-  const [ListCor, setListCor] = useState<any[]>([]);
-  const [ladingFin, setLadingFin] = useState<boolean>(false);
-  const [ladingCor, setLadingCor] = useState<boolean>(false);
-  const [ladingEmp, setLadingEmp] = useState<boolean>(false);
-  const [form, setForm] = useState({
-    construtora: 0,
-    empreendimento: 0,
-    financeira: 0,
-    corretor: 0,
+  const initialLists = useMemo(
+    () => ({
+      construtoras: Form
+        ? [{ id: Form.construtoraId, fantasia: Form.construtora?.fantasia }]
+        : session?.construtora,
+      empreendimentos: Form
+        ? [{ id: Form.empreendimentoId, nome: Form.empreendimento?.nome }]
+        : session?.empreendimento,
+      financeiras: Form
+        ? [{ id: Form.financeiraId, fantasia: Form.financeira?.fantasia }]
+        : session?.Financeira,
+      corretores: Form
+        ? [{ id: Form.corretorId, nome: Form.corretor?.nome }]
+        : [{id: session.id, nome: session.nome}],
+    }),
+    [Form, isAdmin, session]
+  );
+
+  const [ListConst, setListConst] = useState<any[]>(initialLists.construtoras);
+  const [ListEmp, setListEmp] = useState<any[]>(initialLists.empreendimentos);
+  const [ListFin, setListFin] = useState<any[]>(initialLists.financeiras);
+  console.log("🚀 ~ SelectConstEmpFinCor ~ ListFin:", ListFin)
+  const [ListCor, setListCor] = useState<any[]>(initialLists.corretores);
+
+  const [loadingStates, setLoadingStates] = useState({
+    empreendimento: false,
+    financeira: false,
+    corretor: false,
   });
+
+  const [form, setForm] = useState({
+    construtora: Form?.construtoraId || 0,
+    empreendimento: Form?.empreendimentoId || 0,
+    financeira: Form?.financeiroId || 0,
+    corretor: Form?.corretorId || 0,
+  });
+  console.log("🚀 ~ SelectConstEmpFinCor ~ Form:", Form?.financeiroId);
+
   const toast = useToast();
 
-  const SetPropForm = (field: keyof typeof form, value: any) => {
+  const SetPropForm = useCallback((field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
-  // useEffect para inicialização com dados pré-preenchidos (apenas uma vez)
-  useEffect(() => {
-    if (!Form) return;
-    // Para admin: pré-preenche com dados específicos do Form
-    if (isAdmin) {
-      if (Form.construtoraId > 0) {
-        SetPropForm("construtora", Form.construtoraId);
-        setListConst([
-          {
-            id: Form.construtoraId,
-            fantasia: Form.construtora?.fantasia || `ID: ${Form.construtoraId}`,
-          },
-        ]);
-      }
-      if (Form.empreendimentoId > 0) {
-        SetPropForm("empreendimento", Form.empreendimentoId);
-        setListEmp([
-          {
-            id: Form.empreendimentoId,
-            nome: Form.empreendimento?.nome || `ID: ${Form.empreendimentoId}`,
-          },
-        ]);
-      }
-      if (Form.financeiroId > 0) {
-        SetPropForm("financeira", Form.financeiroId);
-        setListFin([
-          {
-            id: Form.financeiroId,
-            fantasia: Form.financeiro?.fantasia || `ID: ${Form.financeiroId}`,
-          },
-        ]);
-      }
-      if (Form.corretorId > 0) {
-        SetPropForm("corretor", Form.corretorId);
-        setListCor([
-          {
-            id: Form.corretorId,
-            nome: Form.corretor?.nome || `ID: ${Form.corretorId}`,
-          },
-        ]);
-      } else {
-        console.log('🚀 ~ Corretor não preenchido - corretorId:', Form.corretorId);
-      }
-      if (form.construtora > 0 && form.empreendimento > 0 && form.financeira > 0 && form.corretor > 0) {
-        RequestFetchAll();
-      }
-    }
-  }, [form.construtora, form.empreendimento, form.financeira, form.corretor, isAdmin]);
+  const updateLoadingState = useCallback(
+    (field: keyof typeof loadingStates, loading: boolean) => {
+      setLoadingStates((prev) => ({ ...prev, [field]: loading }));
+    },
+    []
+  );
 
-  // useEffect para inicialização sem pré-preenchimento (admin)
+  const RequestFetchAll = useCallback(async () => {
+    await RequestFetch();
+    await RequestFetch(form.construtora);
+    await RequestFetch(form.construtora, form.empreendimento);
+    await RequestFetch(form.construtora, form.empreendimento, form.financeira);
+  }, [form]);
+
+
   useEffect(() => {
-    if (!isAdmin || Form) return;
-    
-    const initializeAdmin = async () => {
-      try {
-        const data = await RequestFetch();
-        setListConst(data);
-        setListEmp([]);
-        setListFin([]);
-        setListCor([]);
-      } catch (error) {
-        console.error('Erro ao carregar construtoras:', error);
+    const initialize = async () => {
+      if (isAdmin && !Form) {
+        // Admin sem Form: carrega todas as construtoras
+        try {
+          const data = await RequestFetch();
+          setListConst(data);
+          setListEmp([]);
+          setListFin([]);
+          setListCor([]);
+        } catch (error) {
+          console.error("Erro ao carregar construtoras:", error);
+        }
+      } else if (isAdmin && Form && form.construtora > 0 && form.empreendimento > 0 && form.financeira > 0 && form.corretor > 0) {
+        // Admin com Form completo: carrega tudo via RequestFetchAll
+        await RequestFetchAll();
+      } else if (!isAdmin) {
+        // Não-admin: usa apenas dados da session
+        setListConst(session?.construtora || []);
+        setListEmp(session?.empreendimento || []);
+        setListFin(session?.Financeira || []);
+        setListCor([{id: session.id, nome: session.nome}]);
       }
     };
-    
-    initializeAdmin();
-  }, [isAdmin, Form]);
 
-  // useEffect para inicialização de usuário comum
-  useEffect(() => {
-    if (isAdmin) return;
-    
-    // Define construtoras da sessão
-    if (session?.construtora && Array.isArray(session.construtora)) {
-      setListConst(session.construtora);
-      
-      // Se há apenas uma construtora, seleciona automaticamente
-      if (session.construtora.length === 1 && !Form) {
-        SetPropForm("construtora", session.construtora[0].id);
-      }
-    }
-    
-    // Para usuário comum, o corretor é sempre ele mesmo
-    if (session?.id && session?.nome) {
-      setListCor([{ id: session.id, nome: session.nome }]);
-      if (!Form) {
-        SetPropForm("corretor", session.id);
-      }
-    }
-  }, [isAdmin, session, Form]);
+    initialize();
+  }, []);
 
-  // useEffect separado para mudanças na construtora
   useEffect(() => {
+    if (!isAdmin) return;
+
     const loadEmpreendimentos = async () => {
       if (form.construtora > 0) {
-        // Ativa loading do empreendimento e limpa listas dependentes
-        setLadingEmp(true);
-        setLadingFin(true);
-        setLadingCor(true);
-        
+        updateLoadingState("empreendimento", true);
+        updateLoadingState("financeira", true);
+        updateLoadingState("corretor", true);
+
         setListFin([]);
         setListCor([]);
-        SetPropForm("financeira", 0);
-        SetPropForm("corretor", 0);
-        
+        if (!Form) SetPropForm("financeira", 0);
+        if (!Form) SetPropForm("corretor", 0);
+
         try {
           const data = await RequestFetch(form.construtora);
           setListEmp(data);
         } catch (error) {
-          console.error('Erro ao carregar empreendimentos:', error);
+          console.error("Erro ao carregar empreendimentos:", error);
           setListEmp([]);
         } finally {
-          setLadingEmp(false);
+          updateLoadingState("empreendimento", false);
         }
       } else {
-        // Se não há construtora, limpa tudo e desativa loadings
         setListEmp([]);
         setListFin([]);
         setListCor([]);
-        setLadingEmp(false);
-        setLadingFin(false);
-        setLadingCor(false);
+        setLoadingStates({
+          empreendimento: false,
+          financeira: false,
+          corretor: false,
+        });
       }
     };
 
     loadEmpreendimentos();
-  }, [form.construtora]);
+  }, [form.construtora, isAdmin]);
 
-  // useEffect separado para mudanças no empreendimento
   useEffect(() => {
+    if (!isAdmin) return;
+
     const loadFinanceiras = async () => {
       if (form.empreendimento > 0 && form.construtora > 0) {
-        // Ativa loading da financeira e limpa lista de corretores
-        setLadingFin(true);
-        if (isAdmin) {
-          setLadingCor(true);
-          setListCor([]);
-          SetPropForm("corretor", 0);
-        }
-        
+        updateLoadingState("financeira", true);
+        updateLoadingState("corretor", true);
+        setListCor([]);
+        if (!Form) SetPropForm("corretor", 0);
+
         try {
-          const data = await RequestFetch(form.construtora, form.empreendimento);
+          const data = await RequestFetch(
+            form.construtora,
+            form.empreendimento
+          );
           setListFin(data);
         } catch (error) {
-          console.error('Erro ao carregar financeiras:', error);
+          console.error("Erro ao carregar financeiras:", error);
           setListFin([]);
         } finally {
-          setLadingFin(false);
+          updateLoadingState("financeira", false);
         }
       } else {
-        // Se não há empreendimento válido, limpa financeiras e corretores
         setListFin([]);
-        if (isAdmin) {
-          setListCor([]);
-          setLadingCor(false);
-        }
-        setLadingFin(false);
+        setListCor([]);
+        updateLoadingState("corretor", false);
+        updateLoadingState("financeira", false);
       }
     };
 
     loadFinanceiras();
-  }, [form.empreendimento, form.construtora, isAdmin]);
+  }, [form.construtora, form.empreendimento, isAdmin]);
 
-  // useEffect separado para mudanças na financeira (apenas para admin)
   useEffect(() => {
     if (!isAdmin) return;
 
@@ -230,9 +205,8 @@ export default function SelectConstEmpFinCor({
         form.construtora > 0 &&
         form.empreendimento > 0
       ) {
-        // Ativa loading dos corretores
-        setLadingCor(true);
-        
+        updateLoadingState("corretor", true);
+
         try {
           const data = await RequestFetch(
             form.construtora,
@@ -241,35 +215,21 @@ export default function SelectConstEmpFinCor({
           );
           setListCor(data);
         } catch (error) {
-          console.error('Erro ao carregar corretores:', error);
+          console.error("Erro ao carregar corretores:", error);
           setListCor([]);
         } finally {
-          setLadingCor(false);
+          updateLoadingState("corretor", false);
         }
       } else {
-        // Se não há financeira válida, limpa corretores
         setListCor([]);
-        setLadingCor(false);
+        updateLoadingState("corretor", false);
       }
     };
 
     loadCorretores();
-  }, [form.financeira, form.construtora, form.empreendimento, isAdmin]);
+  }, [form.construtora, form.empreendimento, form.financeira, isAdmin]);
 
-  const RequestFetchAll = async () => {
-    try {
-      const construtora = await RequestFetch();
-      setListConst(construtora);
-      const empreendimento = await RequestFetch(form.construtora);
-      setListEmp(empreendimento);
-      const financeira = await RequestFetch(form.construtora, form.empreendimento);
-      setListFin(financeira);
-      const corretor = await RequestFetch(form.construtora, form.empreendimento, form.financeira);
-      setListCor(corretor);
-    } catch (error) {
-      console.error('Erro ao carregar construtoras:', error);
-    }
-  }
+
 
   /**
    * Realiza uma requisição para buscar as opções de construtora, empreendimento, financeira e corretor,
@@ -283,134 +243,166 @@ export default function SelectConstEmpFinCor({
    * @param financeiraId - ID da financeira
    * @param corretorId - ID do corretor
    */
-  async function RequestFetch(
-    construtoraId?: number,
-    empreendimentoId?: number,
-    financeiraId?: number
-  ) {
-    try {
-      let params = "";
-      if (construtoraId) {
-        params =
-          params.length > 0
-            ? params + `&construtoraId=${construtoraId}`
-            : `construtoraId=${construtoraId}`;
-      }
-      if (empreendimentoId) {
-        params =
-          params.length > 0
-            ? params + `&empreendimentoId=${empreendimentoId}`
-            : `empreendimentoId=${empreendimentoId}`;
-      }
-      if (financeiraId) {
-        params =
-          params.length > 0
-            ? params + `&financeiraId=${financeiraId}`
-            : `financeiraId=${financeiraId}`;
-      }
-      const Url =
-        params.length > 0
-          ? `/api/adm/getoptions?${params}`
-          : `/api/adm/getoptions`;
-      const req = await fetch(Url);
-      const data = await req.json();
-      return data;
-    } catch (error) {
-      console.error("Erro ao buscar opções:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro desconhecido";
-      toast({
-        title: "Erro ao carregar dados",
-        description: errorMessage,
-        status: "error",
-      });
-      return [];
-    }
-  }
+  const RequestFetch = useCallback(
+    async (
+      construtoraId?: number,
+      empreendimentoId?: number,
+      financeiraId?: number
+    ) => {
+      try {
+        const searchParams = new URLSearchParams();
+        if (construtoraId)
+          searchParams.append("construtoraId", construtoraId.toString());
+        if (empreendimentoId)
+          searchParams.append("empreendimentoId", empreendimentoId.toString());
+        if (financeiraId)
+          searchParams.append("financeiraId", financeiraId.toString());
 
-  /**
-   * retorna os dados do form para fora
-   */
+        const url = `/api/adm/getoptions${
+          searchParams.toString() ? `?${searchParams.toString()}` : ""
+        }`;
+        const req = await fetch(url);
+        const data = await req.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao buscar opções:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
+        toast({
+          title: "Erro ao carregar dados",
+          description: errorMessage,
+          status: "error",
+        });
+        return [];
+      }
+    },
+    [toast]
+  );
+
   useEffect(() => {
-    if (form.construtora) {
-      ValueConstrutora(form.construtora);
-    }
-    if (form.empreendimento) {
-      ValueEmpreendimento(form.empreendimento);
-    }
-    if (form.financeira) {
-      ValueFinanceira(form.financeira);
-    }
-    if (form.corretor) {
-      ValueCorretor(form.corretor);
-    }
-  }, [form]);
+    ValueConstrutora(form.construtora);
+  }, [form.construtora]);
+
+  useEffect(() => {
+    ValueEmpreendimento(form.empreendimento);
+  }, [form.empreendimento]);
+
+  useEffect(() => {
+    ValueFinanceira(form.financeira);
+  }, [form.financeira]);
+
+  useEffect(() => {
+    ValueCorretor(form.corretor);
+  }, [form.corretor]);
 
   return (
     <>
       <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
+        w={"full"}
+        // justifyContent={"center"}
+        flexWrap={{base: "wrap", md: "nowrap"}}
         gap={4}
         mb={2}
       >
         <SelectBasic
           label="Construtora"
           id="construtora"
-          onvalue={(value) => SetPropForm("construtora", value)}
+          onvalue={useCallback(
+            (value: number) => SetPropForm("construtora", value),
+            [SetPropForm]
+          )}
           value={form.construtora}
           required
-          options={ListConst.map((construtora: any) => ({
-            id: construtora.id,
-            fantasia: construtora.fantasia,
-          }))}
-          boxWidth="15%"
+          options={useMemo(
+            () =>
+              ListConst.map((construtora: any) => ({
+                id: construtora.id,
+                fantasia: construtora.fantasia,
+              })),
+            [ListConst]
+          )}
+          // boxWidth="15%"
         />
         <SelectBasic
           label="Empreendimento"
           id="empreendimento"
-          onvalue={(value) => SetPropForm("empreendimento", value)}
+          onvalue={useCallback(
+            (value: number) => SetPropForm("empreendimento", value),
+            [SetPropForm]
+          )}
           value={form.empreendimento}
           required
-          isLoading={ListEmp.length === 0}
-          isDisabled={!form.construtora || ladingEmp || (form.construtora > 0 && ListEmp.length === 0)}
-          options={ListEmp.map((e) => ({
-            id: e.id,
-            fantasia: e.nome,
-          }))}
-          boxWidth="35%"
+          isLoading={ListEmp.length === 0 || form.construtora === 0 || loadingStates.empreendimento}
+          isDisabled={
+            !form.construtora ||
+            loadingStates.empreendimento ||
+            form.construtora === 0 ||
+            (form.construtora > 0 && ListEmp.length === 0)
+          }
+          options={useMemo(
+            () =>
+              ListEmp.map((e) => ({
+                id: e.id,
+                fantasia: e.nome,
+              })),
+            [ListEmp]
+          )}
+          // boxWidth="35%"
         />
         <SelectBasic
           label="Financeira"
           id="financeira"
-          onvalue={(value) => SetPropForm("financeira", value)}
+          onvalue={useCallback(
+            (value: number) => SetPropForm("financeira", value),
+            [SetPropForm]
+          )}
           value={form.financeira}
           required
-          isLoading={ListFin.length === 0}
-          isDisabled={!form.empreendimento || ladingFin || (form.empreendimento > 0 && ListFin.length === 0)}
-          options={ListFin.map((f) => ({
-            id: f.id,
-            fantasia: f.fantasia,
-          }))}
-          boxWidth="15%"
+          isLoading={ListFin.length === 0 || form.empreendimento === 0 || loadingStates.financeira}
+          isDisabled={
+            !form.empreendimento ||
+            loadingStates.financeira ||
+            form.empreendimento === 0 ||
+            (form.empreendimento > 0 && ListFin.length === 0)
+          }
+          options={useMemo(
+            () =>
+              ListFin.map((f) => ({
+                id: f.id,
+                fantasia: f.fantasia,
+              })),
+            [ListFin]
+          )}
+          // boxWidth="15%"
         />
 
         {isAdmin && (
           <SelectBasic
             label="Corretor"
             id="corretor"
-            onvalue={(value) => SetPropForm("corretor", value)}
-            isLoading={ListCor.length === 0}
+            onvalue={useCallback(
+              (value: number) => SetPropForm("corretor", value),
+              [SetPropForm]
+            )}
+            isLoading={ListCor.length === 0 || form.financeira === 0 || loadingStates.corretor}
             value={form.corretor}
             required
-            isDisabled={!form.financeira || ladingCor || (form.financeira > 0 && ListCor.length === 0)}
-            defaultValue={ListCor.length == 1 ? ListCor[0].id : ""}
-            options={ListCor.map((c) => ({
-              id: c.id,
-              fantasia: c.nome,
-            }))}
-            boxWidth="30%"
+            isDisabled={
+              !form.financeira ||
+              loadingStates.corretor ||
+              form.financeira === 0 ||
+              (form.financeira > 0 && ListCor.length === 0)
+            }
+            defaultValue={ListCor.length === 1 ? ListCor[0].id : ""}
+            options={useMemo(
+              () =>
+                ListCor.map((c) => ({
+                  id: c.id,
+                  fantasia: c.nome,
+                })),
+              [ListCor]
+            )}
+            // boxWidth="30%"
           />
         )}
       </Flex>
