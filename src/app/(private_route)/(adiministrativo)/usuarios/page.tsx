@@ -18,8 +18,7 @@ export default async function Usuarios() {
       Authorization: `Bearer ${session?.token}`,
     },
     next: {
-      revalidate: 60 * 60 * 2,
-      tags: ["Usuarios-list-page"],
+      tags: ["usuarios-list-page"],
     },
   });
 

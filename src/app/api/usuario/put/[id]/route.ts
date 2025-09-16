@@ -40,6 +40,7 @@ export async function PUT(
     revalidateTag("user-get");
     revalidateTag("user-role");
     revalidateTag("usuarios_list");
+    revalidateTag("usuarios-list-page");
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error }, { status: 500 });
