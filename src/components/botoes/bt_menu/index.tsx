@@ -1,6 +1,5 @@
 "use client";
 import { Box, Button, IconButton, useToast } from "@chakra-ui/react";
-
 import { useRouter } from "next/navigation";
 
 type BotaoMenuProps = {
@@ -12,6 +11,30 @@ type BotaoMenuProps = {
 export default function BotaoMenu({ name, path, icon }: BotaoMenuProps) {
   const toast = useToast();
   const router = useRouter();
+
+  const handleRoute = () => {
+    if (name === "Sair") {
+      (async () => {
+        try {
+          const logout = await fetch("/api/auth/logout");
+          if (!logout.ok) {
+            throw new Error("Erro ao fazer logout");
+          }
+          router.push("/login");
+        } catch (error) {
+          console.error("Erro ao fazer logout", error);
+          toast({
+            title: "Erro ao fazer logout",
+            description: "Erro ao fazer logout",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      })();
+    }
+    router.push(path);
+  };
   return (
     <>
       <Box display={{ base: "flex", xl: "none" }}>
@@ -20,29 +43,7 @@ export default function BotaoMenu({ name, path, icon }: BotaoMenuProps) {
           variant="link"
           size={"lg"}
           aria-label={name}
-          onClick={() => {
-            if (name === "Sair") {
-              (async () => {
-                try {
-                  const logout = await fetch("/api/auth/logout");
-                  if (!logout.ok) {
-                    throw new Error("Erro ao fazer logout");
-                  }
-                  router.push("/login");
-                } catch (error) {
-                  console.error("Erro ao fazer logout", error);
-                  toast({
-                    title: "Erro ao fazer logout",
-                    description: "Erro ao fazer logout",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                  });
-                }
-              })();
-            }
-            router.push(path);
-          }}
+          onClick={handleRoute}
           icon={icon}
           px={3}
           _active={{ bg: "white", textColor: "green.500" }}
@@ -56,15 +57,7 @@ export default function BotaoMenu({ name, path, icon }: BotaoMenuProps) {
           size={{ sm: "xs", md: "md" }}
           fontWeight={"light"}
           leftIcon={icon}
-          onClick={() => {
-            if (name === "Sair") {
-              (async () => {
-                await fetch("/api/auth/logout");
-              })();
-              router.push("/login");
-            }
-            router.push(path);
-          }}
+          onClick={handleRoute}
           px={3}
           _active={{ bg: "white", textColor: "green.500" }}
           _hover={{ bg: "whiteAlpha.800", textColor: "green" }}

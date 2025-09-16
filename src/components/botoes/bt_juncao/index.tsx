@@ -1,4 +1,3 @@
-"use client";
 import {
   Box,
   Flex,
@@ -14,7 +13,6 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { RxHamburgerMenu } from "react-icons/rx";
 import BotaoMenu from "../bt_menu";
 import BotaoMobileMenu from "../bt_mobile_menu";
-import React from "react";
 
 /**
  * Interface para tipagem das props do componente BotaoJuncao.
@@ -26,9 +24,6 @@ interface BotoesFunctionProps {
 // Clean Code: Sempre renderize o container principal para evitar erro de hidratação
 // e garantir uma estrutura consistente entre server e client.
 export default function BotaoJuncao({ session }: BotoesFunctionProps) {
-  // Evita divergências de hidratação: renderiza UI interativa apenas após o mount
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
 
   return (
     <Flex
@@ -45,7 +40,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
 
       {/* Coluna: Navegação principal (estrutura sempre presente, conteúdo condicional) */}
       <Box display={{ base: "flex", md: "none" }}>
-        {mounted && session ? (
+        {session ? (
           <Menu>
             <MenuButton
               bg={"gray.50"}
@@ -79,7 +74,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
       </Box>
 
       <Box display={{ base: "none", md: "flex" }} gap={1} w={"85%"}>
-        {mounted && session ? (
+        {session ? (
           <>
             <BotaoMenu name="Home" path="/home" icon={<FiHome />} />
             <BotaoMenu name="Nova Solicitação" path="/solicitacoes" icon={<FiFilePlus />} />
@@ -100,7 +95,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
 
       {/* Coluna: Ações à direita (estrutura sempre presente) */}
       <Box display={{ base: "none", md: "flex" }}>
-        {mounted && session ? (
+        {session ? (
           <BotaoMenu name="Sair" path="/login" icon={<FiLogOut />} />
         ) : (
           <Box aria-hidden="true" />
