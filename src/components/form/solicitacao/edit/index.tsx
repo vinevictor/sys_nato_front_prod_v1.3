@@ -54,12 +54,12 @@ interface SolicitacaoType {
   distrato_id: number | null;
   andamento: string | null;
   type_validacao: string | null;
-  dt_aprovacao: string | null;
+  dt_aprovacao: Date | string | null;
   hr_aprovacao: string | null;
   dt_agendamento: string | null;
   hr_agendamento: string | null;
   estatos_pgto: string | null;
-  valorcd: number;
+  valorcd: number | string | null;
   situacao_pg: number;
   freqSms: number;
   alertanow: boolean;
@@ -70,45 +70,67 @@ interface SolicitacaoType {
   construtoraId: number;
   financeiroId: number;
   empreendimentoId: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
   relacionamentos: string[];
   dt_revogacao: string | null;
   direto: boolean;
-  txid: string;
-  pixCopiaECola: string;
-  imagemQrcode: string;
-  pg_status: boolean;
-  pg_andamento: string;
-  pg_date: string | null;
+  txid: string | null;
+  pixCopiaECola: string | null;
+  imagemQrcode: string | null;
   uploadCnh: string | null;
   uploadRg: string | null;
-  obs: any[];
-  corretor: GetCorretor;
-  construtora: GetConstrutora;
-  empreendimento: GetEmpreendimentos;
-  financeiro: GetFinanceiras;
-  alerts: [];
-  tags: [];
-}
-
-interface GetEmpreendimentos {
-  id: number;
-  nome: string;
-}
-
-interface GetFinanceiras {
-  id: number;
-  fantasia: string;
-}
-interface GetConstrutora {
-  id: number;
-  fantasia: string;
-}
-
-interface GetCorretor {
-  id: number;
-  nome: string;
+  sisapp?: boolean | null;
+  obs: {
+    id: string;
+    data: string;
+    hora: string;
+    autor: string;
+    autor_id: number;
+    mensagem: string;
+  }[];
+  pg_andamento: string;
+  pg_date: string | null;
+  pg_status: boolean;
+  corretor: {
+    id: number;
+    nome: string;
+    telefone: string;
+  };
+  construtora: {
+    id: number;
+    fantasia: string;
+    valor_cert: number;
+  };
+  empreendimento: {
+    id: number;
+    nome: string;
+    cidade: string;
+    estado: string;
+    tag: string;
+  };
+  financeiro: {
+    id: number;
+    fantasia: string;
+    tel: string;
+    valor_cert: number;
+  };
+  alerts: [
+    {
+      id: number;
+      descricao: string;
+      status: boolean;
+      createdAt: string;
+    }
+  ];
+  tags: [
+    {
+      id: number;
+      solicitacao: number;
+      descricao: string;
+      createAt: string;
+    }
+  ];
 }
 
 export default function FormSolicitacaoEdit({
@@ -121,6 +143,7 @@ export default function FormSolicitacaoEdit({
   const Hierarquia = session?.hierarquia || null;
   const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
+  console.log("🚀 ~ FormSolicitacaoEdit ~ form:", form);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field: keyof typeof form, value: any) => {
@@ -315,7 +338,9 @@ export default function FormSolicitacaoEdit({
             ValueFinanceira={(value: number) =>
               handleChange("financeiroId", Number(value))
             }
-            ValueCorretor={(value: number) => handleChange("corretorId", Number(value))}
+            ValueCorretor={(value: number) =>
+              handleChange("corretorId", Number(value))
+            }
           />
           <Flex gap={2}>
             <BoxBasic
@@ -421,7 +446,12 @@ export default function FormSolicitacaoEdit({
           >
             Chamado
           </Button>
-          <BtCreateAlertCliente DataSolicitacao={data} user={session} />
+          <BtCreateAlertCliente
+            corretorId={form?.corretor?.id ?? 0}
+            solicitacaoId={form?.id}
+            solicitacaoNome={form?.nome}
+            isAdmin={session?.hierarquia === "ADM"}
+          />
           {form?.distrato &&
             form?.ativo &&
             ((Hierarquia === "ADM" && (

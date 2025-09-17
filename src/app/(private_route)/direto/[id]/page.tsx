@@ -1,3 +1,4 @@
+import Loading from "@/app/loading";
 import MensagensChatDireto from "@/components/direto/mesage";
 import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
@@ -5,6 +6,7 @@ import LogsComponent from "@/components/logsComponent";
 import ListAlertas from "@/components/solicitacao/alert";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { Box, Container, Flex } from "@chakra-ui/react";
+import { Suspense } from "react";
 
 interface Props {
   params: {
@@ -22,38 +24,48 @@ const requestData = async (id: number, token: string) => {
   });
   const data = await request.json();
   if (!request.ok)
-    return { error: true, message: data.message || "Solicitação não encontrada", data: null, status: request.status };
-  return { error: false, message: "Solicitação encontrada", data, status: request.status };
+    return {
+      error: true,
+      message: data.message || "Solicitação não encontrada",
+      data: null,
+      status: request.status,
+    };
+  return {
+    error: false,
+    message: "Solicitação encontrada",
+    data,
+    status: request.status,
+  };
 };
 
 const requestLogs = async (id: number, token: string) => {
-   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/getlogs/${id}`;
-   const request = await fetch(url, {
-     headers: {
-       "Content-Type": "application/json",
-       Authorization: `Bearer ${token}`,
-     },
-   });
-   const data = await request.json();
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/getlogs/${id}`;
+  const request = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await request.json();
   if (!request.ok)
     return { error: true, message: "Solicitação não encontrada", data: null };
   return { error: false, message: "Logs encontrado", data };
-}
+};
 
 const requestAlertas = async (id: number, token: string) => {
-      const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert/get/cadastro/${id}`;
-    const request = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await request.json();
-    if (!request.ok)
-      return { error: true, message: "Solicitação não encontrada", data: null };
-    return { error: false, message: "Alertas encontrado", data };
-}
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert/get/cadastro/${id}`;
+  const request = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await request.json();
+  if (!request.ok)
+    return { error: true, message: "Solicitação não encontrada", data: null };
+  return { error: false, message: "Alertas encontrado", data };
+};
 
 export default async function PageDireto({ params }: Props) {
   const { id } = params;
@@ -62,7 +74,7 @@ export default async function PageDireto({ params }: Props) {
   const data = await requestData(+id, session?.token);
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
-  if (data.status === 404) {
+  if (data.status === 404 || data.error) {
     return <Error404 />;
   }
 
@@ -83,7 +95,11 @@ export default async function PageDireto({ params }: Props) {
             minW={0} // Permite que o flex item encolha
           >
             {/* <FormSolicitacaoEdit id={+id} data={data} /> */}
-            {data.data && <FormSolicitacaoDireto dados={data.data} Id={+id} session={user} />}
+            <Suspense fallback={<Loading />}>
+              {data.data && (
+                <FormSolicitacaoDireto dados={data.data} Id={+id} session={user} />
+              )}
+            </Suspense>
           </Box>
 
           {/* Seção lateral - Chat e Alertas */}
@@ -101,7 +117,15 @@ export default async function PageDireto({ params }: Props) {
               minH={{ base: "400px", md: "500px", lg: "45%" }}
               maxH={{ base: "600px", lg: "none" }}
             >
-              <MensagensChatDireto Id={+id} messages={data.data.obs || []} session={user} />
+              <Suspense fallback={<Loading />}>
+                {data.data && (
+                  <MensagensChatDireto
+                    Id={+id}
+                    messages={data.data.obs || []}
+                    session={user}
+                  />
+                )}
+              </Suspense>
             </Box>
 
             {/* Alertas */}
@@ -115,7 +139,6 @@ export default async function PageDireto({ params }: Props) {
           </Flex>
         </Flex>
 
-        
         {/* Logs - Sempre em uma nova linha */}
         {user?.hierarquia === "ADM" && (
           <Box mt={{ base: 6, md: 8 }} w="full">

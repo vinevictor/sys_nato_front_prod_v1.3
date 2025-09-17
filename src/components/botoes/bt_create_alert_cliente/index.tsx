@@ -1,7 +1,6 @@
 "use client";
 
 import useAlertContext from "@/hook/useAlertContext";
-import { AuthUser } from "@/types/session";
 import {
   Button,
   FormControl,
@@ -17,46 +16,55 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BeatLoader } from "react-spinners";
 
 interface BtCreateAlertClienteProps {
-  DataSolicitacao: solictacao.SolicitacaoObjectCompleteType;
-  user: AuthUser | null;
+  corretorId: number;
+  solicitacaoId: number;
+  solicitacaoNome: string;
+  isAdmin: boolean;
 }
 
 export function BtCreateAlertCliente({
-  DataSolicitacao,
-  user,
+  corretorId,
+  solicitacaoId,
+  solicitacaoNome,
+  isAdmin,
 }: BtCreateAlertClienteProps) {
-  const hierarquia = user?.hierarquia;
-  const [Data, setData] = useState<
-    solictacao.SolicitacaoObjectCompleteType | undefined
-  >();
-  const [Loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [Descricao, setDescricao] = useState("");
-  const toast = useToast();
 
   const { setAlert } = useAlertContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const OverlayTwo = () => (
     <ModalOverlay bg="none" backdropFilter="auto" backdropInvert="80%" />
   );
 
-  useEffect(() => {
-    if (DataSolicitacao) setData(DataSolicitacao);
-  }, [DataSolicitacao]);
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    setLoading(true);
-    const data: AlertsType.AlertsProps = {
-      corretor_id: Data?.corretor?.id,
-      solicitacao_id: Data?.id,
+    setIsLoading(true);
+    if (!corretorId) {
+      toast({
+        title: "Erro",
+        description: "Defina um corretor para criar um alerta!",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsLoading(false);
+      // return;
+    }
+
+    const data = {
+      corretor_id: corretorId,
+      solicitacao_id: solicitacaoId,
       descricao: Descricao,
     };
-
+   
     const request = await fetch(`/api/alerts/create`, {
       method: "POST",
       headers: {
@@ -75,11 +83,11 @@ export function BtCreateAlertCliente({
       });
 
       setAlert(true);
-      setLoading(false);
+      setIsLoading(false);
       setTimeout(() => {
         setAlert(false);
       }, 1000);
-      window.location.reload();
+      // window.location.reload();
       onClose();
     }
 
@@ -93,20 +101,20 @@ export function BtCreateAlertCliente({
         duration: 3000,
         isClosable: true,
       });
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <>
-      {hierarquia === "ADM" && (
+      { isAdmin && (
         <>
           <Button
             colorScheme="yellow"
             variant="solid"
             size="sm"
             onClick={onOpen}
-            isLoading={Loading}
+            isLoading={isLoading}
             spinner={<BeatLoader size={8} color="black" />}
           >
             CRIAR ALERTA
@@ -117,8 +125,8 @@ export function BtCreateAlertCliente({
             <ModalOverlay />
             <ModalContent>
               <ModalHeader>
-                {Data?.nome &&
-                  `Criar Alerta para ${Data?.nome} vendedor ${Data?.corretor?.nome}`}
+                {solicitacaoNome &&
+                  `Criar Alerta para solicitacao ${solicitacaoNome}`}
               </ModalHeader>
               <ModalCloseButton />
               <FormControl>
@@ -137,7 +145,7 @@ export function BtCreateAlertCliente({
                   <Button
                     variant="ghost"
                     onClick={onClose}
-                    isLoading={Loading}
+                    isLoading={isLoading}
                     spinner={<BeatLoader size={8} color="black" />}
                   >
                     Cancelar
@@ -146,7 +154,7 @@ export function BtCreateAlertCliente({
                     colorScheme="green"
                     mr={3}
                     onClick={handleSubmit}
-                    isLoading={Loading}
+                    isLoading={isLoading}
                     spinner={<BeatLoader size={8} color="black" />}
                   >
                     Enviar
