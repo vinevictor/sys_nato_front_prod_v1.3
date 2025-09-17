@@ -31,7 +31,7 @@ export const BotaoSisapp = ({ body, ativo = false }: BotaoSisappProps) => {
           : body.valorcd,
         docSuspenso: null,
         alertaNow: body.alertanow || false,
-        dtCriacaoNow: body.dt_criacao_now || null,
+        // dtCriacaoNow: body.dt_criacao_now || null,
         statusAtendimento: body.statusAtendimento,
         corretor: JSON.stringify({
           id: body.corretor.id,
@@ -101,8 +101,6 @@ export const BotaoSisapp = ({ body, ativo = false }: BotaoSisappProps) => {
       alert(`Erro ao processar a requisição: ${error}`);
     }
   };
-
-  // TODO: verificar se a solicitação ja foi enviada para o sisapp
 
   return (
     <Button

@@ -31,7 +31,6 @@ export async function POST(request: Request) {
     );
     revalidateTag("alert-geral-all");
     const retorno = await response.json();
-    console.log("🚀 ~ POST ~ retorno:", retorno);
     return NextResponse.json(retorno, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: error.message.join("\n") || error.message }, { status: 500 });

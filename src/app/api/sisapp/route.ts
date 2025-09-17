@@ -43,9 +43,8 @@ export async function POST(request: Request) {
       }
     );
 
-    const updateRes = await updateResponse.json();
-    console.log("🚀 ~ POST ~ updateRes:", updateRes)
-    
+    // const updateRes = await updateResponse.json();
+    await updateResponse.json();
 
     return NextResponse.json(
       { data: data, message: "Arquivo enviado com sucesso" },
