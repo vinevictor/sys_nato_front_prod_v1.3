@@ -29,18 +29,41 @@ export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
       <InputGroup size="lg">
         <Input 
           pr="4.5rem"
+          height="48px"
           type={show ? "text" : "password"}
           value={setvalue}
           onChange={handleonvalue}
-          border={"1px solid #b8b8b8cc"}
+          border="2px solid #E2E8F0"
+          borderRadius="8px"
+          fontSize="16px"
+          bg="white"
+          placeholder="Digite sua senha"
+          _hover={{ 
+            borderColor: "#CBD5E0" 
+          }}
+          _focus={{ 
+            borderColor: "#3182CE",
+            boxShadow: "0 0 0 1px #3182CE"
+          }}
           onKeyDownCapture={(e) => {
             if (e.key === "Enter") {
               envClick();
             }
           }}
         />
-        <InputRightElement width="4.5rem">
-          <Button h="1.75rem" size="sm" onClick={handleClick}>
+        <InputRightElement width="4.5rem" height="48px">
+          <Button 
+            h="32px" 
+            size="sm" 
+            onClick={handleClick}
+            bg="transparent"
+            color="#718096"
+            _hover={{ 
+              bg: "gray.100",
+              color: "#2D3748"
+            }}
+            borderRadius="6px"
+          >
             {show ? <FaEyeSlash /> : <IoEyeSharp />}
           </Button>
         </InputRightElement>
