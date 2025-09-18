@@ -36,15 +36,7 @@ export default function SelectEmpreendimento({
   FormEmpId,
   constId,
 }: SelectEmpreendimentoProps) {
-  const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(() => {
-    if (FormEmp && FormEmp.length > 0) {
-      return FormEmp;
-    }
-    if (session?.empreendimento && session.empreendimento.length > 0) {
-      return session.empreendimento;
-    }
-    return [];
-  });
+  const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(FormEmp && FormEmp.length > 0 ? FormEmp : []);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -107,12 +99,18 @@ export default function SelectEmpreendimento({
         isDisabled={!constId || loading || constId === 0}
         required
         options={useMemo(
-          () =>
-            ListEmp.map((e: any) => ({
+          () => {
+            if (!isAdmin) {
+              return session.empreendimento.map((e: any) => ({
+                id: e.id,
+                fantasia: e.nome,
+              }));
+            }
+            return ListEmp.map((e: any) => ({
               id: e.id,
               fantasia: e.nome,
-            })),
-          [ListEmp]
+            }));
+          }, [ListEmp, session, isAdmin]
         )}
         // boxWidth="15%"
       />

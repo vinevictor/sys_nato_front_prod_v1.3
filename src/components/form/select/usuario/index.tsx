@@ -42,9 +42,7 @@ export default function SelectUser({
   finId,
 }: SelectUserProps) {
   const [ListUser, setListUser] = useState<UserType[]>(
-    FormUser && FormUser.length > 0
-      ? FormUser
-      : [{ id: Number(session?.id), nome: session?.nome }]
+    FormUser && FormUser.length > 0 ? FormUser : []
   );
   const [user, setUser] = useState<number>(FormUserId ?? 0);
   const [loading, setLoading] = useState(false);
@@ -129,14 +127,15 @@ export default function SelectUser({
           finId === 0
         }
         required
-        options={useMemo(
-          () =>
-            ListUser.map((e: any) => ({
-              id: e.id,
-              fantasia: e.nome,
-            })),
-          [ListUser]
-        )}
+        options={useMemo(() => {
+          if (!isAdmin) {
+            return [{ id: Number(session?.id), fantasia: session?.nome }];
+          }
+          return ListUser.map((e: any) => ({
+            id: e.id,
+            fantasia: e.nome,
+          }));
+        }, [ListUser, session, isAdmin])}
         // boxWidth="15%"
       />
     </>
