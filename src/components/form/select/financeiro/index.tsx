@@ -38,16 +38,7 @@ export default function SelectFinanceira({
   constId,
   empId,
 }: SelectFinanceiraProps) {
-  const [ListFin, setListFin] = useState<FinanceiraType[]>(() => {
-    if (FormFin && FormFin.length > 0) {
-      return FormFin;
-    }
-    if (session?.Financeira && session.Financeira.length > 0) {
-      return session.Financeira;
-    }
-    return [];
-  });
-
+  const [ListFin, setListFin] = useState<FinanceiraType[]>(FormFin && FormFin.length > 0 ? FormFin : []);
   const [financeira, setFinanceira] = useState<number>(FormFinId ?? 0);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -119,12 +110,18 @@ export default function SelectFinanceira({
         isDisabled={!constId || !empId || loading || constId === 0}
         required
         options={useMemo(
-          () =>
-            ListFin.map((e: any) => ({
+          () => {
+            if (!isAdmin) {
+              return session.Financeira.map((e: any) => ({
+                id: e.id,
+                fantasia: e.fantasia,
+              }));
+            }
+            return ListFin.map((e: any) => ({
               id: e.id,
               fantasia: e.fantasia,
-            })),
-          [ListFin]
+            }));
+          }, [ListFin, session, isAdmin]
         )}
         // boxWidth="15%"
       />

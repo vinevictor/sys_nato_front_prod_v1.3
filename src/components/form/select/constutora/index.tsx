@@ -15,16 +15,16 @@ interface SelectConstutoraProps {
 type ConstutoraType = {
   id: number;
   fantasia: string;
-}
+};
 
 /**
- * 
+ *
  * @param session - Sessão do usuário
  * @param isAdmin - Se o usuário é admin
  * @param FormConst - Lista de construtoras
  * @param FormConstId - ID da construtora
  * @param ValueConst - Função para setar o valor da construtora
- * 
+ *
  */
 export default function SelectConstutora({
   session,
@@ -34,7 +34,7 @@ export default function SelectConstutora({
   ValueConst,
 }: SelectConstutoraProps) {
   const [ListConst, setListConst] = useState<ConstutoraType[]>(
-    FormConst && FormConst.length > 0 ? FormConst : session?.construtora ?? []
+    FormConst && FormConst.length > 0 ? FormConst : []
   );
   const [construtora, setConstrutora] = useState<number>(FormConstId ?? 0);
   const toast = useToast();
@@ -92,14 +92,18 @@ export default function SelectConstutora({
         onvalue={handleSelectChange}
         value={construtora}
         required
-        options={useMemo(
-          () =>
-            ListConst.map((construtora: any) => ({
-              id: construtora.id,
-              fantasia: construtora.fantasia,
-            })),
-          [ListConst]
-        )}
+        options={useMemo(() => {
+          if (!isAdmin) {
+            return session.construtora.map((e: any) => ({
+              id: e.id,
+              fantasia: e.fantasia,
+            }));
+          }
+          return ListConst.map((e: any) => ({
+            id: e.id,
+            fantasia: e.fantasia,
+          }));
+        }, [ListConst, session, isAdmin])}
         // boxWidth="15%"
       />
     </>

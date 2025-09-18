@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { cpf: string } }
 ) {
   try {
-    const { cpf } = params;
+    const { cpf } = await params;
 
     const session = await GetSessionServer();
     if (!session) {
