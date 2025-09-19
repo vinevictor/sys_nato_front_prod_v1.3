@@ -220,7 +220,7 @@ export default function MensagensChat({
     >
       
       <Box
-        bg="gradient(to-b, green.50, green.100)"
+        bgGradient="linear(to-b, green.50, green.100)"
         borderRadius="lg"
         flex="1"
         overflowY="auto"

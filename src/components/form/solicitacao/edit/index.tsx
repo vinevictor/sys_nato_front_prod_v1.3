@@ -30,6 +30,7 @@ import { AiOutlineWarning } from "react-icons/ai";
 import { TbDeviceMobileMessage } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
 import SelectConstEmpFinCor from "../../select";
+import BtnLimparFcw from "@/components/botoes/btn_lipar_fcw";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
@@ -143,7 +144,6 @@ export default function FormSolicitacaoEdit({
   const Hierarquia = session?.hierarquia || null;
   const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
-  console.log("🚀 ~ FormSolicitacaoEdit ~ form:", form);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field: keyof typeof form, value: any) => {
@@ -210,47 +210,7 @@ export default function FormSolicitacaoEdit({
         shadow={"lg"}
         h={"fit-content"}
       >
-        <Flex
-          p={4}
-          rounded={"md"}
-          flexDir={"row"}
-          justifyContent={"space-between"}
-          w={"full"}
-        >
-          <Flex flexDir={"column"}>
-            <Text fontSize={"md"}>
-              Criado Em:
-              {` ${
-                form?.createdAt &&
-                form?.createdAt.split("T")[0].split("-").reverse().join("/")
-              }, ${
-                form?.createdAt && form?.createdAt.split("T")[1].split(".")[0]
-              }`}
-            </Text>
-            {form?.updatedAt && (
-              <Text fontSize={"md"}>
-                Atualizado Em:
-                {` ${
-                  form?.updatedAt &&
-                  form?.updatedAt.split("T")[0].split("-").reverse().join("/")
-                }, ${
-                  form?.updatedAt && form?.updatedAt.split("T")[1].split(".")[0]
-                }`}
-              </Text>
-            )}
-            <Text fontSize={{ base: "sm", md: "md" }}>Id: {form?.id}</Text>
-          </Flex>
-          <Flex flexDir={"column"}>
-            <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
-            <Text fontSize={{ base: "md", md: "md" }}>
-              Corretor:{" "}
-              {form?.corretor?.nome
-                ? form?.corretor.nome
-                : "Corretor Não Cadastrado"}
-            </Text>
-            <Text fontSize={{ base: "md", md: "md" }}>Andamento: {Msg}</Text>
-          </Flex>
-        </Flex>
+        {/* Cabeçalho interno removido (informações movidas para o cabeçalho da página) */}
         <Divider borderColor="#00713D" />
         <Flex
           w={"100%"}
@@ -260,7 +220,7 @@ export default function FormSolicitacaoEdit({
           p={{ base: 2, md: 4 }}
           mb={2}
         >
-          <Flex gap={2}>
+          <Flex gap={2} flexDir={{ base: "column", md: "row" }}>
             <MaskedInput
               boxWidth="40%"
               id="cpf"
@@ -294,7 +254,7 @@ export default function FormSolicitacaoEdit({
               isReadOnly={!isAdmin}
             />
           </Flex>
-          <Flex gap={2}>
+          <Flex gap={2} flexDir={{ base: "column", md: "row" }}>
             <InputBasic
               id="email"
               type="email"
@@ -342,93 +302,122 @@ export default function FormSolicitacaoEdit({
               handleChange("corretorId", Number(value))
             }
           />
-          <Flex gap={2}>
-            <BoxBasic
-              id="idfcweb"
-              label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
-              value={form?.id_fcw || ""}
-              isLink={isAdmin}
-              href={
-                isAdmin
-                  ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form?.id_fcw}`
-                  : undefined
-              }
-            />
-            <BoxBasic
-              id="andamento"
-              label="Andamento"
-              value={form?.andamento || ""}
-            />
-            {isAdmin && (
-              <SelectMultiItem
-                Id={id || 0}
-                isAdmin={isAdmin}
-                label="Tags"
-                Tags={data.tags}
-                OnRetorno={(tags) => handleChange("tags", tags)}
-                required
+          <Flex
+            gap={2}
+            flexWrap={{ base: "nowrap", md: "wrap" }}
+            flexDir={{ base: "column", md: "row" }}
+            align={{ base: "stretch", md: "flex-start" }}
+          >
+            <Box w={{ base: "full", md: "15rem" }}>
+              <BoxBasic
+                id="idfcweb"
+                label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
+                value={form?.id_fcw || ""}
+                isLink={isAdmin}
+                href={
+                  isAdmin
+                    ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${form?.id_fcw}`
+                    : undefined
+                }
               />
-            )}
-          </Flex>
-          {session?.role.now && (
-            <Box>
-              <Flex
-                w={"full"}
-                border="1px"
-                borderColor="red.500"
-                bg="red.100"
-                p={3}
-                borderRadius="md"
-                align="center"
-                gap={2}
-                justify="space-between"
-              >
-                <Flex align="center" gap={2}>
-                  <Icon as={AiOutlineWarning} color="red.600" boxSize={7} />
-
-                  {form.alertanow ? (
-                    <Text color="red.700" fontSize="md">
-                      Alerta criado, se for necessário cancelar
-                    </Text>
-                  ) : (
-                    <Text color="red.700" fontSize="md">
-                      Somente em caso de cliente presente na unidade
-                    </Text>
-                  )}
-                </Flex>
-                <BtnAlertNow
-                  id={form.id || 0}
-                  alertanow={form.alertanow || false}
+            </Box>
+            <Box w={{ base: "full", md: "13rem" }}>
+              <BoxBasic
+                id="andamento"
+                label="Andamento"
+                value={form?.andamento || ""}
+              />
+            </Box>
+            <Box
+              w={{ base: "full", md: "15rem" }}
+              m={{ base: 0, md: "auto" }}
+              flex={{ base: "initial", md: 1 }}
+              display="flex"
+            >
+              {isAdmin && form?.id_fcw && <BtnLimparFcw id={id || 0} />}
+            </Box>
+            <Box
+              w={{ base: "full", md: "28rem" }}
+              h={{ base: "auto", md: "12rem" }}
+              flex={{ base: "initial", md: 1 }}
+            >
+              {isAdmin && (
+                <SelectMultiItem
+                  Id={id || 0}
+                  isAdmin={isAdmin}
+                  label="Tags"
+                  Tags={data.tags}
+                  OnRetorno={(tags) => handleChange("tags", tags)}
+                  required
                 />
-              </Flex>
+              )}
             </Box>
-          )}
-          {data.sisapp && (
-            <Box>
-              <Flex
-                w={"full"}
-                border="1px"
-                borderColor="blue.500"
-                bg="blue.100"
-                p={2}
-                borderRadius="md"
-                align="center"
-                gap={3}
-                justify="center"
-              >
-                <Flex align="center" gap={2}>
-                  <Icon
-                    as={TbDeviceMobileMessage}
-                    color="blue.600"
-                    boxSize={7}
+          </Flex>
+          <Divider h={{ md: "auto" }} />
+          {/* Área reservada para comportar exatamente 2 cards (NOW e SISAPP) */}
+          <Box w="full" minH="120px" display="flex" flexDir="column" gap={2}>
+            {session?.role.now && (
+              <Box>
+                <Flex
+                  w={"full"}
+                  border="1px"
+                  borderColor="red.500"
+                  bg="red.100"
+                  p={3}
+                  borderRadius="md"
+                  align="center"
+                  gap={2}
+                  justify="space-between"
+                  minH="56px"
+                >
+                  <Flex align="center" gap={2}>
+                    <Icon as={AiOutlineWarning} color="red.600" boxSize={7} />
+
+                    {form.alertanow ? (
+                      <Text color="red.700" fontSize="md">
+                        Alerta criado, se for necessário cancelar
+                      </Text>
+                    ) : (
+                      <Text color="red.700" fontSize="md">
+                        Somente em caso de cliente presente na unidade
+                      </Text>
+                    )}
+                  </Flex>
+                  <BtnAlertNow
+                    id={form.id || 0}
+                    alertanow={form.alertanow || false}
                   />
-                  <Text color="blue.700" fontSize="md">
-                    Cliente atendido via Aplicativo NatoId
-                  </Text>
                 </Flex>
-              </Flex>
-            </Box>
-          )}
+              </Box>
+            )}
+            {data.sisapp && (
+              <Box>
+                <Flex
+                  w={"full"}
+                  border="1px"
+                  borderColor="blue.500"
+                  bg="blue.100"
+                  p={2}
+                  borderRadius="md"
+                  align="center"
+                  gap={3}
+                  justify="center"
+                  minH="56px"
+                >
+                  <Flex align="center" gap={2}>
+                    <Icon
+                      as={TbDeviceMobileMessage}
+                      color="blue.600"
+                      boxSize={7}
+                    />
+                    <Text color="blue.700" fontSize="md">
+                      Cliente atendido via Aplicativo NatoId
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Box>
+            )}
+          </Box>
         </Flex>
 
         <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>

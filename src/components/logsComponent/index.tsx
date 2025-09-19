@@ -34,7 +34,6 @@ export default function LogsComponent({ logs }: LogProps) {
 
   return (
     <Flex
-      m={2}
       w={"full"}
       border={"1px solid #ccc"}
       rounded={"md"}
@@ -43,11 +42,12 @@ export default function LogsComponent({ logs }: LogProps) {
       shadow="md"
       bg="white"
     >
-      <Heading as="h2" size="lg" mb={6} textAlign="center" color="teal.600">
+      <Heading as="h2" size="lg" mb={2} textAlign="center" color="teal.600">
         Registro de Atividades
       </Heading>
+      <Divider mb={3} />
       <Box
-        maxHeight="300px"
+        height="360px"
         overflowY="auto"
         sx={{
           "&::-webkit-scrollbar": {
@@ -70,13 +70,10 @@ export default function LogsComponent({ logs }: LogProps) {
       >
         <List>
           {logs.map((log) => (
-            <ListItem>
-              <VStack align="flex-start">
-                <HStack justifyContent="space-between" width="full">                  
-
-                </HStack>
-                <Divider/>
-                <Text fontSize="md" color="gray.700">
+            <ListItem key={log.id}>
+              <VStack align="flex-start" spacing={1} width="full">
+                <Divider />
+                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.700">
                   {log.descricao}
                 </Text>
               </VStack>
