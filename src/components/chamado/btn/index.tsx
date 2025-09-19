@@ -3,7 +3,7 @@ import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 interface BtnChamadoProps {
   name: string;
-  id: string;
+  id: number;
   type?: "edit" | "delete";
 }
 
@@ -30,13 +30,12 @@ export default function BtnChamado({ name, id, type }: BtnChamadoProps) {
     }
   };
 
-  const CssInject = type === "edit" ? {colorScheme:"blue", variant:"outline"} : {colorScheme:"red", variant:"solid"};
+  const CssInject =
+    type === "edit"
+      ? { colorScheme: "blue", variant: "outline" }
+      : { colorScheme: "red", variant: "solid" };
   return (
-    <Button
-      {...CssInject}
-      size="lg"
-      onClick={handleIniciarAtendimento}
-    >
+    <Button {...CssInject} size="lg" onClick={handleIniciarAtendimento}>
       {name}
     </Button>
   );

@@ -1,4 +1,3 @@
-import BtnChamado from "@/components/chamado/btn";
 import { GetSessionServer } from "@/lib/auth_confg";
 import {
   Badge,
@@ -8,12 +7,11 @@ import {
   Divider,
   Flex,
   Heading,
-  Input,
   Link,
-  Select,
   Text,
 } from "@chakra-ui/react";
-import { redirect } from "next/navigation";
+import BtnChamado from "@/components/chamado/btn";
+import FiltroChamados from "../filtro/filtroChamado";
 
 interface TypeChamado {
   id: number;
@@ -40,13 +38,13 @@ interface PageProps {
     status?: string;
     prioridade?: string;
     departamento?: string;
-    clear?: string;
   };
 }
 
-async function getChamadosAll(session: SessionNext.Server | null) {
+async function getChamados(session: any, filtros: PageProps["searchParams"]) {
+  const params = new URLSearchParams(filtros as any);
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/chamado`,
+    `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/chamado?${params.toString()}`,
     {
       method: "GET",
       headers: {
@@ -58,7 +56,23 @@ async function getChamadosAll(session: SessionNext.Server | null) {
   );
 
   if (!response.ok) {
-    console.error("getChamadosAll status:", response.status);
+    console.error("getChamados status:", response.status);
+    return [];
+  }
+  return response.json();
+}
+
+async function getChamadosAllOptions(session: any): Promise<TypeChamado[]> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/chamado`,
+    {
+      headers: { Authorization: `Bearer ${session?.token}` },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    console.error("getChamadosAllOptions status:", response.status);
     return [];
   }
 
@@ -66,270 +80,114 @@ async function getChamadosAll(session: SessionNext.Server | null) {
   return data ?? [];
 }
 
-// Função para filtrar chamados
-function filtrarChamados(
-  chamados: TypeChamado[],
-  filtros: PageProps["searchParams"]
-) {
-  let resultado = [...chamados];
-
-  if (filtros.id?.trim()) {
-    resultado = resultado.filter((c) => String(c.id) === filtros.id!.trim());
-  }
-
-  if (filtros.busca?.trim()) {
-    const termo = filtros.busca.toLowerCase();
-    resultado = resultado.filter(
-      (c) =>
-        c.titulo.toLowerCase().includes(termo) ||
-        c.descricao?.toLowerCase().includes(termo) ||
-        c.user_nome?.toLowerCase().includes(termo)
-    );
-  }
-
-  if (filtros.status)
-    resultado = resultado.filter((c) => c.status === filtros.status);
-  if (filtros.prioridade)
-    resultado = resultado.filter((c) => c.prioridade === filtros.prioridade);
-  if (filtros.departamento)
-    resultado = resultado.filter(
-      (c) => c.departamento === filtros.departamento
-    );
-
-  return resultado;
-}
-
-// Server Action para filtros
-async function handleFilter(formData: FormData) {
-  "use server";
-
-  const params = new URLSearchParams();
-
-  const busca = formData.get("busca") as string;
-  const id = formData.get("id") as string;
-  const status = formData.get("status") as string;
-  const prioridade = formData.get("prioridade") as string;
-  const departamento = formData.get("departamento") as string;
-
-  if (busca?.trim()) params.set("busca", busca.trim());
-  if (id?.trim()) params.set("id", id.trim());
-  if (status) params.set("status", status);
-  if (prioridade) params.set("prioridade", prioridade);
-  if (departamento) params.set("departamento", departamento);
-
-  // Adiciona parâmetro para limpar os inputs após a filtragem
-  params.set("clear", "true");
-
-  redirect(`/chamado?${params.toString()}`);
-}
-
-// Server Action para limpar filtros
-async function handleClearFilters() {
-  "use server";
-  redirect("/chamado");
-}
-
-interface ChamadoSwitchProps {
+export default async function ChamadoSwitch({
+  searchParams,
+}: {
   searchParams: PageProps["searchParams"];
-}
-
-export default async function ChamadoSwitch({ searchParams }: ChamadoSwitchProps) {
+}) {
   const session = await GetSessionServer();
-  const chamadosTodos = session ? await getChamadosAll(session) : [];
-  const chamados = filtrarChamados(chamadosTodos, searchParams);
 
-  // Determina se deve limpar os inputs (quando clear=true)
-  const shouldClearInputs = searchParams.clear === "true";
+  const chamadosFiltrados = session
+    ? await getChamados(session, searchParams)
+    : [];
 
-  // Obter valores únicos para os selects
-  const statusUnicos: any = [
-    ...new Set(chamadosTodos.map((c: any) => c.status)),
+  const todosChamadosParaOpcoes = session
+    ? await getChamadosAllOptions(session)
+    : [];
+
+  const statusUnicos: string[] = [
+    ...new Set(todosChamadosParaOpcoes.map((c: TypeChamado) => c.status)),
   ].filter(Boolean);
-  const prioridadesUnicas = [
-    ...new Set(chamadosTodos.map((c: any) => c.prioridade)),
+
+  const prioridadesUnicas: string[] = [
+    ...new Set(todosChamadosParaOpcoes.map((c: TypeChamado) => c.prioridade)),
   ].filter(Boolean);
-  const departamentosUnicos = [
-    ...new Set(chamadosTodos.map((c: any) => c.departamento)),
+
+  const departamentosUnicos: string[] = [
+    ...new Set(todosChamadosParaOpcoes.map((c: TypeChamado) => c.departamento)),
   ].filter(Boolean);
 
   return (
-    <>
-      <Flex
-        minH="88.6vh"
-        w="100%"
-        bg="#F8F8F8"
-        overflowY="auto"
-        overflowX="hidden"
-        justifyContent={"center"}
-        px={{ base: 0, md: "8rem", lg: "15rem" }}
-      >
+    <Flex
+      minH="88.6vh"
+      w="100%"
+      bg="#F8F8F8"
+      justifyContent={"center"}
+      px={{ base: 4, md: "8rem", lg: "15rem" }}
+    >
+      <Flex w={"100%"} minH={"100%"} py={4} flexDir={"column"} gap={4}>
         <Flex
-          w={"100%"}
-          minH={"100%"}
-          px={{ base: 0, md: 4 }}
-          py={4}
-          flexDir={"column"}
+          justifyContent={"space-between"}
+          alignItems={"end"}
+          mb={10}
+          flexWrap="wrap"
           gap={4}
         >
-          {/* 1 */}
-          <Flex justifyContent={"space-between"} alignItems={"end"} mb={10}>
-            <Box>
-              <Heading>Chamados de Suporte</Heading>
-              <Flex gap={2}>
-                <Text>{chamados.length} chamados</Text>
-                <Badge colorScheme="red">
-                  {
-                    chamados.filter((item: any) => item.prioridade === "alta")
-                      .length
-                  }{" "}
-                  críticos
-                </Badge>
-                <Badge colorScheme="green">
-                  {
-                    chamados.filter(
-                      (item: any) => item.status === "EM_ANDAMENTO"
-                    ).length
-                  }{" "}
-                  abertos
-                </Badge>
-                <Badge colorScheme="yellow">
-                  {chamados.filter((item: any) => item.status === "LV2").length}{" "}
-                  nível 2
-                </Badge>
-              </Flex>
-            </Box>
-            <Flex>
-              <Button as={Link} href="/chamado/novo" colorScheme="green">
-                Novo Chamado
-              </Button>
+          <Box>
+            <Heading>Chamados de Suporte</Heading>
+            <Flex gap={2} flexWrap="wrap" mt={2}>
+              <Text fontWeight="bold">
+                {chamadosFiltrados.length} chamados encontrados
+              </Text>
             </Flex>
+          </Box>
+          <Flex>
+            <Button as={Link} href="/chamado/novo" colorScheme="green">
+              Novo Chamado
+            </Button>
           </Flex>
+        </Flex>
 
-          {/* 2 */}
-          <Flex gap={2} justifyContent={"center"} alignItems={"center"}>
-            <form action={handleFilter} style={{ display: "contents" }}>
-              <Box w={"25rem"}>
-                <Input
-                  name="busca"
-                  type="text"
-                  placeholder="Buscar chamados"
-                  w={"100%"}
-                  defaultValue={
-                    shouldClearInputs ? "" : searchParams.busca || ""
-                  }
-                />
-              </Box>
-              <Box w={"15rem"}>
-                <Input
-                  name="id"
-                  type="text"
-                  placeholder="ID"
-                  w={"100%"}
-                  defaultValue={shouldClearInputs ? "" : searchParams.id || ""}
-                />
-              </Box>
-              <Box w={"15rem"}>
-                <Select
-                  name="status"
-                  placeholder="status"
-                  w={"100%"}
-                  defaultValue={
-                    shouldClearInputs ? "" : searchParams.status || ""
-                  }
-                >
-                  {statusUnicos.map((status: any) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </Select>
-              </Box>
-              <Box w={"15rem"}>
-                <Select
-                  name="prioridade"
-                  placeholder="prioridade"
-                  w={"100%"}
-                  defaultValue={
-                    shouldClearInputs ? "" : searchParams.prioridade || ""
-                  }
-                >
-                  {prioridadesUnicas.map((prioridade: any) => (
-                    <option key={prioridade} value={prioridade}>
-                      {prioridade.toUpperCase()}
-                    </option>
-                  ))}
-                </Select>
-              </Box>
-              <Box w={"15rem"}>
-                <Select
-                  name="departamento"
-                  placeholder="Departamento"
-                  w={"100%"}
-                  defaultValue={
-                    shouldClearInputs ? "" : searchParams.departamento || ""
-                  }
-                >
-                  {departamentosUnicos.map((departamento: any) => (
-                    <option key={departamento} value={departamento}>
-                      {departamento.toUpperCase()}
-                    </option>
-                  ))}
-                </Select>
-              </Box>
-              <Box w={"10rem"}>
-                <Button type="submit" colorScheme="green" w={"100%"}>
-                  Filtrar
-                </Button>
-              </Box>
-            </form>
-            <Box w={"10rem"}>
-              <form action={handleClearFilters}>
-                <Button type="submit" colorScheme="gray" w={"100%"}>
-                  Limpar
-                </Button>
-              </form>
-            </Box>
-          </Flex>
-          <Divider my={4} borderColor="gray.300" />
+        <FiltroChamados
+          statusUnicos={statusUnicos}
+          prioridadesUnicas={prioridadesUnicas}
+          departamentosUnicos={departamentosUnicos}
+        />
 
-          {/* 3 */}
-          <Flex flexDir={"column"} gap={2}>
-            {/* card */}
-            {chamados.map((item: any) => (
+        <Divider my={4} borderColor="gray.300" />
+
+        <Flex flexDir={"column"} gap={3}>
+          {chamadosFiltrados.length > 0 ? (
+            chamadosFiltrados.map((item: TypeChamado) => (
               <Box
                 key={item.id}
                 p={4}
                 borderRadius="15px"
                 shadow="md"
-                _hover={{ shadow: "xl" }}
-                overflowY="auto"
-                w={"100%"}
                 bg="#fff"
                 border="1px solid"
-                borderColor="gray.300"
+                borderColor="gray.200"
               >
                 <Flex justifyContent={"space-between"} alignItems={"start"}>
-                  <Flex flexDir={"column"} gap={4}>
-                    <Flex gap={2} alignItems={"center"}>
+                  <Flex flexDir={"column"} gap={3}>
+                    <Flex gap={2} alignItems={"center"} flexWrap="wrap">
                       <Text fontSize={"md"} fontWeight={"bold"}>
                         {item.titulo}
                       </Text>
                       <Badge colorScheme="blue">{item.status}</Badge>
                       <Badge colorScheme="yellow">{item.prioridade}</Badge>
                     </Flex>
-                    <Flex gap={2}>
+                    <Flex gap={2} flexWrap="wrap">
                       <Text fontSize={"sm"}>Solicitante: {item.user_nome}</Text>
                       •
                       <Text fontSize={"sm"}>
                         Departamento: {item.departamento}
                       </Text>
                     </Flex>
-                    <Flex gap={4}>
+                    <Flex gap={4} flexWrap="wrap">
                       <Code children={`ID: ${item.id}`} />
-                      <Code children={`Aberto em: ${item.createAt}`} />
                       <Code
-                        children={`Última atualização: ${item.updatedAt}`}
+                        children={`Aberto em: ${new Date(
+                          item.createAt
+                        ).toLocaleDateString("pt-BR")}`}
                       />
+                      {item.updatedAt && (
+                        <Code
+                          children={`Última atualização: ${new Date(
+                            item.updatedAt
+                          ).toLocaleDateString("pt-BR")}`}
+                        />
+                      )}
                     </Flex>
                   </Flex>
                   <Flex gap={2}>
@@ -338,10 +196,14 @@ export default async function ChamadoSwitch({ searchParams }: ChamadoSwitchProps
                   </Flex>
                 </Flex>
               </Box>
-            ))}
-          </Flex>
+            ))
+          ) : (
+            <Text textAlign="center" p={10} color="gray.500">
+              Nenhum chamado encontrado com os filtros aplicados.
+            </Text>
+          )}
         </Flex>
       </Flex>
-    </>
+    </Flex>
   );
 }
