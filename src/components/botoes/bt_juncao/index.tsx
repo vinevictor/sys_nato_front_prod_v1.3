@@ -11,8 +11,10 @@ import { CgBriefcase, CgToday } from "react-icons/cg";
 import { FiFilePlus, FiHome, FiLogOut, FiSettings } from "react-icons/fi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { GiBrazil } from "react-icons/gi";
 import BotaoMenu from "../bt_menu";
 import BotaoMobileMenu from "../bt_mobile_menu";
+import { FaSignature } from "react-icons/fa";
 
 /**
  * Interface para tipagem das props do componente BotaoJuncao.
@@ -57,9 +59,17 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
                 icon={<FiFilePlus />}
               />
               {session?.role?.adm && (
-                <BotaoMobileMenu name="Painel adm" path="/adm" icon={<FiSettings />} />
+                <BotaoMobileMenu
+                  name="Painel adm"
+                  path="/adm"
+                  icon={<FiSettings />}
+                />
               )}
-              <BotaoMobileMenu name="Dashboard" path="/dashboard" icon={<LuLayoutDashboard />} />
+              <BotaoMobileMenu
+                name="Dashboard"
+                path="/dashboard"
+                icon={<LuLayoutDashboard />}
+              />
               <BotaoMobileMenu name="FAQ" path="/faq" icon={<CgToday />} />
               {/* {session?.role?.direto && (
                   <BotaoMobileMenu name="Direto" path="/direto" icon={<CgBriefcase />} />
@@ -77,14 +87,36 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
         {session ? (
           <>
             <BotaoMenu name="Home" path="/home" icon={<FiHome />} />
-            <BotaoMenu name="Nova Solicitação" path="/solicitacoes" icon={<FiFilePlus />} />
+            <BotaoMenu
+              name="Nova Solicitação"
+              path="/solicitacoes"
+              icon={<FiFilePlus />}
+            />
             {session?.role?.adm && (
               <BotaoMenu name="Painel adm" path="/adm" icon={<FiSettings />} />
             )}
-            <BotaoMenu name="Dashboard" path="/dashboard" icon={<LuLayoutDashboard />} />
+            <BotaoMenu
+              name="Dashboard"
+              path="/dashboard"
+              icon={<LuLayoutDashboard />}
+            />
             <BotaoMenu name="FAQ" path="/faq" icon={<CgToday />} />
             {session?.role?.direto && (
               <BotaoMenu name="Direto" path="/direto" icon={<CgBriefcase />} />
+            )}
+            {session?.role?.adm && (
+              <BotaoMenu
+                name="NatoGov (desenvolvimento)"
+                path="/natogov"
+                icon={<GiBrazil />}
+              />
+            )}
+            {session?.role?.adm && (
+              <BotaoMenu
+                name="NatoSign (IntelliSign)"
+                path="/natosign"
+                icon={<FaSignature />}
+              />
             )}
           </>
         ) : (

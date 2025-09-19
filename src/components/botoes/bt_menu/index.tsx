@@ -9,29 +9,15 @@ type BotaoMenuProps = {
 };
 
 export default function BotaoMenu({ name, path, icon }: BotaoMenuProps) {
-  const toast = useToast();
   const router = useRouter();
 
-  const handleRoute = () => {
+  const handleRoute = async () => {
     if (name === "Sair") {
-      (async () => {
-        try {
-          const logout = await fetch("/api/auth/logout");
-          if (!logout.ok) {
-            throw new Error("Erro ao fazer logout");
-          }
-          router.push("/login");
-        } catch (error) {
-          console.error("Erro ao fazer logout", error);
-          toast({
-            title: "Erro ao fazer logout",
-            description: "Erro ao fazer logout",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        }
-      })();
+      const logout = await fetch("/api/auth/logout");
+      if (!logout.ok) {
+        console.log("Erro ao fazer logout");
+      }
+      router.push("/login");
     }
     router.push(path);
   };

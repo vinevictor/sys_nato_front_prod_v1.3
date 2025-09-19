@@ -39,6 +39,7 @@ export default function SelectEmpreendimento({
   const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(FormEmp && FormEmp.length > 0 ? FormEmp : []);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   const RequestFetch = useCallback(async (constId?: number) => {
@@ -68,7 +69,10 @@ export default function SelectEmpreendimento({
       setListEmp(data);
       setLoading(false);
     })();
-  }, [isAdmin, constId, RequestFetch]);
+    if (isAdmin && FormEmpId) {
+      setDisabled(false);
+    };
+  }, [isAdmin, constId, RequestFetch, FormEmpId]);
 
   const handleSelectChange = useCallback((value: number) => {
     setEmpreendimento(value);
@@ -96,7 +100,7 @@ export default function SelectEmpreendimento({
         onvalue={handleSelectChange}
         value={empreendimento}
         isLoading={!constId || loading || constId === 0}
-        isDisabled={!constId || loading || constId === 0}
+        Disable={!constId || loading || constId === 0 || disabled}
         required
         options={useMemo(
           () => {
