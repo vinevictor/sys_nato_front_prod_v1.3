@@ -25,9 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         }
       );
 
-      const data = await user.json();
-      console.log("🚀 ~ PUT ~ data:", data)
-    
+      const data = await user.json();    
 
       if (!user.ok) {
         return NextResponse.json(data, { status: 402 });

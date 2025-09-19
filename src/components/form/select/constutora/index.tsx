@@ -37,15 +37,17 @@ export default function SelectConstutora({
     FormConst && FormConst.length > 0 ? FormConst : []
   );
   const [construtora, setConstrutora] = useState<number>(FormConstId ?? 0);
+  const [Disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
-    if (isAdmin) {
-      (async () => {
-        const data = await RequestFetch();
-        setListConst(data);
-      })();
+    if (FormConstId && isAdmin) {
+      setDisabled(false);
     }
+    (async () => {
+      const data = await RequestFetch();
+      setListConst(data);
+    })();
   }, [FormConstId, isAdmin]);
 
   const handleSelectChange = (value: string) => {
@@ -91,6 +93,7 @@ export default function SelectConstutora({
         id="construtora"
         onvalue={handleSelectChange}
         value={construtora}
+        Disable={Disabled}
         required
         options={useMemo(() => {
           if (!isAdmin) {

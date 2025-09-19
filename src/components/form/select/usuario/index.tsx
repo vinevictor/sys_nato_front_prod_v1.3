@@ -46,6 +46,7 @@ export default function SelectUser({
   );
   const [user, setUser] = useState<number>(FormUserId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -59,6 +60,9 @@ export default function SelectUser({
     }
     if (constId === 0 && empId === 0 && finId === 0) {
       setUser(0);
+    }
+    if (isAdmin && FormUserId) {
+      setDisabled(false);
     }
   }, [FormUserId, isAdmin, constId, empId, finId]);
 
@@ -117,14 +121,15 @@ export default function SelectUser({
           empId === 0 ||
           finId === 0
         }
-        isDisabled={
+        Disable={
           !constId ||
           !empId ||
           !finId ||
           loading ||
           constId === 0 ||
           empId === 0 ||
-          finId === 0
+          finId === 0 ||
+          disabled
         }
         required
         options={useMemo(() => {

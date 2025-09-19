@@ -41,6 +41,7 @@ export default function SelectFinanceira({
   const [ListFin, setListFin] = useState<FinanceiraType[]>(FormFin && FormFin.length > 0 ? FormFin : []);
   const [financeira, setFinanceira] = useState<number>(FormFinId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -57,6 +58,9 @@ export default function SelectFinanceira({
     if (constId === 0 && empId === 0) {
       setFinanceira(0);
       setListFin([]);
+    }
+    if (isAdmin && FormFinId) {
+      setDisabled(false);
     }
   }, [FormFinId, isAdmin, constId, empId]);
 
@@ -107,7 +111,7 @@ export default function SelectFinanceira({
         onvalue={handleSelectChange}
         value={financeira}
         isLoading={!constId || !empId || loading || constId === 0}
-        isDisabled={!constId || !empId || loading || constId === 0}
+        Disable={!constId || !empId || loading || constId === 0 || disabled}
         required
         options={useMemo(
           () => {

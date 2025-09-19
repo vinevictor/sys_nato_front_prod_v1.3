@@ -372,7 +372,7 @@ export default function FormSolicitacaoDireto({
               id: e.id,
               fantasia: e.nome,
             }))}
-            isDisabled={!isAdmin}
+            Disable={!isAdmin}
           />
 
           <SelectBasic
@@ -384,7 +384,7 @@ export default function FormSolicitacaoDireto({
             }}
             value={form?.financeira || ""}
             required
-            isDisabled={!form?.empreendimento || !isAdmin}
+            Disable={!form?.empreendimento || !isAdmin}
             options={Financeiras.map((f) => ({
               id: f.id,
               fantasia: f.fantasia,
@@ -397,7 +397,7 @@ export default function FormSolicitacaoDireto({
             onvalue={(value) => handleChange("corretor", Number(value))}
             value={form?.corretor || ""}
             required
-            isDisabled={!form?.empreendimento || !isAdmin}
+            Disable={!form?.empreendimento || !form?.financeira || !isAdmin}
             options={Corretores.map((c) => ({
               id: c.id,
               fantasia: c.nome,
