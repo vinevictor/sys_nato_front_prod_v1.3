@@ -99,14 +99,14 @@ export default function SelectMultiItem({
 
   return (
     <>
-      <Box w={"full"} minH={"6rem"}>
+      <Box w={"full"} minH={{ base: "12rem", md: "14rem" }}>
         {isAdmin && (
           <>
             {IsLoadingGeral && (
               <>
                 <Flex
                   w={"full"}
-                  h={"6rem"}
+                  h={"full"}
                   justifyContent={"center"}
                   alignItems={"center"}
                 >
@@ -180,7 +180,7 @@ export default function SelectMultiItem({
               </FormControl>
             )}
             {!IsLoadingGeral && !isAdmin && (
-              <Flex w={"full"} h={"6rem"} flexWrap={"wrap"}>
+              <Flex w={"full"} h={{ base: "12rem", md: "14rem" }} flexWrap={"wrap"}>
                 {TagsValue?.map((item) => (
                   <Tag
                     key={item.id}

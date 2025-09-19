@@ -10,9 +10,7 @@ export async function PUT(
 ) {
   try {
     const data = await request.json();
-    console.log("🚀 ~ data:", data);
     const { id } = params;
-    console.log("🚀 ~ id:", id);
     const session = await GetSessionServer();
 
     if (!session) {

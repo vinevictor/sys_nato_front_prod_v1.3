@@ -22,14 +22,11 @@ interface Props {
 }
 
 export default function ModalPrimeAsses({ session }: Props) {
-  console.log("🚀 ~ ModalPrimeAsses ~ session:", session)
   const [Senha, setSenha] = useState("");
   const [ConfirmeSenha, setConfirmeSenha] = useState("");
   const toast = useToast();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const primeiro_asseso = session.reset_password;
-  console.log("🚀 ~ ModalPrimeAsses ~ primeiro_asseso:", primeiro_asseso)
   const ID = session.id;
 
   useEffect(() => {
@@ -50,8 +47,6 @@ export default function ModalPrimeAsses({ session }: Props) {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(Senha, ConfirmeSenha);
-
     if (Senha !== ConfirmeSenha) {
       toast({
         title: "Erro!",

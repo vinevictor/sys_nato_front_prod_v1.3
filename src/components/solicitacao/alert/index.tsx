@@ -1,14 +1,15 @@
 "use client";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Heading, Divider } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
 interface ListAlertasProps {
   id: number;
   data?: any;
+  ContainerAlertas?: string;
 }
 
-export default function ListAlertas({ id, data }: ListAlertasProps) {
+export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
   const [dataAlert, setDataAlert] = useState([]);
   
   useEffect(() => {
@@ -34,33 +35,27 @@ export default function ListAlertas({ id, data }: ListAlertasProps) {
   
   return (
     <Flex
+      mb={2}
       w="full"
-      h="full"
-      p={{ base: 3, md: 6 }}
-      bg="white"
-      borderRadius={8}
-      boxShadow="2xl"
+      border="1px solid #ccc"
+      rounded="md"
       direction="column"
-      overflow="hidden"
-      border="1px solid"
-      borderColor="gray.200"
+      px={6}
+      h={ContainerAlertas}
+      shadow="md"
+      bg="white"
     >
-      <Box flexShrink={0}>
-        <Text
-          fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
-          fontWeight="semibold"
-          color="gray.700"
-        >
-          Alertas
-        </Text>
-      </Box>
+      <Heading as="h2" size="lg" mb={2} textAlign="center" color="teal.600">
+        Alertas
+      </Heading>
+      <Divider mb={3} />
 
       <Box
-        flex="1"
+        height="360px"
         overflow="auto"
         css={{
           "&::-webkit-scrollbar": {
-            width: "6px",
+            width: "8px",
           },
           "&::-webkit-scrollbar-track": {
             background: "#f1f1f1",
