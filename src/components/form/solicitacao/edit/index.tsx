@@ -301,6 +301,7 @@ export default function FormSolicitacaoEdit({
             ValueCorretor={(value: number) =>
               handleChange("corretorId", Number(value))
             }
+            edit
           />
           <Flex
             gap={2}
