@@ -1,4 +1,5 @@
 import { GetSessionServer } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -9,9 +10,7 @@ export async function PUT(
 ) {
   try {
     const data = await request.json();
-    console.log("🚀 ~ data:", data);
     const { id } = params;
-    console.log("🚀 ~ id:", id);
     const session = await GetSessionServer();
 
     if (!session) {
@@ -29,6 +28,7 @@ export async function PUT(
       }
     );
     const retorno = await response.json();
+    revalidateTag("user-get");
     return NextResponse.json(retorno, { status: 200 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });

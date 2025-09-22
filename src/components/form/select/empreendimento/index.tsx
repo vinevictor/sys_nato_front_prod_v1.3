@@ -10,6 +10,7 @@ interface SelectEmpreendimentoProps {
   FormEmp?: EmpreendimentoType[];
   FormEmpId?: number;
   constId?: number;
+  edit?: boolean;
 }
 
 type EmpreendimentoType = {
@@ -35,18 +36,12 @@ export default function SelectEmpreendimento({
   FormEmp,
   FormEmpId,
   constId,
+  edit = false
 }: SelectEmpreendimentoProps) {
-  const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(() => {
-    if (FormEmp && FormEmp.length > 0) {
-      return FormEmp;
-    }
-    if (session?.empreendimento && session.empreendimento.length > 0) {
-      return session.empreendimento;
-    }
-    return [];
-  });
+  const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(FormEmp && FormEmp.length > 0 ? FormEmp : []);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   const RequestFetch = useCallback(async (constId?: number) => {
@@ -76,7 +71,12 @@ export default function SelectEmpreendimento({
       setListEmp(data);
       setLoading(false);
     })();
-  }, [isAdmin, constId, RequestFetch]);
+    if (isAdmin && FormEmpId) {
+      setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
+    }
+  }, [isAdmin, constId, RequestFetch, FormEmpId, edit]);
 
   const handleSelectChange = useCallback((value: number) => {
     setEmpreendimento(value);
@@ -104,15 +104,21 @@ export default function SelectEmpreendimento({
         onvalue={handleSelectChange}
         value={empreendimento}
         isLoading={!constId || loading || constId === 0}
-        isDisabled={!constId || loading || constId === 0}
+        Disable={!constId || loading || constId === 0 || disabled}
         required
         options={useMemo(
-          () =>
-            ListEmp.map((e: any) => ({
+          () => {
+            if (!isAdmin) {
+              return session.empreendimento.map((e: any) => ({
+                id: e.id,
+                fantasia: e.nome,
+              }));
+            }
+            return ListEmp.map((e: any) => ({
               id: e.id,
               fantasia: e.nome,
-            })),
-          [ListEmp]
+            }));
+          }, [ListEmp, session, isAdmin]
         )}
         // boxWidth="15%"
       />

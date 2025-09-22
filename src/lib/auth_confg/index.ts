@@ -97,7 +97,7 @@ export async function GetSessionServer() {
         },
         next: {
           // revalidar a cada 20 minutos
-          revalidate: 1200,
+          // revalidate: 1200,
           tags: ["user-get"],
         },
       }

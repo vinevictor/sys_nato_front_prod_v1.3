@@ -11,6 +11,7 @@ interface SelectFinanceiraProps {
   FormFinId?: number;
   constId?: number;
   empId?: number;
+  edit?: boolean;
 }
 
 type FinanceiraType = {
@@ -37,19 +38,12 @@ export default function SelectFinanceira({
   FormFinId,
   constId,
   empId,
+  edit = false
 }: SelectFinanceiraProps) {
-  const [ListFin, setListFin] = useState<FinanceiraType[]>(() => {
-    if (FormFin && FormFin.length > 0) {
-      return FormFin;
-    }
-    if (session?.Financeira && session.Financeira.length > 0) {
-      return session.Financeira;
-    }
-    return [];
-  });
-
+  const [ListFin, setListFin] = useState<FinanceiraType[]>(FormFin && FormFin.length > 0 ? FormFin : []);
   const [financeira, setFinanceira] = useState<number>(FormFinId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -67,7 +61,12 @@ export default function SelectFinanceira({
       setFinanceira(0);
       setListFin([]);
     }
-  }, [FormFinId, isAdmin, constId, empId]);
+    if (isAdmin && FormFinId) {
+      setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
+    }
+  }, [FormFinId, isAdmin, constId, empId, edit]);
 
   const handleSelectChange = (value: number) => {
     setFinanceira(value);
@@ -116,15 +115,21 @@ export default function SelectFinanceira({
         onvalue={handleSelectChange}
         value={financeira}
         isLoading={!constId || !empId || loading || constId === 0}
-        isDisabled={!constId || !empId || loading || constId === 0}
+        Disable={!constId || !empId || loading || constId === 0 || disabled}
         required
         options={useMemo(
-          () =>
-            ListFin.map((e: any) => ({
+          () => {
+            if (!isAdmin) {
+              return session.Financeira.map((e: any) => ({
+                id: e.id,
+                fantasia: e.fantasia,
+              }));
+            }
+            return ListFin.map((e: any) => ({
               id: e.id,
               fantasia: e.fantasia,
-            })),
-          [ListFin]
+            }));
+          }, [ListFin, session, isAdmin]
         )}
         // boxWidth="15%"
       />

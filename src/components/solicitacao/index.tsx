@@ -30,9 +30,13 @@ export default function SolicitacaoSWITCH({ session }: switchProps) {
           onCpfChange={onCpfChange}
           onSolicitacao={setSolicitacao}
         />
-        {isOpen === true && (
+        {cpfChange && (
           <Flex w={"full"} h={"full"} justifyContent={"center"}>
-            <FormSolicitacao cpf={cpfChange} solicitacao={solicitacao} session={session} />
+            <FormSolicitacao
+              cpf={cpfChange}
+              solicitacao={solicitacao}
+              session={session}
+            />
           </Flex>
         )}
       </Flex>

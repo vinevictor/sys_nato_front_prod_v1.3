@@ -12,6 +12,7 @@ interface SelectUserProps {
   constId?: number;
   empId?: number;
   finId?: number;
+  edit?: boolean;
 }
 
 type UserType = {
@@ -40,14 +41,14 @@ export default function SelectUser({
   constId,
   empId,
   finId,
+  edit = false,
 }: SelectUserProps) {
   const [ListUser, setListUser] = useState<UserType[]>(
-    FormUser && FormUser.length > 0
-      ? FormUser
-      : [{ id: Number(session?.id), nome: session?.nome }]
+    FormUser && FormUser.length > 0 ? FormUser : []
   );
   const [user, setUser] = useState<number>(FormUserId ?? 0);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -62,7 +63,12 @@ export default function SelectUser({
     if (constId === 0 && empId === 0 && finId === 0) {
       setUser(0);
     }
-  }, [FormUserId, isAdmin, constId, empId, finId]);
+    if (isAdmin && FormUserId) {
+      setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
+    }
+  }, [FormUserId, isAdmin, constId, empId, finId, edit]);
 
   const handleSelectChange = (value: number) => {
     setUser(value);
@@ -119,24 +125,26 @@ export default function SelectUser({
           empId === 0 ||
           finId === 0
         }
-        isDisabled={
+        Disable={
           !constId ||
           !empId ||
           !finId ||
           loading ||
           constId === 0 ||
           empId === 0 ||
-          finId === 0
+          finId === 0 ||
+          disabled
         }
         required
-        options={useMemo(
-          () =>
-            ListUser.map((e: any) => ({
-              id: e.id,
-              fantasia: e.nome,
-            })),
-          [ListUser]
-        )}
+        options={useMemo(() => {
+          if (!isAdmin) {
+            return [{ id: Number(session?.id), fantasia: session?.nome }];
+          }
+          return ListUser.map((e: any) => ({
+            id: e.id,
+            fantasia: e.nome,
+          }));
+        }, [ListUser, session, isAdmin])}
         // boxWidth="15%"
       />
     </>

@@ -25,6 +25,7 @@ export default function BoxBasic({
         fontSize="sm"
         display="flex"
         alignItems="center"
+        w="full"
         gap={1}
         m={0}
       >

@@ -26,6 +26,8 @@ export async function PUT(
       ...(body.construtoraId && { construtora: body.construtoraId }),
       ...(body.financeiroId && { financeiro: body.financeiroId }),
       ...(body.empreendimentoId && { empreendimento: body.empreendimentoId }),
+      ...(body.id_fcw && { id_fcw: body.id_fcw }),
+      ...(body.andamento && { andamento: body.andamento }),
     };
     const session = await GetSessionServer();
 
@@ -141,7 +143,6 @@ export async function PUT(
 
     const data = await user.json();
 
-    console.log("🚀 ~ data:", data);
     if (!user.ok) {
       return new NextResponse("Invalid credentials", { status: 402 });
     }

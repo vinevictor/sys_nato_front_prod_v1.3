@@ -31,7 +31,7 @@ export default function InputBasic({
   };
 
   return (
-    <FormControl w={boxWidth}>
+    <FormControl w={{md:boxWidth, base:"full"}}>
       <FormLabel
         htmlFor={id}
         fontSize="sm"

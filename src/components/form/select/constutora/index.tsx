@@ -10,21 +10,22 @@ interface SelectConstutoraProps {
   FormConst?: ConstutoraType[];
   FormConstId?: number;
   ValueConst: (value: number) => void;
+  edit?: boolean;
 }
 
 type ConstutoraType = {
   id: number;
   fantasia: string;
-}
+};
 
 /**
- * 
+ *
  * @param session - Sessão do usuário
  * @param isAdmin - Se o usuário é admin
  * @param FormConst - Lista de construtoras
  * @param FormConstId - ID da construtora
  * @param ValueConst - Função para setar o valor da construtora
- * 
+ *
  */
 export default function SelectConstutora({
   session,
@@ -32,21 +33,26 @@ export default function SelectConstutora({
   FormConst,
   FormConstId,
   ValueConst,
+  edit = false,
 }: SelectConstutoraProps) {
   const [ListConst, setListConst] = useState<ConstutoraType[]>(
-    FormConst && FormConst.length > 0 ? FormConst : session?.construtora ?? []
+    FormConst && FormConst.length > 0 ? FormConst : []
   );
   const [construtora, setConstrutora] = useState<number>(FormConstId ?? 0);
+  const [Disabled, setDisabled] = useState<boolean>(true);
   const toast = useToast();
 
   useEffect(() => {
-    if (isAdmin) {
-      (async () => {
-        const data = await RequestFetch();
-        setListConst(data);
-      })();
+    (async () => {
+      const data = await RequestFetch();
+      setListConst(data);
+    })();
+    if (FormConstId && isAdmin) {
+      setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
     }
-  }, [FormConstId, isAdmin]);
+  }, [FormConstId, isAdmin, edit]);
 
   const handleSelectChange = (value: string) => {
     setConstrutora(Number(value));
@@ -91,15 +97,20 @@ export default function SelectConstutora({
         id="construtora"
         onvalue={handleSelectChange}
         value={construtora}
+        Disable={Disabled}
         required
-        options={useMemo(
-          () =>
-            ListConst.map((construtora: any) => ({
-              id: construtora.id,
-              fantasia: construtora.fantasia,
-            })),
-          [ListConst]
-        )}
+        options={useMemo(() => {
+          if (!isAdmin) {
+            return session.construtora.map((e: any) => ({
+              id: e.id,
+              fantasia: e.fantasia,
+            }));
+          }
+          return ListConst.map((e: any) => ({
+            id: e.id,
+            fantasia: e.fantasia,
+          }));
+        }, [ListConst, session, isAdmin])}
         // boxWidth="15%"
       />
     </>

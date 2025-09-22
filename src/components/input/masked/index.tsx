@@ -125,7 +125,7 @@ export default function MaskedInput({
   };
 
   return (
-    <FormControl w={boxWidth}>
+    <FormControl w={{md:boxWidth, base:"full"}}>
       <FormLabel
         htmlFor={id}
         fontSize="sm"

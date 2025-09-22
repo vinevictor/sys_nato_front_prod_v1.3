@@ -320,6 +320,7 @@ export default function FormSolicitacao({
           }
           ValueFinanceira={(value: number) => handleChange("financeira", value)}
           ValueCorretor={(value: number) => handleChange("corretor", value)}
+          edit={true}
         />
       </Flex>
 

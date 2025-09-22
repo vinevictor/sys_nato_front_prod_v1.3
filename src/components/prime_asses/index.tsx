@@ -25,7 +25,6 @@ export default function ModalPrimeAsses({ session }: Props) {
   const [Senha, setSenha] = useState("");
   const [ConfirmeSenha, setConfirmeSenha] = useState("");
   const toast = useToast();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const primeiro_asseso = session.reset_password;
   const ID = session.id;
@@ -48,8 +47,6 @@ export default function ModalPrimeAsses({ session }: Props) {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(Senha, ConfirmeSenha);
-
     if (Senha !== ConfirmeSenha) {
       toast({
         title: "Erro!",
