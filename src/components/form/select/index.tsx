@@ -1,110 +1,108 @@
 "use client";
 import { Session } from "@/types/session";
 import { Flex } from "@chakra-ui/react";
-import { useEffect, useState, useCallback  } from "react";
+import { useEffect, useState, useCallback } from "react";
 import SelectConstutora from "./constutora";
 import SelectEmpreendimento from "./empreendimento";
 import SelectFinanceira from "./financeiro";
 import SelectUser from "./usuario";
 
 type FormType = {
-  "id": number,
-  "nome": string,
-  "email": string,
-  "cpf": string,
-  "telefone": string,
-  "telefone2": string | null,
-  "dt_nascimento": string,
-  "id_fcw": number,
-  "cnh": string | null,
-  "ativo": boolean,
-  "rela_quest": boolean,
-  "distrato": boolean,
-  "dt_distrato": Date | string | null,
-  "status_aprovacao": boolean,
-  "distrato_id": number | null,
-  "andamento": string | null,
-  "type_validacao": string | null,
-  "dt_aprovacao": Date | string | null,
-  "hr_aprovacao": Date | string | null,
-  "dt_agendamento": Date | string | null,
-  "hr_agendamento": Date | string | null,
-  "estatos_pgto": string | null,
-  "valorcd": number | string | null,
-  "situacao_pg": number,
-  "freqSms": number,
-  "alertanow": boolean,
-  "dt_criacao_now": Date | string | null,
-  "statusAtendimento": boolean,
-  "pause": boolean,
-  "corretorId": number,
-  "construtoraId": number,
-  "financeiroId": number,
-  "empreendimentoId": number,
-  "createdAt": Date | string | null,
-  "updatedAt": Date | string | null,
-  "relacionamentos": string[],
-  "dt_revogacao": Date | string | null,
-  "direto": boolean,
-  "txid": string | null,
-  "pixCopiaECola": string | null,
-  "imagemQrcode": string | null,
-  "uploadCnh": string | null,
-  "uploadRg": string | null,
-  "sisapp"?: boolean | null,
-  "obs": {
-    "id": string,
-    "data": string,
-    "hora": string,
-    "autor": string,
-    "autor_id": number,
-    "mensagem": string
-  }[],
-  "pg_andamento": string,
-  "pg_date": Date | string | null,
-  "pg_status": boolean,
-  "corretor": {
-    "id": number,
-    "nome": string,
-    "telefone": string
-  },
-  "construtora": {
-    "id": number,
-    "fantasia": string,
-    "valor_cert": number
-  },
-  "empreendimento": {
-    "id": number,
-    "nome": string,
-    "cidade": string,
-    "estado": string,
-    "tag": string
-  },
-  "financeiro": {
-    "id": number,
-    "fantasia": string,
-    "tel": string,
-    "valor_cert": number
-  },
-  "alerts": [
+  id: number;
+  nome: string;
+  email: string;
+  cpf: string;
+  telefone: string;
+  telefone2: string | null;
+  dt_nascimento: string;
+  id_fcw: number;
+  cnh: string | null;
+  ativo: boolean;
+  rela_quest: boolean;
+  distrato: boolean;
+  dt_distrato: Date | string | null;
+  status_aprovacao: boolean;
+  distrato_id: number | null;
+  andamento: string | null;
+  type_validacao: string | null;
+  dt_aprovacao: Date | string | null;
+  hr_aprovacao: Date | string | null;
+  dt_agendamento: Date | string | null;
+  hr_agendamento: Date | string | null;
+  estatos_pgto: string | null;
+  valorcd: number | string | null;
+  situacao_pg: number;
+  freqSms: number;
+  alertanow: boolean;
+  dt_criacao_now: Date | string | null;
+  statusAtendimento: boolean;
+  pause: boolean;
+  corretorId: number;
+  construtoraId: number;
+  financeiroId: number;
+  empreendimentoId: number;
+  createdAt: Date | string | null;
+  updatedAt: Date | string | null;
+  relacionamentos: string[];
+  dt_revogacao: Date | string | null;
+  direto: boolean;
+  txid: string | null;
+  pixCopiaECola: string | null;
+  imagemQrcode: string | null;
+  uploadCnh: string | null;
+  uploadRg: string | null;
+  sisapp?: boolean | null;
+  obs: {
+    id: string;
+    data: string;
+    hora: string;
+    autor: string;
+    autor_id: number;
+    mensagem: string;
+  }[];
+  pg_andamento: string;
+  pg_date: Date | string | null;
+  pg_status: boolean;
+  corretor: {
+    id: number;
+    nome: string;
+    telefone: string;
+  };
+  construtora: {
+    id: number;
+    fantasia: string;
+    valor_cert: number;
+  };
+  empreendimento: {
+    id: number;
+    nome: string;
+    cidade: string;
+    estado: string;
+    tag: string;
+  };
+  financeiro: {
+    id: number;
+    fantasia: string;
+    tel: string;
+    valor_cert: number;
+  };
+  alerts: [
     {
-      "id": number,
-      "descricao": string,
-      "status": boolean,
-      "createdAt": string
+      id: number;
+      descricao: string;
+      status: boolean;
+      createdAt: string;
     }
-  ],
-  "tags": [
+  ];
+  tags: [
     {
-      "id": number,
-      "solicitacao": number,
-      "descricao": string,
-      "createAt": string
+      id: number;
+      solicitacao: number;
+      descricao: string;
+      createAt: string;
     }
-  ]
-
-}
-  
+  ];
+};
 
 interface SelectConstEmpFinCorProps {
   session: Session.AuthUser;
@@ -140,7 +138,7 @@ export default function SelectConstEmpFinCor({
   ValueFinanceira,
   ValueCorretor,
   Form,
-  edit = false
+  edit,
 }: SelectConstEmpFinCorProps) {
   const [form, setForm] = useState({
     construtora: Form?.construtoraId || 0,
@@ -149,11 +147,9 @@ export default function SelectConstEmpFinCor({
     corretor: Form?.corretorId || 0,
   });
 
-
   const SetPropForm = useCallback((field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   }, []);
-
 
   useEffect(() => {
     ValueConstrutora(form.construtora);
@@ -257,5 +253,3 @@ export default function SelectConstEmpFinCor({
     </>
   );
 }
-
-// 493.646.890-89

@@ -33,7 +33,7 @@ export default function SelectConstutora({
   FormConst,
   FormConstId,
   ValueConst,
-  edit = false,
+  edit,
 }: SelectConstutoraProps) {
   const [ListConst, setListConst] = useState<ConstutoraType[]>(
     FormConst && FormConst.length > 0 ? FormConst : []
@@ -47,12 +47,12 @@ export default function SelectConstutora({
       const data = await RequestFetch();
       setListConst(data);
     })();
-    if (FormConstId && isAdmin) {
+    if (!edit || (edit && isAdmin)) {
       setDisabled(false);
-    } else if (edit) {
-      setDisabled(false);
+    } else {
+      setDisabled(true);
     }
-  }, [FormConstId, isAdmin, edit]);
+  }, [edit, isAdmin]);
 
   const handleSelectChange = (value: string) => {
     setConstrutora(Number(value));
