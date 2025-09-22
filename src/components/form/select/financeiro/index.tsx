@@ -11,6 +11,7 @@ interface SelectFinanceiraProps {
   FormFinId?: number;
   constId?: number;
   empId?: number;
+  edit?: boolean;
 }
 
 type FinanceiraType = {
@@ -37,6 +38,7 @@ export default function SelectFinanceira({
   FormFinId,
   constId,
   empId,
+  edit = false
 }: SelectFinanceiraProps) {
   const [ListFin, setListFin] = useState<FinanceiraType[]>(FormFin && FormFin.length > 0 ? FormFin : []);
   const [financeira, setFinanceira] = useState<number>(FormFinId ?? 0);
@@ -61,8 +63,10 @@ export default function SelectFinanceira({
     }
     if (isAdmin && FormFinId) {
       setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
     }
-  }, [FormFinId, isAdmin, constId, empId]);
+  }, [FormFinId, isAdmin, constId, empId, edit]);
 
   const handleSelectChange = (value: number) => {
     setFinanceira(value);

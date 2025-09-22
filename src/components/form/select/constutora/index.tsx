@@ -10,6 +10,7 @@ interface SelectConstutoraProps {
   FormConst?: ConstutoraType[];
   FormConstId?: number;
   ValueConst: (value: number) => void;
+  edit?: boolean;
 }
 
 type ConstutoraType = {
@@ -32,6 +33,7 @@ export default function SelectConstutora({
   FormConst,
   FormConstId,
   ValueConst,
+  edit = false,
 }: SelectConstutoraProps) {
   const [ListConst, setListConst] = useState<ConstutoraType[]>(
     FormConst && FormConst.length > 0 ? FormConst : []
@@ -41,14 +43,16 @@ export default function SelectConstutora({
   const toast = useToast();
 
   useEffect(() => {
-    if (FormConstId && isAdmin) {
-      setDisabled(false);
-    }
     (async () => {
       const data = await RequestFetch();
       setListConst(data);
     })();
-  }, [FormConstId, isAdmin]);
+    if (FormConstId && isAdmin) {
+      setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
+    }
+  }, [FormConstId, isAdmin, edit]);
 
   const handleSelectChange = (value: string) => {
     setConstrutora(Number(value));

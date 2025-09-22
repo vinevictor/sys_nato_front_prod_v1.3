@@ -114,6 +114,7 @@ interface SelectConstEmpFinCorProps {
   ValueFinanceira: (value: number) => void;
   ValueCorretor: (value: number) => void;
   Form?: FormType | null;
+  edit?: boolean;
 }
 
 /**
@@ -139,6 +140,7 @@ export default function SelectConstEmpFinCor({
   ValueFinanceira,
   ValueCorretor,
   Form,
+  edit = false
 }: SelectConstEmpFinCorProps) {
   const [form, setForm] = useState({
     construtora: Form?.construtoraId || 0,
@@ -216,6 +218,7 @@ export default function SelectConstEmpFinCor({
           ValueConst={handleSelectConst}
           FormConst={Form?.construtora ? [Form.construtora] : []}
           FormConstId={Form?.construtoraId || 0}
+          edit={edit}
         />
         <SelectEmpreendimento
           session={session}
@@ -224,6 +227,7 @@ export default function SelectConstEmpFinCor({
           FormEmp={Form?.empreendimento ? [Form.empreendimento] : []}
           FormEmpId={form.empreendimento}
           constId={form.construtora}
+          edit={edit}
         />
         <SelectFinanceira
           session={session}
@@ -233,6 +237,7 @@ export default function SelectConstEmpFinCor({
           FormFinId={form.financeira}
           constId={form.construtora}
           empId={form.empreendimento}
+          edit={edit}
         />
 
         {isAdmin && (
@@ -245,6 +250,7 @@ export default function SelectConstEmpFinCor({
             constId={form.construtora}
             empId={form.empreendimento}
             finId={form.financeira}
+            edit={edit}
           />
         )}
       </Flex>

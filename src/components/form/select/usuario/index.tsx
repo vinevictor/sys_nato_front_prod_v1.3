@@ -12,6 +12,7 @@ interface SelectUserProps {
   constId?: number;
   empId?: number;
   finId?: number;
+  edit?: boolean;
 }
 
 type UserType = {
@@ -40,6 +41,7 @@ export default function SelectUser({
   constId,
   empId,
   finId,
+  edit = false,
 }: SelectUserProps) {
   const [ListUser, setListUser] = useState<UserType[]>(
     FormUser && FormUser.length > 0 ? FormUser : []
@@ -63,8 +65,10 @@ export default function SelectUser({
     }
     if (isAdmin && FormUserId) {
       setDisabled(false);
+    } else if (edit) {
+      setDisabled(false);
     }
-  }, [FormUserId, isAdmin, constId, empId, finId]);
+  }, [FormUserId, isAdmin, constId, empId, finId, edit]);
 
   const handleSelectChange = (value: number) => {
     setUser(value);
