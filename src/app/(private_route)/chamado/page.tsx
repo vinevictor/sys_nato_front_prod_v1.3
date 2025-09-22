@@ -9,7 +9,6 @@ interface PageProps {
     status?: string;
     prioridade?: string;
     departamento?: string;
-    clear?: string;
   };
 }
 
