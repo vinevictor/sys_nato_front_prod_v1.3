@@ -10,6 +10,7 @@ interface SelectEmpreendimentoProps {
   FormEmp?: EmpreendimentoType[];
   FormEmpId?: number;
   constId?: number;
+  edit?: boolean;
 }
 
 type EmpreendimentoType = {
@@ -35,6 +36,7 @@ export default function SelectEmpreendimento({
   FormEmp,
   FormEmpId,
   constId,
+  edit = false
 }: SelectEmpreendimentoProps) {
   const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(FormEmp && FormEmp.length > 0 ? FormEmp : []);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
@@ -71,8 +73,10 @@ export default function SelectEmpreendimento({
     })();
     if (isAdmin && FormEmpId) {
       setDisabled(false);
-    };
-  }, [isAdmin, constId, RequestFetch, FormEmpId]);
+    } else if (edit) {
+      setDisabled(false);
+    }
+  }, [isAdmin, constId, RequestFetch, FormEmpId, edit]);
 
   const handleSelectChange = useCallback((value: number) => {
     setEmpreendimento(value);
