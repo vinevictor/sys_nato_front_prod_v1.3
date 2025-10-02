@@ -243,6 +243,13 @@ export default function CreateNatosign() {
       apiFormData.append("file", formData.document);
       apiFormData.append("const_id", formData.const_id || "1");
       apiFormData.append("signatarios", JSON.stringify(signatariosParaApi));
+      apiFormData.append("title", "SisNato - Assinatura de documento");
+      apiFormData.append("subject", "Contrato de financiamento de imóvel");
+      apiFormData.append(
+        "message",
+        "Por favor, assine o documento para prosseguir com o processo de financiamento de imóvel."
+      );
+      apiFormData.append("expire_at", "7");
 
       apiFormData.append("valor", formData.valor.toString());
       apiFormData.append("cca_id", formData.cca_id);
