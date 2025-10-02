@@ -13,8 +13,8 @@ import {
 import Step1 from "@/components/natosign/create/step1";
 import Step2 from "@/components/natosign/create/step2";
 import Step3 from "@/components/natosign/create/step3";
-import Router from "next/router";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/navigation";
 
 interface Signer {
   name: string;
@@ -44,6 +44,10 @@ interface FormData {
   valor: number;
   cca_id: string;
   const_id: string;
+  title: string;
+  subject: string;
+  message: string;
+  expire_at: number;
 }
 const fetchConstrutoras = async () => {
   try {
@@ -58,6 +62,7 @@ const fetchConstrutoras = async () => {
 
 export default function CreateNatosign() {
   const [step, setStep] = useState(1);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [availableCcas, setAvailableCcas] = useState<CcaType[]>([]);
   const [isCcaLoading, setIsCcaLoading] = useState(true);
@@ -80,6 +85,11 @@ export default function CreateNatosign() {
     valor: 0,
     cca_id: "",
     const_id: "",
+    title: "SisNato - Assinatura de documento",
+    subject: "Contrato de financiamento de imóvel",
+    message:
+      "Por favor, assine o documento para prosseguir com o processo de financiamento de imóvel.",
+    expire_at: 7, // 7 dias
   });
   const toast = useToast();
 
@@ -243,13 +253,11 @@ export default function CreateNatosign() {
       apiFormData.append("file", formData.document);
       apiFormData.append("const_id", formData.const_id || "1");
       apiFormData.append("signatarios", JSON.stringify(signatariosParaApi));
-      apiFormData.append("title", "SisNato - Assinatura de documento");
-      apiFormData.append("subject", "Contrato de financiamento de imóvel");
-      apiFormData.append(
-        "message",
-        "Por favor, assine o documento para prosseguir com o processo de financiamento de imóvel."
-      );
-      apiFormData.append("expire_at", "7");
+      if (formData.title) apiFormData.append("title", formData.title);
+      if (formData.subject) apiFormData.append("subject", formData.subject);
+      if (formData.message) apiFormData.append("message", formData.message);
+      if (formData.expire_at)
+        apiFormData.append("expire_at", formData.expire_at.toString());
 
       apiFormData.append("valor", formData.valor.toString());
       apiFormData.append("cca_id", formData.cca_id);
@@ -305,7 +313,7 @@ export default function CreateNatosign() {
           size={"md"}
           color={"black"}
           icon={<ArrowBackIcon />}
-          onClick={() => Router.back()}
+          onClick={() => router.back()}
         ></IconButton>
         <VStack spacing={8} align="stretch">
           <Heading as="h1" size="lg" textAlign="center">

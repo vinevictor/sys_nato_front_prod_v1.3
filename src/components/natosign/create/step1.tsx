@@ -3,18 +3,21 @@ import {
   FormLabel,
   Select,
   VStack,
-  InputGroup,
-  InputLeftElement,
   Input,
   Skeleton,
   Text,
-  Heading,
+  Textarea,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 
 interface CcaType {
   id: number;
   fantasia: string;
-  valor: number;
+  Intelesign_price: number;
 }
 
 interface ConstType {
@@ -41,9 +44,10 @@ export default function Step1({
   isConstLoading,
   availableConst,
 }: Step1Props) {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
+
   const renderCcaComponent = () => {
     if (isCcaLoading) {
       return <Skeleton height="40px" borderRadius="md" />;
@@ -83,10 +87,11 @@ export default function Step1({
 
     return (
       <Text color="red.500" p={2}>
-        Nenhum CCA disponível para esta operação.
+        Nenhum CCA disponível.
       </Text>
     );
   };
+
   const renderConstComponent = () => {
     if (isConstLoading) {
       return <Skeleton height="40px" borderRadius="md" />;
@@ -131,26 +136,66 @@ export default function Step1({
   return (
     <VStack spacing={6} align="stretch">
       <FormControl isRequired>
-        <FormLabel>Tipo de Assinatura</FormLabel>
-        <Select
-          placeholder="Selecione o tipo de assinatura"
-          value={formData.signatureType}
-          onChange={(e) => handleChange("signatureType", e.target.value)}
-        >
-          <option value="simple">Simples</option>
-          <option value="qualified">
-            Qualificada (com Certificado Digital)
-          </option>
-        </Select>
+        <FormLabel>Construtora</FormLabel>
+        {renderConstComponent()}
       </FormControl>
 
       <FormControl isRequired>
         <FormLabel>Financeira (CCA)</FormLabel>
         {renderCcaComponent()}
       </FormControl>
+
       <FormControl isRequired>
-        <FormLabel>Construtora</FormLabel>
-        {renderConstComponent()}
+        <FormLabel>Tipo de Assinatura</FormLabel>
+        <Select
+          value={formData.signatureType}
+          onChange={(e) => handleChange("signatureType", e.target.value)}
+        >
+          <option value="simple">Simples</option>
+          <option value="qualified">Qualificada</option>
+        </Select>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Título do Envelope</FormLabel>
+        <Input
+          value={formData.title}
+          onChange={(e) => handleChange("title", e.target.value)}
+        />
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Assunto do Email</FormLabel>
+        <Input
+          value={formData.subject}
+          onChange={(e) => handleChange("subject", e.target.value)}
+        />
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Mensagem do Email</FormLabel>
+        <Textarea
+          value={formData.message}
+          onChange={(e) => handleChange("message", e.target.value)}
+          placeholder="Mensagem que aparecerá no corpo do email para os signatários."
+        />
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Dias para Expiração</FormLabel>
+        <NumberInput
+          value={formData.expire_at}
+          min={1}
+          onChange={(valueAsString, valueAsNumber) =>
+            handleChange("expire_at", valueAsNumber)
+          }
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
       </FormControl>
     </VStack>
   );

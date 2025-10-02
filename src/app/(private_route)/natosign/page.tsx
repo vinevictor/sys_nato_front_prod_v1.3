@@ -1,4 +1,5 @@
 import NatosignHome from "@/components/natosign";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function Natosign() {
+  const session = GetSessionServer();
+  console.log("🚀 ~ Natosign ~ session:", session);
   return (
     // <Flex justifyContent="center" alignItems="center" h="100%" w="100%">
     //   {/* <Image
