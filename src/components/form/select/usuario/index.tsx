@@ -63,7 +63,7 @@ export default function SelectUser({
     if (constId === 0 && empId === 0 && finId === 0) {
       setUser(0);
     }
-    if (isAdmin && FormUserId) {
+    if (isAdmin ) {
       setDisabled(false);
     } else if (edit) {
       setDisabled(false);
