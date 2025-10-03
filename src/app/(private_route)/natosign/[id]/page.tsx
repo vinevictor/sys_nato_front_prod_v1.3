@@ -15,7 +15,8 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { FiDownload, FiExternalLink } from "react-icons/fi";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { SignatarioCard } from "@/components/natosign/SignatarioCard";
 
 interface Props {
   params: {
@@ -99,13 +100,15 @@ export default async function NatosignView({ params }: Props) {
   const { id } = params;
   const session = await GetSessionServer();
   const res = await requestData(+id, session?.token);
-  console.log("🚀 ~ NatosignView ~ res:", res);
-
+  if (session.user?.hierarquia !== "ADM") {
+    redirect("/home");
+  }
   if (res.error || !res.data) {
     return notFound();
   }
 
   const envelope = res.data;
+  const signatarios = envelope.signatarios || [];
 
   const createdAtFormatted = new Date(envelope.createdAt).toLocaleString(
     "pt-BR"
@@ -182,6 +185,22 @@ export default async function NatosignView({ params }: Props) {
                 Baixar Original
               </Button>
             </HStack>
+          </Box>
+          <Box>
+            <Heading as="h2" size="md" mb={4}>
+              Signatários
+            </Heading>
+            {signatarios.length > 0 ? (
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                {signatarios.map((signer: any) => (
+                  <SignatarioCard key={signer.id} signer={signer} />
+                ))}
+              </SimpleGrid>
+            ) : (
+              <Text color="gray.500">
+                Nenhum signatário associado a este envelope.
+              </Text>
+            )}
           </Box>
 
           <Divider />

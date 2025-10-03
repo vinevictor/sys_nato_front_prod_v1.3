@@ -4,9 +4,12 @@ import {
   Flex,
   IconButton,
   Link,
+  Progress,
   Td,
+  Text,
   Tooltip,
   Tr,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { FiDownload, FiEdit, FiEye } from "react-icons/fi";
@@ -26,6 +29,14 @@ export const TableComponentNatosign = ({
 
   const dtCriacao = new Date(dados.createdAt).toLocaleString("pt-BR");
   const dtFim = new Date(dados.updatedAt).toLocaleString("pt-BR");
+
+  const signatarios = dados.signatarios || [];
+  const totalSigners = signatarios.length;
+  const signedCount = signatarios.filter(
+    (s: { state: string }) => s.state === "done"
+  ).length;
+  const progressValue =
+    totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
 
   const getStatusBadge = (status: string) => {
     const statusColors: { [key: string]: string } = {
@@ -52,16 +63,28 @@ export const TableComponentNatosign = ({
           {dados.id}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {/* {dados.signatarios.map((item, index) => {
-            return (
-              <Flex key={index}>
-                <p>{item.name}</p>
-                {index < dados.signatarios.length - 1 && ", "}
-              </Flex>
-            );
-          })} */}
-          --
+          {dados.signatarios && dados.signatarios.length > 0
+            ? dados.signatarios.map((s: { nome: string }) => s.nome).join(", ")
+            : "--"}
         </Td>
+        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+          {totalSigners > 0 ? (
+            <VStack spacing={1} align="stretch" maxW={"100px"}>
+              <Text
+                fontSize="xs"
+                fontWeight="bold"
+                color="gray.600"
+                textAlign="right"
+              >
+                {signedCount} de {totalSigners}
+              </Text>
+              <Progress value={progressValue} size="xs" colorScheme="green" />
+            </VStack>
+          ) : (
+            "--"
+          )}
+        </Td>
+
         <Td p={"0.2rem"} borderBottomColor={"gray.300"}>
           {getStatusBadge(dados.status)}
         </Td>

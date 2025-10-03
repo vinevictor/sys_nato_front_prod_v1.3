@@ -1,10 +1,22 @@
 declare namespace natosign {
   /**
+   * Representa a estrutura de um signatário dentro da lista de envelopes.
+   */
+  interface SignatarioType {
+    id: number;
+    nome: string;
+    email: string;
+    cpf: string;
+    state: string;
+    updatedAt: string;
+  }
+
+  /**
    * Representa um único objeto de envelope retornado pela API de listagem.
    */
   interface NatosignObjectType {
     id: number;
-    UUID: string; // Corrigido: 'UUID' em maiúsculo
+    UUID: string;
     status: string;
     doc_original_viw: string;
     doc_original_down: string;
@@ -13,13 +25,21 @@ declare namespace natosign {
     original_name: string;
     hash: string;
     valor: number;
-    cca_id: number; // Corrigido: a API retorna 'cca_id', não o objeto 'financeiro'
+    cca_id: number;
     status_pg: string;
     createdAt: string;
     status_view: string;
     updatedAt: string;
     ativo: boolean;
-    // Removido: 'signatarios' e 'financeiro' não estão presentes na resposta da lista
+
+    construtora_id: number;
+    user_id: number;
+    title: string;
+    description: string;
+    message: string;
+    type: string;
+
+    signatarios: SignatarioType[];
   }
 
   /**
@@ -28,7 +48,7 @@ declare namespace natosign {
   interface NatosignGetType {
     data: NatosignObjectType[];
     total: number;
-    pagina: number; // ou 'page', dependendo da sua API
-    limite: number; // ou 'limit', dependendo da sua API
+    pagina: number;
+    limite: number;
   }
 }

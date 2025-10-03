@@ -15,6 +15,7 @@ import Step2 from "@/components/natosign/create/step2";
 import Step3 from "@/components/natosign/create/step3";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
+import { GetSessionClient } from "@/lib/auth_confg";
 
 interface Signer {
   name: string;

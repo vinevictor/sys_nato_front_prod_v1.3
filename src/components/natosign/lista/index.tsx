@@ -93,6 +93,7 @@ export const DadoCompomentListNatosign = ({
   const [ListaDados, setListaDados] = useState<
     natosign.NatosignObjectType[] | null
   >(null);
+  console.log("🚀 ~ DadoCompomentListNatosign ~ ListaDados:", ListaDados);
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Total, setTotal] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -358,6 +359,15 @@ export const DadoCompomentListNatosign = ({
                       minW={"200px"}
                     >
                       SIGNATÁRIOS
+                    </Th>
+                    <Th
+                      minW={"80px"}
+                      fontSize={"lg"}
+                      p={"0.8rem"}
+                      borderBottomColor={"gray.300"}
+                      whiteSpace="nowrap"
+                    >
+                      ASSINATURAS
                     </Th>
                     <Th
                       fontSize={"lg"}

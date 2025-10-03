@@ -10,7 +10,6 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    console.log("🚀 ~ POST ~ formData:", formData);
 
     const nestApiResponse = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign`,
@@ -29,7 +28,6 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(data, { status: 200 });
-    // return NextResponse.json({ message: "OK" }, { status: 200 });
   } catch (error) {
     console.error("Erro ao processar a solicitação:", error);
     return NextResponse.json(
