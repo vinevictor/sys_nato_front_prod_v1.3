@@ -31,17 +31,16 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
 
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
 
-  const agendamento =
-    dados.dt_agendamento && dados.hr_agendamento
-      ? dados.dt_agendamento
-          .toString()
-          .split("T")[0]
-          .split("-")
-          .reverse()
-          .join("/") +
-        " " +
-        dados.hr_agendamento.toString().split("T")[1].split(".")[0]
-      : "";
+  const formatarDataAgendamento = (date: string | null, time: string | null) => {
+    if(!date || !time) return null;
+    const dataConcat = `${date.toString().split("T")[0]}T${time.toString().split("T")[1]}`;
+    const dataFormatada = new Date(dataConcat);
+    // dataFormatada.setHours(dataFormatada.getHours() - 3);
+    return dataFormatada.toLocaleDateString("pt-BR") + " " + dataFormatada.toLocaleTimeString("pt-BR");
+  };
+
+  const agendamento = formatarDataAgendamento(dados?.dt_agendamento?.toString() || null, dados?.hr_agendamento?.toString() || null)
+     
 
   const timeOut = calcTimeOut(
     dados.createdAt.toString(),
@@ -145,7 +144,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.andamento === "NOVA FC"
             ? "INICIADO"
             : dados.andamento === "REAGENDAMENTO"
-            ? "Cliente não estava disponivel. Novo agendamento sendo feito."
+            ? "REAGENDADO"
             : dados.andamento}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
