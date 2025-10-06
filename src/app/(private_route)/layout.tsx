@@ -2,6 +2,9 @@ import FooterComponent from "@/components/footer";
 import PrivateHeader from "@/components/layout/private-header";
 import { GetSessionServer } from "@/lib/auth_confg";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 interface PrivateLayoutProps {
   children: React.ReactNode;
 }
