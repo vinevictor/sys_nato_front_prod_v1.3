@@ -23,6 +23,7 @@ export const TableComponentNatosign = ({
   dados,
   session,
 }: TableComponentNatosignProps) => {
+  console.log("🚀 ~ TableComponentNatosign ~ dados:", dados);
   const router = useRouter();
 
   const Textcolor = "black";
