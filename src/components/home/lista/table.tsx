@@ -31,16 +31,28 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
 
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
 
-  const formatarDataAgendamento = (date: string | null, time: string | null) => {
-    if(!date || !time) return null;
-    const dataConcat = `${date.toString().split("T")[0]}T${time.toString().split("T")[1]}`;
+  const formatarDataAgendamento = (
+    date: string | null,
+    time: string | null
+  ) => {
+    if (dados.andamento === "EMITIDO") return "";
+    if (!date || !time) return null;
+    const dataConcat = `${date.toString().split("T")[0]}T${
+      time.toString().split("T")[1]
+    }`;
     const dataFormatada = new Date(dataConcat);
     // dataFormatada.setHours(dataFormatada.getHours() - 3);
-    return dataFormatada.toLocaleDateString("pt-BR") + " " + dataFormatada.toLocaleTimeString("pt-BR");
+    return (
+      dataFormatada.toLocaleDateString("pt-BR") +
+      " " +
+      dataFormatada.toLocaleTimeString("pt-BR")
+    );
   };
 
-  const agendamento = formatarDataAgendamento(dados?.dt_agendamento?.toString() || null, dados?.hr_agendamento?.toString() || null)
-     
+  const agendamento = formatarDataAgendamento(
+    dados?.dt_agendamento?.toString() || null,
+    dados?.hr_agendamento?.toString() || null
+  );
 
   const timeOut = calcTimeOut(
     dados.createdAt.toString(),
@@ -48,6 +60,14 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     dados.hr_aprovacao?.toString() || null
   );
 
+  const validacao = () => {
+    if (!agendamento && !dados.type_validacao) return "";
+    if (dados.andamento === "EMITIDO") return "";
+    if (dados.type_validacao === "VIDEO GT") return " - VIDEO";
+    if (dados.type_validacao === "VIDEO CONF") return " - VIDEO";
+    return " - PRESENCIAL";
+  };
+  
   return (
     <>
       <Tr bg={Gbcolor}>
@@ -138,7 +158,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.financeiro ? dados.financeiro.fantasia : "SEM FINANCEIRO"}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {agendamento}
+          {agendamento}{validacao()}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {dados.andamento === "NOVA FC"
