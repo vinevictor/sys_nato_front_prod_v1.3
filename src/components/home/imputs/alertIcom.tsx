@@ -1,14 +1,21 @@
 import { Box, Icon, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Portal } from "@chakra-ui/react";
 import { FiAlertTriangle } from "react-icons/fi";
+import { memo, useMemo } from "react";
 
 interface AlertIcomCompomentProps {
   tag?: any[];
 }
 
-export const AlertIcomCompoment = ({ tag }: AlertIcomCompomentProps) => {
+export const AlertIcomCompoment = memo(({ tag }: AlertIcomCompomentProps) => {
+  const tagText = useMemo(() => {
+    if (!tag || tag.length === 0) return "";
+    return tag.map((item) => item.descricao).join(",\n");
+  }, [tag]);
+
+  const hasTag = useMemo(() => tag && tag.length > 0, [tag]);
   return (
     <>
-      {tag && tag.length > 0 ? (
+      {hasTag ? (
         <Popover>
           <PopoverTrigger>
             <IconButton
@@ -23,18 +30,16 @@ export const AlertIcomCompoment = ({ tag }: AlertIcomCompomentProps) => {
               p={0}
             />
           </PopoverTrigger>
-          {tag && tag.length > 0 && (
-            <Portal>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverHeader>Atenção</PopoverHeader>
-                <PopoverCloseButton />
-                <PopoverBody>
-                  {tag && tag.map((item) => item.descricao).join(",\n")}
-                </PopoverBody>
-              </PopoverContent>
-            </Portal>
-          )}
+          <Portal>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverHeader>Atenção</PopoverHeader>
+              <PopoverCloseButton />
+              <PopoverBody>
+                {tagText}
+              </PopoverBody>
+            </PopoverContent>
+          </Portal>
         </Popover>
       ) : (
         <Box as="span">
@@ -51,4 +56,4 @@ export const AlertIcomCompoment = ({ tag }: AlertIcomCompomentProps) => {
       )}
     </>
   );
-};
+});

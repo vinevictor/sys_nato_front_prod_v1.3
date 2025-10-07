@@ -6,25 +6,24 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { MdOutlineInsertPageBreak } from "react-icons/md";
+import { memo, useMemo } from "react";
 
 interface DistratoIconComponentProps extends IconButtonProps {
   distrato?: boolean;
   andamento?: string | null;
 }
 
-export const DistratoIconComponent = ({
+export const DistratoIconComponent = memo(({
   distrato,
   andamento,
   ...props
 }: DistratoIconComponentProps) => {
-  const Aparecer =
-    andamento === "APROVADO"
-      ? false
-      : andamento === "EMITIDO"
-      ? false
-      : andamento === "REVOGADO"
-      ? false
-      : true;
+  const Aparecer = useMemo(() => {
+    if (andamento === "APROVADO" || andamento === "EMITIDO" || andamento === "REVOGADO") {
+      return false;
+    }
+    return true;
+  }, [andamento]);
 
   if (!Aparecer) {
     return (
@@ -70,4 +69,4 @@ export const DistratoIconComponent = ({
       )}
     </>
   );
-};
+});

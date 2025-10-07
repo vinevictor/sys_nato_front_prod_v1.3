@@ -20,7 +20,7 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { ImClock } from "react-icons/im";
 import { InputComponentFilterHome } from "../imputs/input";
 import { SelectComponentFilterHome } from "../imputs/select";
@@ -204,40 +204,51 @@ export const DadoCompomentList = ({
 
   const { data } = useHomeContex();
 
+  // Separa o useEffect em múltiplos para evitar re-renders desnecessários
   useEffect(() => {
     if (dados) {
-      setIsLoading(true);
       setListaDados(dados.data);
       setTotal(dados.total);
-      setIsLoading(false);
     }
-    if (data) {
-      setIsLoading(true);
-      if (data.data?.length > 0) {
-        setListaDados(data.data);
-        setTotal(data.total);
-      }
-      setIsLoading(false);
-    }
-    if (session?.user) {
-      (async () => {
-        if (session.user.hierarquia === "ADM") {
-          setDataConstrutora(await fetchConstrutoraAll());
-          setDataEmpreendimento(await fetchEmpreendimentoAll());
-          setDataFinanceiro(await fetchFinanceiroAll());
-        } else {
-          session.user.construtora.length > 0 &&
-            setDataConstrutora(session.user.construtora);
-          session.user.empreendimento.length > 0 &&
-            setDataEmpreendimento(session.user.empreendimento);
-          session.user.Financeira.length > 0 &&
-            setDataFinanceiro(session.user.Financeira);
-        }
-      })();
-    }
-  }, [data, dados, session]);
+  }, [dados]);
 
-  const filtroPrimario = async () => {
+  useEffect(() => {
+    if (data && data.data?.length > 0) {
+      setListaDados(data.data);
+      setTotal(data.total);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const loadData = async () => {
+      if (session.user.hierarquia === "ADM") {
+        const [construtoras, empreendimentos, financeiros] = await Promise.all([
+          fetchConstrutoraAll(),
+          fetchEmpreendimentoAll(),
+          fetchFinanceiroAll()
+        ]);
+        setDataConstrutora(construtoras);
+        setDataEmpreendimento(empreendimentos);
+        setDataFinanceiro(financeiros);
+      } else {
+        if (session.user.construtora.length > 0) {
+          setDataConstrutora(session.user.construtora);
+        }
+        if (session.user.empreendimento.length > 0) {
+          setDataEmpreendimento(session.user.empreendimento);
+        }
+        if (session.user.Financeira.length > 0) {
+          setDataFinanceiro(session.user.Financeira);
+        }
+      }
+    };
+
+    loadData();
+  }, [session?.user?.hierarquia, session?.user?.id]);
+
+  const filtroPrimario = useCallback(async () => {
     setIsLoading(true);
     if (!ListaDados) return;
     const filtro = await FirlterData(
@@ -259,9 +270,9 @@ export const DadoCompomentList = ({
       setMesageError("Nenhum dado encontrado");
     }
     setIsLoading(false);
-  };
+  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, session, ListaDados]);
 
-  const HandleFilterBlank = async () => {
+  const HandleFilterBlank = useCallback(async () => {
     setIsLoading(true);
     setNome(null);
     setAndamento(null);
@@ -272,22 +283,24 @@ export const DadoCompomentList = ({
     setPagina(null);
     const data = await FirlterData(
       {
-        nome: Nome,
-        andamento: Andamento,
-        construtora: Construtora,
-        empreendimento: Empreendimento,
-        financeiro: Financeiro,
-        id: Id,
+        nome: null,
+        andamento: null,
+        construtora: null,
+        empreendimento: null,
+        financeiro: null,
+        id: null,
         pagina: null,
       },
       session
     );
     setListaDados(data.data);
+    setTotal(data.total);
     setMesageError(null);
-    window.location.reload();
-  };
+    setIsLoading(false);
+    router.refresh();
+  }, [session, router]);
 
-  const NextPage = async () => {
+  const NextPage = useCallback(async () => {
     setIsLoading(true);
     if (Pagina === null) return;
     const data = await FirlterData(
@@ -305,7 +318,7 @@ export const DadoCompomentList = ({
     setListaDados(data.data);
     setPagina(Pagina);
     setIsLoading(false);
-  };
+  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, Pagina, session]);
 
   return (
     <>

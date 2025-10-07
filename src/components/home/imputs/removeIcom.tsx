@@ -6,26 +6,25 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { BsFillTrashFill } from "react-icons/bs";
+import { memo, useMemo } from "react";
 
 interface DeletarIconComponentProps extends IconButtonProps {
   Block?: boolean;
   andamento: string | null;
 }
 
-export const DeletarIconComponent = ({
+export const DeletarIconComponent = memo(({
   Block,
   andamento,
   ...props
 }: DeletarIconComponentProps) => {
-  const Aparecer = !Block
-    ? false
-    : andamento === "APROVADO"
-    ? false
-    : andamento === "EMITIDO"
-    ? false
-    : andamento === "REVOGADO"
-    ? false
-    : true;
+  const Aparecer = useMemo(() => {
+    if (!Block) return false;
+    if (andamento === "APROVADO" || andamento === "EMITIDO" || andamento === "REVOGADO") {
+      return false;
+    }
+    return true;
+  }, [Block, andamento]);
   return (
     <>
       {Aparecer ? (
@@ -52,4 +51,4 @@ export const DeletarIconComponent = ({
       )}
     </>
   );
-};
+});
