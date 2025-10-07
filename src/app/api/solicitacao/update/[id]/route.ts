@@ -28,6 +28,7 @@ export async function PUT(
       ...(body.empreendimentoId && { empreendimento: body.empreendimentoId }),
       ...(body.id_fcw && { id_fcw: body.id_fcw }),
       ...(body.andamento && { andamento: body.andamento }),
+      gov: body.gov || false
     };
     const session = await GetSessionServer();
 

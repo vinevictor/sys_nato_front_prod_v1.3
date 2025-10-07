@@ -27,6 +27,8 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     ? "green.200"
     : dados.andamento === "EMITIDO"
     ? "green.200"
+    : dados.gov
+    ? "blue.200"
     : "white";
 
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
@@ -67,7 +69,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     if (dados.type_validacao === "VIDEO CONF") return " - VIDEO";
     return " - PRESENCIAL";
   };
-  
+
   return (
     <>
       <Tr bg={Gbcolor}>
@@ -158,7 +160,8 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.financeiro ? dados.financeiro.fantasia : "SEM FINANCEIRO"}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {agendamento}{validacao()}
+          {agendamento}
+          {validacao()}
         </Td>
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {dados.andamento === "NOVA FC"
