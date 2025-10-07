@@ -1,25 +1,24 @@
 "use client";
 import { Flex, Switch, Text } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback, memo } from "react";
 import { RegisterContext } from "@/context/RegisterContex";
 
 interface SelectGovProps {
   isState: boolean;
 }
 
-export default function SelectGov({ isState }: SelectGovProps) {
+function SelectGov({ isState }: SelectGovProps) {
   const [Value, setValue] = useState<boolean>(isState);
   const { setGov } = useContext(RegisterContext);
 
   useEffect(() => {
     setGov(isState);
-    
-  }, []);
+  }, [isState, setGov]);
 
-  const HandleSubmit = (value: boolean) => {
+  const HandleSubmit = useCallback((value: boolean) => {
     setValue(value);
     setGov(value);
-  };
+  }, [setGov]);
 
   return (
     <>
@@ -37,3 +36,5 @@ export default function SelectGov({ isState }: SelectGovProps) {
     </>
   );
 }
+
+export default memo(SelectGov);

@@ -24,7 +24,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback, useMemo, memo } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { TbDeviceMobileMessage } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
@@ -135,32 +135,33 @@ interface SolicitacaoType {
   ];
 }
 
-export default function FormSolicitacaoEdit({
+function FormSolicitacaoEdit({
   id,
   data,
   session,
 }: FormSolicitacaoEditProps) {
   const toast = useToast();
   const router = useRouter();
-  const Hierarquia = session?.hierarquia || null;
-  const isAdmin = Hierarquia === "ADM";
   const [form, setForm] = useState<SolicitacaoType>(data);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (field: keyof typeof form, value: any) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
   const { Gov } = useContext(RegisterContext);
 
+  const isAdmin = useMemo(() => session?.hierarquia === "ADM", [session?.hierarquia]);
+  const Hierarquia = useMemo(() => session?.hierarquia || null, [session?.hierarquia]);
+
+  const handleChange = useCallback((field: keyof typeof form, value: any) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
   useEffect(() => {
-    handleChange('gov', Gov)
-  }, [Gov])
+    setForm((prev) => ({ ...prev, gov: Gov }));
+  }, [Gov]);
 
   /**
    * Envia os dados do formulário para atualização da solicitação
    * Exibe feedback ao usuário e recarrega a página após sucesso
    */
-  const handlesubmit = async () => {
+  const handlesubmit = useCallback(async () => {
     setIsLoading(true);
     const req = await fetch(`/api/solicitacao/update/${id}`, {
       method: "PUT",
@@ -186,9 +187,9 @@ export default function FormSolicitacaoEdit({
     });
     setTimeout(() => {
       setIsLoading(false);
-      window.location.reload();
+      router.refresh();
     }, 2000);
-  };
+  }, [id, form, toast, router]);
 
   return (
     <>
@@ -489,3 +490,5 @@ export default function FormSolicitacaoEdit({
     </>
   );
 }
+
+export default memo(FormSolicitacaoEdit);
