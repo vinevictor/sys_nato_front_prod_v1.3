@@ -44,7 +44,7 @@ declare namespace solictacao {
     pixCopiaECola: string;
     imagemQrcode: string;
     txid: string;
-
+    gov: boolean;
     corretor: {
       id: number;
       nome: string;
@@ -87,6 +87,7 @@ declare namespace solictacao {
     telefone?: string | null;
     telefone2?: string | null;
     email?: string | null;
+    gov?: boolean
     corretor?: {
       id: number;
       nome: string;
@@ -173,6 +174,7 @@ declare namespace solictacao {
     obs?: string;
     empreedimento?: number;
     cnh?: string;
+    gov?: boolean;
     uploadCnh?: string;
     relacionamento?: string[];
     telefone2?: string;

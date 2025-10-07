@@ -35,7 +35,6 @@ const GetListaDados = async (
       return null;
     }
     const data = await user.json();
-    console.log("🚀 ~ GetListaDados ~ data:", data)
     return data;
   } catch (error) {
     console.error("Erro ao buscar dados:", error);

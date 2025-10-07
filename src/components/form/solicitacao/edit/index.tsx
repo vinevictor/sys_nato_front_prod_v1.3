@@ -12,7 +12,6 @@ import { ResendSms } from "@/components/buttons/resendSms";
 import BtnBasicSave from "@/components/buttons/save";
 import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
-import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
 import { Session } from "@/types/session";
 import {
@@ -25,12 +24,13 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { TbDeviceMobileMessage } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
 import SelectConstEmpFinCor from "../../select";
 import BtnLimparFcw from "@/components/botoes/btn_lipar_fcw";
+import { RegisterContext } from "@/context/RegisterContex";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
@@ -82,6 +82,7 @@ interface SolicitacaoType {
   uploadCnh: string | null;
   uploadRg: string | null;
   sisapp?: boolean | null;
+  gov: boolean | false;
   obs: {
     id: string;
     data: string;
@@ -149,6 +150,11 @@ export default function FormSolicitacaoEdit({
   const handleChange = (field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
+  const { Gov } = useContext(RegisterContext);
+
+  useEffect(() => {
+    handleChange('gov', Gov)
+  }, [Gov])
 
   /**
    * Envia os dados do formulário para atualização da solicitação
@@ -183,19 +189,6 @@ export default function FormSolicitacaoEdit({
       window.location.reload();
     }, 2000);
   };
-
-  const Msg =
-    form?.andamento !== "EMITIDO" &&
-    form?.andamento !== "APROVADO" &&
-    form?.dt_agendamento
-      ? `Atendido em ${form?.dt_agendamento
-          .split("T")[0]
-          .split("-")
-          .reverse()
-          .join("/")} as ${form?.hr_agendamento?.split("T")[1].split(".")[0]}`
-      : !form?.andamento
-      ? ""
-      : form?.andamento;
 
   return (
     <>
