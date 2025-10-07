@@ -1,11 +1,12 @@
 import { Box, Icon, Tooltip } from "@chakra-ui/react";
 import { FaRunning } from "react-icons/fa";
+import { memo } from "react";
 
 interface AndamentoIconComponentProps {
   andamento?: boolean;
 }
 
-export const AndamentoIconComponent = ({ andamento }: AndamentoIconComponentProps) => {
+export const AndamentoIconComponent = memo(({ andamento }: AndamentoIconComponentProps) => {
   return (
     <>
       {andamento ? (
@@ -35,4 +36,4 @@ export const AndamentoIconComponent = ({ andamento }: AndamentoIconComponentProp
       )}
     </>
   );
-};
+});

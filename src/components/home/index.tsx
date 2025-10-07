@@ -28,8 +28,6 @@ const GetListaDados = async (
 export default async function HomeSwitch() {
   const session = await GetSessionServer();
   const ListDados = await GetListaDados(session);
-  console.log("🚀 ~ HomeSwitch ~ ListDados:", ListDados)
-
   return (
     <>
       <HomeProvider>

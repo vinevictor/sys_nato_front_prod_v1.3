@@ -1,8 +1,9 @@
 import { Input, InputProps } from "@chakra-ui/react";
+import { memo } from "react";
 
 interface InputComponentProps extends InputProps {}
 
-export const InputComponentFilterHome = ({ ...props }: InputComponentProps) => {
+export const InputComponentFilterHome = memo(({ ...props }: InputComponentProps) => {
   return (
     <Input
       textColor={"#00713D"}
@@ -14,4 +15,4 @@ export const InputComponentFilterHome = ({ ...props }: InputComponentProps) => {
       {...props}
     />
   );
-};
+});
