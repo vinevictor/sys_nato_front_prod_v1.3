@@ -244,8 +244,8 @@ export default function CreateNatosign() {
     setIsLoading(true);
     try {
       const signatariosParaApi = formData.signers.map((s) => ({
-        nome: s.name,
-        email: s.email,
+        nome: s.name.toUpperCase(),
+        email: s.email.toLowerCase(),
         cpf: s.cpf.replace(/\D/g, ""),
       }));
 
@@ -284,7 +284,7 @@ export default function CreateNatosign() {
         isClosable: true,
       });
 
-      // router.push('/natosign');
+      router.push("/natosign");
     } catch (error: any) {
       console.error("Erro ao enviar envelope:", error);
       toast({
