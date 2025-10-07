@@ -5,7 +5,7 @@ import MensagensChat from "@/components/mensagensChat";
 import { SessionClient } from "@/types/session";
 import { Flex, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useCallback, memo, useEffect } from "react";
 
 interface Props {
   Id: number;
@@ -22,13 +22,17 @@ type MensagemObj = {
   autor_id: number;
 };
 
-export default function MensagensChatDireto({ Id, messages, session }: Props) {
+function MensagensChatDireto({ Id, messages, session }: Props) {
   const [isLoadingMensagem, setIsLoadingMensagem] = useState(false);
   const [dataMensagem, setDataMensagem] = useState<MensagemObj[]>(messages);
   const toast = useToast();
   const router = useRouter();
 
-  const handleMsg = async (value: MensagemObj[]) => {
+  useEffect(() => {
+    setDataMensagem(messages);
+  }, [messages]);
+
+  const handleMsg = useCallback(async (value: MensagemObj[]) => {
     setIsLoadingMensagem(true);
     const req = await fetch(`/api/solicitacao/chat/${Id}`, {
       method: "PUT",
@@ -45,11 +49,12 @@ export default function MensagensChatDireto({ Id, messages, session }: Props) {
         duration: 5000,
         isClosable: true,
       });
+    } else {
+      setDataMensagem(res.obs);
+      router.refresh();
     }
-    setDataMensagem(res.obs);
     setIsLoadingMensagem(false);
-    router.refresh();
-  };
+  }, [Id, toast, router]);
 
   
   return (
@@ -77,4 +82,5 @@ export default function MensagensChatDireto({ Id, messages, session }: Props) {
     </>
   );
 }
-    
+
+export default memo(MensagensChatDireto);

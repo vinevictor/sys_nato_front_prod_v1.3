@@ -1,6 +1,6 @@
 "use client";
 import { Box, Flex, Text, Heading, Divider } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
 interface ListAlertasProps {
@@ -9,29 +9,48 @@ interface ListAlertasProps {
   ContainerAlertas?: string;
 }
 
-export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
-  const [dataAlert, setDataAlert] = useState([]);
-  
+function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
+  const [dataAlert, setDataAlert] = useState(data || []);
+
   useEffect(() => {
-    if (data) {
+    if (data && data.length > 0) {
       setDataAlert(data);
+      return;
     }
-    if (!data || data.length === 0) {
-      (async () => {
-        const req = await fetch(`/api/alerts/solicitacao/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        });
-        if (req.ok) {
-          const res = await req.json();
-          setDataAlert(res || []);
-        }
-      })();
-    }
+
+    const fetchAlerts = async () => {
+      const req = await fetch(`/api/alerts/solicitacao/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      });
+      if (req.ok) {
+        const res = await req.json();
+        setDataAlert(res || []);
+      }
+    };
+
+    fetchAlerts();
   }, [id, data]);
+
+  const hasAlerts = useMemo(() => dataAlert.length > 0, [dataAlert.length]);
+
+  const formatDate = useCallback((dateString: string) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }, []);
+
+  const truncateText = useCallback((text: string, maxLength: number = 60) => {
+    if (text.length <= maxLength) return text;
+    return `${text.slice(0, maxLength)}...`;
+  }, []);
   
   return (
     <Flex
@@ -70,7 +89,7 @@ export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasP
           },
         }}
       >
-        {dataAlert.length === 0 ? (
+        {!hasAlerts ? (
           <Flex
             h="full"
             align="center"
@@ -119,9 +138,7 @@ export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasP
                     wordBreak="break-word"
                     flex="1"
                   >
-                    {item.descricao.length > 60
-                      ? `${item.descricao.slice(0, 60)}...`
-                      : item.descricao}
+                    {truncateText(item.descricao)}
                   </Text>
                 </Flex>
 
@@ -132,14 +149,7 @@ export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasP
                   mt={{ base: 1, sm: 0 }}
                   alignSelf={{ base: "flex-end", sm: "center" }}
                 >
-                  {item.createdAt
-                    ? new Date(item.createdAt).toLocaleString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : ""}
+                  {formatDate(item.createdAt)}
                 </Text>
               </Flex>
             ))}
@@ -149,3 +159,5 @@ export default function ListAlertas({ id, data, ContainerAlertas }: ListAlertasP
     </Flex>
   );
 }
+
+export default memo(ListAlertas);
