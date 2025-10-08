@@ -1,6 +1,6 @@
 "use server";
 
-import { GetSessionClient, GetSessionServer } from "@/lib/auth_confg";
+import {  GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
