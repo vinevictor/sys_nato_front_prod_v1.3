@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { ProvidersChakra } from "@/provider/ChakraProviders";
+import ChunkErrorBoundary from "@/components/ChunkErrorBoundary";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +30,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} chakra-ui-light`}
       >
+        <ChunkErrorBoundary>
           <ProvidersChakra>{children}</ProvidersChakra>
+        </ChunkErrorBoundary>
       </body>
     </html>
   );
