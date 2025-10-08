@@ -1,4 +1,4 @@
-import { CreateSessionServer, CreateSessionClient } from "@/lib/auth_confg";
+import { CreateSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -23,8 +23,18 @@ export async function POST(request: Request) {
       return NextResponse.json({message: data.message}, { status: 400 });
     }
     const { token, user } = data;
+    
+    // Cria sessão principal
     await CreateSessionServer({token, user});
-    await CreateSessionClient({user});
+    
+    // Cria cache de role (cookie session-role) - Route Handler pode modificar cookies
+    try {
+      await updateAndCreateRoleCache(token, user.id);
+    } catch (error) {
+      console.error("Erro ao criar cache de role:", error);
+      // Continua mesmo se falhar, pois será criado na próxima requisição
+    }
+    
     return NextResponse.json({message: "Login realizado com sucesso"}, {status: 200});
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
