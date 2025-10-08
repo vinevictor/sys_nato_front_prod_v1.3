@@ -161,9 +161,10 @@ export default async function PageSolicitacoes({ params }: Props) {
                 <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
                   Andamento: {data?.data?.andamento || "-"}
                 </Text>
-                {session?.user?.hierarquia === "ADM" && (
-                  <SelectGov isState={data?.data?.gov} />
-                )}
+                {session?.user?.hierarquia === "ADM" &&
+                  data?.data?.andamento !== "EMITIDO" && (
+                    <SelectGov isState={data?.data?.gov} />
+                  )}
               </Box>
             </Flex>
           </Flex>
