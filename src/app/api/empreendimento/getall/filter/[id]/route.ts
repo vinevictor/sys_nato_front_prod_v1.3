@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     const { id } = params;
 
     if (!session?.token) {
@@ -22,7 +22,7 @@ export async function GET(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`
+          Authorization: `Bearer ${session?.token}`,
         },
         next: {
           // revalida a cada 1 minuto

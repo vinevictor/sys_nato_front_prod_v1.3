@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 // Esta rota depende de autenticação baseada em sessão (cookies/token),
 // por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -27,7 +27,7 @@ export async function GET(
         },
         next: {
           // revalida a cada 1 minuto
-          revalidate: 10,
+          revalidate: 1200,
         },
       }
     );
@@ -38,7 +38,7 @@ export async function GET(
     const data = await reqest.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
-    console.log("🚀 ~ error:", error)
+    console.log("🚀 ~ error:", error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
