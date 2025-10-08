@@ -1,8 +1,7 @@
 // servidor: biblioteca de auth (removido 'use server')
-"use server"
+"use server";
 import * as jose from "jose";
 import { cookies } from "next/headers";
-
 
 export async function OpenSessionToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
@@ -62,6 +61,7 @@ export async function GetSessionClient() {
           revalidate: 1200,
           tags: ["user-role"],
         },
+        cache: "force-cache",
       }
     );
     const retorno = await response.json();
@@ -97,13 +97,13 @@ export async function GetSessionServer() {
         },
         next: {
           // revalidar a cada 20 minutos
-          // revalidate: 1200,
+          revalidate: 1200,
           tags: ["user-get"],
         },
+        cache: "force-cache",
       }
     );
     const retorno = await response.json();
-    // console.log("🚀 ~ GetSessionServer ~ retorno:", retorno)
     data.user.role = retorno.role || null;
     data.user.reset_password = retorno.reset_password || false;
     data.user.termos = retorno.termos || false;
@@ -123,4 +123,19 @@ export async function GetSessionServer() {
 export async function DeleteSession() {
   cookies().delete("session");
   cookies().delete("session-token");
+}
+
+export async function GetSessionServerApi() {
+  try {
+    const token = cookies().get("session-token");
+    if (!token) {
+      return null;
+    }
+    const data: any = await OpenSessionToken(token.value);
+    console.log("🚀 ~ GetSessionServerApi ~ data:", data)
+    return await Promise.resolve(data);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
