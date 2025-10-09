@@ -17,6 +17,7 @@ export async function UpdateFinanceira(_: any, data: FormData) {
   const construtoraFinal = construtoraArray.map((element) => {
     return Number(element);
   });
+  const Intelesign_status = data.get("Intelesign_status") as string;
 
   const session = await GetSessionServer();
 
@@ -39,13 +40,16 @@ export async function UpdateFinanceira(_: any, data: FormData) {
       },
       body: JSON.stringify({
         direto: !direto ? false : true,
-        valor_cert: parseFloat(valor_cert.replace(",", ".").trim().replace("R$", "")).toFixed(2),
+        valor_cert: parseFloat(
+          valor_cert.replace(",", ".").trim().replace("R$", "")
+        ).toFixed(2),
         razaosocial: razaoSocial.trim(),
         tel: telefone,
         email: email.trim(),
         responsavel: responsavel.trim(),
         fantasia: fantasia.trim(),
         construtoras: construtoraFinal,
+        Intelesign_status: Intelesign_status === "true",
       }),
     }
   );
