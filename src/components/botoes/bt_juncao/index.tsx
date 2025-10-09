@@ -26,7 +26,6 @@ interface BotoesFunctionProps {
 // Clean Code: Sempre renderize o container principal para evitar erro de hidratação
 // e garantir uma estrutura consistente entre server e client.
 export default function BotaoJuncao({ session }: BotoesFunctionProps) {
-
   return (
     <Flex
       justifyContent={"space-between"}
@@ -111,7 +110,7 @@ export default function BotaoJuncao({ session }: BotoesFunctionProps) {
                 icon={<GiBrazil />}
               />
             )}
-            {session?.role?.adm && (
+            {(session?.role?.adm || session?.role?.natosign) && (
               <BotaoMenu
                 name="NatoSign (IntelliSign)"
                 path="/natosign"

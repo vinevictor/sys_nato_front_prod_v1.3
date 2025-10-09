@@ -46,7 +46,7 @@ export default async function NatosignView({ params }: Props) {
   const { id } = params;
   const session = await GetSessionServer();
   const res = await requestData(+id, session?.token);
-  if (session.user?.hierarquia !== "ADM") {
+  if (session.user?.hierarquia !== "ADM" && !session.user?.role.natosign) {
     redirect("/home");
   }
   if (res.error || !res.data) {

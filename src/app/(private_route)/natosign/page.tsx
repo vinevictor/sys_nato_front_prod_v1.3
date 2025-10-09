@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 export default async function Natosign() {
   const session = await GetSessionServer();
-  if (session.user?.hierarquia !== "ADM") {
+  console.log("🚀 ~ Natosign ~ session:", session);
+  if (session.user?.hierarquia !== "ADM" && !session.user?.role.natosign) {
     redirect("/home");
   }
   return (
