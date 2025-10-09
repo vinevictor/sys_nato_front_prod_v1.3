@@ -2,15 +2,14 @@
 
 import Loading from "@/app/loading";
 import MensagensChat from "@/components/mensagensChat";
-import { SessionClient } from "@/types/session";
 import { Flex, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, memo, useEffect } from "react";
 
 interface Props {
   Id: number;
-  messages:  MensagemObj[];
-  session: SessionClient;
+  messages: MensagemObj[];
+  session: SessionNext.Client;
 }
 
 type MensagemObj = {
