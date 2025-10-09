@@ -24,7 +24,14 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState, useCallback, useMemo, memo } from "react";
+import {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  memo,
+} from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { TbDeviceMobileMessage } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
@@ -135,19 +142,21 @@ interface SolicitacaoType {
   ];
 }
 
-function FormSolicitacaoEdit({
-  id,
-  data,
-  session,
-}: FormSolicitacaoEditProps) {
+function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
   const toast = useToast();
   const router = useRouter();
   const [form, setForm] = useState<SolicitacaoType>(data);
   const [isLoading, setIsLoading] = useState(false);
   const { Gov } = useContext(RegisterContext);
 
-  const isAdmin = useMemo(() => session?.hierarquia === "ADM", [session?.hierarquia]);
-  const Hierarquia = useMemo(() => session?.hierarquia || null, [session?.hierarquia]);
+  const isAdmin = useMemo(
+    () => session?.hierarquia === "ADM",
+    [session?.hierarquia]
+  );
+  const Hierarquia = useMemo(
+    () => session?.hierarquia || null,
+    [session?.hierarquia]
+  );
 
   const handleChange = useCallback((field: keyof typeof form, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -224,7 +233,8 @@ function FormSolicitacaoEdit({
               value={form?.cpf || ""}
               onvalue={(value) => handleChange("cpf", value)}
               required
-              Disable
+              isReadOnly={!isAdmin}
+              Disable={!isAdmin}
             />
             <InputBasic
               id="nome"

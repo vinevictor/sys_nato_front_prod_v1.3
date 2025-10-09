@@ -1,6 +1,13 @@
 "use client";
 import UserRegisterProvider from "@/provider/UserRegister";
-import { Flex, Spacer, Divider, Button, Switch } from "@chakra-ui/react";
+import {
+  Flex,
+  Spacer,
+  Divider,
+  Switch,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
 import { UpdateFinanceira } from "@/actions/financeira/service/updateFinanceira";
 import BotaoCancelar from "../botoes/btn_cancelar";
 import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
@@ -56,7 +63,18 @@ export function CardUpdateFinanceira({ id, setFinanceiraCard }: Props) {
               w={"10rem"}
               valor_cert={setFinanceiraCard?.valor_cert ?? ""}
             />
-
+            <FormControl display="flex" alignItems="center" w={"15rem"}>
+              <FormLabel htmlFor="intelesign-status" mb="0">
+                Intelesign
+              </FormLabel>
+              <Switch
+                id="intelesign-status"
+                name="Intelesign_status"
+                value="true"
+                colorScheme="green"
+                defaultChecked={setFinanceiraCard?.Intelesign_status}
+              />
+            </FormControl>
           </UserRegisterProvider>
           <Spacer />
           <SaveBtm

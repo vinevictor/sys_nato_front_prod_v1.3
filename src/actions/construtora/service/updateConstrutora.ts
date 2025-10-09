@@ -55,4 +55,3 @@ export default async function UpdateConstrutora(_: any, data: FormData) {
   revalidateTag("construtora-all-page");
   redirect("/construtoras");
 }
-

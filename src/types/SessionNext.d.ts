@@ -68,10 +68,14 @@ declare namespace SessionNext {
    * Financeira
    * @param {number} id
    * @param {string} fantasia
+   * @param {boolean} Intelesign_status
+   * @param {boolean} Intelesign_price
    */
   interface Financeira {
     id: number;
     fantasia: string;
+    Intelesign_status: boolean;
+    Intelesign_price: boolean;
   }
 
   /**
@@ -106,5 +110,6 @@ declare namespace SessionNext {
     lista_finace?: boolean;
     empreendimento?: boolean;
     relatorio?: boolean;
+    Natosign?: boolean;
   }
 }
