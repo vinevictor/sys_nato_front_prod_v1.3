@@ -11,7 +11,6 @@ interface PrivateLayoutProps {
 
 export default async function PrivateLayout({ children }: PrivateLayoutProps) {
   const session = await GetSessionServer();
-
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <PrivateHeader session={session} />
