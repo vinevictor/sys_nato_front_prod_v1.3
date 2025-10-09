@@ -110,6 +110,6 @@ declare namespace SessionNext {
     lista_finace?: boolean;
     empreendimento?: boolean;
     relatorio?: boolean;
-    Natosign?: boolean;
+    natosign?: boolean;
   }
 }

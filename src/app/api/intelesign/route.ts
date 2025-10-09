@@ -1,7 +1,7 @@
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +9,9 @@ export async function POST(request: Request) {
     if (!session?.token) {
       return new Response("Unauthorized", { status: 401 });
     }
-
+    if (session.user?.hierarquia !== "ADM" && !session.user?.role.natosign) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const formData = await request.formData();
 
     const nestApiResponse = await fetch(
