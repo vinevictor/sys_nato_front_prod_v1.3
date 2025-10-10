@@ -91,7 +91,7 @@ export default function Step3({ formData, setFormData }: Step3Props) {
         description: "Dados preenchidos automaticamente.",
         status: "success",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erro na busca",
         description: "Não foi possível buscar os dados.",

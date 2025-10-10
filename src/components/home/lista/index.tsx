@@ -61,13 +61,13 @@ const FirlterData = async (
 ) => {
   const filter = [];
 
-  nome && filter.push(`nome=${nome}`);
-  andamento && filter.push(`andamento=${andamento}`);
-  Number(construtora) > 0 && filter.push(`construtora=${construtora}`);
-  Number(empreendimento) > 0 && filter.push(`empreendimento=${empreendimento}`);
-  Number(financeiro) > 0 && filter.push(`financeiro=${financeiro}`);
-  Number(id) > 0 && filter.push(`id=${id}`);
-  Number(pagina) > 0 && filter.push(`pagina=${pagina}`);
+  if (nome) filter.push(`nome=${nome}`);
+  if (andamento) filter.push(`andamento=${andamento}`);
+  if (Number(construtora) > 0) filter.push(`construtora=${construtora}`);
+  if (Number(empreendimento) > 0) filter.push(`empreendimento=${empreendimento}`);
+  if (Number(financeiro) > 0) filter.push(`financeiro=${financeiro}`);
+  if (Number(id) > 0) filter.push(`id=${id}`);
+  if (Number(pagina) > 0) filter.push(`pagina=${pagina}`);
 
   const URL =
     filter.length > 0

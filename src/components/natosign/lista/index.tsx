@@ -18,7 +18,6 @@ import { InputComponentFilterHome } from "@/components/home/imputs/input";
 import { SelectComponentFilterHome } from "@/components/home/imputs/select";
 import { SelectPgComponent } from "@/components/home/imputs/selectPg";
 import { TableComponentNatosign } from "./lista";
-import useHomeNatosignContex from "@/hook/useHomeNatosignContext";
 
 interface DadoCompomentListProps {
   dados: natosign.NatosignGetType | null;
@@ -105,8 +104,6 @@ export const DadoCompomentListNatosign = ({
   const [dataFim, setDataFim] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
   const [pagina, setPagina] = useState<number | null>(1);
-
-  const { data } = useHomeNatosignContex();
 
   useEffect(() => {
     if (dados) {

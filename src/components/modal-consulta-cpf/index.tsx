@@ -126,7 +126,7 @@ export default function ModalConsultaRegistro({
             onCpfChange(CPF);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         toast({
           title: "Erro!",
           description: "Erro ao verificar o CPF!",

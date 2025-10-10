@@ -26,121 +26,120 @@ export async function CreateSessionServer(payload = {}) {
   });
 }
 
+/**
+ * Aplica valores padrão aos dados do usuário
+ * Centraliza a lógica de fallback para evitar duplicação
+ */
+function applyDefaultUserValues(user: any) {
+  user.role = null;
+  user.reset_password = false;
+  user.termos = false;
+  user.status = false;
+  user.hierarquia = "USER";
+  user.construtora = [];
+  user.empreendimento = [];
+  user.Financeira = [];
+}
+
+/**
+ * Atualiza dados do usuário com dados da API
+ * Centraliza a lógica de mapeamento para evitar duplicação
+ */
+function updateUserDataFromApi(user: any, apiData: any) {
+  user.role = apiData.role || null;
+  user.reset_password = apiData.reset_password || false;
+  user.termos = apiData.termos || false;
+  user.status = apiData.status || false;
+  user.hierarquia = apiData.hierarquia || "USER";
+  user.construtora = apiData.construtoras || [];
+  user.empreendimento = apiData.empreendimentos || [];
+  user.Financeira = apiData.financeiros || [];
+}
+
+/**
+ * Atualiza dados do usuário com dados do cookie
+ * Centraliza a lógica de mapeamento do cache
+ */
+function updateUserDataFromCache(user: any, cacheData: any) {
+  user.role = cacheData.role || null;
+  user.reset_password = cacheData.reset_password || false;
+  user.termos = cacheData.termos || false;
+  user.status = cacheData.status || false;
+  user.hierarquia = cacheData.hierarquia || "USER";
+  user.construtora = cacheData.construtora || [];
+  user.empreendimento = cacheData.empreendimento || [];
+  user.Financeira = cacheData.Financeira || [];
+}
+
+/**
+ * Cria objeto de role normalizado para o cookie
+ */
+function createRolePayload(data: any) {
+  return {
+    role: data.role || null,
+    reset_password: data.reset_password || false,
+    termos: data.termos || false,
+    status: data.status || false,
+    hierarquia: data.hierarquia || "USER",
+    construtora: data.construtoras || data.construtora || [],
+    empreendimento: data.empreendimentos || data.empreendimento || [],
+    Financeira: data.financeiros || data.Financeira || [],
+  };
+}
+
+/**
+ * Busca dados do usuário da API e atualiza o cache
+ */
+async function fetchAndCacheUserData(token: string, userId: string, user: any) {
+  try {
+    const apiData = await fetchUserData(token, userId);
+    updateUserDataFromApi(user, apiData);
+    
+    // Tenta criar cache em background sem bloquear
+    CreateRole(createRolePayload(apiData)).catch((err) => 
+      console.warn("Aviso: Não foi possível criar session-role:", err)
+    );
+  } catch (error) {
+    console.warn("Aviso: Erro ao buscar dados do usuário:", error);
+    applyDefaultUserValues(user);
+  }
+}
+
+/**
+ * Obtém sessão do servidor com cache otimizado
+ * Reduz duplicação de código e melhora performance
+ */
 export async function GetSessionServer() {
   try {
+    // Validação do token principal
     const token = cookies().get("session-token");
-    if (!token) {
-      return null;
-    }
+    if (!token) return null;
+
     const data: any = await OpenSessionToken(token.value);
-    if (!data) {
-      return null;
-    }
+    if (!data) return null;
 
     const dadosRetorno: any = data;
     const cookieRole = cookies().get("session-role");
-    
+
+    // Caso 1: Cache não existe - busca da API
     if (!cookieRole) {
-      // session-role não existe, recria automaticamente em background
-      // Isso não deve bloquear a aplicação
-      try {
-        const dataRole: any = await fetchUserData(data.token, data.user.id);
-        
-        // Atualiza dados do retorno
-        dadosRetorno.user.role = dataRole.role || null;
-        dadosRetorno.user.reset_password = dataRole.reset_password || false;
-        dadosRetorno.user.termos = dataRole.termos || false;
-        dadosRetorno.user.status = dataRole.status || false;
-        dadosRetorno.user.hierarquia = dataRole.hierarquia || "USER";
-        dadosRetorno.user.construtora = dataRole.construtoras || [];
-        dadosRetorno.user.empreendimento = dataRole.empreendimentos || [];
-        dadosRetorno.user.Financeira = dataRole.financeiros || [];
-        
-        // Tenta criar o cookie em background (não bloqueia se falhar)
-        try {
-          await CreateRole({
-            role: dataRole.role || null,
-            reset_password: dataRole.reset_password || false,
-            termos: dataRole.termos || false,
-            status: dataRole.status || false,
-            hierarquia: dataRole.hierarquia || "USER",
-            construtora: dataRole.construtoras || [],
-            empreendimento: dataRole.empreendimentos || [],
-            Financeira: dataRole.financeiros || [],
-          });
-        } catch (cookieError) {
-          // Falha ao criar cookie não deve afetar a aplicação
-          console.warn("Aviso: Não foi possível criar session-role:", cookieError);
-        }
-      } catch (error) {
-        // Se falhar ao buscar dados, usa valores padrão
-        console.warn("Aviso: Erro ao buscar dados do usuário:", error);
-        dadosRetorno.user.role = null;
-        dadosRetorno.user.reset_password = false;
-        dadosRetorno.user.termos = false;
-        dadosRetorno.user.status = false;
-        dadosRetorno.user.hierarquia = "USER";
-        dadosRetorno.user.construtora = [];
-        dadosRetorno.user.empreendimento = [];
-        dadosRetorno.user.Financeira = [];
-      }
-      
+      await fetchAndCacheUserData(data.token, data.user.id, dadosRetorno.user);
       return dadosRetorno;
     }
 
-    // Cookie existe, faz parse do JSON
+    // Caso 2: Cache existe - tenta usar
     try {
       const roleData = JSON.parse(cookieRole.value);
-      dadosRetorno.user.role = roleData.role || null;
-      dadosRetorno.user.reset_password = roleData.reset_password || false;
-      dadosRetorno.user.termos = roleData.termos || false;
-      dadosRetorno.user.status = roleData.status || false;
-      dadosRetorno.user.hierarquia = roleData.hierarquia || "USER";
-      dadosRetorno.user.construtora = roleData.construtora || [];
-      dadosRetorno.user.empreendimento = roleData.empreendimento || [];
-      dadosRetorno.user.Financeira = roleData.Financeira || [];
-    } catch (parseError) {
-      // Se falhar ao fazer parse, recria o cookie
-      console.warn("Aviso: Cookie session-role corrompido, recriando...");
-      try {
-        const dataRole: any = await fetchUserData(data.token, data.user.id);
-        dadosRetorno.user.role = dataRole.role || null;
-        dadosRetorno.user.reset_password = dataRole.reset_password || false;
-        dadosRetorno.user.termos = dataRole.termos || false;
-        dadosRetorno.user.status = dataRole.status || false;
-        dadosRetorno.user.hierarquia = dataRole.hierarquia || "USER";
-        dadosRetorno.user.construtora = dataRole.construtoras || [];
-        dadosRetorno.user.empreendimento = dataRole.empreendimentos || [];
-        dadosRetorno.user.Financeira = dataRole.financeiros || [];
-        
-        // Recria o cookie
-        await CreateRole({
-          role: dataRole.role || null,
-          reset_password: dataRole.reset_password || false,
-          termos: dataRole.termos || false,
-          status: dataRole.status || false,
-          hierarquia: dataRole.hierarquia || "USER",
-          construtora: dataRole.construtoras || [],
-          empreendimento: dataRole.empreendimentos || [],
-          Financeira: dataRole.financeiros || [],
-        });
-      } catch (error) {
-        // Mesmo se falhar, usa valores padrão e continua
-        console.warn("Aviso: Não foi possível recriar session-role:", error);
-        dadosRetorno.user.role = null;
-        dadosRetorno.user.reset_password = false;
-        dadosRetorno.user.termos = false;
-        dadosRetorno.user.status = false;
-        dadosRetorno.user.hierarquia = "USER";
-        dadosRetorno.user.construtora = [];
-        dadosRetorno.user.empreendimento = [];
-        dadosRetorno.user.Financeira = [];
-      }
+      updateUserDataFromCache(dadosRetorno.user, roleData);
+      return dadosRetorno;
+    } catch (error) {
+      // Caso 3: Cache corrompido - revalida
+      console.warn("Aviso: Cookie session-role corrompido, recriando...", error);
+      await fetchAndCacheUserData(data.token, data.user.id, dadosRetorno.user);
+      return dadosRetorno;
     }
-
-    return dadosRetorno;
   } catch (error) {
-    console.log(error);
+    console.error("Erro crítico na sessão:", error);
     return null;
   }
 }

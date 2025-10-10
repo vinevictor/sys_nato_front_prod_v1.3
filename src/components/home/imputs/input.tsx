@@ -1,7 +1,7 @@
 import { Input, InputProps } from "@chakra-ui/react";
 import { memo } from "react";
 
-interface InputComponentProps extends InputProps {}
+type InputComponentProps = InputProps;
 
 export const InputComponentFilterHome = memo(({ ...props }: InputComponentProps) => {
   return (
@@ -16,3 +16,5 @@ export const InputComponentFilterHome = memo(({ ...props }: InputComponentProps)
     />
   );
 });
+
+InputComponentFilterHome.displayName = "InputComponentFilterHome";

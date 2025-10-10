@@ -70,3 +70,5 @@ export const DistratoIconComponent = memo(({
     </>
   );
 });
+
+DistratoIconComponent.displayName = "DistratoIconComponent";

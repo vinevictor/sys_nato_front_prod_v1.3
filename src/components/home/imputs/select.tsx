@@ -31,3 +31,5 @@ export const SelectComponentFilterHome = memo(({ Data, place , ...props }: Selec
     </Select>
   );
 });
+
+SelectComponentFilterHome.displayName = "SelectComponentFilterHome";
