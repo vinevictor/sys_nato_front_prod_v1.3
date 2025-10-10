@@ -2,6 +2,7 @@
 import { AuthUser } from "@/types/session";
 import { Textarea } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { solictacao } from "@/types/solicitacao";
 
 interface imputTextObsProps {
   DataSolicitacao?: solictacao.SolicitacaoGetType | any;

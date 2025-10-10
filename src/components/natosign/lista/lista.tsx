@@ -16,21 +16,16 @@ import { FiDownload, FiEdit, FiEye } from "react-icons/fi";
 
 interface TableComponentNatosignProps {
   dados: natosign.NatosignObjectType;
-  session: SessionNext.Server | any | null;
+  session?: any;
 }
 
 export const TableComponentNatosign = ({
   dados,
-  session,
 }: TableComponentNatosignProps) => {
-  console.log("🚀 ~ TableComponentNatosign ~ dados:", dados);
   const router = useRouter();
-
   const Textcolor = "black";
-
   const dtCriacao = new Date(dados.createdAt).toLocaleString("pt-BR");
   const dtFim = new Date(dados.updatedAt).toLocaleString("pt-BR");
-
   const signatarios = dados.signatarios || [];
   const totalSigners = signatarios.length;
   const signedCount = signatarios.filter(

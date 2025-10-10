@@ -58,11 +58,6 @@ export function TabelaChamados({
     }
   };
 
-  const getStatusLabel = (status: number | undefined) => {
-    // const encontrado = ChamadoOptions.find((option) => option.id === status);
-    // return encontrado ? encontrado.Label : "Status desconhecido";
-  };
-
   async function DeleteChamado(id: number) {
     const req: any = await fetch(`/api/chamado/back/delete/${id}`, {
       method: "DELETE",

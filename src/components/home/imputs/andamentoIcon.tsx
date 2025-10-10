@@ -37,3 +37,5 @@ export const AndamentoIconComponent = memo(({ andamento }: AndamentoIconComponen
     </>
   );
 });
+
+AndamentoIconComponent.displayName = "AndamentoIconComponent";

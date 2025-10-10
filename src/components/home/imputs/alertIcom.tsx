@@ -57,3 +57,5 @@ export const AlertIcomCompoment = memo(({ tag }: AlertIcomCompomentProps) => {
     </>
   );
 });
+
+AlertIcomCompoment.displayName = "AlertIcomCompoment";

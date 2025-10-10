@@ -85,18 +85,6 @@ export default function VideoComponent({ url }: VideoProps) {
         }
     };
 
-    // Extrai o nome do arquivo da URL para exibição
-    const getFilenameFromUrl = (url: string): string => {
-        try {
-            const pathname = new URL(url).pathname;
-            const filename = pathname.split('/').pop() || 'video';
-            return filename;
-        } catch (e) {
-            // Se não for uma URL válida, retorna um nome genérico
-            return 'video.mp4';
-        }
-    };
-
     return (
         <Box position="relative" width="100%" ref={containerRef}>
             {isLoading && (

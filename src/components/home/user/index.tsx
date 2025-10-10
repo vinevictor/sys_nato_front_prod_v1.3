@@ -175,3 +175,5 @@ export const UserCompomentInfo = memo(({ session }: UserCompomentInfoProps) => {
     </>
   );
 });
+
+UserCompomentInfo.displayName = "UserCompomentInfo";

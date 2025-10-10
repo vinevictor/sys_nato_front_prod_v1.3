@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AlertComponent } from "../alerts";
 import { Box, Divider, Stack, Text } from "@chakra-ui/react";
 import useAlertContext from "@/hook/useAlertContext";
+import { solictacao } from "@/types/solicitacao";
 
 interface SetDataProps {
   Id: number;

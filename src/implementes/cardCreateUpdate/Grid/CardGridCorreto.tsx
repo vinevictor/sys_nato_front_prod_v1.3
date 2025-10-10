@@ -3,6 +3,7 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 import SelectCorretor from "../dropdow/selectCorretor";
 import DropCorretor from "../dropdow/dropCorretor";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridCorretorProps extends BoxProps {
   DataSolicitacao: solictacao.SolicitacaoGetType | any;

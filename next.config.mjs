@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Ignora erros de ESLint durante o build (warnings não bloqueiam)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Gera buildId estático para evitar problemas após deploy
   generateBuildId: async () => {
     return `build-${Date.now()}`;

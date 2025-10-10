@@ -5,6 +5,7 @@ import { EditarIconComponent } from "../imputs/editarIcom";
 import { DeletarIconComponent } from "../imputs/removeIcom";
 import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
+import { solictacao } from "@/types/solicitacao";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType;

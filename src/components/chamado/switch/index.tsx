@@ -175,18 +175,18 @@ export default async function ChamadoSwitch({
                       </Text>
                     </Flex>
                     <Flex gap={4} flexWrap="wrap">
-                      <Code children={`ID: ${item.id}`} />
-                      <Code
-                        children={`Aberto em: ${new Date(
+                      <Code>{`ID: ${item.id}`}</Code>
+                      <Code>
+                        {`Aberto em: ${new Date(
                           item.createAt
                         ).toLocaleDateString("pt-BR")}`}
-                      />
+                      </Code>
                       {item.updatedAt && (
-                        <Code
-                          children={`Última atualização: ${new Date(
+                        <Code>
+                          {`Última atualização: ${new Date(
                             item.updatedAt
                           ).toLocaleDateString("pt-BR")}`}
-                        />
+                        </Code>
                       )}
                     </Flex>
                   </Flex>

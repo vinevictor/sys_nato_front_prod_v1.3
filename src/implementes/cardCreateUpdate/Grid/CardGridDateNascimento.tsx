@@ -1,6 +1,7 @@
 "use client";
 import { Box, BoxProps, FormLabel, Input, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridDateNascimento extends BoxProps {
   DataSolicitacao: solictacao.SolicitacaoGetType | any;

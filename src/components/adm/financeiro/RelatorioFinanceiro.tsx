@@ -97,7 +97,7 @@ export default function RelatorioFinanceiro({onAtualizar}: Props) {
       HandlePesquisa();
     }
     const filtro = dados.filter((item) => {
-      item.construtora.fantasia?.toLowerCase().includes(busca.toLowerCase()) ||
+      return item.construtora.fantasia?.toLowerCase().includes(busca.toLowerCase()) ||
       item.construtora.razaosocial
         ?.toLowerCase()
         .includes(busca.toLowerCase()) ||

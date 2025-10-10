@@ -52,3 +52,5 @@ export const DeletarIconComponent = memo(({
     </>
   );
 });
+
+DeletarIconComponent.displayName = "DeletarIconComponent";

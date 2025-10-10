@@ -58,3 +58,5 @@ export const NowIconComponent = memo(({ now }: NowIconComponentProps) => {
     </>
   );
 });
+
+NowIconComponent.displayName = "NowIconComponent";

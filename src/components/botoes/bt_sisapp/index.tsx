@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button, useToast } from "@chakra-ui/react";
+import { solictacao } from "@/types/solicitacao";
 
 interface BotaoSisappProps {
   body: solictacao.SolicitacaoObjectDiretoType;

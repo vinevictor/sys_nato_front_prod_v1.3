@@ -5,6 +5,7 @@ import { Box, CircularProgress, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { TabelaDireto } from "../../tabelaDireto";
 import { SessionServer } from "@/types/session";
+import { solictacao } from "@/types/solicitacao";
 
 interface FiltroData {
   id: number | null;

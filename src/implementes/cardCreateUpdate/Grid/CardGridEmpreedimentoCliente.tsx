@@ -1,6 +1,7 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 import DropEmpreendimento from "../dropdow/dropEmpreendimento";
 import SelectEmpreedimento from "../dropdow/selectEmpreedimento";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridEmpreedimentoProps extends BoxProps {
   DataSolicitacao: solictacao.SolicitacaoGetType | any;

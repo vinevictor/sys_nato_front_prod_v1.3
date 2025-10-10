@@ -11,14 +11,16 @@ interface switchProps {
 
 export default function SolicitacaoSWITCH({ session }: switchProps) {
   const [cpfChange, setCpfChange] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<Boolean>(true);
   const [solicitacao, setSolicitacao] = useState<any>(null);
 
   const onCpfChange = (cpf: string) => {
     setCpfChange(cpf);
   };
-  const handleClose = (isOpen: boolean) => {
-    setIsOpen(isOpen);
+
+  const handleClose = () => {
+    // Função placeholder para controle do modal
+    setCpfChange("");
+    setSolicitacao(null);
   };
 
   return (

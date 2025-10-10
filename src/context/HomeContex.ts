@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { solictacao } from "@/types/solicitacao";
 
 type HomeType = {
   data: solictacao.SolicitacaoGetType;

@@ -15,6 +15,7 @@ import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
 import { Session } from "@/types/session";
+import { solictacao } from "@/types/solicitacao";
 import {
   Box,
   Button,

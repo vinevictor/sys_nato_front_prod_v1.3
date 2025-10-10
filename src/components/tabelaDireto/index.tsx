@@ -25,15 +25,14 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import { useSession } from "@/hook/useSession";
 import { useEffect, useState } from "react";
 import { FaRunning } from "react-icons/fa";
 import { ImClock } from "react-icons/im";
 import { IoIosArrowForward } from "react-icons/io";
 import { FiAlertTriangle } from "react-icons/fi";
-import { BotoesFunction } from "../botoes/bt_group_function";
 import { BotoesFunctionDireto } from "../botoes/bt_group_functionDireto";
 import { SessionServer } from "@/types/session";
+
 interface TabelaProps {
   ClientData: any;
   total: number | null;

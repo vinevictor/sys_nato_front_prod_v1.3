@@ -2,7 +2,7 @@ import { IconButton, IconButtonProps, Tooltip } from "@chakra-ui/react";
 import { BsBoxArrowUpRight } from "react-icons/bs";
 import { memo } from "react";
 
-interface EditarIconComponentProps extends IconButtonProps {}
+type EditarIconComponentProps = IconButtonProps;
 
 export const EditarIconComponent = memo(({ ...props }: EditarIconComponentProps) => {
   return (
@@ -18,3 +18,5 @@ export const EditarIconComponent = memo(({ ...props }: EditarIconComponentProps)
     </>
   );
 });
+
+EditarIconComponent.displayName = "EditarIconComponent";

@@ -57,7 +57,7 @@ export default function ModalTermos({ session }: Props) {
         })();
       }
     }
-  }, [onOpen, termosAceitos, idUser, toast]);
+  }, [onOpen, termosAceitos, idUser, toast, session]);
   const handleCheckboxChange = (e: any) => {
     setCheck(e.target.checked);
   };

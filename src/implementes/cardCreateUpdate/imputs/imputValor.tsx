@@ -25,7 +25,7 @@ export default function InputValor({
       setValor(valorLimpo);
       setInit(true);
     }
-  }, [setValueValor]);
+  }, [setValueValor, init]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const valor = e.target.value;
@@ -33,7 +33,7 @@ export default function InputValor({
     const maskCpf = mask(valorLimpo, ["R$ 999.999.999,99"]);
     setMask(maskCpf);
     setValor(valorLimpo);
-    props.onChange && props.onChange(e); // Mantém o evento original se passado
+    if (props.onChange) props.onChange(e); // Mantém o evento original se passado
   };
 
   return (

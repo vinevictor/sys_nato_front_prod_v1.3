@@ -5,7 +5,6 @@ import {
   Flex,
   FormLabel,
   Heading,
-  Text,
 } from "@chakra-ui/react";
 const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
   [

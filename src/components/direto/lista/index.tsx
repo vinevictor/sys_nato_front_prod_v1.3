@@ -22,6 +22,7 @@ import { SelectPgComponent } from "../imputs/selectPg";
 import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 import { Session } from "@/types/session";
+import { solictacao } from "@/types/solicitacao";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;
