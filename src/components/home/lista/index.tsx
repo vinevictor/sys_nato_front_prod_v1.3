@@ -20,7 +20,7 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ImClock } from "react-icons/im";
 import { InputComponentFilterHome } from "../imputs/input";
 import { SelectComponentFilterHome } from "../imputs/select";
@@ -30,6 +30,7 @@ import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/loading";
+import { solictacao } from "@/types/solicitacao";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;

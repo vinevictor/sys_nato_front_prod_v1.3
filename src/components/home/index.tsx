@@ -5,6 +5,7 @@ import ModalTermos from "../termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { DadoCompomentList } from "./lista";
 import { UserCompomentInfo } from "./user";
+import { solictacao } from "@/types/solicitacao";
 
 const GetListaDados = async (
   session: SessionNext.Server | null

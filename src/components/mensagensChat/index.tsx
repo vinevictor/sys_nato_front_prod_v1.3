@@ -9,6 +9,7 @@ interface MensagensProps {
   data: MensagemObj[];
   session: SessionNext.Client;
   onSend: (message: MensagemObj[]) => void;
+  disabled?: boolean;
 }
 
 type MensagemObj = {
@@ -32,6 +33,7 @@ export default function MensagensChat({
   data,
   session,
   onSend,
+  disabled = false,
 }: MensagensProps): React.ReactElement {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -282,6 +284,7 @@ export default function MensagensChat({
             border="2px solid"
             borderColor="gray.200"
             bg="gray.50"
+            disabled={disabled}
             fontSize={{ base: "sm", md: "md" }}
             _hover={{ borderColor: "gray.300", bg: "white" }}
             _focus={{

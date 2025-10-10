@@ -9,6 +9,7 @@ import { DeletarIconComponent } from "../imputs/removeIcom";
 import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useMemo } from "react";
+import { solictacao } from "@/types/solicitacao";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType;

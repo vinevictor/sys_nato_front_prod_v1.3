@@ -6,6 +6,7 @@ import ListAlertas from "@/components/solicitacao/alert";
 import SelectGov from "@/components/solicitacao/select_gov";
 import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
+import { SolicitacaoIdType } from "@/types/solicitacao";
 import { Flex, Box, Container, Text, Heading, Divider } from "@chakra-ui/react";
 import { Suspense } from "react";
 
@@ -73,7 +74,8 @@ export default async function PageSolicitacoes({ params }: Props) {
   const { id } = params;
   const session = await GetSessionServer();
   const user = session?.user;
-  const data = await requestData(+id, session?.token);
+  const data: SolicitacaoIdType = await requestData(+id, session?.token);
+  // console.log("🚀 ~ PageSolicitacoes ~ data:", data)
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
   if (data.status === 404) {
@@ -83,6 +85,46 @@ export default async function PageSolicitacoes({ params }: Props) {
   const isAdmin = user?.hierarquia === "ADM";
   const ContainerMesage = isAdmin ? "65vh" : "58%";
   const ContainerAlertas = isAdmin ? "52vh" : "60%";
+
+  const AndamentoTxt = () => {
+    if (data.data?.andamento === "EMITIDO") return "EMITIDO";
+    if (data.data?.gov) {
+      if (
+        data.data?.andamento !== "APROVADO" &&
+        data.data?.andamento !== "EMITIDO"
+      )
+        return "Atendido pelo GovBr";
+    }
+    if (data.data?.andamento === "EM EDICAO") return "";
+    if (data.data?.andamento === "NOVA FC") return "INICIADO";
+    if (data.data?.andamento === "REAGENDAMENTO") return "REAGENDADO";
+
+    return data.data?.andamento;
+  };
+
+  const AprovacaoTxt = () => {
+    const hora = data.data?.hr_aprovacao || "";
+    const date = data.data?.dt_aprovacao || "";
+    if (!hora || !date) return "";
+    const dateFormatted = new Date(
+      `${date.split("T")[0]}T${hora.split("T")[1]}`
+    );
+    return dateFormatted.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+  };
+
+  const AgendamentoTxt = () => {
+    const hora = data.data?.hr_agendamento || "";
+    const date = data.data?.dt_agendamento || "";
+    if (!hora || !date) return "";
+    const dateFormatted = new Date(
+      `${date.split("T")[0]}T${hora.split("T")[1]}`
+    );
+    return dateFormatted.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+  };
 
   return (
     <Container
@@ -128,16 +170,20 @@ export default async function PageSolicitacoes({ params }: Props) {
                       }`
                     : "-"}
                 </Text>
-                {data?.data?.updatedAt && (
+                {data?.data?.andamento !== "EMITIDO" &&
+                  data.data?.andamento !== "APROVADO" && (
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                      Agendado Em: {`${AgendamentoTxt()}`}
+                    </Text>
+                  )}
+                {data?.data?.andamento === "EMITIDO" && (
                   <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
-                    Atualizado Em:{" "}
-                    {`${data.data.updatedAt
-                      .split("T")[0]
-                      .split("-")
-                      .reverse()
-                      .join("/")}, ${
-                      data.data.updatedAt.split("T")[1].split(".")[0]
-                    }`}
+                    Aprovado Em: {`${AprovacaoTxt()}`}
+                  </Text>
+                )}
+                {data?.data?.andamento === "APROVADO" && (
+                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                    Aprovado Em: {`${AprovacaoTxt()}`}
                   </Text>
                 )}
                 <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
@@ -159,11 +205,11 @@ export default async function PageSolicitacoes({ params }: Props) {
                   Corretor: {data?.data?.corretor?.nome || "-"}
                 </Text>
                 <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
-                  Andamento: {data?.data?.andamento || "-"}
+                  Andamento: {AndamentoTxt() || ""}
                 </Text>
                 {session?.user?.hierarquia === "ADM" &&
                   data?.data?.andamento !== "EMITIDO" && (
-                    <SelectGov isState={data?.data?.gov} />
+                    <SelectGov isState={data?.data?.gov || false} />
                   )}
               </Box>
             </Flex>
@@ -240,6 +286,10 @@ export default async function PageSolicitacoes({ params }: Props) {
                 Id={+id}
                 messages={data.data?.obs ?? []}
                 session={user}
+                disabled={
+                  data.data?.andamento === "EMITIDO" ||
+                  data.data?.andamento === "APROVADO"
+                }
               />
             </Box>
 
