@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,7 @@ export async function PUT(
         { status: res.statusCode }
       );
     }
-
+    await updateAndCreateRoleCache(session.token, session.user.id)
     return NextResponse.json(
       { ...res, message: "Termo atualizado com sucesso" },
       { status: 200 }

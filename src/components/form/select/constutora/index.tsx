@@ -74,7 +74,11 @@ export default function SelectConstutora({
   const RequestFetch = async () => {
     try {
       const url = `/api/adm/getoptions`;
-      const req = await fetch(url);
+      const req = await fetch(url, {
+        next: {
+          revalidate: 60,
+        },
+      });
       const data = await req.json();
       return data;
     } catch (error) {

@@ -79,10 +79,10 @@ export default function ExperienciaSection() {
               <VStack p={6} bg="purple.50" borderRadius="lg" textAlign="center">
                 <Icon as={FaRocket} boxSize={8} color="purple.500" />
                 <Heading size="lg" color="purple.600">
-                  2h
+                  10h
                 </Heading>
                 <Text fontSize="sm" color={textColor}>
-                  Tempo máximo de análise
+                  Tempo médio de certificação
                 </Text>
               </VStack>
               
