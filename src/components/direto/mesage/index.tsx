@@ -10,6 +10,7 @@ interface Props {
   Id: number;
   messages: MensagemObj[];
   session: SessionNext.Client;
+  disabled?: boolean;
 }
 
 type MensagemObj = {
@@ -21,7 +22,7 @@ type MensagemObj = {
   autor_id: number;
 };
 
-function MensagensChatDireto({ Id, messages, session }: Props) {
+function MensagensChatDireto({ Id, messages, session, disabled }: Props) {
   const [isLoadingMensagem, setIsLoadingMensagem] = useState(false);
   const [dataMensagem, setDataMensagem] = useState<MensagemObj[]>(messages);
   const toast = useToast();
@@ -76,6 +77,7 @@ function MensagensChatDireto({ Id, messages, session }: Props) {
           data={dataMensagem}
           session={session}
           onSend={handleMsg}
+          disabled={disabled}
         />
       )}
     </>

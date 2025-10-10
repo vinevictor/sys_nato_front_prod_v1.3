@@ -168,7 +168,7 @@ export default function BtnAlertNow({
                   colorScheme="teal"
                   size="lg"
                 >
-                  CNH/RG anexado?
+                  Documentos em mãos?
                 </Checkbox>
                 <br />
                 <Checkbox

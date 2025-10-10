@@ -87,7 +87,7 @@ declare namespace solictacao {
     telefone?: string | null;
     telefone2?: string | null;
     email?: string | null;
-    gov?: boolean
+    gov?: boolean;
     corretor?: {
       id: number;
       nome: string;
@@ -134,7 +134,7 @@ declare namespace solictacao {
 
     // logs
     logDelete?: React.JSX.Element;
-  }
+  };
 
   /**
    * SolicitacaoPutType
@@ -383,3 +383,88 @@ interface DadosApi {
   valor: number;
   status_pgto: string;
 }
+
+export type SolicitacaoIdType = {
+  error: boolean;
+  message: string;
+  data: SolicitacaoIdTypeData | null;
+  status: number;
+};
+
+type SolicitacaoIdTypeData = {
+  id: number;
+  nome: string;
+  email: string;
+  cpf: string;
+  telefone: string;
+  telefone2: string | null;
+  dt_nascimento: string;
+  id_fcw: number;
+  cnh: string | null;
+  ativo: boolean;
+  rela_quest: boolean;
+  distrato: boolean;
+  dt_distrato: string | null;
+  status_aprovacao: boolean;
+  distrato_id: number | null;
+  andamento: string;
+  type_validacao: string;
+  dt_aprovacao: string | null;
+  hr_aprovacao: string | null;
+  dt_agendamento: string | null;
+  hr_agendamento: string | null;
+  estatos_pgto: string | null;
+  valorcd: number | null;
+  situacao_pg: number;
+  freqSms: number;
+  alertanow: boolean;
+  dt_criacao_now: string | null;
+  statusAtendimento: boolean;
+  pause: boolean;
+  corretorId: number;
+  construtoraId: number;
+  financeiroId: number;
+  empreendimentoId: number;
+  createdAt: string;
+  updatedAt: string;
+  relacionamentos: any[];
+  dt_revogacao: string | null;
+  direto: boolean;
+  txid: string | null;
+  pixCopiaECola: string | null;
+  imagemQrcode: string | null;
+  uploadCnh: string | null;
+  uploadRg: string | null;
+  sisapp: boolean;
+  obs: any[];
+  pg_andamento: string;
+  pg_date: string | null;
+  pg_status: boolean;
+  gov: boolean;
+  corretor: {
+    id: number;
+    nome: string;
+    telefone: string;
+  };
+  construtora: { id: number; fantasia: string; valor_cert: number };
+  empreendimento: {
+    id: number;
+    nome: string;
+    cidade: string;
+    estado: string;
+    tag: string;
+  };
+  financeiro: {
+    id: number;
+    fantasia: string;
+    tel: string;
+    valor_cert: number;
+  };
+  alerts: any[];
+  tags: {
+    id: number;
+    solicitacao: number;
+    descricao: string;
+    createdAt: string;
+  }[];
+};
