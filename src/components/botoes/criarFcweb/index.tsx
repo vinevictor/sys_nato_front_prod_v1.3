@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import React, { FormEventHandler, useState, useRef } from "react";
 import { AuthUser } from "@/types/session";
+import { solictacao } from "@/types/solicitacao";
 
 interface CriarFcwebProps {
   Dados: solictacao.SolicitacaoObjectCompleteType | any;

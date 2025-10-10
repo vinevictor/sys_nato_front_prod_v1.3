@@ -1,7 +1,7 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
 import DropConstrutora from "../dropdow/dropConstrutora";
 import SelectConstrutora from "../dropdow/selectConstrutora";
-
+import { solictacao } from "@/types/solicitacao";
 
 
 interface CardGridConstrutoraProps extends BoxProps {

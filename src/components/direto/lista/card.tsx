@@ -18,6 +18,7 @@ import { NowIconComponent } from "../imputs/nowIcon";
 import { DeletarIconComponent } from "../imputs/removeIcom";
 import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardComponentHomeProps {
   dados: solictacao.SolicitacaoObjectType;

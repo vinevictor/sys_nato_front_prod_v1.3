@@ -1,4 +1,5 @@
 import { Box, BoxProps, FormLabel, Text } from "@chakra-ui/react";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridUpdateCnhProps extends BoxProps {
   DataSolicitacao: solictacao.SolicitacaoGetType | any;

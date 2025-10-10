@@ -1,6 +1,7 @@
 import { Box, BoxProps, FormLabel } from "@chakra-ui/react";
 import { InputTextObs } from "../imputs/imputTextObs";
 import { AuthUser } from "@/types/session";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridUpdateCnhProps extends BoxProps {
   DataSolicitacao?: solictacao.SolicitacaoGetType;

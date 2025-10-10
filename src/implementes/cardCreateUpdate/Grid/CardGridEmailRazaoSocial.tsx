@@ -1,6 +1,7 @@
 import { Box, BoxProps, FormLabel } from "@chakra-ui/react";
 import React from "react";
 import InputEmailRazaoSocial from "../imputs/inputEmailRazaoSocial";
+import { solictacao } from "@/types/solicitacao";
 
 interface CardGridEmailRazaoSocialProps extends BoxProps {
   DataSolicitacao?: solictacao.SolicitacaoGetType | any;
