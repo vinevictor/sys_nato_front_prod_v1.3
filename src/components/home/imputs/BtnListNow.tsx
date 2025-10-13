@@ -8,7 +8,7 @@ import { BeatLoader } from "react-spinners";
 interface BtnListNowProps {
   session: SessionNext.Client;
 }
-
+// TODO: remover componente
 export const BtnListNow = ({ session }: BtnListNowProps) => {
   const [loading, setLoading] = useState(false);
   const [Cont, setCont] = useState(0);
