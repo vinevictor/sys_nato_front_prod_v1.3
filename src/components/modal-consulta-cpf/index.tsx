@@ -20,6 +20,7 @@ import {
   useToast,
   Text,
   Link,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaIdCard, FaLongArrowAltUp } from "react-icons/fa";
 import { IoSearch, IoWarning } from "react-icons/io5";
@@ -144,14 +145,30 @@ export default function ModalConsultaRegistro({
   };
 
   const handleContinue = () => {
+    console.log("handleContinue");
     setIsOpen(false);
-    onIsOpen(true);
   };
+
+  // Cores responsivas ao tema
+  const bgModal = useColorModeValue("white", "gray.800");
+  const bgInput = useColorModeValue("gray.50", "gray.700");
+  const textColor = useColorModeValue("gray.800", "white");
+  const labelColor = useColorModeValue("teal.600", "teal.300");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const iconColor = useColorModeValue("gray.400", "gray.500");
+  const placeholderColor = useColorModeValue("gray.500", "gray.400");
+  const hoverBg = useColorModeValue("gray.100", "gray.600");
+  const itemBg = useColorModeValue("gray.50", "gray.700");
+  const linkColor = useColorModeValue("teal.600", "white");
+  const warningBg = useColorModeValue("orange.100", "orange.900");
+  const warningBorder = useColorModeValue("orange", "orange.600");
+  const warningIcon = useColorModeValue("orange.600", "orange.300");
+
   return (
     <Modal isOpen={isOpen} onClose={() => {}} isCentered size="xl">
       <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(10px)" />
       <ModalContent
-        bg="white"
+        bg={bgModal}
         borderRadius="2xl"
         boxShadow="xl"
         maxW="lg"
@@ -160,10 +177,10 @@ export default function ModalConsultaRegistro({
         <ModalHeader
           fontSize="2xl"
           fontWeight="bold"
-          color="teal.600"
+          color={labelColor}
           textAlign="center"
           borderBottomWidth="2px"
-          borderColor="gray.200"
+          borderColor={borderColor}
         >
           Forneça o CPF do cliente
         </ModalHeader>
@@ -172,7 +189,7 @@ export default function ModalConsultaRegistro({
           <Box mb={6}>
             <FormLabel
               fontWeight="semibold"
-              color="teal.600"
+              color={labelColor}
               fontSize="lg"
               mb={2}
             >
@@ -180,17 +197,18 @@ export default function ModalConsultaRegistro({
             </FormLabel>
             <InputGroup>
               <InputLeftElement pointerEvents="none" pt={1.5}>
-                <Icon as={FaIdCard} color="gray.400" />
+                <Icon as={FaIdCard} color={iconColor} />
               </InputLeftElement>
               <Input
                 type="text"
                 placeholder="Digite o CPF"
                 focusBorderColor="teal.400"
-                bg="gray.50"
+                bg={bgInput}
+                color={textColor}
                 borderRadius="md"
                 pl={10}
                 fontSize="md"
-                _placeholder={{ color: "gray.500" }}
+                _placeholder={{ color: placeholderColor }}
                 h="12"
                 value={CPFMask}
                 onChange={(e) => {
@@ -235,7 +253,7 @@ export default function ModalConsultaRegistro({
               {solexists === true && (
               <FormLabel
                 fontWeight="semibold"
-                color="teal.600"
+                color={labelColor}
                 fontSize="lg"
                 mb={4}
               >
@@ -250,9 +268,9 @@ export default function ModalConsultaRegistro({
                       justify="space-between"
                       align="center"
                       p={4}
-                      bg="gray.50"
+                      bg={itemBg}
                       borderRadius="md"
-                      _hover={{ bg: "gray.100" }}
+                      _hover={{ bg: hoverBg }}
                       transition="all 0.2s ease"
                       boxShadow="sm"
                       flexDirection={{ base: "column", md: "row" }}
@@ -260,7 +278,7 @@ export default function ModalConsultaRegistro({
                       {session?.hierarquia === "ADM" ? (
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
+                          color={linkColor}
                           fontWeight="bold"
                           fontSize="md"
                           mb={{ base: 2, md: 0 }}
@@ -270,7 +288,7 @@ export default function ModalConsultaRegistro({
                       ) : (
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
+                          color={linkColor}
                           fontWeight="bold"
                           fontSize="md"
                           mb={{ base: 2, md: 0 }}
@@ -281,7 +299,7 @@ export default function ModalConsultaRegistro({
                       {session?.hierarquia === "ADM" ? (
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
+                          color={linkColor}
                           fontWeight="semibold"
                           fontSize="sm"
                         >
@@ -290,7 +308,7 @@ export default function ModalConsultaRegistro({
                       ) : (
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
+                          color={linkColor}
                           fontWeight="semibold"
                           fontSize="sm"
                         >
@@ -320,14 +338,14 @@ export default function ModalConsultaRegistro({
                     justify="space-between"
                     align="center"
                     p={4}
-                    bg="orange.100"
+                    bg={warningBg}
                     borderRadius="md"
                     boxShadow="sm"
-                    border="1px solid orange"
+                    border={`1px solid ${warningBorder}`}
                     flexDirection={{ base: "column", md: "row" }}
                   >
-                    <Text fontSize={"1xs"}>
-                      <Icon as={IoWarning} color="orange.600" mr={2} />
+                    <Text fontSize={"1xs"} color={textColor}>
+                      <Icon as={IoWarning} color={warningIcon} mr={2} />
                       Solicitação Já Existente, Favor Abrir um Chamado ou entrar
                       em contato com a nossa equipe.
                     </Text>

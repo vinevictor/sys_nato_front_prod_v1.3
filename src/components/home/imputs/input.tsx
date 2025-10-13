@@ -10,8 +10,12 @@ export const InputComponentFilterHome = memo(({ ...props }: InputComponentProps)
       _hover={{ borderColor: "#00613C" }}
       borderColor={"#00713D"}
       placeholder="Nome"
+      _dark={{
+        borderColor: "#00d672",
+        textColor: "white",
+      }}
       size="sm"
-      borderRadius="1rem"
+      borderRadius="0.5rem"
       {...props}
     />
   );
