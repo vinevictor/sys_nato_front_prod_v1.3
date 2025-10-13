@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         Authorization: `Bearer ${session?.token}`,
       },
       next: {
-        tags: ["alert-geral-all"],
+        // tags: ["alert-geral-all"],
         revalidate: 60 * 30,
       },
     });

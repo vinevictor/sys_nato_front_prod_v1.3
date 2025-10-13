@@ -3,6 +3,7 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {  useState } from "react";
 import { FaEyeSlash } from "react-icons/fa";
@@ -15,7 +16,7 @@ interface SenhaProps {
 }
 
 export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
-  // function PasswordInput() {
+  // function PasswordInput()
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const handleonvalue = (e: any) => {
@@ -23,6 +24,15 @@ export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
     const value: string = e.target.value;
     onvalue(value);
   };
+  
+  // Cores dinâmicas baseadas no tema
+  const inputBg = useColorModeValue("white", "gray.700");
+  const inputBorder = useColorModeValue("#E2E8F0", "gray.600");
+  const inputHoverBorder = useColorModeValue("#CBD5E0", "gray.500");
+  const inputFocusBorder = useColorModeValue("#3182CE", "blue.400");
+  const iconColor = useColorModeValue("#718096", "gray.400");
+  const iconHoverBg = useColorModeValue("gray.100", "gray.600");
+  const iconHoverColor = useColorModeValue("#2D3748", "gray.200");
 
   return (
     <>
@@ -33,17 +43,18 @@ export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
           type={show ? "text" : "password"}
           value={setvalue}
           onChange={handleonvalue}
-          border="2px solid #E2E8F0"
+          border="2px solid"
+          borderColor={inputBorder}
           borderRadius="8px"
           fontSize="16px"
-          bg="white"
+          bg={inputBg}
           placeholder="Digite sua senha"
           _hover={{ 
-            borderColor: "#CBD5E0" 
+            borderColor: inputHoverBorder
           }}
           _focus={{ 
-            borderColor: "#3182CE",
-            boxShadow: "0 0 0 1px #3182CE"
+            borderColor: inputFocusBorder,
+            boxShadow: `0 0 0 1px ${inputFocusBorder}`
           }}
           onKeyDownCapture={(e) => {
             if (e.key === "Enter") {
@@ -57,10 +68,10 @@ export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
             size="sm" 
             onClick={handleClick}
             bg="transparent"
-            color="#718096"
+            color={iconColor}
             _hover={{ 
-              bg: "gray.100",
-              color: "#2D3748"
+              bg: iconHoverBg,
+              color: iconHoverColor
             }}
             borderRadius="6px"
           >

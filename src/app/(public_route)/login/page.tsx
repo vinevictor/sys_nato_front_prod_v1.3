@@ -8,15 +8,31 @@ import {
   Image, 
   Link, 
   VStack,
-  useBreakpointValue 
+  useBreakpointValue,
+  useColorModeValue 
 } from "@chakra-ui/react";
 
 export default function LoginPage() {
   // Controla se deve mostrar a imagem lateral baseado no breakpoint
   const showSideImage = useBreakpointValue({ base: false, lg: true });
+  const theme = useColorModeValue("light", "dark");
+  
+  // Cores dinâmicas baseadas no tema
+  const bgColor = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("#2D3748", "gray.100");
+  const subtextColor = useColorModeValue("#718096", "gray.400");
+  const linkColor = useColorModeValue("#3182CE", "blue.400");
+  const linkHoverColor = useColorModeValue("#2C5282", "blue.300");
+  const decorBg1 = useColorModeValue(
+    "linear-gradient(135deg, rgba(49, 130, 206, 0.05) 0%, rgba(66, 153, 225, 0.1) 100%)",
+    "linear-gradient(135deg, rgba(49, 130, 206, 0.1) 0%, rgba(66, 153, 225, 0.2) 100%)"
+  );
+  const decorBg2 = useColorModeValue(
+    "linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(104, 211, 145, 0.1) 100%)",
+    "linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(104, 211, 145, 0.2) 100%)"
+  );
   
   return (
-    
     <Flex height="100vh" overflow="hidden">
       {/* Painel Lateral com Imagem - Visível apenas em telas grandes */}
       {showSideImage && (
@@ -51,7 +67,7 @@ export default function LoginPage() {
         direction="column"
         justify="center"
         align="center"
-        bg="white"
+        bg={bgColor}
         px={{ base: "6", md: "8", lg: "12" }}
         py={{ base: "8", md: "12" }}
         position="relative"
@@ -60,25 +76,36 @@ export default function LoginPage() {
         <VStack spacing="8" width="100%" maxWidth="400px">
           {/* Logo */}
           <Box textAlign="center">
-            <Image 
-              src="/sisnatologo.png" 
-              alt="Logo SISNATO" 
-              width={{ base: "120px", md: "150px" }}
-              height={{ base: "120px", md: "150px" }}
-              mx="auto"
-              mb="4"
-            />
+            {theme === "light" ? (
+              <Image
+                src="/sisnatologo_dark.png"
+                alt="Logo SISNATO"
+                width={{ base: "120px", md: "150px" }}
+                height={{ base: "120px", md: "150px" }}
+                mx="auto"
+                mb="8"
+              />
+            ) : (
+              <Image
+                src="/sisnatologo_light.png"
+                alt="Logo SISNATO"
+                width={{ base: "120px", md: "150px" }}
+                height={{ base: "160px", md: "180px" }}
+                mx="auto"
+                mb="8"
+              />
+            )}
             <Text
               fontSize={{ base: "28px", md: "32px", lg: "36px" }}
               fontWeight="600"
-              color="#2D3748"
+              color={textColor}
               letterSpacing="-0.5px"
             >
               Bem-vindo
             </Text>
             <Text
               fontSize={{ base: "14px", md: "16px" }}
-              color="#718096"
+              color={subtextColor}
               mt="2"
             >
               Faça login para acessar sua conta
@@ -94,24 +121,24 @@ export default function LoginPage() {
           <Box textAlign="center" mt="6">
             <Text
               fontSize={{ base: "12px", md: "13px" }}
-              color="#718096"
+              color={subtextColor}
               lineHeight="1.5"
             >
               Ao continuar, você concorda com os{" "}
-              <Link 
-                href="/termos/uso" 
-                color="#3182CE" 
+              <Link
+                href="/termos/uso"
+                color={linkColor}
                 textDecoration="underline"
-                _hover={{ color: "#2C5282" }}
+                _hover={{ color: linkHoverColor }}
               >
                 Termos de uso
               </Link>{" "}
               e{" "}
-              <Link 
-                href="/termos/privacidade" 
-                color="#3182CE" 
+              <Link
+                href="/termos/privacidade"
+                color={linkColor}
                 textDecoration="underline"
-                _hover={{ color: "#2C5282" }}
+                _hover={{ color: linkHoverColor }}
               >
                 Política de Privacidade
               </Link>
@@ -128,7 +155,7 @@ export default function LoginPage() {
           width="200px"
           height="200px"
           borderRadius="full"
-          bg="linear-gradient(135deg, rgba(49, 130, 206, 0.05) 0%, rgba(66, 153, 225, 0.1) 100%)"
+          bg={decorBg1}
           zIndex="-1"
         />
         <Box
@@ -138,7 +165,7 @@ export default function LoginPage() {
           width="150px"
           height="150px"
           borderRadius="full"
-          bg="linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(104, 211, 145, 0.1) 100%)"
+          bg={decorBg2}
           zIndex="-1"
         />
       </Flex>

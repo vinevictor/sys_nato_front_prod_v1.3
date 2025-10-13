@@ -38,7 +38,7 @@ export default function BtnAlertList({ session }: BtnAlertListProps) {
       }
     }
   };
-
+  // TODO: remover componente
   const HandleAlertasList = async () => {
     if (session.role?.alert) {
       const url = "/api/alerts/geral/findAll";

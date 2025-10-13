@@ -7,7 +7,8 @@ import {
   Button,
   useToast,
   Flex,
-  CircularProgress
+  CircularProgress,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +20,15 @@ export const FormLogin = () => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const router = useRouter();
+  
+  // Cores dinâmicas baseadas no tema
+  const labelColor = useColorModeValue("#2D3748", "gray.200");
+  const inputBg = useColorModeValue("white", "gray.700");
+  const inputBorder = useColorModeValue("#E2E8F0", "gray.600");
+  const inputHoverBorder = useColorModeValue("#CBD5E0", "gray.500");
+  const inputFocusBorder = useColorModeValue("#3182CE", "blue.400");
+  const buttonBg = useColorModeValue("#3182CE", "blue.500");
+  const buttonHoverBg = useColorModeValue("#2C5282", "blue.600");
 
   const handlesubmit = async () => {
     setLoading(true);
@@ -63,7 +73,7 @@ export const FormLogin = () => {
         <FormLabel 
           fontSize="14px" 
           fontWeight="500" 
-          color="#2D3748"
+          color={labelColor}
           mb="2"
         >
           Usuário
@@ -72,17 +82,18 @@ export const FormLogin = () => {
           type="text"
           size="lg"
           height="48px"
-          border="2px solid #E2E8F0"
+          border="2px solid"
+          borderColor={inputBorder}
           borderRadius="8px"
           textTransform="uppercase"
           fontSize="16px"
-          bg="white"
+          bg={inputBg}
           _hover={{ 
-            borderColor: "#CBD5E0" 
+            borderColor: inputHoverBorder
           }}
           _focus={{ 
-            borderColor: "#3182CE",
-            boxShadow: "0 0 0 1px #3182CE"
+            borderColor: inputFocusBorder,
+            boxShadow: `0 0 0 1px ${inputFocusBorder}`
           }}
           onChange={(e: any) => setUsername(e.target.value.toUpperCase())}
           value={username}
@@ -92,7 +103,7 @@ export const FormLogin = () => {
         <FormLabel 
           fontSize="14px" 
           fontWeight="500" 
-          color="#2D3748"
+          color={labelColor}
           mb="2"
           mt="6"
         >
@@ -110,13 +121,13 @@ export const FormLogin = () => {
         mb="4"
         width="100%"
         height="48px"
-        bg="#3182CE"
+        bg={buttonBg}
         color="white"
         fontSize="16px"
         fontWeight="600"
         borderRadius="8px"
         _hover={{ 
-          bg: "#2C5282",
+          bg: buttonHoverBg,
           transform: "translateY(-1px)",
           boxShadow: "0 4px 12px rgba(49, 130, 206, 0.4)"
         }}
