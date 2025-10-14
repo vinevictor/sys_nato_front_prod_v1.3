@@ -1,9 +1,9 @@
 // app/providers.tsx
-'use client'
+"use client";
 
-import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
-import { CacheProvider } from '@chakra-ui/next-js'
-import theme from '@/theme'
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import { CacheProvider } from "@chakra-ui/next-js";
+import theme from "@/theme";
 
 /**
  * ProvidersChakra
@@ -20,5 +20,5 @@ export function ProvidersChakra({ children }: { children: React.ReactNode }) {
         {children}
       </ChakraProvider>
     </CacheProvider>
-  )
+  );
 }

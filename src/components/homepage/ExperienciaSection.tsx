@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Box,
@@ -11,34 +11,53 @@ import {
   SimpleGrid,
   Text,
   VStack,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { FaChartLine, FaUsers, FaRocket, FaShieldAlt } from 'react-icons/fa';
-import NextLink from 'next/link';
+} from "@chakra-ui/react";
+import { FaChartLine, FaUsers, FaRocket, FaShieldAlt } from "react-icons/fa";
 
 /**
  * Seção de experiência no mercado com estatísticas
- * Utiliza client component para hooks do Chakra UI
+ * Agora com suporte para tema claro e escuro.
  */
 export default function ExperienciaSection() {
-  const textColor = useColorModeValue('gray.600', 'gray.300');
-
   return (
-    <Box id="experiencia" py={20} bg="white">
+    <Box
+      id="experiencia"
+      scrollMarginTop="4rem"
+      py={20}
+      // Fundo da seção agora é adaptável
+      bg="white"
+      _dark={{ bg: "gray.900" }}
+    >
       <Container maxW="7xl">
-        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12} alignItems="center">
+        <Grid
+          templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
+          gap={12}
+          alignItems="center"
+        >
           <GridItem>
             <VStack align="flex-start" spacing={6}>
-              <Heading size="xl" color="gray.800">
+              <Heading size="xl" color="gray.800" _dark={{ color: "white" }}>
                 Agilidade, Segurança e Confiabilidade
               </Heading>
-              
-              <Text fontSize="lg" color={textColor}>
-                O SisNATO oferece gestão completa de documentos imobiliários com certificação digital ICP-Brasil, garantindo validade jurídica e proteção contra fraudes.
+
+              <Text
+                fontSize="lg"
+                color="gray.600"
+                _dark={{ color: "gray.300" }}
+              >
+                O SisNATO oferece gestão completa de documentos imobiliários com
+                certificação digital ICP-Brasil, garantindo validade jurídica e
+                proteção contra fraudes.
               </Text>
-              
-              <Text fontSize="sm" color={textColor} fontStyle="italic">
-                *Certificação ICP-Brasil garante autenticidade, integridade e validade jurídica dos documentos assinados digitalmente.
+
+              <Text
+                fontSize="sm"
+                color="gray.600"
+                _dark={{ color: "gray.400" }}
+                fontStyle="italic"
+              >
+                *Certificação ICP-Brasil garante autenticidade, integridade e
+                validade jurídica dos documentos assinados digitalmente.
               </Text>
               <Button
                 as="a"
@@ -53,45 +72,133 @@ export default function ExperienciaSection() {
               </Button>
             </VStack>
           </GridItem>
-          
+
           <GridItem>
             <SimpleGrid columns={2} spacing={6}>
-              <VStack p={6} bg="green.50" borderRadius="lg" textAlign="center">
-                <Icon as={FaChartLine} boxSize={8} color="green.500" />
-                <Heading size="lg" color="green.600">
+              {/* Card 1: Precisão */}
+              <VStack
+                p={6}
+                bg="green.50"
+                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
+                borderRadius="lg"
+                textAlign="center"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Icon
+                  as={FaChartLine}
+                  boxSize={8}
+                  color="green.500"
+                  _dark={{ color: "green.300" }}
+                />
+                <Heading
+                  size="lg"
+                  color="green.600"
+                  _dark={{ color: "green.300" }}
+                >
                   99,8%
                 </Heading>
-                <Text fontSize="sm" color={textColor}>
+                <Text
+                  fontSize="sm"
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Precisão antifraude
                 </Text>
               </VStack>
-              
-              <VStack p={6} bg="blue.50" borderRadius="lg" textAlign="center">
-                <Icon as={FaUsers} boxSize={8} color="blue.500" />
-                <Heading size="lg" color="blue.600">
+
+              {/* Card 2: Documentos */}
+              <VStack
+                p={6}
+                bg="blue.50"
+                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
+                borderRadius="lg"
+                textAlign="center"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Icon
+                  as={FaUsers}
+                  boxSize={8}
+                  color="blue.500"
+                  _dark={{ color: "blue.300" }}
+                />
+                <Heading
+                  size="lg"
+                  color="blue.600"
+                  _dark={{ color: "blue.300" }}
+                >
                   5.000+
                 </Heading>
-                <Text fontSize="sm" color={textColor}>
+                <Text
+                  fontSize="sm"
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Documentos processados
                 </Text>
               </VStack>
-              
-              <VStack p={6} bg="purple.50" borderRadius="lg" textAlign="center">
-                <Icon as={FaRocket} boxSize={8} color="purple.500" />
-                <Heading size="lg" color="purple.600">
+
+              {/* Card 3: Tempo */}
+              <VStack
+                p={6}
+                bg="purple.50"
+                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
+                borderRadius="lg"
+                textAlign="center"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Icon
+                  as={FaRocket}
+                  boxSize={8}
+                  color="purple.500"
+                  _dark={{ color: "purple.300" }}
+                />
+                <Heading
+                  size="lg"
+                  color="purple.600"
+                  _dark={{ color: "purple.300" }}
+                >
                   10h
                 </Heading>
-                <Text fontSize="sm" color={textColor}>
+                <Text
+                  fontSize="sm"
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Tempo médio de certificação
                 </Text>
               </VStack>
-              
-              <VStack p={6} bg="orange.50" borderRadius="lg" textAlign="center">
-                <Icon as={FaShieldAlt} boxSize={8} color="orange.500" />
-                <Heading size="lg" color="orange.600">
+
+              {/* Card 4: Conformidade */}
+              <VStack
+                p={6}
+                bg="orange.50"
+                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
+                borderRadius="lg"
+                textAlign="center"
+                border="1px"
+                borderColor="gray.200"
+              >
+                <Icon
+                  as={FaShieldAlt}
+                  boxSize={8}
+                  color="orange.500"
+                  _dark={{ color: "orange.300" }}
+                />
+                <Heading
+                  size="lg"
+                  color="orange.600"
+                  _dark={{ color: "orange.300" }}
+                >
                   100%
                 </Heading>
-                <Text fontSize="sm" color={textColor}>
+                <Text
+                  fontSize="sm"
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Conformidade ICP-Brasil
                 </Text>
               </VStack>
