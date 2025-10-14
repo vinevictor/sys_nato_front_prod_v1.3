@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   List,
   Flex,
+  VStack,
   InputGroup,
   InputLeftElement,
   Icon,
@@ -20,6 +21,7 @@ import {
   useToast,
   Text,
   Link,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaIdCard, FaLongArrowAltUp } from "react-icons/fa";
 import { IoSearch, IoWarning } from "react-icons/io5";
@@ -144,213 +146,242 @@ export default function ModalConsultaRegistro({
   };
 
   const handleContinue = () => {
+    console.log("handleContinue");
     setIsOpen(false);
-    onIsOpen(true);
   };
+
+  // Cores responsivas ao tema
+  const bgModal = useColorModeValue("white", "gray.800");
+  const bgInput = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("#023147", "gray.100");
+  const subtextColor = useColorModeValue("gray.600", "gray.400");
+  const labelColor = useColorModeValue("#023147", "gray.100");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const iconColor = useColorModeValue("#00713D", "green.400");
+  const placeholderColor = useColorModeValue("gray.500", "gray.400");
+  const hoverBg = useColorModeValue("gray.50", "gray.600");
+  const itemBg = useColorModeValue("gray.50", "gray.700");
+  const linkColor = useColorModeValue("#00713D", "green.400");
+  const warningBg = useColorModeValue("orange.50", "orange.900");
+  const warningBorder = useColorModeValue("orange.200", "orange.600");
+  const warningIcon = useColorModeValue("orange.600", "orange.300");
+
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} isCentered size="xl">
-      <ModalOverlay bg="blackAlpha.700" backdropFilter="blur(10px)" />
+    <Modal 
+      isOpen={isOpen} 
+      onClose={() => {}} 
+      isCentered 
+      size="xl"
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
+    >
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
       <ModalContent
-        bg="white"
-        borderRadius="2xl"
-        boxShadow="xl"
-        maxW="lg"
-        p={6}
+        bg={bgModal}
+        borderRadius="xl"
+        boxShadow="2xl"
+        maxW="600px"
+        mx={4}
       >
-        <ModalHeader
-          fontSize="2xl"
-          fontWeight="bold"
-          color="teal.600"
-          textAlign="center"
-          borderBottomWidth="2px"
-          borderColor="gray.200"
-        >
-          Forneça o CPF do cliente
+        <ModalHeader pt={6} pb={4}>
+          <VStack spacing={2} align="center">
+            <Box
+              p={3}
+              bg="green.100"
+              _dark={{ bg: "green.900" }}
+              borderRadius="full"
+            >
+              <Icon as={FaIdCard} fontSize="24" color={iconColor} />
+            </Box>
+            <Text fontSize="xl" fontWeight="bold" color={textColor}>
+              Consulta de CPF
+            </Text>
+            <Text fontSize="sm" color={subtextColor} textAlign="center">
+              Digite o CPF do cliente para iniciar uma nova solicitação
+            </Text>
+          </VStack>
         </ModalHeader>
 
-        <ModalBody py={6}>
-          <Box mb={6}>
-            <FormLabel
-              fontWeight="semibold"
-              color="teal.600"
-              fontSize="lg"
-              mb={2}
-            >
-              CPF
-            </FormLabel>
-            <InputGroup>
-              <InputLeftElement pointerEvents="none" pt={1.5}>
-                <Icon as={FaIdCard} color="gray.400" />
-              </InputLeftElement>
-              <Input
-                type="text"
-                placeholder="Digite o CPF"
-                focusBorderColor="teal.400"
-                bg="gray.50"
-                borderRadius="md"
-                pl={10}
-                fontSize="md"
-                _placeholder={{ color: "gray.500" }}
-                h="12"
-                value={CPFMask}
-                onChange={(e) => {
-                  const valor = e.target.value;
-                  const valorLimpo = unMask(valor);
-                  const masked = mask(valorLimpo, ["999.999.999-99"]);
-                  setCPFMask(masked);
-                  setCPF(valorLimpo);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (CPF.length == 11) {
-                      handleSubmit();
-                    } else {
-                      toast({
-                        title: "Erro!",
-                        description:
-                          "Faltam caracteres no CPF! Por favor, digite o CPF corretamente.",
-                        status: "error",
-                        duration: 3000,
-                        isClosable: true,
-                      });
-                    }
-                  }
-                }}
-              />
-              <InputRightElement width="4.5rem" pt={1.5} pe={2}>
-                <Button
-                  colorScheme="teal"
-                  px={2}
-                  h="10"
-                  onClick={() => handleSubmit()}
-                >
-                  <Icon as={IoSearch} boxSize={6} />
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
-
-          {solicitacoes.length > 0 && (
-            <Box mt={8}>
-              {solexists === true && (
+        <ModalBody px={6} py={4}>
+          <VStack spacing={4} w="full">
+            <Box w="full">
               <FormLabel
-                fontWeight="semibold"
-                color="teal.600"
-                fontSize="lg"
-                mb={4}
+                fontSize="sm"
+                fontWeight="medium"
+                color={labelColor}
+                mb={2}
               >
-                Solicitação existente
+                CPF do Cliente
               </FormLabel>
-              )}
-              <List spacing={3}>
-                {solicitacoes.map((item: any) => (
-                  <Flex key={item.id} direction="column">
-                    <Flex
-                      key={item}
-                      justify="space-between"
-                      align="center"
-                      p={4}
-                      bg="gray.50"
-                      borderRadius="md"
-                      _hover={{ bg: "gray.100" }}
-                      transition="all 0.2s ease"
-                      boxShadow="sm"
-                      flexDirection={{ base: "column", md: "row" }}
-                    >
-                      {session?.hierarquia === "ADM" ? (
+              <InputGroup size="lg">
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={FaIdCard} color={iconColor} />
+                </InputLeftElement>
+                <Input
+                  type="text"
+                  placeholder="000.000.000-00"
+                  focusBorderColor="#00713D"
+                  bg={bgInput}
+                  color={textColor}
+                  borderRadius="lg"
+                  fontSize="md"
+                  _placeholder={{ color: placeholderColor }}
+                  border="2px"
+                  borderColor={borderColor}
+                  _hover={{ borderColor: "#00713D" }}
+                  value={CPFMask}
+                  onChange={(e) => {
+                    const valor = e.target.value;
+                    const valorLimpo = unMask(valor);
+                    const masked = mask(valorLimpo, ["999.999.999-99"]);
+                    setCPFMask(masked);
+                    setCPF(valorLimpo);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (CPF.length == 11) {
+                        handleSubmit();
+                      } else {
+                        toast({
+                          title: "Atenção!",
+                          description: "Por favor, digite o CPF completo.",
+                          status: "warning",
+                          duration: 3000,
+                          isClosable: true,
+                          position: "top-right",
+                        });
+                      }
+                    }
+                  }}
+                />
+                <InputRightElement width="auto" pr={2}>
+                  <Button
+                    bg="#00713D"
+                    _hover={{ bg: "#00631B" }}
+                    color="white"
+                    size="md"
+                    onClick={() => handleSubmit()}
+                    leftIcon={<Icon as={IoSearch} />}
+                  >
+                    Buscar
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <Text fontSize="xs" color={subtextColor} mt={2}>
+                Digite apenas números ou use o formato com pontos e traço
+              </Text>
+            </Box>
+
+            {solicitacoes.length > 0 && (
+              <Box w="full" mt={4}>
+                {solexists === true && (
+                  <Text
+                    fontSize="md"
+                    fontWeight="semibold"
+                    color={labelColor}
+                    mb={3}
+                  >
+                    Solicitações Existentes
+                  </Text>
+                )}
+                <List spacing={2}>
+                  {solicitacoes.map((item: any) => (
+                    <Flex key={item.id} direction="column" w="full">
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        p={3}
+                        bg={itemBg}
+                        borderRadius="lg"
+                        _hover={{ bg: hoverBg }}
+                        transition="all 0.2s ease"
+                        border="1px"
+                        borderColor={borderColor}
+                        flexDirection={{ base: "column", sm: "row" }}
+                        gap={2}
+                      >
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
+                          color={linkColor}
                           fontWeight="bold"
                           fontSize="md"
-                          mb={{ base: 2, md: 0 }}
+                          _hover={{ textDecoration: "underline" }}
+                          flex={1}
                         >
                           {item.nome}
                         </Link>
-                      ) : (
                         <Link
                           href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
-                          fontWeight="bold"
-                          fontSize="md"
-                          mb={{ base: 2, md: 0 }}
-                        >
-                          {item.nome}
-                        </Link>
-                      )}
-                      {session?.hierarquia === "ADM" ? (
-                        <Link
-                          href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
-                          fontWeight="semibold"
+                          color={subtextColor}
+                          fontWeight="medium"
                           fontSize="sm"
+                          _hover={{ color: linkColor }}
                         >
-                          {item.id}
+                          ID: {item.id}
                         </Link>
-                      ) : (
-                        <Link
-                          href={`/solicitacoes/${item.id}`}
-                          color="teal.600"
-                          fontWeight="semibold"
-                          fontSize="sm"
+                      </Flex>
+                      {session?.hierarquia === "ADM" && (
+                        <Button
+                          bg="#00713D"
+                          _hover={{ bg: "#00631B" }}
+                          color="white"
+                          size="sm"
+                          onClick={() => handleContinueWithData(item)}
+                          borderTopRadius={0}
+                          borderBottomRadius="lg"
+                          leftIcon={<Icon as={FaLongArrowAltUp} />}
+                          rightIcon={<Icon as={FaLongArrowAltUp} />}
                         >
-                          {item.id}
-                        </Link>
+                          Usar Informações desta Solicitação
+                        </Button>
                       )}
                     </Flex>
-                    {session?.hierarquia === "ADM" && (
-                      <Button
-                        colorScheme="green"
-                        size="sm"
-                        h={"fit-content"}
-                        p={1}
-                        fontSize={"1xs"}
-                        onClick={() => handleContinueWithData(item)}
-                        borderTopRadius={0}
-                      >
-                        <Icon as={FaLongArrowAltUp} mr={1} />
-                        Usar Informações desta solicitação
-                        <Icon as={FaLongArrowAltUp} mr={1} />
-                      </Button>
-                    )}
-                  </Flex>
-                ))}
-                {solicitacoes.length > 0 && session?.hierarquia !== "ADM" && (
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    p={4}
-                    bg="orange.100"
-                    borderRadius="md"
-                    boxShadow="sm"
-                    border="1px solid orange"
-                    flexDirection={{ base: "column", md: "row" }}
-                  >
-                    <Text fontSize={"1xs"}>
-                      <Icon as={IoWarning} color="orange.600" mr={2} />
-                      Solicitação Já Existente, Favor Abrir um Chamado ou entrar
-                      em contato com a nossa equipe.
-                    </Text>
-                  </Flex>
-                )}
-              </List>
-            </Box>
-          )}
+                  ))}
+                  {solicitacoes.length > 0 && session?.hierarquia !== "ADM" && (
+                    <Flex
+                      align="center"
+                      p={3}
+                      bg={warningBg}
+                      borderRadius="lg"
+                      border="1px"
+                      borderColor={warningBorder}
+                      gap={2}
+                    >
+                      <Icon as={IoWarning} color={warningIcon} fontSize="20" />
+                      <Text fontSize="sm" color={textColor}>
+                        Solicitação já existente. Favor abrir um chamado ou entrar em contato com nossa equipe.
+                      </Text>
+                    </Flex>
+                  )}
+                </List>
+              </Box>
+            )}
+          </VStack>
         </ModalBody>
 
-        <Divider />
-
-        <ModalFooter mt={4}>
-          <Flex justify="flex-end" w="full" gap={3}>
+        <ModalFooter px={6} pb={6} pt={4}>
+          <Flex justify="flex-end" w="full" gap={3} flexWrap="wrap">
             {IsContinue && (
-              <Button colorScheme="teal" onClick={() => handleContinue()}>
-                Continuar cadastro
+              <Button
+                bg="#00713D"
+                _hover={{ bg: "#00631B" }}
+                color="white"
+                onClick={() => handleContinue()}
+                flex={{ base: 1, sm: "none" }}
+                minW={{ sm: "150px" }}
+              >
+                Continuar Cadastro
               </Button>
             )}
             <Button
               variant="outline"
-              colorScheme="teal"
+              borderColor="#00713D"
+              color="#00713D"
+              _hover={{ bg: "gray.50" }}
+              _dark={{ _hover: { bg: "gray.700" } }}
               onClick={() => handleClose()}
+              flex={{ base: 1, sm: "none" }}
+              minW={{ sm: "100px" }}
             >
               Fechar
             </Button>

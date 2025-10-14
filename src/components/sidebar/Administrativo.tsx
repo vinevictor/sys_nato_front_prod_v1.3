@@ -39,7 +39,7 @@ const adminMenuItems: AdminMenuItem[] = [
   {
     name: "Usuários",
     icon: FiUsers,
-    href: "/users",
+    href: "/usuarios",
     description: "Gerenciar usuários do sistema",
   },
   {

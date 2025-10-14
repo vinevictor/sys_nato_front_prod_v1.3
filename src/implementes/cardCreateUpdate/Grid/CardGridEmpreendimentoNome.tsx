@@ -21,6 +21,11 @@ export default function CardGridEmpreendimento({
           variant="flushed"
           setNomeValue={nome}
           borderColor={"gray.400"}
+          _dark={{
+            bg: "gray.700",
+            borderColor: "gray.600",
+            color: "gray.100",
+          }}
           px={1}
           bg={"gray.100"}
         />

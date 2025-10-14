@@ -152,6 +152,7 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
               read: false,
             }));
             setBugReports(bugsMapeados);
+            setCont(cont + bugsMapeados.length);
           } else {
             setBugReports([]);
           }

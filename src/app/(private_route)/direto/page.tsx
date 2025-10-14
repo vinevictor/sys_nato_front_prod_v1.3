@@ -1,89 +1,68 @@
-import Loading from "@/app/loading";
 import { DadoCompomentList } from "@/components/direto/lista";
-import { UserCompomentInfo } from "@/components/direto/user";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
-import { Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Metadata } from "next";
-import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "HOME DIRETO",
+  title: "DIRETO",
   description: "sistema de gestão de vendas de imóveis",
 };
 
 const GetListaDados = async (
   session: Session.SessionServer | null
 ): Promise<any | null> => {
-  try {
-    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
-    const user = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.token}`,
-      },
-      cache: "no-store",
-    });
-
-    if (!user.ok) {
-      console.error("GetListaDados status:", user.status);
-      return null;
-    }
-    const data = await user.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar dados:", error);
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
+  const user = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.token}`,
+    },
+  });
+  const data = await user.json();
+  if (!user.ok) {
+    console.error("GetListaDados status:", data.message);
     return null;
   }
+  return data;
 };
 
-interface Props {
-  session: Session.SessionServer | null;
-}
-
-async function DadosContent({ session }: Props) {
-  const ListDados = await GetListaDados(session);
-
-  await new Promise((resolve) => setTimeout(resolve, 4000));
-
-  return (
-    <>
-      {session && <UserCompomentInfo session={session} />}
-      {session && (
-        <DadoCompomentList
-          dados={ListDados}
-          session={session}
-        />
-      )}
-    </>
-  );
-}
-
+/**
+ * Página Direto
+ * 
+ * Funcionalidades:
+ * - Exibe lista de vendas diretas
+ * - Modais de primeiro acesso e termos
+ * - Adaptado ao layout com sidebar
+ * - Responsivo e com tema adaptativo
+ * 
+ * @component
+ */
 export default async function DiretoPage() {
   const session = await GetSessionServer();
-
+  const ListDados = await GetListaDados(session);
+  
   return (
-    <>
-      <HomeProvider>
-        <Flex
-          minH="89.8vh"
-          w="100%"
-          bg="#F8F8F8"
-          overflowY="auto"
-          overflowX="hidden"
-        >
-          <ModalPrimeAsses session={session as any} />
-          <ModalTermos session={session as any} />
-          <Suspense fallback={<Loading />}>
-            <DadosContent session={session} />
-          </Suspense>
-        </Flex>
-      </HomeProvider>
-    </>
+    <HomeProvider>
+      <Box
+        w="full"
+        h="full"
+        bg="gray.50"
+        _dark={{ bg: "gray.900" }}
+        p={{ base: 2, md: 3, lg: 4 }}
+      >
+        {/* Modais */}
+        {session && <ModalPrimeAsses session={session.user} />}
+        {session && <ModalTermos session={session.user} />}
+        
+        {/* Conteúdo principal */}
+        {session && <DadoCompomentList dados={ListDados} session={session} />}
+      </Box>
+    </HomeProvider>
   );
 }

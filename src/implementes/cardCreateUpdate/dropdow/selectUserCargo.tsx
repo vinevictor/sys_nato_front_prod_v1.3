@@ -22,17 +22,33 @@ export function SelectUserCargo({ setValue, ...props }: SelectUserCargoProps) {
         <Select
           name="cargo"
           {...props}
-          border="1px solid #b8b8b8cc"
+          border="1px solid"
+          borderColor="gray.400"
           borderTop={"none"}
           borderRight={"none"}
           borderLeft={"none"}
           borderRadius="0"
-          bg={"gray.100"}
-          borderColor={"gray.400"}
+          bg="gray.100"
+          color="gray.800"
           onChange={(e: any) => setCargo(e.target.value)}
           value={Cargo}
+          _dark={{
+            bg: "gray.700",
+            borderColor: "gray.500",
+            color: "gray.100"
+          }}
+          sx={{
+            "& option": {
+              bg: "white",
+              color: "gray.800",
+            },
+            "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
+              bg: "gray.800",
+              color: "gray.100",
+            }
+          }}
         >
-          <option style={{ backgroundColor: "#EDF2F7" }} value={0}>
+          <option value={0}>
             Selecione um cargo
           </option>
           {CargoOptions.map((cargo: Cargo) => (

@@ -14,7 +14,13 @@ export default function CardGridRegisterEmail({
 }: CardGridRegisterEmailProps) {
   return (
     <Box {...props}>
-      <FormLabel fontSize="sm" fontWeight="md" m={0}>
+      <FormLabel 
+        fontSize="sm" 
+        fontWeight="md" 
+        m={0}
+        color="gray.700"
+        _dark={{ color: "gray.300" }}
+      >
         {type === "confirm" ? "Confirmar Email" : "Email"}
       </FormLabel>
 
@@ -24,8 +30,14 @@ export default function CardGridRegisterEmail({
           px={1}
           py={2}
           bg="gray.100"
-          textColor="GrayText"
-          borderBottom="1px solid #A0AEC0"
+          color="gray.600"
+          borderBottom="1px solid"
+          borderColor="gray.400"
+          _dark={{ 
+            bg: "gray.700", 
+            color: "gray.200",
+            borderColor: "gray.500"
+          }}
         >
           {email}
         </Text>
@@ -38,6 +50,11 @@ export default function CardGridRegisterEmail({
           px={1}
           bg="gray.100"
           borderColor="gray.400"
+          _dark={{ 
+            bg: "gray.700", 
+            borderColor: "gray.500",
+            color: "gray.100"
+          }}
         />
       )}
     </Box>

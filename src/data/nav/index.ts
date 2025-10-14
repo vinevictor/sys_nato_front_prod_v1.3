@@ -8,7 +8,7 @@ export const defaultNavItems: NavItem[] = [
   {
     name: "Home",
     icon: FiHome,
-    href: "/home2",
+    href: "/home",
     role: null,
   },
   {

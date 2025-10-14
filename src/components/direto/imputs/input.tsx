@@ -11,7 +11,7 @@ export const InputComponentFilterHome = ({ ...props }: InputComponentProps) => {
       borderColor={"#00713D"}
       placeholder="id"
       size="sm"
-      borderRadius="1rem"
+      borderRadius="0.5rem"
       {...props}
     />
   );

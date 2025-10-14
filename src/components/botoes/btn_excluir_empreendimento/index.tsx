@@ -1,11 +1,12 @@
 "use client";
 
-import { Button, Tooltip, useToast, Icon } from "@chakra-ui/react";
+import { IconButton, Tooltip, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { GrStatusCritical, GrStatusGood } from "react-icons/gr";
+import { MdDomain, MdDomainDisabled } from "react-icons/md";
 
 interface BtnDesativarEmpreendimentoProps {
-  id: string;
+  id: number;
   ativo: boolean;
 }
 
@@ -50,22 +51,32 @@ export default function BtnDesativarEmpreendimento({
 
   return (
     <Tooltip
-      label={ativo ? "Desativar Empreendimento" : "Ativar Empreendimento"}
+      label={
+        ativo
+          ? "Deseja desativar Empreendimento?"
+          : "Deseja ativar Empreendimento?"
+      }
+      placement="top"
     >
-      <Button
+      <IconButton
         variant="outline"
-        colorScheme={ativo ? "green" : "red"}
+        colorScheme={ativo ? "red" : "green"}
+        icon={ativo ? <MdDomainDisabled /> : <MdDomain />}
+        aria-label={ativo ? "Desativar" : "Ativar"}
         onClick={handleToggleStatus}
         isLoading={isLoading}
         isDisabled={isLoading}
-      >
-        <Icon
-          as={ativo ? GrStatusGood : GrStatusCritical}
-          color={ativo ? "green.500" : "red.500"}
-          mr={2}
-        />
-        {ativo ? "Ativado" : "Desativado"}
-      </Button>
+        _hover={{
+          bg: ativo ? "red.50" : "green.50",
+          _dark: {
+            bg: ativo ? "red.900" : "green.900",
+          },
+        }}
+        _dark={{
+          borderColor: ativo ? "red.600" : "green.600",
+          color: ativo ? "red.400" : "green.400",
+        }}
+      />
     </Tooltip>
   );
 }

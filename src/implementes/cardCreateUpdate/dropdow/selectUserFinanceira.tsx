@@ -64,13 +64,24 @@ export function SelectUserFinanceira({
       <Flex
         key={e.id}
         gap={1}
-        border="1px solid #b8b8b8cc"
+        border="1px solid"
+        borderColor="blue.300"
         p={1}
         alignItems={"center"}
         borderRadius={9}
-        bg={"blue.200"}
+        bg="blue.200"
+        _dark={{
+          bg: "blue.700",
+          borderColor: "blue.500"
+        }}
       >
-        <Text fontSize={"0.6rem"}>{e.fantasia}</Text>
+        <Text 
+          fontSize={"0.6rem"}
+          color="blue.800"
+          _dark={{ color: "blue.100" }}
+        >
+          {e.fantasia}
+        </Text>
         <Icon
           as={RxCross2}
           fontSize={"0.8rem"}
@@ -99,24 +110,39 @@ export function SelectUserFinanceira({
       <Flex gap={2}>
         <Select
           {...props}
-          border="1px solid #b8b8b8cc"
+          border="1px solid"
+          borderColor="gray.400"
           borderTop={"none"}
           borderRight={"none"}
           borderLeft={"none"}
           borderRadius="0"
-          bg={"gray.100"}
-          borderColor={"gray.400"}
+          bg="gray.100"
+          color="gray.800"
           isDisabled={FinanceiraDisabled}
           onChange={(e: any) => setFinanceira(Number(e.target.value))}
           value={Financeira}
+          _dark={{
+            bg: "gray.700",
+            borderColor: "gray.500",
+            color: "gray.100"
+          }}
+          sx={{
+            "& option": {
+              bg: "white",
+              color: "gray.800",
+            },
+            "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
+              bg: "gray.800",
+              color: "gray.100",
+            }
+          }}
         >
-          <option style={{ backgroundColor: "#EDF2F7" }} value={0}>
+          <option value={0}>
             Selecione uma financeira
           </option>
           {FinanceiraData.length > 0 &&
             FinanceiraData.map((Financeira: any) => (
               <option
-                style={{ backgroundColor: "#EDF2F7" }}
                 key={Financeira.id}
                 value={Financeira.id}
               >

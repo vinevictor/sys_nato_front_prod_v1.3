@@ -17,7 +17,7 @@ export const BugReport = () => {
   useEffect(() => {
     HandleFindAll();
   }, []);
-
+  // TODO: remover componente
   // Função responsável por buscar todos os bugs na API de forma segura
   const HandleFindAll = async () => {
     try {
@@ -48,9 +48,9 @@ export const BugReport = () => {
 
   const MapBug = bug?.map((bug: any, index: number) => {
     return (
-      <Alert 
+      <Alert
         key={index}
-        status={"warning"} 
+        status={"warning"}
         bg="orange.50"
         border="1px solid"
         borderColor="orange.200"
@@ -63,7 +63,7 @@ export const BugReport = () => {
           bg: "orange.100",
           borderColor: "orange.300",
           shadow: "md",
-          transform: "translateY(-2px)"
+          transform: "translateY(-2px)",
         }}
       >
         <GoAlertFill
@@ -72,19 +72,10 @@ export const BugReport = () => {
           style={{ marginRight: "0.75rem", flexShrink: 0 }}
         />
         <Flex flexDir="column" gap={1} flex={1}>
-          <AlertTitle 
-            fontSize="xl" 
-            fontWeight="bold" 
-            color="orange.700"
-            mb={1}
-          >
+          <AlertTitle fontSize="xl" fontWeight="bold" color="orange.700" mb={1}>
             Alerta
           </AlertTitle>
-          <AlertDescription 
-            fontSize="md" 
-            color="orange.600"
-            lineHeight="1.4"
-          >
+          <AlertDescription fontSize="md" color="orange.600" lineHeight="1.4">
             {bug.descricao}
           </AlertDescription>
         </Flex>

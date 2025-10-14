@@ -23,8 +23,12 @@ export const SelectComponentFilterHome = memo(({ Data, place , ...props }: Selec
       _hover={{ borderColor: "#00613C" }}
       borderColor={"#00713D"}
       placeholder={place}
+      _dark={{
+        borderColor: "#00d672",
+        textColor: "white",
+      }}
       size="sm"
-      borderRadius="1rem"
+      borderRadius="0.5rem"
       {...props}
     >
       {options}

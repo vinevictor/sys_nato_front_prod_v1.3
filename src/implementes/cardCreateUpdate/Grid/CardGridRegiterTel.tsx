@@ -13,7 +13,13 @@ export default function CardGridRegisterTel({
   return (
     <>
       <Box {...props}>
-        <FormLabel fontSize="sm" fontWeight="md" m={0}>
+        <FormLabel 
+          fontSize="sm" 
+          fontWeight="md" 
+          m={0}
+          color="gray.700"
+          _dark={{ color: "gray.300" }}
+        >
           Telefone {index && index > 0 && index}
         </FormLabel>
         <InputRegisterTel
@@ -21,8 +27,13 @@ export default function CardGridRegisterTel({
           Index={index && index > 0 && index}
           tell={tell}
           px={1}
-          bg={"gray.100"}
-          borderColor={"gray.400"}
+          bg="gray.100"
+          borderColor="gray.400"
+          _dark={{ 
+            bg: "gray.700", 
+            borderColor: "gray.500",
+            color: "gray.100"
+          }}
         />
       </Box>
     </>

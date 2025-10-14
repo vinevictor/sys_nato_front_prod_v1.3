@@ -17,11 +17,23 @@ export default function CardGridName({
     <Box {...props}>
       {
         label ? (
-          <FormLabel fontSize="sm" fontWeight="md" m={0}>
+          <FormLabel 
+            fontSize="sm" 
+            fontWeight="md" 
+            m={0}
+            color="gray.700"
+            _dark={{ color: "gray.300" }}
+          >
             {label}
           </FormLabel>
         ) : (
-          <FormLabel fontSize="sm" fontWeight="md" m={0}>
+          <FormLabel 
+            fontSize="sm" 
+            fontWeight="md" 
+            m={0}
+            color="gray.700"
+            _dark={{ color: "gray.300" }}
+          >
             Nome Completo
           </FormLabel>
         )
@@ -34,6 +46,11 @@ export default function CardGridName({
         px={1}
         bg="gray.100"
         readonly={readonly}
+        _dark={{ 
+          bg: "gray.700", 
+          borderColor: "gray.500",
+          color: "gray.100"
+        }}
       />
     </Box>
   );

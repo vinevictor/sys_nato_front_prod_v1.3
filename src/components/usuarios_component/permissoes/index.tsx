@@ -40,8 +40,18 @@ interface Props {
 export default function Permissoes({ data }: Props) {
   return (
     <>
-      <Divider my={4} borderColor="gray.300" />
-      <Heading fontSize={{ base: "md", md: "lg" }}>Permissões</Heading>
+      <Divider 
+        my={4} 
+        borderColor="gray.300" 
+        _dark={{ borderColor: "gray.600" }} 
+      />
+      <Heading 
+        fontSize={{ base: "md", md: "lg" }}
+        color="gray.800"
+        _dark={{ color: "gray.100" }}
+      >
+        Permissões
+      </Heading>
       <Flex
         w={"100%"}
         gap={4}
@@ -57,8 +67,15 @@ export default function Permissoes({ data }: Props) {
                 borderColor="gray.500"
                 name={item.name}
                 defaultChecked={isChecked}
+                _dark={{ borderColor: "gray.400" }}
               />
-              <FormLabel fontSize="sm" fontWeight="md" m={0}>
+              <FormLabel 
+                fontSize="sm" 
+                fontWeight="md" 
+                m={0}
+                color="gray.700"
+                _dark={{ color: "gray.300" }}
+              >
                 {item.label}
               </FormLabel>
             </Flex>

@@ -12,7 +12,13 @@ export function CardGridUserFinanceira({
   return (
     <>
       <Box {...props}>
-        <FormLabel fontSize="sm" fontWeight="md" m={0}>
+        <FormLabel 
+          fontSize="sm" 
+          fontWeight="md" 
+          m={0}
+          color="gray.700"
+          _dark={{ color: "gray.300" }}
+        >
           Financeira
         </FormLabel>
         <SelectUserFinanceira setValue={UserFinanceira} />

@@ -44,7 +44,7 @@ export default function SidebarLayout({ session, children }: SidebarLayoutProps)
         transition="margin-left 0.3s ease"
       >
         {/* Conteúdo principal com scroll */}
-        <Box flex={1} overflowY="auto">
+        <Box px={4} flex={1} overflowY="auto">
           {children}
         </Box>
 

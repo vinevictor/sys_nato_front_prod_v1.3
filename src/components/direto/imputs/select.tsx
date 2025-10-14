@@ -13,7 +13,11 @@ export const SelectComponentFilterHome = ({ Data, ...props }: SelectPropsCompone
       _hover={{ borderColor: "#00613C" }}
       borderColor={"#00713D"}
       size="sm"
-      borderRadius="1rem"
+      _dark={{
+        borderColor: "#00d672",
+        textColor: "white",
+      }}
+      borderRadius="0.5rem"
       {...props}
     >
       { Data.length > 0 &&

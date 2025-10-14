@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { Box, Flex, Heading, Text, Button, VStack, Container, Icon } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { FiRefreshCw, FiHome } from "react-icons/fi";
+import { Box, Flex, Heading, Text, Button, VStack, Icon } from "@chakra-ui/react";
+import { MdRefresh, MdHome, MdWarning } from "react-icons/md";
 import Link from "next/link";
-
-const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
 
 /**
  * Componente de erro global da aplicação
- * Este componente é exibido automaticamente quando ocorre um erro não tratado
+ * 
+ * Exibido automaticamente quando ocorre um erro não tratado.
+ * Permite ao usuário tentar novamente ou voltar para home.
+ * 
+ * @param error - Erro capturado
+ * @param reset - Função para tentar novamente
+ * @returns Componente de erro
  */
 export default function Error({
   error,
@@ -27,214 +29,203 @@ export default function Error({
 
   return (
     <Flex
-      w="full"
-      minH="100vh"
+      direction="column"
       align="center"
       justify="center"
-      bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+      minH="100vh"
+      bg="gray.50"
+      _dark={{ bg: "gray.900" }}
+      p={{ base: 4, md: 8 }}
       position="relative"
       overflow="hidden"
     >
-      {/* Background decorativo */}
+      {/* Efeito de fundo decorativo */}
       <Box
         position="absolute"
-        top="-10%"
-        right="-5%"
-        w="400px"
-        h="400px"
+        top="-40%"
+        right="-10%"
+        width="600px"
+        height="600px"
         borderRadius="full"
-        bg="whiteAlpha.200"
+        bg="orange.50"
+        _dark={{ bg: "orange.900", opacity: 0.1 }}
+        opacity={0.3}
         filter="blur(100px)"
+        pointerEvents="none"
       />
       <Box
         position="absolute"
-        bottom="-10%"
-        left="-5%"
-        w="500px"
-        h="500px"
+        bottom="-40%"
+        left="-10%"
+        width="500px"
+        height="500px"
         borderRadius="full"
-        bg="whiteAlpha.200"
-        filter="blur(120px)"
+        bg="red.50"
+        _dark={{ bg: "red.900", opacity: 0.1 }}
+        opacity={0.3}
+        filter="blur(100px)"
+        pointerEvents="none"
       />
 
-      <Container maxW="container.md" py={10}>
-        <MotionFlex
-          direction="column"
-          align="center"
-          justify="center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Card principal */}
+      <VStack
+        spacing={{ base: 6, md: 8 }}
+        textAlign="center"
+        maxW={{ base: "90%", md: "600px" }}
+        bg="white"
+        p={{ base: 6, md: 10 }}
+        borderRadius="2xl"
+        shadow="2xl"
+        borderWidth="1px"
+        borderColor="gray.200"
+        _dark={{ bg: "gray.800", borderColor: "gray.700" }}
+        position="relative"
+        zIndex={1}
+      >
+        {/* Ícone de aviso */}
+        <Box position="relative">
           <Box
-            bg="white"
-            borderRadius="2xl"
-            boxShadow="2xl"
-            p={{ base: 8, md: 12, lg: 16 }}
-            maxW="600px"
-            w="full"
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            width={{ base: "120px", md: "160px" }}
+            height={{ base: "120px", md: "160px" }}
+            borderRadius="full"
+            bg="orange.100"
+            _dark={{ bg: "orange.900", opacity: 0.2 }}
+            filter="blur(20px)"
+          />
+          <Icon
+            as={MdWarning}
+            w={{ base: 24, md: 32 }}
+            h={{ base: 24, md: 32 }}
+            color="orange.500"
+            _dark={{ color: "orange.400" }}
             position="relative"
-            overflow="hidden"
+          />
+        </Box>
+
+        {/* Título */}
+        <Heading
+          fontSize={{ base: "2xl", md: "3xl" }}
+          fontWeight="semibold"
+          color="gray.800"
+          _dark={{ color: "gray.100" }}
+        >
+          Ops! Algo Deu Errado
+        </Heading>
+
+        {/* Descrição */}
+        <Text
+          fontSize={{ base: "md", md: "lg" }}
+          color="gray.600"
+          _dark={{ color: "gray.300" }}
+          lineHeight="1.8"
+          px={{ base: 0, md: 4 }}
+        >
+          Encontramos um erro inesperado durante a execução.
+          <br />
+          Tente novamente ou volte para a página inicial.
+        </Text>
+
+        {/* Detalhes do erro (apenas em desenvolvimento) */}
+        {process.env.NODE_ENV === "development" && (
+          <Box
+            w="full"
+            p={4}
+            bg="gray.50"
+            _dark={{ bg: "gray.900" }}
+            borderRadius="md"
+            borderLeft="4px solid"
+            borderColor="orange.500"
+            textAlign="left"
           >
-            {/* Decoração do card */}
-            <Box
-              position="absolute"
-              top="-50px"
-              right="-50px"
-              w="150px"
-              h="150px"
-              borderRadius="full"
-              bg="red.50"
-              opacity={0.5}
-            />
-
-            <VStack spacing={6} textAlign="center">
-              {/* Ícone de erro animado */}
-              <MotionBox
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+            <Text 
+              fontSize="sm" 
+              fontWeight="semibold" 
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+              mb={2}
+            >
+              Detalhes do erro (DEV):
+            </Text>
+            <Text 
+              fontSize="xs" 
+              color="gray.600"
+              _dark={{ color: "gray.400" }}
+              fontFamily="mono"
+              wordBreak="break-word"
+            >
+              {error.message}
+            </Text>
+            {error.digest && (
+              <Text 
+                fontSize="xs" 
+                color="gray.500"
+                _dark={{ color: "gray.500" }}
+                mt={2}
               >
-                <Box
-                  w={{ base: "100px", md: "120px" }}
-                  h={{ base: "100px", md: "120px" }}
-                  borderRadius="full"
-                  bg="red.50"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  mb={4}
-                >
-                  <Text fontSize={{ base: "4xl", md: "5xl" }} role="img" aria-label="erro">
-                    😕
-                  </Text>
-                </Box>
-              </MotionBox>
-
-              {/* Título */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Heading
-                  fontSize={{ base: "2xl", md: "3xl" }}
-                  fontWeight="bold"
-                  bgGradient="linear(to-r, red.600, pink.500)"
-                  bgClip="text"
-                  letterSpacing="tight"
-                  mb={2}
-                >
-                  Ops! Algo deu errado
-                </Heading>
-              </MotionBox>
-
-              {/* Descrição */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                w="full"
-              >
-                <Text
-                  fontSize={{ base: "md", md: "lg" }}
-                  color="gray.600"
-                  maxW="400px"
-                  mx="auto"
-                >
-                  Encontramos um erro inesperado. Tente novamente ou volte para a página inicial.
-                </Text>
-
-                {/* Detalhes do erro (apenas em desenvolvimento) */}
-                {process.env.NODE_ENV === "development" && (
-                  <Box
-                    mt={4}
-                    p={4}
-                    bg="gray.50"
-                    borderRadius="md"
-                    borderLeft="4px solid"
-                    borderColor="red.500"
-                    textAlign="left"
-                  >
-                    <Text fontSize="sm" fontWeight="semibold" color="gray.700" mb={1}>
-                      Detalhes do erro:
-                    </Text>
-                    <Text fontSize="xs" color="gray.600" fontFamily="mono">
-                      {error.message}
-                    </Text>
-                    {error.digest && (
-                      <Text fontSize="xs" color="gray.500" mt={2}>
-                        Digest: {error.digest}
-                      </Text>
-                    )}
-                  </Box>
-                )}
-              </MotionBox>
-
-              {/* Botões de ação */}
-              <MotionBox
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                w="full"
-                pt={4}
-              >
-                <VStack spacing={3} w="full">
-                  <Button
-                    onClick={() => reset()}
-                    size="lg"
-                    w="full"
-                    maxW="300px"
-                    colorScheme="red"
-                    bgGradient="linear(to-r, red.500, pink.500)"
-                    _hover={{
-                      bgGradient: "linear(to-r, red.600, pink.600)",
-                      transform: "translateY(-2px)",
-                      boxShadow: "lg",
-                    }}
-                    _active={{
-                      transform: "translateY(0)",
-                    }}
-                    transition="all 0.2s"
-                    leftIcon={<Icon as={FiRefreshCw} />}
-                  >
-                    Tentar Novamente
-                  </Button>
-
-                  <Button
-                    as={Link}
-                    href="/home"
-                    size="md"
-                    variant="ghost"
-                    colorScheme="red"
-                    leftIcon={<Icon as={FiHome} />}
-                    _hover={{
-                      bg: "red.50",
-                      transform: "translateX(-2px)",
-                    }}
-                    transition="all 0.2s"
-                  >
-                    Voltar para Home
-                  </Button>
-                </VStack>
-              </MotionBox>
-
-              {/* Mensagem adicional */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                pt={4}
-              >
-                <Text fontSize="sm" color="gray.500">
-                  Se o problema persistir, entre em contato com o suporte técnico.
-                </Text>
-              </MotionBox>
-            </VStack>
+                Digest: {error.digest}
+              </Text>
+            )}
           </Box>
-        </MotionFlex>
-      </Container>
+        )}
+
+        {/* Botões de ação */}
+        <VStack spacing={3} w="full" pt={4}>
+          <Button
+            onClick={() => reset()}
+            leftIcon={<MdRefresh />}
+            colorScheme="orange"
+            size={{ base: "md", md: "lg" }}
+            w="full"
+            maxW="300px"
+            _hover={{
+              transform: "translateY(-2px)",
+              shadow: "lg",
+            }}
+            transition="all 0.2s"
+          >
+            Tentar Novamente
+          </Button>
+
+          <Button
+            as={Link}
+            href="/home"
+            leftIcon={<MdHome />}
+            variant="ghost"
+            colorScheme="orange"
+            size={{ base: "sm", md: "md" }}
+            _hover={{
+              bg: "orange.50",
+              _dark: { bg: "orange.900", opacity: 0.3 },
+            }}
+            transition="all 0.2s"
+          >
+            Voltar para Home
+          </Button>
+        </VStack>
+
+        {/* Mensagem adicional */}
+        <Box
+          bg="orange.50"
+          px={6}
+          py={3}
+          borderRadius="lg"
+          borderWidth="1px"
+          borderColor="orange.200"
+          _dark={{ bg: "orange.900", opacity: 0.3, borderColor: "orange.700" }}
+          mt={4}
+        >
+          <Text
+            fontSize={{ base: "sm", md: "md" }}
+            color="orange.700"
+            _dark={{ color: "orange.300" }}
+          >
+            Se o problema persistir, entre em contato com o suporte técnico.
+          </Text>
+        </Box>
+      </VStack>
     </Flex>
   );
 }

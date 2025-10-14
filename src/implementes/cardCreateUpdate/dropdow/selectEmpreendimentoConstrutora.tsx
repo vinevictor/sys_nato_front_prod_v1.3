@@ -1,6 +1,6 @@
 "use client";
 import useEmpreendimentoContext from "@/hook/useEmpreendimentoContext";
-import { Flex, Select, SelectProps, useToast } from "@chakra-ui/react";
+import { Flex, Select, SelectProps, chakra, useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
 interface SelectUserConstrutoraProps extends SelectProps {
@@ -17,6 +17,19 @@ interface EmpreendimentoConstrutoraProps {
   fantasia: string | null;
 }
 
+/**
+ * Select de Construtoras do Empreendimento
+ *
+ * Busca a lista de construtoras da API e permite seleção.
+ * Suporta tema claro e escuro com cores e estilos adaptativos.
+ *
+ * Estados visuais:
+ * - Hover: Verde (#00713D no light, #00d672 no dark)
+ * - Focus: Verde com shadow
+ * - Dark mode: Background gray.700, texto gray.100
+ *
+ * @param setValue - ID da construtora inicial selecionada
+ */
 export function SelectEmpreendimentoConstrutora({
   setValue,
   ...props
@@ -66,40 +79,35 @@ export function SelectEmpreendimentoConstrutora({
   }, [setValue]);
 
   return (
-    <>
-      <Flex gap={2}>
-        <Select
-          {...props}
-          name="empreendimentoConstrutora"
-          border="1px solid #b8b8b8cc"
-          borderTop={"none"}
-          borderRight={"none"}
-          borderLeft={"none"}
-          borderRadius="0"
-          bg={"gray.100"}
-          borderColor={"gray.400"}
-          onChange={(e: any) => {
-            const selectedId = Number(e.target.value);
-            setConstrutora(selectedId);
-            handleConstrutoraChange(selectedId);
-          }}
-          value={Construtora}
-        >
-          <option style={{ backgroundColor: "#EDF2F7" }} value={0}>
-            Selecione uma construtora
-          </option>
-          {ConstrutoraData.length > 0 &&
-            ConstrutoraData.map((construtora) => (
-              <option
-                style={{ backgroundColor: "#EDF2F7" }}
-                key={construtora.id}
-                value={construtora.id}
-              >
-                {construtora.fantasia}
-              </option>
-            ))}
-        </Select>
-      </Flex>
-    </>
+    <Flex gap={2} width="100%">
+      <Select
+        {...props}
+        name="empreendimentoConstrutora"
+        variant="flushed"
+        borderColor="gray.400"
+        bg="gray.100"
+        px={1}
+        onChange={(e: any) => {
+          const selectedId = Number(e.target.value);
+          setConstrutora(selectedId);
+          handleConstrutoraChange(selectedId);
+        }}
+        value={Construtora}
+        rounded={"sm"}
+        _dark={{
+          bg: "gray.700",
+          borderColor: "gray.600",
+          color: "gray.100",
+        }}
+      >
+        <chakra.option ps={2} _dark={{ color: "gray.800" }} value={0}>Selecione uma construtora</chakra.option>
+        {ConstrutoraData.length > 0 &&
+          ConstrutoraData.map((construtora) => (
+            <chakra.option ps={2} key={construtora.id} _dark={{ color: "gray.800" }} value={construtora.id}>
+              {construtora.fantasia}
+            </chakra.option>
+          ))}
+      </Select>
+    </Flex>
   );
 }
