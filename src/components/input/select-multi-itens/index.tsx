@@ -99,7 +99,7 @@ export default function SelectMultiItem({
 
   return (
     <>
-      <Box w={"full"} minH={{ base: "12rem", md: "14rem" }}>
+      <Box w={"full"} minH={{ base: "9rem", md: "10rem" }}>
         {isAdmin && (
           <>
             {IsLoadingGeral && (

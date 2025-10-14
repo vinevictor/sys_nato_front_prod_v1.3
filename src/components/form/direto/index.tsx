@@ -21,9 +21,11 @@ import {
   Button,
   Divider,
   Flex,
+  Heading,
   Icon,
   Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -236,68 +238,52 @@ export default function FormSolicitacaoDireto({
   };
 
   return (
-    <Flex
-      w={"full"}
-      rounded={"md"}
-      border={"1px solid #E8E8E8"}
-      alignItems={"center"}
-      flexDir={{ base: "column", md: "column" }}
-      flexWrap={{ base: "nowrap", md: "nowrap" }}
-      gap={2}
-      shadow={"lg"}
-      h={"fit-content"}
+    <VStack 
+      spacing={0} 
+      align="stretch" 
+      w="full"
+      bg="white"
+      borderWidth="1px"
+      borderColor="gray.200"
+      borderRadius="xl"
+      shadow="lg"
+      _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
+      h="full"
     >
+      {/* Título do Formulário */}
       <Flex
-        p={4}
-        rounded={"md"}
-        flexDir={"row"}
-        justifyContent={"space-between"}
-        w={"full"}
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        borderBottomWidth="2px"
+        borderBottomColor="#00713D"
+        p={{ base: 3, md: 4 }}
+        align="center"
+        justify="space-between"
       >
-        <Flex flexDir={"column"}>
-          <Text fontSize={"md"}>
-            Criado Em:
-            {` ${
-              dados.createdAt &&
-              dados.createdAt.split("T")[0].split("-").reverse().join("/")
-            }, ${
-              dados.createdAt && dados.createdAt.split("T")[1].split(".")[0]
-            }`}
-          </Text>
-          {dados.updatedAt && (
-            <Text fontSize={"md"}>
-              Atualizado Em:
-              {` ${
-                dados.updatedAt &&
-                dados.updatedAt.split("T")[0].split("-").reverse().join("/")
-              }, ${
-                dados.updatedAt && dados.updatedAt.split("T")[1].split(".")[0]
-              }`}
-            </Text>
-          )}
-          <Text fontSize={{ base: "sm", md: "md" }}>Id: {Id}</Text>
-        </Flex>
-        <Flex flexDir={"column"}>
-          <Text fontSize={{ base: "xl", md: "2xl" }}>Dados Pessoais</Text>
-          <Text fontSize={{ base: "md", md: "md" }}>
-            Corretor:{" "}
-            {dados.corretor?.nome
-              ? dados.corretor.nome
-              : "Corretor Não Cadastrado"}
-          </Text>
-          <Text fontSize={{ base: "md", md: "md" }}>
-            Andamento: {dados.andamento}
-          </Text>
-        </Flex>
+        <Heading 
+          size={{ base: "sm", md: "md" }}
+          color="#023147"
+          _dark={{ color: "gray.100" }}
+        >
+          Dados da Solicitação Direto
+        </Heading>
       </Flex>
-      <Divider borderColor="#00713D" />
+      
+      {/* Conteúdo do Formulário */}
+      <VStack
+        spacing={4}
+        p={{ base: 3, md: 4, lg: 6 }}
+        align="stretch"
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        flex={1}
+        overflowY="auto"
+      >
       <Flex
         w={"100%"}
         justifyContent={"center"}
         flexDir={"column"}
         gap={4}
-        p={4}
-        mb={2}
       >
         <Flex gap={2}>
           <MaskedInput
@@ -433,39 +419,22 @@ export default function FormSolicitacaoDireto({
             OnRetorno={(tags) => handleChange("tags", tags)}
           />
         </Flex>
-        {session?.role.now && (
-          <Box>
-            <Flex
-              w={"full"}
-              border="1px"
-              borderColor="red.500"
-              bg="red.100"
-              p={3}
-              borderRadius="md"
-              align="center"
-              gap={2}
-              justify="space-between"
-            >
-              <Flex align="center" gap={2}>
-                <Icon as={AiOutlineWarning} color="red.600" boxSize={7} />
-
-                {dados.alertanow ? (
-                  <Text color="red.700" fontSize="md">
-                    Alerta criado, se for necessário cancelar
-                  </Text>
-                ) : (
-                  <Text color="red.700" fontSize="md">
-                    Somente em caso de cliente presente na unidade
-                  </Text>
-                )}
-              </Flex>
-              <BtnAlertNow id={Id || 0} alertanow={dados.alertanow || false} />
-            </Flex>
-          </Box>
-        )}
       </Flex>
 
-      <Flex gap={2} w={"full"} p={2} justifyContent={"flex-end"}>
+      </VStack>
+      
+      {/* Botões de Ação - Fixo no rodapé */}
+      <Flex 
+        gap={2} 
+        w={"full"} 
+        justifyContent={"flex-end"}
+        flexWrap="wrap"
+        p={{ base: 3, md: 4 }}
+        borderTopWidth="2px"
+        borderTopColor="#00713D"
+        bg="white"
+        _dark={{ borderTopColor: "#00d672", bg: "gray.800" }}
+      >
         {session?.hierarquia === "ADM" && <BotaoSisapp body={dados as any} />}
         {dados.ativo && isAdmin && <ResendSms id={Id} />}
         <Button
@@ -527,6 +496,6 @@ export default function FormSolicitacaoDireto({
           </BtnBasicSave>
         )}
       </Flex>
-    </Flex>
+    </VStack>
   );
 }

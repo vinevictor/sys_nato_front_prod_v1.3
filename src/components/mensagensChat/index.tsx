@@ -86,11 +86,17 @@ export default function MensagensChat({
           border={!isCurrentUser ? "1px solid" : "none"}
           borderColor={!isCurrentUser ? "gray.200" : "transparent"}
           position="relative"
+          _dark={{
+            bg: isCurrentUser ? "blue.600" : "gray.700",
+            color: isCurrentUser ? "white" : "gray.100",
+            borderColor: !isCurrentUser ? "gray.600" : "transparent"
+          }}
         >
           {!isCurrentUser && (
             <Text
               fontSize="xs"
               color="gray.500"
+              _dark={{ color: "gray.400" }}
               mb={1}
               fontWeight="medium"
             >
@@ -110,6 +116,7 @@ export default function MensagensChat({
           <Text
             fontSize="xs"
             color={isCurrentUser ? "blue.100" : "gray.500"}
+            _dark={{ color: isCurrentUser ? "blue.200" : "gray.400" }}
             textAlign="right"
             fontWeight="medium"
           >
@@ -133,12 +140,11 @@ export default function MensagensChat({
         borderColor="gray.200"
         p={{ base: 3, md: 4 }}
         flexDir="column"
-
-        justifyContent={"center"}
+        justifyContent="center"
         position="relative"
         overflow="hidden"
+        _dark={{ bg: "gray.900", borderColor: "gray.700" }}
       >
-        
         <Box
           bg="green.50"
           borderRadius="lg"
@@ -147,9 +153,9 @@ export default function MensagensChat({
           border="1px solid"
           borderColor="green.200"
           position="relative"
+          _dark={{ bg: "gray.800", borderColor: "gray.600" }}
         />
 
-       
         <Flex gap={2} align="flex-end">
           <Textarea
             placeholder="Selecione uma conversa para começar..."
@@ -161,6 +167,7 @@ export default function MensagensChat({
             bg="gray.100"
             isDisabled
             fontSize={{ base: "sm", md: "md" }}
+            _dark={{ bg: "gray.800", color: "gray.400", borderColor: "gray.600" }}
           />
           <Button
             leftIcon={<FiSend />}
@@ -173,7 +180,6 @@ export default function MensagensChat({
           </Button>
         </Flex>
 
-        
         <Box
           position="absolute"
           top={0}
@@ -181,12 +187,13 @@ export default function MensagensChat({
           right={0}
           bottom={0}
           bg="whiteAlpha.300"
+          _dark={{ bg: "blackAlpha.500" }}
           backdropFilter="blur(1px)"
           borderRadius="lg"
           zIndex={1}
           display="flex"
-          alignItems={"center"}
-          justifyContent={"center"}
+          alignItems="center"
+          justifyContent="center"
         >
           <Text
             color="gray.600"
@@ -198,6 +205,7 @@ export default function MensagensChat({
             py={2}
             borderRadius="md"
             shadow="sm"
+            _dark={{ color: "gray.300", bg: "gray.800" }}
           >
             Chat indisponível
           </Text>
@@ -208,7 +216,6 @@ export default function MensagensChat({
 
   return (
     <Box
-      h="full"
       w="full"
       display="flex"
       bg="white"
@@ -219,8 +226,10 @@ export default function MensagensChat({
       p={{ base: 3, md: 4 }}
       flexDir="column"
       overflow="hidden"
+      flex={1}
+      minH={0}
+      _dark={{ bg: "gray.800", borderColor: "gray.700" }}
     >
-      
       <Box
         bgGradient="linear(to-b, green.50, green.100)"
         borderRadius="lg"
@@ -231,6 +240,7 @@ export default function MensagensChat({
         border="1px solid"
         borderColor="green.200"
         position="relative"
+        _dark={{ bgGradient: "linear(to-b, gray.900, gray.800)", borderColor: "gray.600" }}
         css={{
           "&::-webkit-scrollbar": {
             width: "6px",
@@ -254,6 +264,7 @@ export default function MensagensChat({
             justify="center"
             direction="column"
             color="gray.500"
+            _dark={{ color: "gray.400" }}
             textAlign="center"
             p={4}
           >
@@ -272,7 +283,6 @@ export default function MensagensChat({
         )}
       </Box>
 
-      
       <Flex gap={2} align="flex-end">
         <Box flex={1}>
           <Textarea
@@ -291,6 +301,17 @@ export default function MensagensChat({
               borderColor: "blue.400",
               bg: "white",
               boxShadow: "0 0 0 1px var(--chakra-colors-blue-400)",
+            }}
+            _dark={{
+              bg: "gray.700",
+              borderColor: "gray.600",
+              color: "gray.100",
+              _hover: { borderColor: "gray.500", bg: "gray.600" },
+              _focus: {
+                borderColor: "blue.500",
+                bg: "gray.600",
+                boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)",
+              }
             }}
             value={message}
             onChange={(e) => setMessage(e.target.value)}

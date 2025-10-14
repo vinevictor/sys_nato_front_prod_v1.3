@@ -1,208 +1,187 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Flex, Heading, Text, Button, VStack, Container, useBreakpointValue, Icon } from "@chakra-ui/react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { FiHome, FiArrowLeft } from "react-icons/fi";
+import { Box, Flex, Heading, Text, Button, VStack, Icon } from "@chakra-ui/react";
+import { MdSearchOff, MdHome, MdArrowBack } from "react-icons/md";
 
-const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
-
+/**
+ * Componente de página não encontrada (404)
+ * 
+ * Exibido quando o usuário tenta acessar uma rota que não existe
+ * no sistema. Oferece navegação para home ou login.
+ * 
+ * @returns Componente de página 404
+ */
 export default function NotFound() {
-  const headingSize = useBreakpointValue({ base: "3xl", md: "4xl", lg: "5xl" });
-  const textSize = useBreakpointValue({ base: "md", md: "lg" });
-  const imageSize = useBreakpointValue({ base: 200, md: 280, lg: 350 });
-
   return (
     <Flex
-      w="full"
-      minH="100vh"
+      direction="column"
       align="center"
       justify="center"
-      bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      minH="100vh"
+      bg="gray.50"
+      _dark={{ bg: "gray.900" }}
+      p={{ base: 4, md: 8 }}
       position="relative"
       overflow="hidden"
     >
-      {/* Background decorativo */}
+      {/* Efeito de fundo decorativo */}
       <Box
         position="absolute"
-        top="-10%"
-        right="-5%"
-        w="400px"
-        h="400px"
+        top="-50%"
+        right="-10%"
+        width="600px"
+        height="600px"
         borderRadius="full"
-        bg="whiteAlpha.100"
+        bg="blue.50"
+        _dark={{ bg: "blue.900", opacity: 0.1 }}
+        opacity={0.3}
         filter="blur(100px)"
+        pointerEvents="none"
       />
       <Box
         position="absolute"
-        bottom="-10%"
-        left="-5%"
-        w="500px"
-        h="500px"
+        bottom="-40%"
+        left="-10%"
+        width="500px"
+        height="500px"
         borderRadius="full"
-        bg="whiteAlpha.100"
-        filter="blur(120px)"
+        bg="purple.50"
+        _dark={{ bg: "purple.900", opacity: 0.1 }}
+        opacity={0.3}
+        filter="blur(100px)"
+        pointerEvents="none"
       />
 
-      <Container maxW="container.lg" py={10}>
-        <MotionFlex
-          direction="column"
-          align="center"
-          justify="center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Card principal */}
+      <VStack
+        spacing={{ base: 6, md: 8 }}
+        textAlign="center"
+        maxW={{ base: "90%", md: "600px" }}
+        bg="white"
+        p={{ base: 6, md: 10 }}
+        borderRadius="2xl"
+        shadow="2xl"
+        borderWidth="1px"
+        borderColor="gray.200"
+        _dark={{ bg: "gray.800", borderColor: "gray.700" }}
+        position="relative"
+        zIndex={1}
+      >
+        {/* Ícone de busca */}
+        <Box position="relative">
           <Box
-            bg="white"
-            borderRadius="2xl"
-            boxShadow="2xl"
-            p={{ base: 8, md: 12, lg: 16 }}
-            maxW="600px"
-            w="full"
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            width={{ base: "120px", md: "160px" }}
+            height={{ base: "120px", md: "160px" }}
+            borderRadius="full"
+            bg="blue.100"
+            _dark={{ bg: "blue.900", opacity: 0.2 }}
+            filter="blur(20px)"
+          />
+          <Icon
+            as={MdSearchOff}
+            w={{ base: 24, md: 32 }}
+            h={{ base: 24, md: 32 }}
+            color="blue.500"
+            _dark={{ color: "blue.400" }}
             position="relative"
-            overflow="hidden"
+          />
+        </Box>
+
+        {/* Código de erro */}
+        <Heading
+          fontSize={{ base: "6xl", md: "8xl" }}
+          fontWeight="bold"
+          color="blue.600"
+          _dark={{ color: "blue.400" }}
+          lineHeight="1"
+          letterSpacing="tight"
+        >
+          404
+        </Heading>
+
+        {/* Título */}
+        <Heading
+          fontSize={{ base: "2xl", md: "3xl" }}
+          fontWeight="semibold"
+          color="gray.800"
+          _dark={{ color: "gray.100" }}
+        >
+          Página Não Encontrada
+        </Heading>
+
+        {/* Descrição */}
+        <Text
+          fontSize={{ base: "md", md: "lg" }}
+          color="gray.600"
+          _dark={{ color: "gray.300" }}
+          lineHeight="1.8"
+          px={{ base: 0, md: 4 }}
+        >
+          Desculpe, não conseguimos encontrar a página que você está procurando.
+          <br />
+          Verifique o endereço ou retorne para a página inicial.
+        </Text>
+
+        {/* Botões de ação */}
+        <VStack spacing={3} w="full" pt={4}>
+          <Button
+            as={Link}
+            href="/home"
+            leftIcon={<MdHome />}
+            colorScheme="blue"
+            size={{ base: "md", md: "lg" }}
+            w="full"
+            maxW="300px"
+            _hover={{
+              transform: "translateY(-2px)",
+              shadow: "lg",
+            }}
+            transition="all 0.2s"
           >
-            {/* Decoração do card */}
-            <Box
-              position="absolute"
-              top="-50px"
-              right="-50px"
-              w="150px"
-              h="150px"
-              borderRadius="full"
-              bg="purple.50"
-              opacity={0.5}
-            />
+            Voltar para Home
+          </Button>
 
-            <VStack spacing={6} textAlign="center">
-              {/* Imagem animada */}
-              <MotionBox
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Box position="relative" mb={4}>
-                  <Image
-                    src="/images/access-denied.svg"
-                    alt="404 - Página não encontrada"
-                    width={imageSize || 280}
-                    height={imageSize || 280}
-                    priority
-                    style={{ filter: "drop-shadow(0 10px 30px rgba(102, 126, 234, 0.3))" }}
-                  />
-                </Box>
-              </MotionBox>
+          <Button
+            as={Link}
+            href="/login"
+            leftIcon={<MdArrowBack />}
+            variant="ghost"
+            colorScheme="blue"
+            size={{ base: "sm", md: "md" }}
+            _hover={{
+              bg: "blue.50",
+              _dark: { bg: "blue.900", opacity: 0.3 },
+            }}
+            transition="all 0.2s"
+          >
+            Ir para Login
+          </Button>
+        </VStack>
 
-              {/* Código de erro */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Heading
-                  fontSize={headingSize}
-                  fontWeight="bold"
-                  bgGradient="linear(to-r, purple.600, pink.500)"
-                  bgClip="text"
-                  letterSpacing="tight"
-                >
-                  404
-                </Heading>
-              </MotionBox>
-
-              {/* Título */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                w="full"
-              >
-                <Heading
-                  size="lg"
-                  color="gray.800"
-                  fontWeight="semibold"
-                  mb={2}
-                >
-                  Algo deu errado
-                </Heading>
-                <Text
-                  fontSize={textSize}
-                  color="gray.600"
-                  maxW="400px"
-                  mx="auto"
-                >
-                  Desculpe, não conseguimos encontrar a página que você está procurando.
-                </Text>
-              </MotionBox>
-
-              {/* Botões de ação */}
-              <MotionBox
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                w="full"
-                pt={4}
-              >
-                <VStack spacing={3} w="full">
-                  <Button
-                    as={Link}
-                    href="/home"
-                    size="lg"
-                    w="full"
-                    maxW="300px"
-                    colorScheme="purple"
-                    bgGradient="linear(to-r, purple.500, pink.500)"
-                    _hover={{
-                      bgGradient: "linear(to-r, purple.600, pink.600)",
-                      transform: "translateY(-2px)",
-                      boxShadow: "lg",
-                    }}
-                    _active={{
-                      transform: "translateY(0)",
-                    }}
-                    transition="all 0.2s"
-                    leftIcon={<Icon as={FiHome} />}
-                  >
-                    Voltar para Home
-                  </Button>
-
-                  <Button
-                    as={Link}
-                    href="/login"
-                    size="md"
-                    variant="ghost"
-                    colorScheme="purple"
-                    leftIcon={<Icon as={FiArrowLeft} />}
-                    _hover={{
-                      bg: "purple.50",
-                      transform: "translateX(-2px)",
-                    }}
-                    transition="all 0.2s"
-                  >
-                    Ir para Login
-                  </Button>
-                </VStack>
-              </MotionBox>
-
-              {/* Mensagem adicional */}
-              <MotionBox
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                pt={4}
-              >
-                <Text fontSize="sm" color="gray.500">
-                  Se o problema persistir, entre em contato com o suporte.
-                </Text>
-              </MotionBox>
-            </VStack>
-          </Box>
-        </MotionFlex>
-      </Container>
+        {/* Mensagem adicional */}
+        <Box
+          bg="blue.50"
+          px={6}
+          py={3}
+          borderRadius="lg"
+          borderWidth="1px"
+          borderColor="blue.200"
+          _dark={{ bg: "blue.900", opacity: 0.3, borderColor: "blue.700" }}
+          mt={4}
+        >
+          <Text
+            fontSize={{ base: "sm", md: "md" }}
+            color="blue.700"
+            _dark={{ color: "blue.300" }}
+          >
+            Se o problema persistir, entre em contato com o suporte.
+          </Text>
+        </Box>
+      </VStack>
     </Flex>
   );
 }

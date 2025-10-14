@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { FaListOl } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
 
-
-
+// TODO remover compoment
 export const BtnListNow = () => {
   const [loading, setLoading] = useState(false)
   const [Cont, setCont] = useState(0)

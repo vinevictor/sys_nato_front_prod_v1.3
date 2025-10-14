@@ -21,19 +21,21 @@ function SelectGov({ isState }: SelectGovProps) {
   }, [setGov]);
 
   return (
-    <>
-      <Flex gap={2} alignItems={"center"}>
-        <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
-          Atendimento GovBr
-        </Text>
-        <Switch
-          isChecked={Value}
-          onChange={(e) => HandleSubmit(e.target.checked)}
-          colorScheme="green"
-          size={"sm"}
-        />
-      </Flex>
-    </>
+    <Flex gap={2} alignItems="center">
+      <Text 
+        fontSize={{ base: "xs", md: "sm" }} 
+        color="gray.600"
+        _dark={{ color: "gray.300" }}
+      >
+        Atendimento GovBr
+      </Text>
+      <Switch
+        isChecked={Value}
+        onChange={(e) => HandleSubmit(e.target.checked)}
+        colorScheme="green"
+        size="sm"
+      />
+    </Flex>
   );
 }
 

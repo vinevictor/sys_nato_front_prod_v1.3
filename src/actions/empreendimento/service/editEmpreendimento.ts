@@ -7,8 +7,8 @@ export async function EditEmpreendimento(_: any, data: FormData) {
   const id = Number(data.get("id") as string);
   const construtora = Number(data.get("empreendimentoConstrutora") as string);
   const nome = data.get("nomeEmpreendimento") as string;
-  const cidade = data.get("nomeCidade") as string;
-  const uf = data.get("empreendimentoUf") as string;
+  const cidade = data.get("cidade") as string;
+  const uf = data.get("estado") as string;
   const financeiro = data.get("financeira") as any;
   const financeiroArray = financeiro.split(",");
   const financeiroFinal = financeiroArray.map((element: number) => {

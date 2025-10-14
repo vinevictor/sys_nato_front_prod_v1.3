@@ -7,7 +7,7 @@ import SelectGov from "@/components/solicitacao/select_gov";
 import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
 import { SolicitacaoIdType } from "@/types/solicitacao";
-import { Flex, Box, Container, Text, Heading, Divider } from "@chakra-ui/react";
+import { Box, Container, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import { Suspense } from "react";
 
 interface Props {
@@ -141,24 +141,36 @@ export default async function PageSolicitacoes({ params }: Props) {
             gap={{ base: 3, md: 4 }}
             align={{ md: "center" }}
             justify="space-between"
+            wrap="wrap"
           >
-            <Heading size={{ base: "md", md: "lg" }}>Solicitação #{id}</Heading>
+            <Heading
+              size={{ base: "md", md: "lg" }}
+              color="gray.800"
+              _dark={{ color: "gray.100" }}
+            >
+              Solicitação #{id}
+            </Heading>
             <Flex
               w={{ base: "full", md: "auto" }}
               gap={{ base: 3, md: 8 }}
               direction={{ base: "column", md: "row" }}
               align={{ base: "flex-start", md: "center" }}
               bg="white"
-              _dark={{ bg: "gray.800" }}
+              _dark={{ bg: "gray.800", boxShadow: "sm" }}
               borderWidth="1px"
               borderColor={{ base: "gray.200", _dark: "gray.700" } as any}
               rounded="lg"
-              boxShadow="sm"
+              boxShadow="md"
               p={{ base: 3, md: 4 }}
+              wrap="wrap"
             >
               {/* Coluna esquerda - datas e id */}
-              <Box minW={{ md: "320px" }}>
-                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+              <Box w={{ base: "full", md: "auto" }} minW={{ md: "320px" }}>
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Criado Em:{" "}
                   {data?.data?.createdAt
                     ? `${data.data.createdAt
@@ -172,21 +184,37 @@ export default async function PageSolicitacoes({ params }: Props) {
                 </Text>
                 {data?.data?.andamento !== "EMITIDO" &&
                   data.data?.andamento !== "APROVADO" && (
-                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      color="gray.600"
+                      _dark={{ color: "gray.300" }}
+                    >
                       Agendado Em: {`${AgendamentoTxt()}`}
                     </Text>
                   )}
                 {data?.data?.andamento === "EMITIDO" && (
-                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                  <Text
+                    fontSize={{ base: "xs", md: "sm" }}
+                    color="gray.600"
+                    _dark={{ color: "gray.300" }}
+                  >
                     Aprovado Em: {`${AprovacaoTxt()}`}
                   </Text>
                 )}
                 {data?.data?.andamento === "APROVADO" && (
-                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                  <Text
+                    fontSize={{ base: "xs", md: "sm" }}
+                    color="gray.600"
+                    _dark={{ color: "gray.300" }}
+                  >
                     Aprovado Em: {`${AprovacaoTxt()}`}
                   </Text>
                 )}
-                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Id: {data?.data?.id ?? "-"}
                 </Text>
               </Box>
@@ -200,11 +228,19 @@ export default async function PageSolicitacoes({ params }: Props) {
               />
 
               {/* Coluna direita - resumo */}
-              <Box minW={{ md: "320px" }}>
-                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+              <Box w={{ base: "full", md: "auto" }} minW={{ md: "320px" }}>
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Corretor: {data?.data?.corretor?.nome || "-"}
                 </Text>
-                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
                   Andamento: {AndamentoTxt() || ""}
                 </Text>
                 {session?.user?.hierarquia === "ADM" &&
@@ -219,86 +255,87 @@ export default async function PageSolicitacoes({ params }: Props) {
 
         {/* Layout principal - Stack vertical em mobile, horizontal em desktop */}
         <Flex
-          direction={{ base: "column", lg: "row" }}
+          direction="column"
           gap={{ base: 4, md: 6 }}
-          // minH="calc(100vh - 160px)"
-          h="67vh"
           maxW="full"
-          align="stretch"
         >
-          {/* Seção do formulário */}
-          <Box
-            flex={{ base: "1", lg: "3" }}
-            w={{ base: "full", lg: "auto" }}
-            minW={0} // Permite que o flex item encolha
-            display="flex"
-            flexDir="column"
+          {/* Linha 1 - Formulário (65%) e Chat (35%) */}
+          <Flex
+            direction={{ base: "column", lg: "row" }}
+            gap={{ base: 4, md: 6 }}
+            w="full"
+            align="stretch"
           >
+            {/* Formulário - 65% */}
             {data.data && (
-              <FormSolicitacaoEdit id={+id} data={data.data} session={user} />
-            )}
-            {/* Logs abaixo do formulário (somente ADM) */}
-            {user?.hierarquia === "ADM" && (
-              <Box mt={{ base: 4, md: 6 }}>
-                <Box
-                  bg="white"
-                  _dark={{ bg: "gray.800" }}
-                  borderWidth="1px"
-                  borderColor={{ base: "gray.200", _dark: "gray.700" } as any}
-                  rounded="lg"
-                  boxShadow="sm"
-                  p={{ base: 3, md: 5 }}
-                >
-                  <Suspense fallback={<LogsComponent logs={logs.data} />}>
-                    <LogsComponent logs={logs.data} />
-                  </Suspense>
-                </Box>
+              <Box flex={{ base: "1", lg: "13" }}>
+                <FormSolicitacaoEdit id={+id} data={data.data} session={user} />
               </Box>
             )}
-          </Box>
 
-          {/* Seção lateral - Chat e Alertas */}
-          <Flex
-            flex={{ base: "1", lg: "2" }}
-            direction="column"
-            gap={{ base: 4, md: 6 }}
-            w={{ base: "full", lg: "auto" }}
-            minW={0}
-            maxW={{ base: "full", lg: "520px" }}
-            position={{ base: "static", lg: "sticky" }}
-            top={{ lg: 4 }}
-            h="full"
-          >
-            {/* Chat */}
+            {/* Chat - 35% */}
             <Box
-              flex="1"
-              minH={{ base: "480px", md: "460px", lg: ContainerMesage }}
-              maxH={{ base: "auto", lg: "none" }}
+              flex={{ base: "1", lg: "7" }}
+              minH={{ base: "360px", md: "420px" }}
+              h={{ lg: ContainerMesage }}
               bg="white"
-              _dark={{ bg: "gray.800" }}
               borderWidth="1px"
-              borderColor={{ base: "gray.200", _dark: "gray.700" } as any}
-              rounded="lg"
-              boxShadow="sm"
-              p={{ base: 3, md: 4 }}
+              borderColor="gray.200"
+              borderRadius="xl"
+              shadow="lg"
+              display="flex"
+              flexDir="column"
+              _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
             >
-              <MensagensChatDireto
-                Id={+id}
-                messages={data.data?.obs ?? []}
-                session={user}
-                disabled={
-                  data.data?.andamento === "EMITIDO" ||
-                  data.data?.andamento === "APROVADO"
-                }
-              />
+                <MensagensChatDireto
+                  Id={+id}
+                  messages={data.data?.obs ?? []}
+                  session={user}
+                  disabled={
+                    data.data?.andamento === "EMITIDO" ||
+                    data.data?.andamento === "APROVADO"
+                  }
+                />
             </Box>
+          </Flex>
 
-            {/* Alertas */}
+          {/* Linha 2 - Logs (65%) e Alertas (35%) */}
+          <Flex
+            direction={{ base: "column", lg: "row" }}
+            gap={{ base: 4, md: 6 }}
+            w="full"
+            align="stretch"
+          >
+            {/* Logs - 65% (somente ADM) */}
+            {user?.hierarquia === "ADM" && (
+              <Box
+                flex={{ base: "1", lg: "13" }}
+                minH={{ base: "280px", md: "340px" }}
+                bg="white"
+                borderWidth="1px"
+                borderColor="gray.200"
+                borderRadius="xl"
+                shadow="lg"
+                overflowY="auto"
+                _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
+              >
+                <Suspense fallback={<LogsComponent logs={logs.data} />}>
+                  <LogsComponent logs={logs.data} />
+                </Suspense>
+              </Box>
+            )}
+
+            {/* Alertas - 35% */}
             <Box
-              flex="2"
-              minH={{ base: "300px", md: "360px" }}
-              maxH={{ base: "auto", lg: "none" }}
-              mb={2}
+              flex={{ base: "1", lg: "7" }}
+              minH={{ base: "280px", md: "340px" }}
+              bg="white"
+              borderWidth="1px"
+              borderColor="gray.200"
+              borderRadius="xl"
+              shadow="lg"
+              overflowY="auto"
+              _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
             >
               <ListAlertas
                 id={+id}

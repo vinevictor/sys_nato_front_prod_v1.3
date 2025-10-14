@@ -1,28 +1,45 @@
 "use client";
 
-import { IconButton, Tooltip } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { IconButton, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { BsFillPencilFill } from "react-icons/bs";
+import { ModalEditarEmpreendimento } from "@/components/modal/ModalEditarEmpreendimento";
 
 interface BtnEditarEmpreendimentoProps {
   id: number;
 }
 
+/**
+ * Botão para editar empreendimento
+ *
+ * Abre um modal com o formulário de edição ao ser clicado.
+ *
+ * @param id - ID do empreendimento a ser editado
+ * @returns Botão de edição com modal
+ */
 export function BtnEditarEmpreendimento({ id }: BtnEditarEmpreendimentoProps) {
-  const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleRedirect = () => {
-    router.push(`/empreendimentos/${id}`);
-  };
   return (
-    <Tooltip label="Editar Empreendimento">
-      <IconButton
-        colorScheme="blue"
-        variant="outline"
-        icon={<BsFillPencilFill />}
-        aria-label="Edit"
-        onClick={handleRedirect}
-      />
-    </Tooltip>
+    <>
+      <Tooltip label="Editar Empreendimento" placement="top">
+        <IconButton
+          colorScheme="blue"
+          variant="outline"
+          icon={<BsFillPencilFill />}
+          aria-label="Editar"
+          onClick={onOpen}
+          _hover={{
+            bg: "blue.50",
+            _dark: { bg: "blue.900" },
+          }}
+          _dark={{
+            borderColor: "blue.600",
+            color: "blue.400",
+          }}
+        />
+      </Tooltip>
+
+      <ModalEditarEmpreendimento id={id} isOpen={isOpen} onClose={onClose} />
+    </>
   );
 }

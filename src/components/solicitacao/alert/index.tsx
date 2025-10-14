@@ -1,5 +1,5 @@
 "use client";
-import { Box, Flex, Text, Heading, Divider } from "@chakra-ui/react";
+import { Box, Flex, Text, Heading, VStack } from "@chakra-ui/react";
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
@@ -53,39 +53,45 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
   }, []);
   
   return (
-    <Flex
-      mb={2}
-      w="full"
-      border="1px solid #ccc"
-      rounded="md"
-      direction="column"
-      px={6}
-      h={ContainerAlertas}
-      shadow="md"
-      bg="white"
-    >
-      <Heading as="h2" size="lg" mb={2} textAlign="center" color="teal.600">
-        Alertas
-      </Heading>
-      <Divider mb={3} />
+    <VStack spacing={0} align="stretch" h="full">
+      {/* Cabeçalho de Alertas */}
+      <Flex
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        borderBottomWidth="2px"
+        borderBottomColor="#00713D"
+        p={{ base: 3, md: 4 }}
+        align="center"
+      >
+        <Heading 
+          size={{ base: "sm", md: "md" }}
+          color="#023147"
+          _dark={{ color: "gray.100" }}
+        >
+          Alertas
+        </Heading>
+      </Flex>
 
+      {/* Conteúdo de Alertas */}
       <Box
-        height="360px"
+        flex={1}
         overflow="auto"
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        p={{ base: 3, md: 4 }}
         css={{
           "&::-webkit-scrollbar": {
-            width: "8px",
+            width: "6px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
-            borderRadius: "3px",
+            background: "transparent",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#c1c1c1",
+            background: "#48bb78",
             borderRadius: "3px",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            background: "#a8a8a8",
+            background: "#38a169",
           },
         }}
       >
@@ -96,6 +102,7 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
             justify="center"
             direction="column"
             color="gray.500"
+            _dark={{ color: "gray.400" }}
             py={8}
           >
             <FaExclamationTriangle size={32} style={{ marginBottom: "8px" }} />
@@ -114,7 +121,7 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
                 align={{ base: "flex-start", sm: "center" }}
                 px={{ base: 3, md: 4 }}
                 py={{ base: 3, md: 2 }}
-                borderRadius="md"
+                borderRadius="lg"
                 bg="yellow.50"
                 border="1px solid"
                 borderColor="yellow.200"
@@ -125,6 +132,13 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
                   transform: "translateY(-1px)",
                   shadow: "sm",
                 }}
+                _dark={{
+                  bg: "yellow.900",
+                  borderColor: "yellow.700",
+                  _hover: {
+                    bg: "yellow.800",
+                  }
+                }}
                 minW={0}
               >
                 <Flex gap={3} align="center" flex="1" minW={0}>
@@ -134,6 +148,7 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
                   <Text
                     fontSize={{ base: "xs", md: "sm" }}
                     color="gray.700"
+                    _dark={{ color: "gray.200" }}
                     noOfLines={{ base: 2, sm: 1 }}
                     wordBreak="break-word"
                     flex="1"
@@ -145,6 +160,7 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   color="gray.500"
+                  _dark={{ color: "gray.400" }}
                   flexShrink={0}
                   mt={{ base: 1, sm: 0 }}
                   alignSelf={{ base: "flex-end", sm: "center" }}
@@ -156,7 +172,7 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
           </Flex>
         )}
       </Box>
-    </Flex>
+    </VStack>
   );
 }
 

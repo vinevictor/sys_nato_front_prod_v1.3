@@ -10,6 +10,7 @@ import {
   Select,
   SelectProps,
   Text,
+  chakra, 
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
@@ -118,23 +119,31 @@ export function SelectEmpreendimentoFinanceiro({
           borderLeft={"none"}
           borderRadius="0"
           bg={"gray.100"}
+          _dark={{
+            bg: "gray.700",
+            borderColor: "gray.600",
+            color: "gray.100",
+            _hover: {
+              borderColor: "#00d672",
+            },
+          }}
           borderColor={"gray.400"}
           isDisabled={FinanceiraDisabled}
           onChange={(e: any) => setFinanceira(Number(e.target.value))}
           value={Financeira}
         >
-          <option style={{ backgroundColor: "#EDF2F7" }} value={0}>
+          <chakra.option _dark={{ color: "gray.800" }} value={0}>
             Selecione uma financeira
-          </option>
+          </chakra.option>
           {FinanceiraData.length > 0 &&
             FinanceiraData.map((Financeira: any) => (
-              <option
-                style={{ backgroundColor: "#EDF2F7" }}
+              <chakra.option
+                _dark={{ color: "gray.800" }}
                 key={Financeira.id}
                 value={Financeira.id}
               >
                 {Financeira.fantasia}
-              </option>
+              </chakra.option>
             ))}
         </Select>
         <Button

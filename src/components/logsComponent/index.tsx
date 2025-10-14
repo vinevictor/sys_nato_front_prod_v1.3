@@ -1,13 +1,12 @@
 import {
   Box,
+  Divider,
+  Flex,
   Heading,
   List,
   ListItem,
-  VStack,
-  HStack,
-  Divider,
   Text,
-  Flex,
+  VStack,
 } from "@chakra-ui/react";
 
 interface Log {
@@ -22,65 +21,121 @@ interface LogProps {
 }
 
 export default function LogsComponent({ logs }: LogProps) {
-  if (!logs || logs.length === 0) {
-    return (
-      <Flex w={"full"} p={4} bg="gray.50">
-        <Text textAlign="center" color="gray.600">
-          Nenhum log disponível no momento.
-        </Text>
-      </Flex>
-    );
-  }
+  const hasLogs = logs && logs.length > 0;
 
   return (
-    <Flex
-      w={"full"}
-      border={"1px solid #ccc"}
-      rounded={"md"}
-      direction="column"
-      p={6}
-      shadow="md"
-      bg="white"
-    >
-      <Heading as="h2" size="lg" mb={2} textAlign="center" color="teal.600">
-        Registro de Atividades
-      </Heading>
-      <Divider mb={3} />
+    <VStack spacing={0} align="stretch" w="full">
+      {/* Cabeçalho de Logs */}
+      <Flex
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        borderBottomWidth="2px"
+        borderBottomColor="#00713D"
+        p={{ base: 3, md: 4 }}
+        align="center"
+      >
+        <Heading
+          size={{ base: "sm", md: "md" }}
+          color="#023147"
+          _dark={{ color: "gray.100" }}
+        >
+          Registro de Atividades
+        </Heading>
+      </Flex>
+
+      {/* Conteúdo de Logs */}
       <Box
-        height="360px"
+        flex={1}
         overflowY="auto"
-        sx={{
+        bg="white"
+        _dark={{ bg: "gray.800" }}
+        p={{ base: 3, md: 4 }}
+        minH="300px"
+        maxH="500px"
+        css={{
           "&::-webkit-scrollbar": {
-            width: "8px",
+            width: "6px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "gray.100",
-            borderRadius: "10px",
+            background: "transparent",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "gray.400",
-            borderRadius: "10px",
-            border: "2px solid gray.100",
+            background: "#48bb78",
+            borderRadius: "3px",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            background: "gray.500",
+            background: "#38a169",
           },
         }}
-        
       >
-        <List>
-          {logs.map((log) => (
-            <ListItem key={log.id}>
-              <VStack align="flex-start" spacing={1} width="full">
-                <Divider />
-                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.700">
-                  {log.descricao}
-                </Text>
-              </VStack>
-            </ListItem>
-          ))}
-        </List>
+        {!hasLogs ? (
+          <Flex
+            h="full"
+            align="center"
+            justify="center"
+            direction="column"
+            color="gray.500"
+            _dark={{ color: "gray.400" }}
+            py={8}
+          >
+            <Text fontSize="sm" textAlign="center">
+              Nenhum log disponível no momento.
+            </Text>
+          </Flex>
+        ) : (
+          <List spacing={3}>
+            {logs.map((log, index) => (
+              <ListItem key={log.id}>
+                <VStack align="flex-start" spacing={2} width="full">
+                  {index > 0 && (
+                    <Divider
+                      borderColor="gray.200"
+                      _dark={{ borderColor: "gray.600" }}
+                    />
+                  )}
+                  <Box
+                    w="full"
+                    p={3}
+                    borderRadius="lg"
+                    bg="blue.50"
+                    border="1px solid"
+                    borderColor="blue.200"
+                    _dark={{
+                      bg: "blue.900",
+                      borderColor: "blue.700",
+                    }}
+                  >
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      color="gray.700"
+                      _dark={{ color: "gray.200" }}
+                      lineHeight="1.5"
+                    >
+                      {log.descricao}
+                    </Text>
+                    {log.createAt && (
+                      <Text
+                        fontSize="xs"
+                        color="gray.500"
+                        _dark={{ color: "gray.400" }}
+                        mt={2}
+                      >
+                        {new Date(log.createAt).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </Text>
+                    )}
+                  </Box>
+                </VStack>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Box>
-    </Flex>
+    </VStack>
   );
 }

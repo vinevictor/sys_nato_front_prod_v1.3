@@ -218,23 +218,23 @@ export default function FormSolicitacao({
         Cadastro Nova Solicitação
       </Text>
       <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
+        w="full"
+        justifyContent="center"
+        flexWrap="wrap"
         gap={4}
         mb={2}
       >
         <MaskedInput
           label="CPF"
           id="cpf"
-          mask={"999.999.999-99"}
+          mask="999.999.999-99"
           placeholder="CPF"
           isCpf
           onvalue={(value) => handleChange("cpf", value)}
           Disable
           value={form.cpf ? form.cpf : ""}
           required
-          boxWidth="15%"
+          boxWidth="25%"
         />
         <InputBasic
           label="Nome Completo"
@@ -246,7 +246,7 @@ export default function FormSolicitacao({
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")}
           required
-          boxWidth="50%"
+          boxWidth="45%"
         />
         <InputBasic
           label="Data de Nascimento"
@@ -260,37 +260,37 @@ export default function FormSolicitacao({
           }
           value={form.datanascimento ? form.datanascimento : ""}
           required
-          boxWidth="15%"
+          boxWidth="25%"
         />
       </Flex>
       <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexWrap={"wrap"}
+        w="full"
+        justifyContent="center"
+        flexWrap="wrap"
         gap={4}
         mb={2}
       >
         <MaskedInput
           label="Whatsapp com DDD"
           id="telefone"
-          mask={"(99) 99999-9999"}
+          mask="(99) 99999-9999"
           placeholder="Whatsapp com DDD"
           onvalue={(value) => handleChange("telefone", value)}
           value={form.telefone}
           required
           isWhatsapp
-          boxWidth="15%"
+          boxWidth="28%"
           retornoLog={(log) => setLogwhats(log)}
         />
 
         <MaskedInput
           label="Whatsapp com DDD 2"
           id="telefone2"
-          mask={"(99) 99999-9999"}
+          mask="(99) 99999-9999"
           placeholder="Whatsapp com DDD"
           onvalue={(value) => handleChange("telefone2", value)}
           value={form.telefone2}
-          boxWidth="15%"
+          boxWidth="28%"
         />
         <InputBasic
           label="Email"
@@ -299,7 +299,7 @@ export default function FormSolicitacao({
           onvalue={(value) => handleChange("email", value)}
           value={form.email}
           required
-          boxWidth="50%"
+          boxWidth="40%"
         />
       </Flex>
       <Flex

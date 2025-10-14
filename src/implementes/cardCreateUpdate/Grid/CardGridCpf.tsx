@@ -17,7 +17,13 @@ export default function CardGridCpf({
   return (
     <>
       <Box {...props}>
-        <FormLabel fontSize="sm" fontWeight="md" m={0}>
+        <FormLabel 
+          fontSize="sm" 
+          fontWeight="md" 
+          m={0}
+          color="gray.700"
+          _dark={{ color: "gray.300" }}
+        >
           CPF
         </FormLabel>
         {CPF && (
@@ -26,9 +32,15 @@ export default function CardGridCpf({
               hidden
               px={1}
               py={2}
-              textColor={"GrayText"}
-              bg={"gray.100"}
-              borderBottom={"1px solid #A0AEC0"}
+              color="gray.600"
+              bg="gray.100"
+              borderBottom="1px solid"
+              borderColor="gray.400"
+              _dark={{ 
+                bg: "gray.700", 
+                color: "gray.200",
+                borderColor: "gray.500"
+              }}
             >
               {CPF}
             </Text>
@@ -36,9 +48,14 @@ export default function CardGridCpf({
               variant="flushed"
               setValueCpf={CPF}
               px={1}
-              bg={"gray.100"}
-              borderColor={"gray.400"}
+              bg="gray.100"
+              borderColor="gray.400"
               maxLength={14}
+              _dark={{ 
+                bg: "gray.700", 
+                borderColor: "gray.500",
+                color: "gray.100"
+              }}
             />
           </>
         )}
@@ -47,9 +64,14 @@ export default function CardGridCpf({
             variant="flushed"
             setValueCpf={CPF}
             px={1}
-            bg={"gray.100"}
-            borderColor={"gray.400"}
+            bg="gray.100"
+            borderColor="gray.400"
             maxLength={14}
+            _dark={{ 
+              bg: "gray.700", 
+              borderColor: "gray.500",
+              color: "gray.100"
+            }}
           />
         )}
       </Box>
