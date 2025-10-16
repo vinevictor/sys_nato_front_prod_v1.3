@@ -4,18 +4,54 @@ import {
   Box,
   Button,
   Container,
+  Flex,
   Grid,
   GridItem,
   Heading,
+  HStack,
   Icon,
+  Tag,
   Text,
   VStack,
+  chakra,
 } from "@chakra-ui/react";
-import { FaFileSignature, FaShieldAlt } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaComments,
+  FaTools,
+  FaUniversity,
+  FaFileSignature,
+  FaTruck,
+} from "react-icons/fa";
+
+const features = [
+  {
+    icon: FaUniversity,
+    tag: "Integração CEF",
+    description: "ICP-Brasil & Assinatura Simples",
+  },
+  {
+    icon: FaTruck,
+    tag: "Logística",
+    description: "Atendimento virtual e presencial",
+  },
+  {
+    icon: FaFileSignature,
+    tag: "Faturamento",
+    description: "Cobrança centralizada",
+  },
+  {
+    icon: FaTools,
+    tag: "Relatórios",
+    description: "Métricas em tempo real",
+  },
+];
 
 export default function HeroSection() {
   return (
     <Box
+      id="inicio"
+      scrollMarginTop="4rem"
       minH="100vh"
       display="flex"
       alignItems="center"
@@ -23,7 +59,6 @@ export default function HeroSection() {
       overflow="hidden"
       bg="gray.100"
       _dark={{ bg: "gray.900" }}
-      boxShadow={"md"}
     >
       <Box
         position="absolute"
@@ -35,74 +70,129 @@ export default function HeroSection() {
         bgSize="cover"
         bgPosition="center"
         opacity={0.1}
+        _dark={{ opacity: 0.2 }}
       />
-
-      <Container maxW="7xl" position="relative" zIndex={1}>
+      <Container maxW="7xl" zIndex={1}>
         <Grid
-          templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
-          gap={8}
+          templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+          gap={{ base: 12, lg: 16 }}
           alignItems="center"
         >
+          {/* Coluna da Esquerda */}
           <GridItem>
             <VStack align="flex-start" spacing={6}>
-              <Heading
-                size="2xl"
-                color="gray.800"
-                _dark={{ color: "white" }}
-                lineHeight="1.2"
-                fontWeight="bold"
+              <Tag
+                size="lg"
+                colorScheme="green"
+                variant="solid"
+                borderRadius="full"
               >
-                Gestão Digital
-                <br />
-                de Documentos Imobiliários
+                ERP DO NATO DIGITAL
+              </Tag>
+
+              <Heading
+                as="h1"
+                size={{ base: "2xl", md: "3xl" }}
+                lineHeight="shorter"
+                fontWeight="extrabold"
+              >
+                <chakra.span
+                  bgGradient="linear(to-r, green.400, teal.400)"
+                  _dark={{ bgGradient: "linear(to-r, green.300, teal.300)" }}
+                  bgClip="text"
+                >
+                  Transforme a gestão de certificação e assinatura digital
+                </chakra.span>
+                <chakra.span color="gray.800" _dark={{ color: "white" }}>
+                  {" "}
+                  da sua construtora.
+                </chakra.span>
               </Heading>
 
               <Text
-                fontSize="xl"
+                fontSize={{ base: "lg", md: "xl" }}
                 color="gray.600"
                 _dark={{ color: "gray.300" }}
-                maxW="md"
               >
-                Agilidade, segurança e confiabilidade na assinatura digital de
-                documentos de compra, venda e aluguel de imóveis
+                Unimos Construtoras, CCAs, Cartórios e Certificadoras em um
+                único ambiente integrado, inteligente e seguro.
               </Text>
 
-              <VStack spacing={4} align="stretch" w="full" maxW="md">
+              <HStack spacing={4} paddingTop={4}>
                 <Button
-                  as="a"
-                  href="https://wa.me/5516992800713?text=Olá! Gostaria de conhecer mais sobre o SisNATO..."
-                  target="_blank"
-                  rel="noopener noreferrer"
                   colorScheme="green"
                   size="lg"
-                  w="full"
-                  leftIcon={<Icon as={FaFileSignature} />}
+                  rightIcon={<FaComments />}
+                  transition="transform 0.2s"
+                  _hover={{ transform: "translateY(-2px)" }}
                 >
-                  Começar Agora
+                  Fale com nosso time
                 </Button>
-
                 <Button
-                  as="a"
-                  href="https://wa.me/5516992800713?text=Olá! Tenho interesse em falar com um especialista..."
-                  target="_blank"
-                  rel="noopener noreferrer"
                   variant="outline"
                   size="lg"
-                  w="full"
-                  // Estilo do botão para o tema claro
+                  rightIcon={<FaArrowRight />}
                   colorScheme="gray"
-                  // Estilo do botão para o tema escuro
-                  _dark={{
-                    colorScheme: "white",
-                    color: "white",
-                    borderColor: "white",
-                    _hover: { bg: "whiteAlpha.200" },
+                  color="gray.700"
+                  _dark={{ color: "whiteAlpha.900" }}
+                  transition="transform 0.2s"
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    bg: "blackAlpha.50",
+                    _dark: { bg: "whiteAlpha.200" },
                   }}
-                  leftIcon={<Icon as={FaShieldAlt} />}
                 >
-                  Falar com Especialista
+                  Ver soluções
                 </Button>
-              </VStack>
+              </HStack>
+            </VStack>
+          </GridItem>
+
+          {/* Coluna da Direita */}
+          <GridItem>
+            <VStack
+              bg="whiteAlpha.700"
+              _dark={{
+                bg: "blackAlpha.600",
+                borderColor: "whiteAlpha.300",
+                boxShadow: "none",
+              }}
+              backdropFilter="blur(12px)"
+              p={8}
+              borderRadius="2xl"
+              spacing={5}
+              align="flex-start"
+              border="1px"
+              borderColor="whiteAlpha.400"
+              boxShadow="lg"
+            >
+              {features.map((feature) => (
+                <Flex key={feature.tag} align="center" w="100%">
+                  <Icon
+                    as={feature.icon}
+                    boxSize={6}
+                    color="green.500"
+                    _dark={{ color: "green.300" }}
+                    mr={4}
+                  />
+                  <VStack align="flex-start" spacing={0}>
+                    <Text
+                      fontWeight="bold"
+                      color="gray.800"
+                      _dark={{ color: "white" }}
+                    >
+                      {feature.tag}
+                    </Text>
+                    <Text
+                      fontSize="sm"
+                      color="gray.600"
+                      _dark={{ color: "gray.300" }}
+                    >
+                      {feature.description}
+                    </Text>
+                  </VStack>
+                </Flex>
+              ))}
             </VStack>
           </GridItem>
         </Grid>

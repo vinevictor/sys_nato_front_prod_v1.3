@@ -52,7 +52,7 @@ export default function NavigationHeader() {
               _dark={{ color: "white" }}
               _hover={{ color: "green.500" }}
             >
-              <Link href="#sobre">Sobre</Link>
+              <Link href="#experiencia">Resultados e Beneficios</Link>
             </Box>
             <Box
               color="gray.800"
@@ -75,13 +75,7 @@ export default function NavigationHeader() {
             >
               <Link href="#paraqueme">Para quem é</Link>
             </Box>
-            <Box
-              color="gray.800"
-              _dark={{ color: "white" }}
-              _hover={{ color: "green.500" }}
-            >
-              <Link href="#resultadosbeneficios">Resultados e Beneficios</Link>
-            </Box>
+
             <Box
               color="gray.800"
               _dark={{ color: "white" }}
@@ -102,6 +96,13 @@ export default function NavigationHeader() {
               _hover={{ color: "green.500" }}
             >
               <Link href="#contato">Contato</Link>
+            </Box>
+            <Box
+              color="gray.800"
+              _dark={{ color: "white" }}
+              _hover={{ color: "green.500" }}
+            >
+              <Link href="#sobre">Sobre</Link>
             </Box>
           </HStack>
 
