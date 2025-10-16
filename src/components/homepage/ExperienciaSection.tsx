@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Button,
   Container,
   Grid,
   GridItem,
@@ -11,88 +10,185 @@ import {
   SimpleGrid,
   Text,
   VStack,
+  chakra,
 } from "@chakra-ui/react";
-import { FaChartLine, FaUsers, FaRocket, FaShieldAlt } from "react-icons/fa";
+import {
+  FaChartLine,
+  FaUsers,
+  FaRocket,
+  FaShieldAlt,
+  FaArrowRight,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
+import SectionBackgroundPattern from "./SectionBackgroundPattern";
+
+const MotionVStack = motion(VStack);
+const MotionText = motion(Text);
+const MotionHeading = motion(Heading);
+const MotionSimpleGrid = motion(SimpleGrid);
+const MotionChakraLink = chakra(motion.a);
+
+const textVariants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const containerCardVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemCardVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 
 /**
- * Seção de experiência no mercado com estatísticas
- * Agora com suporte para tema claro e escuro.
+ * Seção de experiência no mercado com estatísticas, agora animada e mais bonita.
  */
 export default function ExperienciaSection() {
   return (
     <Box
       id="experiencia"
       scrollMarginTop="4rem"
-      py={20}
-      // Fundo da seção agora é adaptável
-      bg="white"
+      py={{ base: 20, md: 28 }} // Aumentei um pouco o padding vertical
+      bg="gray.100"
       _dark={{ bg: "gray.900" }}
+      position="relative"
+      overflow="hidden"
     >
-      <Container maxW="7xl">
+      <SectionBackgroundPattern />
+
+      <Container maxW="7xl" position={"relative"} zIndex={1}>
         <Grid
           templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
           gap={12}
           alignItems="center"
         >
+          {/* Coluna da Esquerda: Textos e Botão (Animados) */}
           <GridItem>
             <VStack align="flex-start" spacing={6}>
-              <Heading size="xl" color="gray.800" _dark={{ color: "white" }}>
-                Agilidade, Segurança e Confiabilidade
-              </Heading>
+              <MotionHeading
+                as="h2" // Alterei para h2 sem quebrar o estilo
+                size="xl"
+                variants={textVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.3 }}
+              >
+                <chakra.span
+                  bgGradient="linear(to-r, green.500, teal.500)"
+                  _dark={{ bgGradient: "linear(to-r, green.300, teal.300)" }}
+                  bgClip="text"
+                >
+                  Agilidade, Segurança e Confiabilidade
+                </chakra.span>
+              </MotionHeading>
 
-              <Text
+              <MotionText
                 fontSize="lg"
                 color="gray.600"
                 _dark={{ color: "gray.300" }}
+                variants={textVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ delay: 0.2, duration: 0.6 }} // Atraso para aparecer depois do título
               >
                 O SisNATO oferece gestão completa de documentos imobiliários com
                 certificação digital ICP-Brasil, garantindo validade jurídica e
                 proteção contra fraudes.
-              </Text>
+              </MotionText>
 
-              <Text
+              <MotionText
                 fontSize="sm"
                 color="gray.600"
                 _dark={{ color: "gray.400" }}
                 fontStyle="italic"
+                variants={textVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ delay: 0.4, duration: 0.6 }} // Mais atraso
               >
                 *Certificação ICP-Brasil garante autenticidade, integridade e
                 validade jurídica dos documentos assinados digitalmente.
-              </Text>
-              <Button
-                as="a"
+              </MotionText>
+
+              <MotionChakraLink
                 href="https://wa.me/5516992800713?text=Olá! Gostaria de conhecer mais sobre a agilidade, segurança e confiabilidade do SisNATO e como ele pode otimizar minha gestão de documentos imobiliários."
                 target="_blank"
                 rel="noopener noreferrer"
-                colorScheme="green"
-                size="lg"
-                leftIcon={<Icon as={FaChartLine} />}
+                display="inline-flex"
+                alignItems="center"
+                justifyContent="center"
+                px={6}
+                py={3}
+                fontSize="lg"
+                fontWeight="semibold"
+                borderRadius="md"
+                bg="green.500"
+                color="white"
+                _hover={{ bg: "green.600" }}
+                variants={textVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.3 }}
+                transition={"delay 0.4s, duration 0.6s"}
               >
                 Conhecer o Sistema
-              </Button>
+                <Icon as={FaArrowRight} ml={2} />
+              </MotionChakraLink>
             </VStack>
           </GridItem>
 
+          {/* Coluna da Direita: Cards de Estatísticas (Animados e Glassmorphism) */}
           <GridItem>
-            <SimpleGrid columns={2} spacing={6}>
+            <MotionSimpleGrid
+              columns={2}
+              spacing={6}
+              variants={containerCardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.4 }}
+            >
               {/* Card 1: Precisão */}
-              <VStack
+              <MotionVStack
                 p={6}
-                bg="green.50"
-                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
-                borderRadius="lg"
+                bg="whiteAlpha.700"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "whiteAlpha.300",
+                  boxShadow: "none",
+                }}
+                backdropFilter="blur(10px)"
+                borderRadius="xl"
                 textAlign="center"
                 border="1px"
                 borderColor="gray.200"
+                boxShadow="md"
+                variants={itemCardVariants}
               >
                 <Icon
                   as={FaChartLine}
                   boxSize={8}
                   color="green.500"
                   _dark={{ color: "green.300" }}
+                  mb={2}
                 />
                 <Heading
-                  size="lg"
+                  size="xl"
                   color="green.600"
                   _dark={{ color: "green.300" }}
                 >
@@ -105,26 +201,34 @@ export default function ExperienciaSection() {
                 >
                   Precisão antifraude
                 </Text>
-              </VStack>
+              </MotionVStack>
 
               {/* Card 2: Documentos */}
-              <VStack
+              <MotionVStack
                 p={6}
-                bg="blue.50"
-                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
-                borderRadius="lg"
+                bg="whiteAlpha.700"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "whiteAlpha.300",
+                  boxShadow: "none",
+                }}
+                backdropFilter="blur(10px)"
+                borderRadius="xl"
                 textAlign="center"
                 border="1px"
                 borderColor="gray.200"
+                boxShadow="md"
+                variants={itemCardVariants}
               >
                 <Icon
                   as={FaUsers}
                   boxSize={8}
                   color="blue.500"
                   _dark={{ color: "blue.300" }}
+                  mb={2}
                 />
                 <Heading
-                  size="lg"
+                  size="xl"
                   color="blue.600"
                   _dark={{ color: "blue.300" }}
                 >
@@ -137,26 +241,34 @@ export default function ExperienciaSection() {
                 >
                   Documentos processados
                 </Text>
-              </VStack>
+              </MotionVStack>
 
               {/* Card 3: Tempo */}
-              <VStack
+              <MotionVStack
                 p={6}
-                bg="purple.50"
-                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
-                borderRadius="lg"
+                bg="whiteAlpha.700"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "whiteAlpha.300",
+                  boxShadow: "none",
+                }}
+                backdropFilter="blur(10px)"
+                borderRadius="xl"
                 textAlign="center"
                 border="1px"
                 borderColor="gray.200"
+                boxShadow="md"
+                variants={itemCardVariants}
               >
                 <Icon
                   as={FaRocket}
                   boxSize={8}
                   color="purple.500"
                   _dark={{ color: "purple.300" }}
+                  mb={2}
                 />
                 <Heading
-                  size="lg"
+                  size="xl"
                   color="purple.600"
                   _dark={{ color: "purple.300" }}
                 >
@@ -169,26 +281,34 @@ export default function ExperienciaSection() {
                 >
                   Tempo médio de certificação
                 </Text>
-              </VStack>
+              </MotionVStack>
 
               {/* Card 4: Conformidade */}
-              <VStack
+              <MotionVStack
                 p={6}
-                bg="orange.50"
-                _dark={{ bg: "blackAlpha.400", borderColor: "gray.700" }}
-                borderRadius="lg"
+                bg="whiteAlpha.700"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "whiteAlpha.300",
+                  boxShadow: "none",
+                }}
+                backdropFilter="blur(10px)"
+                borderRadius="xl"
                 textAlign="center"
                 border="1px"
                 borderColor="gray.200"
+                boxShadow="md"
+                variants={itemCardVariants}
               >
                 <Icon
                   as={FaShieldAlt}
                   boxSize={8}
                   color="orange.500"
                   _dark={{ color: "orange.300" }}
+                  mb={2}
                 />
                 <Heading
-                  size="lg"
+                  size="xl"
                   color="orange.600"
                   _dark={{ color: "orange.300" }}
                 >
@@ -201,8 +321,8 @@ export default function ExperienciaSection() {
                 >
                   Conformidade ICP-Brasil
                 </Text>
-              </VStack>
-            </SimpleGrid>
+              </MotionVStack>
+            </MotionSimpleGrid>
           </GridItem>
         </Grid>
       </Container>

@@ -2,14 +2,22 @@
 
 import {
   Box,
+  Button,
   Container,
   Heading,
-  SimpleGrid,
   Text,
   VStack,
+  Grid,
+  GridItem,
+  List,
+  ListItem,
+  ListIcon,
+  chakra,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { CheckIcon } from "@chakra-ui/icons";
+import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
-// Dados para os cards
 const audienceData = [
   {
     title: "Construtoras & Incorporadoras",
@@ -43,6 +51,22 @@ const audienceData = [
   },
 ];
 
+const leftColumnVariants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const rightColumnVariants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut", delay: 0.2 },
+  },
+};
+
+const MotionGridItem = motion(GridItem);
+
 export default function ParaQuemESection() {
   return (
     <Box
@@ -51,52 +75,97 @@ export default function ParaQuemESection() {
       bg="gray.100"
       _dark={{ bg: "gray.900" }}
       py={{ base: 20, md: 28 }}
+      position="relative"
+      overflow="hidden"
     >
-      <Container maxW="6xl">
-        <VStack spacing={3} mb={12} align="flex-start">
-          <Heading
-            as="h2"
-            size="xl"
-            color="green.600"
-            _dark={{ color: "green.300" }}
-          >
-            Para quem é
-          </Heading>
-        </VStack>
+      <SectionBackgroundPattern />
 
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={8}>
-          {audienceData.map((audience) => (
-            <VStack
-              key={audience.title}
-              bg="white"
-              _dark={{
-                bg: "blackAlpha.400",
-                borderColor: "gray.700",
-                boxShadow: "none",
-              }}
-              p={8}
-              borderRadius="xl"
-              border="1px"
-              borderColor="gray.200"
-              spacing={4}
-              align="flex-start"
-              textAlign="left"
-              boxShadow="md"
-              transition="transform 0.2s, box-shadow 0.2s"
-              _hover={{
-                transform: "translateY(-5px)",
-                boxShadow: "lg",
-              }}
-            >
-              <Heading size="md" color="gray.800" _dark={{ color: "white" }}>
-                {audience.title}
+      <Container maxW="6xl" position="relative" zIndex={1}>
+        {/* Layout de duas colunas com Grid */}
+        <Grid
+          templateColumns={{ base: "1fr", lg: "1fr 1.2fr" }}
+          gap={{ base: 10, lg: 16 }}
+          alignItems="center"
+        >
+          {/* Coluna da esquerda para o título e CTA */}
+          <MotionGridItem
+            variants={leftColumnVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.5 }}
+          >
+            <VStack align="flex-start" spacing={5}>
+              <Heading as="h2" size="xl">
+                <chakra.span
+                  bgGradient="linear(to-r, green.500, teal.500)"
+                  _dark={{ bgGradient: "linear(to-r, green.300, teal.300)" }}
+                  bgClip="text"
+                >
+                  Para quem é
+                </chakra.span>
               </Heading>
-              <Text color="gray.600" _dark={{ color: "gray.300" }}>
-                {audience.description}
+              <Text
+                fontSize="lg"
+                color="gray.600"
+                _dark={{ color: "gray.400" }}
+              >
+                Nossa plataforma foi desenhada para integrar todos os players do
+                mercado imobiliário, da construtora ao cartório.
               </Text>
+              <Button
+                colorScheme="green"
+                size="lg"
+                mt={4}
+                onClick={() =>
+                  document
+                    .getElementById("planos")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Ver Planos
+              </Button>
             </VStack>
-          ))}
-        </SimpleGrid>
+          </MotionGridItem>
+
+          {/*  Coluna da direita com a lista de funcionalidades */}
+          <MotionGridItem
+            variants={rightColumnVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.5 }}
+          >
+            <List spacing={4}>
+              {audienceData.map((audience) => (
+                <ListItem
+                  key={audience.title}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <ListIcon
+                    as={CheckIcon}
+                    color="green.500"
+                    _dark={{ color: "green.300" }}
+                    boxSize={5}
+                  />
+                  <Text
+                    as="span"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    <chakra.span
+                      fontWeight="bold"
+                      color="gray.800"
+                      _dark={{ color: "white" }}
+                    >
+                      {audience.title}:
+                    </chakra.span>{" "}
+                    {audience.description}
+                  </Text>
+                </ListItem>
+              ))}
+            </List>
+          </MotionGridItem>
+        </Grid>
       </Container>
     </Box>
   );
