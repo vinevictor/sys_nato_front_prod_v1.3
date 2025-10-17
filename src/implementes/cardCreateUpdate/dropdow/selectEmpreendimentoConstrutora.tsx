@@ -90,14 +90,21 @@ export function SelectEmpreendimentoConstrutora({
         onChange={(e: any) => {
           const selectedId = Number(e.target.value);
           setConstrutora(selectedId);
-          handleConstrutoraChange(selectedId);
+          
+          // Se tem onChange externo, delega a responsabilidade
+          if (props.onChange) {
+            props.onChange(e);
+          } else {
+            // Apenas chama o handler interno se não houver onChange externo
+            handleConstrutoraChange(selectedId);
+          }
         }}
         value={Construtora}
         rounded={"sm"}
         _dark={{
           bg: "gray.700",
           borderColor: "gray.600",
-          color: "gray.100",
+          color: "gray.50",
         }}
       >
         <chakra.option ps={2} _dark={{ color: "gray.800" }} value={0}>Selecione uma construtora</chakra.option>

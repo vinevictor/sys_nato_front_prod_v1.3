@@ -11,9 +11,7 @@ export type EmpreedimentoType = {
     fantasia: string;
   };
   financeiros: {
-    financeiro: {
-      id: number;
-      fantasia: string;
-    };
+    id: number;
+    fantasia: string;
   }[];
 };

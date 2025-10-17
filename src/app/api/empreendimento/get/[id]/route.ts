@@ -24,18 +24,14 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        next: {
-          // revalida a cada 1 minuto
-          revalidate: 60,
-        },
+        cache: "no-store", // Sempre busca dados atualizados
       }
     );
-    console.log("🚀 ~ reqest:", reqest);
+
     if (!reqest.ok) {
       return new NextResponse("Invalid credentials", { status: 401 });
     }
     const data = await reqest.json();
-    console.log("🚀 ~ data:", data);
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error }, { status: 500 });

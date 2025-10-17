@@ -6,6 +6,8 @@ import { ModalEditarEmpreendimento } from "@/components/modal/ModalEditarEmpreen
 
 interface BtnEditarEmpreendimentoProps {
   id: number;
+  listConstrutora: any[];
+  listEstado: any[];
 }
 
 /**
@@ -16,7 +18,7 @@ interface BtnEditarEmpreendimentoProps {
  * @param id - ID do empreendimento a ser editado
  * @returns Botão de edição com modal
  */
-export function BtnEditarEmpreendimento({ id }: BtnEditarEmpreendimentoProps) {
+export function BtnEditarEmpreendimento({ id, listConstrutora, listEstado }: BtnEditarEmpreendimentoProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -39,7 +41,7 @@ export function BtnEditarEmpreendimento({ id }: BtnEditarEmpreendimentoProps) {
         />
       </Tooltip>
 
-      <ModalEditarEmpreendimento id={id} isOpen={isOpen} onClose={onClose} />
+      <ModalEditarEmpreendimento id={id} isOpen={isOpen} onClose={onClose} lista={listConstrutora} listEstado={listEstado} />
     </>
   );
 }

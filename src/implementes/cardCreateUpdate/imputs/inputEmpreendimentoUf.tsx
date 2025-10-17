@@ -10,6 +10,7 @@ export interface InputEmpreendimentoUfProps {
   borderColor?: string;
   px?: number;
   bg?: string;
+  estados: Estado[] | [];
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -36,40 +37,13 @@ interface Estado {
 export default function InputEmpreendimentoUf({
   setUfValue,
   onChange,
+  estados,
   ...props
 }: InputEmpreendimentoUfProps) {
-  const [estados, setEstados] = useState<Estado[]>([]);
+
   const [ufLocal, setUfLocal] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-
-  // Busca os estados do Brasil
-  useEffect(() => {
-    const fetchEstados = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/country/estados");
-        const result = await response.json();
-
-        if (result.ok) {
-          // Ordena os estados por nome
-          const estadosOrdenados = result.data.sort((a: Estado, b: Estado) =>
-            a.name.localeCompare(b.name)
-          );
-          setEstados(estadosOrdenados);
-        } else {
-          setError("Erro ao carregar estados");
-        }
-      } catch (err) {
-        console.error("Erro ao buscar estados:", err);
-        setError("Erro ao carregar estados");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEstados();
-  }, []);
 
   // Define o valor inicial
   useEffect(() => {
@@ -78,6 +52,13 @@ export default function InputEmpreendimentoUf({
       setUfLocal(UpCase);
     }
   }, [setUfValue]);
+
+  // Controla o loading baseado nos estados recebidos
+  useEffect(() => {
+    if (estados && estados.length > 0) {
+      setIsLoading(false);
+    }
+  }, [estados]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const valor = e.target.value;
@@ -124,30 +105,27 @@ export default function InputEmpreendimentoUf({
   return (
     <Box width="100%">
       <Select
-        {...props}
         w="full"
         value={ufLocal}
         onChange={handleChange}
         placeholder="Selecione um estado"
         size="md"
         _hover={{
-          borderColor: "#00713D",
+          borderColor: "gray.400",
         }}
         _focus={{
-          borderColor: "#00713D",
-          boxShadow: "0 0 0 1px #00713D",
+          borderColor: "green.500",
+          boxShadow: "0 0 0 1px var(--chakra-colors-green-500)",
         }}
         _dark={{
-          bg: "gray.700",
+          bg: "gray.800",
           borderColor: "gray.600",
           color: "gray.100",
-          _hover: {
-            borderColor: "#00d672",
-          },
         }}
+        {...props}
       >
-        {estados.map((estado) => (
-          <chakra.option _dark={{ color: "gray.800" }} key={estado.id} value={estado.iso2}>
+        {estados?.map((estado) => (
+          <chakra.option _dark={{ color: "gray.700" }} key={estado.id} value={estado.iso2}>
             {estado.name} ({estado.iso2})
           </chakra.option>
         ))}
