@@ -148,7 +148,6 @@ export default function InputEmpreendimentoCidade({
   return (
     <Box width="100%">
       <Select
-        {...props}
         width="100%"
         minW="200px"
         value={cidadeLocal}
@@ -156,23 +155,21 @@ export default function InputEmpreendimentoCidade({
         placeholder="Selecione uma cidade"
         size="md"
         _hover={{
-          borderColor: "#00713D",
+          borderColor: "gray.400",
         }}
         _focus={{
-          borderColor: "#00713D",
-          boxShadow: "0 0 0 1px #00713D",
+          borderColor: "green.500",
+          boxShadow: "0 0 0 1px var(--chakra-colors-green-500)",
         }}
         _dark={{
-          bg: "gray.700",
+          bg: "gray.800",
           borderColor: "gray.600",
           color: "gray.100",
-          _hover: {
-            borderColor: "#00d672",
-          },
         }}
+        {...props}
       >
         {cidades.map((cidade) => (
-          <chakra.option _dark={{ color: "gray.800" }} key={cidade.id} value={cidade.name}>
+          <chakra.option _dark={{ color: "gray.700" }} key={cidade.id} value={cidade.name}>
             {cidade.name}
           </chakra.option>
         ))}

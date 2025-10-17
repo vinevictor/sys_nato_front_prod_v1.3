@@ -25,6 +25,8 @@ import { EmpreedimentoType } from "@/types/empreendimentos_fidAll";
 
 interface EmpreendimentosType {
   data: EmpreedimentoType[];
+  listConstrutora: any[];
+  listEstado: any[];
 }
 
 /**
@@ -36,7 +38,7 @@ interface EmpreendimentosType {
  * @param data - Lista de empreendimentos
  * @returns Grid de cards de empreendimentos
  */
-export default function Empreendimentos({ data }: EmpreendimentosType) {
+export default function Empreendimentos({ data, listConstrutora, listEstado }: EmpreendimentosType) {
   const [Empreendimentos, setEmpreendimentos] = useState<EmpreedimentoType[]>(
     []
   );
@@ -232,11 +234,13 @@ export default function Empreendimentos({ data }: EmpreendimentosType) {
                         letterSpacing="wide"
                         _dark={{ color: "gray.400" }}
                       >
-                        Financeiros
+                        Financeiros ({empreendimento.financeiros.length})
                       </Text>
                     </Flex>
                     <Flex gap={1} flexWrap="wrap" ml={6}>
-                      {empreendimento.financeiros.map((item, index) => (
+                      {empreendimento.financeiros.map((item, index) => {
+                        console.log(`Card ${empreendimento.id} - Financeiro ${index}:`, item);
+                        return (
                         <Badge
                           key={index}
                           colorScheme="blue"
@@ -245,9 +249,10 @@ export default function Empreendimentos({ data }: EmpreendimentosType) {
                           py={1}
                           borderRadius="md"
                         >
-                          {item.financeiro.fantasia}
+                          {item.fantasia}
                         </Badge>
-                      ))}
+                        );
+                      })}
                     </Flex>
                   </Box>
                 )}
@@ -267,7 +272,7 @@ export default function Empreendimentos({ data }: EmpreendimentosType) {
                 id={empreendimento.id}
                 ativo={empreendimento.status}
               />
-              <BtnEditarEmpreendimento id={empreendimento.id} />
+              <BtnEditarEmpreendimento id={empreendimento.id} listConstrutora={listConstrutora} listEstado={listEstado} />
             </Flex>
           </Flex>
         );

@@ -1,5 +1,6 @@
 "use client";
 import Empreendimentos from "@/components/empreendimentoCard";
+import { ModalCriarEmpreendimento } from "@/components/modal/ModalCriarEmpreendimento";
 import { EmpreedimentoType } from "@/types/empreendimentos_fidAll";
 import {
   Box,
@@ -15,7 +16,9 @@ import {
   SimpleGrid,
   Skeleton,
   Text,
+  useToast,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -88,8 +91,7 @@ function extrairFinanceirosUnicos(empreendimentos: EmpreedimentoType[]) {
 
   empreendimentos.forEach((emp) => {
     if (emp.financeiros && Array.isArray(emp.financeiros)) {
-      emp.financeiros.forEach((item: any) => {
-        const financeiro = item.financeiro;
+      emp.financeiros.forEach((financeiro: any) => {
         if (financeiro && !financeirosMap.has(financeiro.id)) {
           financeirosMap.set(financeiro.id, {
             id: financeiro.id,
@@ -129,6 +131,10 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
   const [filtroConstrutora, setFiltroConstrutora] = useState("");
   const [filtroFinanceiro, setFiltroFinanceiro] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
+  const [construtoraData, setConstrutoraData] = useState([]);
+  const [estadoData, setEstadoData] = useState([]);
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     setEmpreendimentos(dados);
@@ -182,7 +188,7 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
         (emp: EmpreedimentoType) =>
           emp.financeiros &&
           emp.financeiros.some(
-            (item) => item.financeiro.id.toString() === filtroFinanceiro
+            (item) => item.id.toString() === filtroFinanceiro
           )
       );
     }
@@ -206,6 +212,46 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
     filtroStatus,
     empreendimentos,
   ]);
+
+  const getConstrutora = async () => {
+    try {
+      const req = await fetch("/api/construtora/getall");
+      const res = await req.json();
+      setConstrutoraData(res);
+    } catch (error: any) {
+      console.log("🚀 ~ getConstrutora ~ error:", error);
+      toast({
+        title: "Erro",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const GetState = async () => {
+    try {
+      const req = await fetch("/api/country/estados");
+      const res = await req.json();
+      setEstadoData(res.data);
+    } catch (error: any) {
+      console.log("🚀 ~ getConstrutora ~ error:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao buscar estados",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    getConstrutora();
+    GetState();
+  }, []);
+  
 
   return (
     <Container maxW="95%" py={4} px={6}>
@@ -258,7 +304,7 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
             colorScheme="green"
             bg="#00713D"
             size={{ base: "md", md: "lg" }}
-            onClick={() => router.push("/empreendimentos/cadastrar")}
+            onClick={onOpen}
             transition="all 0.2s"
             w={{ base: "full", md: "auto" }}
             _hover={{
@@ -660,7 +706,7 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
           {/* Lista de Empreendimentos */}
           <Box w="full">
             {dadosFiltrados.length > 0 ? (
-              <Empreendimentos data={dadosFiltrados} />
+              <Empreendimentos data={dadosFiltrados} listConstrutora={construtoraData} listEstado={estadoData} />
             ) : empreendimentos.length > 0 ? (
               <Flex
                 w="full"
@@ -717,6 +763,14 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
           </Box>
         </VStack>
       </VStack>
+
+      {/* Modal de Criação de Empreendimento */}
+      <ModalCriarEmpreendimento
+        isOpen={isOpen}
+        onClose={onClose}
+        lista={construtoraData}
+        listEstado={estadoData}
+      />
     </Container>
   );
 }

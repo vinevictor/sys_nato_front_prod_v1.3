@@ -12,6 +12,7 @@ type HTMLFormProps = React.DetailedHTMLProps<
 type CardFormProps = PropsWithChildren<
   Omit<HTMLFormProps, "action"> & {
     action: (prevState: any, formData: FormData) => Promise<any>;
+    onSuccess?: () => void;
   }
 >;
 
@@ -44,7 +45,17 @@ export function CardFormComponent(props: CardFormProps) {
         isClosable: true,
         position: "top-right",
       });
-      window.location.reload();
+      
+      // Chama callback de sucesso se fornecida
+      if (props.onSuccess) {
+        props.onSuccess();
+      }
+      
+      // Recarrega a página após um pequeno delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
       setIsSuccess(false); // Reset state after showing toast
     }
     if (isError) {

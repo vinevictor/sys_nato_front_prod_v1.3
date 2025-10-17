@@ -18,38 +18,39 @@ import { useEffect, useState } from "react";
 // ===== TYPES =====
 interface Construtora {
   id: number;
-  [key: string]: unknown;
+  fantasia: string;
 }
 
 interface EmpreendimentoCard {
-  construtora?: Construtora;
-  nome?: string;
-  estado?: string;
-  cidade?: string;
-  financeiros?: string;
+  id?: number;
+  nome: string;
+  estado: string;
+  cidade: string;
+  construtora: {
+    id: number;
+    fantasia: string;
+  };
+  financeiros: [
+    {
+      id: number;
+      fantasia: string;
+    }
+  ];
 }
 
 interface ModalEditarEmpreendimentoProps {
   id: number;
+  lista: Construtora[];
+  listEstado: any[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-// ===== COMPONENT =====
-/**
- * Modal para edição de empreendimento
- *
- * Exibe o formulário de edição em um modal ao invés de uma página separada.
- * Busca os dados do empreendimento pela API e passa para o formulário.
- *
- * @param id - ID do empreendimento a ser editado
- * @param isOpen - Estado de abertura do modal
- * @param onClose - Função para fechar o modal
- * @returns Modal com formulário de edição
- */
 export function ModalEditarEmpreendimento({
   id,
   isOpen,
+  lista,
+  listEstado,
   onClose,
 }: ModalEditarEmpreendimentoProps) {
   const [data, setData] = useState<EmpreendimentoCard | null>(null);
@@ -60,7 +61,6 @@ export function ModalEditarEmpreendimento({
     try {
       const req = await fetch(`/api/empreendimento/get/${id}`);
       const res = await req.json();
-      console.log("🚀 ~ fetchEmpreendimento ~ res:", res);
       setData(res);
     } catch (error) {
       console.error("Erro ao buscar empreendimento:", error);
@@ -77,10 +77,7 @@ export function ModalEditarEmpreendimento({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" scrollBehavior="inside">
-      <ModalOverlay
-        bg="blackAlpha.600"
-        backdropFilter="blur(4px)"
-      />
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(4px)" />
       <ModalContent
         mx={4}
         my={8}
@@ -104,7 +101,7 @@ export function ModalEditarEmpreendimento({
           }}
         />
         <Divider borderColor="gray.300" _dark={{ borderColor: "gray.600" }} />
-        
+
         <ModalBody py={6}>
           {isLoading ? (
             <Flex
@@ -130,7 +127,13 @@ export function ModalEditarEmpreendimento({
               </Text>
             </Flex>
           ) : data ? (
-            <CardUpdateEmpreendimento id={id} setEmpreendimentoCard={data} />
+            <CardUpdateEmpreendimento
+              id={id}
+              lista={lista}
+              setEmpreendimentoCard={data}
+              onSuccess={onClose}
+              listEstado={listEstado}
+            />
           ) : (
             <Flex
               direction="column"
