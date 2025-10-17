@@ -26,10 +26,11 @@ async function ConstrutorasData() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session.token}`,
       },
-      next: {
-        revalidate: 60 * 10, // 10 minutos
-        tags: ["construtora-all-page"],
-      },
+      cache: "no-store",
+      // next: {
+      //   revalidate: 60 * 10, // 10 minutos
+      //   tags: ["construtora-all-page"],
+      // },
     });
 
     if (!req.ok) {
@@ -37,7 +38,7 @@ async function ConstrutorasData() {
     }
 
     const data = await req.json();
-    return <ConstrutoraPage data={data} />;
+    return <ConstrutoraPage data={data} session={session.user} />;
   } catch (error) {
     return (
       <Box textAlign="center" p={5}>

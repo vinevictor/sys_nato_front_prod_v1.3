@@ -22,8 +22,8 @@ export async function GET() {
           Authorization: `Bearer ${session?.token}`,
         },
         next: {
-          // tags: ["bug-report-all"],
-          revalidate: 60 * 30,
+          tags: ["bug-report-all"],
+          revalidate: 60 * 3,
         },
       }
     );

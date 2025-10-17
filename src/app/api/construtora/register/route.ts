@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/empresa`,
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/construtora`,
       {
         method: "POST",
         headers: {

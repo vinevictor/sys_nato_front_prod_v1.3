@@ -1,15 +1,11 @@
 import FinanceirasClient from "@/components/financeirasClient/RenderComponent";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function FinanceirasPage() {
   const session = await GetSessionServer();
 
-  if (!session) {
-    redirect("/login");
-  }
   const req =
     session &&
     (await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/financeiro`, {
@@ -18,16 +14,18 @@ export default async function FinanceirasPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      next: {
-        revalidate: 60 * 60 * 2,
-        tags: ["financeiras-list-page"],
-      },
+      cache: "no-store", // Garante dados sempre atualizados
     }));
 
+  if (!req.ok) {
+    return null;
+  }
+
   const data = await req.json();
+
   return (
     <>
-      <FinanceirasClient data={data} />
+      <FinanceirasClient data={data} session={session} />
     </>
   );
 }
