@@ -14,6 +14,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { MdAddCircle } from "react-icons/md";
 import { useEffect, useState } from "react";
 
 interface ConstutoraType {
@@ -104,10 +105,34 @@ export default function ModalAddCobranca() {
   return (
     <>
       <Button
-        colorScheme="blue"
-        size="md"
-        variant={"outline"}
+        leftIcon={<MdAddCircle size={20} />}
+        bg="#3B82F6"
+        color="white"
+        size={{ base: "sm", md: "md" }}
+        fontSize={{ base: "sm", md: "md" }}
         onClick={() => onOpen()}
+        shadow="md"
+        borderWidth="2px"
+        borderColor="#3B82F6"
+        _hover={{
+          bg: "#2563EB",
+          borderColor: "#2563EB",
+          transform: "translateY(-2px)",
+          shadow: "lg",
+        }}
+        _active={{
+          transform: "translateY(0)",
+          shadow: "md",
+        }}
+        _dark={{
+          bg: "#3B82F6",
+          borderColor: "#60A5FA",
+          _hover: {
+            bg: "#2563EB",
+            borderColor: "#3B82F6",
+          },
+        }}
+        transition="all 0.2s"
       >
         Nova Cobrança
       </Button>

@@ -23,7 +23,7 @@ export async function PUT(
     const req = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/financeiro/${id}`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,

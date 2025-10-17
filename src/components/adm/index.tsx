@@ -9,139 +9,238 @@ import ModalAddCobranca from "@/components/adm/modal/add_cobranca";
 import { useSession } from "@/hook/useSession";
 import {
   Box,
+  Container,
   Flex,
   Heading,
   SimpleGrid,
+  Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { LuBuilding, LuDollarSign, LuFileText, LuUsers } from "react-icons/lu";
+import { useEffect, useState, useCallback } from "react";
+import { LuDollarSign, LuFileText } from "react-icons/lu";
+import { 
+  MdDashboard, 
+  MdCheckCircle, 
+  MdPending, 
+  MdAnalytics, 
+  MdMail 
+} from "react-icons/md";
 
 interface RelatorioType {
-  usuarios: number;
-  construtoras: number;
   relatorios: number;
   cobrancas_aberto: string;
+  aprovado: number;
+  em_analise: number;
+  envelopes: number;
+  pendente: number;
 }
 
 export default function AdmSwitch() {
   const [dados, setDados] = useState<RelatorioType | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
   const session = useSession();
 
-  useEffect(() => {
-    if (!dados) {
-      setLoading(true);
-    }
-    fetchDados();
-  }, []);
-
-  const fetchDados = async () => {
+  const fetchDados = useCallback(async () => {
+    setLoading(true);
     try {
       const req = await fetch("/api/relatorio/getall");
       const res = await req.json();
       setDados(res);
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
       toast({
         title: "Erro",
-        description: "Não foi possível carregar os dados",
+        description: "Não foi possível carregar os dados",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }
-    setLoading(false);
-  };
+  }, [toast]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  useEffect(() => {
+    fetchDados();
+    
+    // Timeout de 4 segundos - se não carregar, define valores padrão
+    const timeout = setTimeout(() => {
+      setDados((currentDados) => {
+        if (!currentDados) {
+          setLoading(false);
+          return {
+            relatorios: 0,
+            aprovado: 0,
+            pendente: 0,
+            em_analise: 0,
+            cobrancas_aberto: "R$ 0,00",
+            envelopes: 0,
+          };
+        }
+        return currentDados;
+      });
+    }, 4000);
+
+    return () => clearTimeout(timeout);
+  }, [fetchDados]);
 
   return (
-    <>
+    <Container 
+      maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }} 
+      py={{ base: 4, md: 5, lg: 6 }} 
+      px={{ base: 3, sm: 4, md: 5, lg: 6 }}
+    >
       {dados && (
-        <Box
-          w={"full"}
-          px={{ base: 2, md: 4 }}
-          py={{ base: 4, md: 8 }}
-          overflow={"auto"}
-          bg="white"
-        >
-          <Box
-            w={"full"}
-            maxWidth="container.2xl"
-            mx="auto"
-            bg="gray.50"
-            borderRadius={"1rem"}
-            boxShadow={"2xl"}
-            p={{ base: 4, md: 8 }}
+        <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
+          {/* Cabeçalho da Página */}
+          <Flex
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            borderBottomWidth="2px"
+            borderBottomColor="#00713D"
+            p={{ base: 4, sm: 5, md: 6 }}
+            align="center"
+            justify="space-between"
+            wrap="wrap"
+            gap={{ base: 3, md: 4 }}
+            borderRadius={{ base: "md", md: "lg" }}
+            shadow={{ base: "sm", md: "md" }}
           >
-            <VStack spacing={{ base: 6, md: 8 }} align="stretch">
+            <Flex align="center" gap={{ base: 2, md: 3 }}>
+              <Box
+                p={{ base: 1.5, md: 2 }}
+                bg="green.50"
+                _dark={{ bg: "green.900" }}
+                borderRadius="md"
+                display={{ base: "none", sm: "block" }}
+              >
+                <MdDashboard
+                  size={32}
+                  color="#00713D"
+                />
+              </Box>
               <Box>
-                <Heading fontSize={{ base: "xl", md: "2xl" }}>
+                <Heading
+                  fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+                  color="#023147"
+                  _dark={{ color: "gray.100" }}
+                >
                   Painel Administrativo
                 </Heading>
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.400" }}
+                  display={{ base: "none", sm: "block" }}
+                >
+                  Visão geral do sistema
+                </Text>
               </Box>
+            </Flex>
 
-              {session?.role.relatorio && (
-                <>
-                  <Flex
-                    w={"100%"}
-                    justifyContent={{ base: "center", md: "flex-end" }}
-                    gap={2}
-                    wrap="wrap"
-                  >
-                    <ModalAddCobranca />
-                    <ModalAddAlerta />
-                  </Flex>
+            {session?.role.relatorio && (
+              <Flex gap={2} wrap="wrap">
+                <ModalAddCobranca />
+                <ModalAddAlerta />
+              </Flex>
+            )}
+          </Flex>
 
+          {session?.role.relatorio && (
+            <>
+              {/* Cards e Alertas lado a lado */}
+              <Flex
+                direction={{ base: "column", lg: "row" }}
+                gap={{ base: 5, md: 6 }}
+                w="full"
+                align="flex-start"
+              >
+                {/* Grid de Cards (3x2) */}
+                <Box 
+                  flex="1" 
+                  minW={{ base: "100%", lg: "0" }}
+                  w="full"
+                >
                   <SimpleGrid
-                    columns={{ base: 1, sm: 2, lg: 4 }}
-                    spacing={{ base: 4, md: 6 }}
+                    columns={{ base: 1, sm: 2, lg: 3 }}
+                    spacing={{ base: 3, sm: 4, md: 5 }}
+                    w="full"
                   >
                     <CardAdmUsuario
-                      count={dados.usuarios}
-                      title={"Usuários"}
-                      icon={<LuUsers size={24} />}
-                    />
-                    <CardAdmUsuario
-                      count={dados.construtoras}
-                      title={"Construtoras"}
-                      icon={<LuBuilding size={24} />}
-                    />
-                    <CardAdmUsuario
-                      count={dados.cobrancas_aberto}
-                      title={"Cobranças em Aberto"}
-                      icon={<LuDollarSign size={24} />}
-                    />
-                    <CardAdmUsuario
-                      count={dados.relatorios}
+                      count={loading ? null : dados?.relatorios}
                       title={"Relatórios Gerados"}
                       icon={<LuFileText size={24} />}
+                      loading={loading}
+                    />
+                    <CardAdmUsuario
+                      count={loading ? null : dados?.cobrancas_aberto}
+                      title={"Cobranças em Aberto"}
+                      icon={<LuDollarSign size={24} />}
+                      loading={loading}
+                    />
+                    <CardAdmUsuario
+                      count={loading ? null : dados?.envelopes}
+                      title={"Envelopes Criados"}
+                      icon={<MdMail size={24} />}
+                      loading={loading}
+                    />
+                    <CardAdmUsuario
+                      count={loading ? null : dados?.em_analise}
+                      title={"Relatórios Em Análise"}
+                      icon={<MdAnalytics size={24} />}
+                      loading={loading}
+                    />
+                    <CardAdmUsuario
+                      count={loading ? null : dados?.pendente}
+                      title={"Relatórios Pendente"}
+                      icon={<MdPending size={24} />}
+                      loading={loading}
+                    />
+                    <CardAdmUsuario
+                      count={loading ? null : dados?.aprovado}
+                      title={"Relatórios Aprovados"}
+                      icon={<MdCheckCircle size={24} />}
+                      loading={loading}
                     />
                   </SimpleGrid>
+                </Box>
 
-                  <Flex
-                    direction={{ base: "column", lg: "row" }}
-                    gap={{ base: 6, md: 8 }}
-                  >
-                    <Box w={{ base: "100%", lg: "70%" }}>
-                      <RelatorioFinanceiro onAtualizar={fetchDados} />
-                    </Box>
-                    <Box w={{ base: "100%", lg: "30%" }}>
-                      <Alertas />
-                    </Box>
-                  </Flex>
-                </>
-              )}
-            </VStack>
-          </Box>
-        </Box>
+                {/* Alertas na lateral */}
+                <Box 
+                  w={{ base: "100%", lg: "380px", xl: "400px" }} 
+                  minW={{ lg: "350px" }}
+                  maxW={{ base: "100%", lg: "420px" }}
+                  flexShrink={0}
+                >
+                  <Alertas />
+                </Box>
+              </Flex>
+
+              {/* Tabela de Relatórios (largura total) */}
+              <Box 
+                w="full"
+                overflowX="auto"
+                sx={{
+                  '&::-webkit-scrollbar': {
+                    height: '8px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#CBD5E0',
+                    borderRadius: '4px',
+                  },
+                }}
+              >
+                <RelatorioFinanceiro onAtualizar={fetchDados} />
+              </Box>
+            </>
+          )}
+        </VStack>
       )}
-    </>
+    </Container>
   );
 }

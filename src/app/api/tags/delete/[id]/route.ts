@@ -17,13 +17,13 @@ export async function DELETE(
     }
 
     const reqest = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/${id}`,
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag-list/${id}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`
-        }
+          Authorization: `Bearer ${session?.token}`,
+        },
       }
     );
 

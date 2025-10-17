@@ -28,10 +28,7 @@ export async function GET(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        next: {
-           // revalida a cada 1 minuto
-           revalidate: 30,
-         },
+        cache: "no-store",
       }
     );
     if (!req.ok) {
