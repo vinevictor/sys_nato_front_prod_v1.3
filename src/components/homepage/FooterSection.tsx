@@ -15,12 +15,14 @@ import { TriangleUpIcon } from "@chakra-ui/icons";
 
 const sitemapLinks = [
   { label: "Início", href: "#inicio" },
-  { label: "Sobre", href: "#sobre" },
+  { label: "Resultados e Beneficios", href: "#experiencia" },
   { label: "Soluções", href: "#solucoes" },
   { label: "Como funciona", href: "#comofunciona" },
   { label: "Para quem é", href: "#paraqueme" },
+  { label: "Planos", href: "#planos" },
   { label: "Parceiras", href: "#parceiras" },
   { label: "Contato", href: "#contato" },
+  { label: "Sobre", href: "#sobre" },
 ];
 
 export default function FooterSection() {

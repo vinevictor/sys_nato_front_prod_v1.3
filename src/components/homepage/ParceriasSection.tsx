@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   useColorMode,
 } from "@chakra-ui/react";
+import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
 /**
  * Seção de parcerias e certificações
@@ -24,8 +25,12 @@ export default function ParceriasSection() {
       py={16}
       bg="gray.100"
       _dark={{ bg: "gray.900" }}
+      position="relative"
+      overflow="hidden"
     >
-      <Container maxW="7xl">
+      <SectionBackgroundPattern />
+
+      <Container maxW="7xl" position="relative" zIndex={1}>
         <VStack spacing={12}>
           <VStack spacing={4} textAlign="center">
             <Heading size="lg" color="gray.800" _dark={{ color: "green.300" }}>
