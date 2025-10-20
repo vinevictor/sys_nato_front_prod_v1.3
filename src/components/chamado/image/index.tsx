@@ -1,36 +1,18 @@
 "use client";
 import {
-  Box,
   Button,
   Flex,
   FormLabel,
-  Grid,
   Icon,
   Input,
   Text,
   useToast,
-  Image,
 } from "@chakra-ui/react";
-import React, {
-  ChangeEvent,
-  DragEvent,
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-} from "react";
-import { FiDownload, FiUpload, FiX } from "react-icons/fi";
-
-// Interface para as imagens existentes passadas como prop
-export interface ExistingImageInput {
-  url_view: string;
-  url_download?: string;
-  // Se suas imagens existentes tiverem um ID único, adicione aqui.
-  // Ex: id?: string | number;
-}
+import { ChangeEvent, DragEvent, useCallback, useEffect } from "react";
+import { FiUpload } from "react-icons/fi";
 
 // Interface interna para gerenciar todas as imagens (existentes e novas)
-interface ManagedImage {
+export interface ManagedImage {
   id: string; // ID único para cada imagem (gerado para novas, pode ser url_view para existentes se único)
   url_view: string; // URL para visualização (blob URL para novas, prop url_view para existentes)
   url_download?: string; // URL para download (apenas para existentes)
@@ -40,59 +22,39 @@ interface ManagedImage {
 
 interface ImageComponentProps {
   // Callback chamado com a lista atualizada de ManagedImage
-  onChange: (images: ManagedImage[]) => void;
-  onRemoveExistingImage?: (imageId: string, imageUrl: string) => void;
-  DataImages?: ExistingImageInput[];
+  onImagesChange: (images: ManagedImage[]) => void;
+  // Lista de imagens gerenciadas pelo componente pai
+  images: ManagedImage[];
   maxImages?: number;
 }
 
 export const ImageComponent = ({
-  onChange,
-  DataImages = [],
+  onImagesChange,
+  images,
   maxImages = 5,
-  onRemoveExistingImage,
 }: ImageComponentProps) => {
-  const [managedImages, setManagedImages] = useState<ManagedImage[]>([]);
   const toast = useToast();
-
-  const isInitializedRef = useRef(false);
-
-  // Efeito para inicializar as imagens existentes apenas uma vez 
-  useEffect(() => {
-    // Verifica se já foi inicializado para evitar reprocessamento
-    if (!isInitializedRef.current && DataImages?.length > 0) {
-      // Converte DataImages para ManagedImage
-      const existingImages = DataImages.map(img => ({
-        id: img.url_view,
-        url_view: img.url_view,
-        url_download: img.url_download,
-        isNew: false
-      }));
-      
-      // Inicializa o estado com as imagens existentes
-      setManagedImages(existingImages);
-      isInitializedRef.current = true;
-    }
-  }, [DataImages]);
 
   // Efeito para atualizar o callback de onChange quando as imagens gerenciadas mudarem
   useEffect(() => {
     // Envia todas as imagens gerenciadas (novas e existentes) para o callback.
     // O componente pai pode então usar a flag 'isNew' para diferenciar
     // quais imagens precisam ser enviadas para o backend, por exemplo.
-    onChange(managedImages);
-  }, [managedImages, onChange]);
+    onImagesChange(images);
+  }, [images, onImagesChange]);
 
   // Efeito para limpar blob URLs ao desmontar o componente
   useEffect(() => {
+    const currentImages = images;
     return () => {
-      managedImages.forEach((img) => {
+      // Função de cleanup
+      currentImages.forEach((img) => {
         if (img.isNew && img.url_view.startsWith("blob:")) {
           URL.revokeObjectURL(img.url_view);
         }
       });
     };
-  }, [managedImages]);
+  }, [images]);
 
   const handleAddFiles = useCallback(
     (files: File[]) => {
@@ -108,7 +70,7 @@ export const ImageComponent = ({
         });
       }
 
-      const currentImageCount = managedImages.length;
+      const currentImageCount = images.length;
       if (currentImageCount + validFiles.length > maxImages) {
         toast({
           title: "Limite excedido",
@@ -129,16 +91,10 @@ export const ImageComponent = ({
       }));
 
       // Adiciona as novas imagens ao array existente, sem substituir as anteriores
-      setManagedImages((prev) => [
-        ...prev, // mantém as imagens já existentes
-        ...newManagedImages // adiciona as novas imagens
-      ]);
-      // DICA: Usar o spread operator garante que cada nova imagem será adicionada junto das outras, formando uma galeria.
-      // Isso evita que uma nova imagem substitua as anteriores.
-      // Sempre utilize essa abordagem ao trabalhar com arrays no estado do React.
-      console.log("Imagens adicionadas:", newManagedImages);
+      // A atualização é feita através do callback para o componente pai
+      onImagesChange([...images, ...newManagedImages]);
     },
-    [managedImages, maxImages, toast]
+    [images, maxImages, toast, onImagesChange]
   );
 
   const handleDrop = useCallback(
@@ -165,63 +121,25 @@ export const ImageComponent = ({
     [handleAddFiles]
   );
 
-  const removeImage = useCallback(
-    (idToRemove: string) => {
-      setManagedImages((prev) =>
-        prev.filter((img) => {
-          if (img.id === idToRemove) {
-            if (img.isNew && img.url_view.startsWith("blob:")) {
-              URL.revokeObjectURL(img.url_view); // Limpar blob URL
-            } else if (!img.isNew && onRemoveExistingImage) {
-              onRemoveExistingImage(img.id, img.url_view); // Chamar onRemove para imagens existentes
-            }
-            return false;
-          }
-          return true;
-        })
-      );
-    },
-    [onRemoveExistingImage]
-  );
-
-  /**
-   * Função para lidar com o download de uma imagem existente.
-   * Cria um link temporário e o clica para iniciar o download.
-   * @param downloadUrl A URL da imagem a ser baixada.
-   */
-  const handleDownloadImage = useCallback((downloadUrl?: string) => {
-    if (!downloadUrl) {
-      toast({
-        title: "Download indisponível",
-        description: "O link para download não foi fornecido para esta imagem.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    // Cria um elemento de link na memória para iniciar o download
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    // Opcional: você pode definir um nome para o arquivo baixado
-    // link.download = downloadUrl.split('/').pop() || 'imagem';
-
-    // Adiciona, clica e remove o link do DOM
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-  }, [toast]);
-
   return (
     <Flex w={"full"} gap={2} h="full" flexDir="column">
-      <FormLabel>Imagens</FormLabel>
+      <FormLabel
+        fontSize="sm"
+        fontWeight="md"
+        color="gray.700"
+        _dark={{ color: "gray.300" }}
+      >
+        Imagens
+      </FormLabel>
       <Flex
         w={"full"}
-        minH="150px"
+        h="150px"
         border="2px dashed"
         borderColor="gray.300"
+        _dark={{
+          borderColor: "gray.600",
+          bg: images.length >= maxImages ? "gray.700" : "gray.800",
+        }}
         borderRadius="lg"
         p={4}
         justifyContent="center"
@@ -230,30 +148,46 @@ export const ImageComponent = ({
         gap={4}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        bg={managedImages.length >= maxImages ? "gray.200" : "gray.50"}
+        bg={images.length >= maxImages ? "gray.200" : "gray.50"}
         _hover={{
-          borderColor:
-            managedImages.length >= maxImages ? "gray.300" : "blue.500",
-          bg: managedImages.length >= maxImages ? "gray.200" : "gray.100",
+          borderColor: images.length >= maxImages ? "gray.300" : "#00713D",
+          bg: images.length >= maxImages ? "gray.200" : "gray.100",
+          _dark: {
+            bg: images.length >= maxImages ? "gray.800" : "gray.900",
+            borderColor: images.length >= maxImages ? "gray.600" : "#00d672",
+          },
         }}
         transition="all 0.2s"
-        opacity={managedImages.length >= maxImages ? 0.7 : 1}
+        opacity={images.length >= maxImages ? 0.7 : 1}
       >
-        <Icon as={FiUpload} w={8} h={8} color="gray.400" />
-        <Text color="gray.500" textAlign="center">
-          {managedImages.length >= maxImages
+        <Icon
+          as={FiUpload}
+          w={8}
+          h={8}
+          color="gray.400"
+          _dark={{ color: "gray.500" }}
+        />
+        <Text color="gray.500" _dark={{ color: "gray.400" }} textAlign="center">
+          {images.length >= maxImages
             ? "Limite de imagens atingido"
             : "Arraste e solte suas imagens aqui ou"}
         </Text>
-        <Text color="gray.400" fontSize="sm">
-          Limite: {managedImages.length}/{maxImages} imagens
+        <Text color="gray.400" _dark={{ color: "gray.500" }} fontSize="sm">
+          Limite: {images.length}/{maxImages} imagens
         </Text>
         <Button
           as="label"
           htmlFor="file-upload-main"
-          colorScheme="blue"
-          isDisabled={managedImages.length >= maxImages}
-          cursor={managedImages.length >= maxImages ? "not-allowed" : "pointer"}
+          colorScheme="green"
+          bg="#00713D"
+          _hover={{ bg: "#005a31" }}
+          _dark={{
+            bg: "#00d672",
+            color: "gray.900",
+            _hover: { bg: "#00c060" },
+          }}
+          isDisabled={images.length >= maxImages}
+          cursor={images.length >= maxImages ? "not-allowed" : "pointer"}
         >
           Selecione do computador
           <Input
@@ -263,66 +197,10 @@ export const ImageComponent = ({
             accept="image/*"
             onChange={handleFileSelect}
             display="none"
-            isDisabled={managedImages.length >= maxImages}
+            isDisabled={images.length >= maxImages}
           />
         </Button>
       </Flex>
-
-      {managedImages.length > 0 && (
-        <Grid
-          templateColumns="repeat(auto-fill, minmax(120px, 1fr))"
-          gap={6}
-          mt={4}
-        >
-          {managedImages.map((image) => (
-            <Box
-              key={image.id}
-              position="relative"
-              w={{ base: "120px", lg: "150px" }}
-              h={{ base: "90px", lg: "100px" }}
-              overflow="hidden"
-              borderRadius="md"
-              boxShadow="sm"
-            >
-              <Image
-                src={image.url_view}
-                alt={`Preview ${image.id}`}
-                objectFit="cover"
-                w="full"
-                h="full"
-              />
-              <Flex position="absolute" top={1} right={1} gap={1}>
-                <Button
-                  size="xs"
-                  colorScheme="red"
-                  borderRadius="full"
-                  onClick={() => removeImage(image.id)}
-                  p={0}
-                  minW="20px"
-                  h="20px"
-                  aria-label="Remover imagem"
-                >
-                  <Icon as={FiX} w={3} h={3} />
-                </Button>
-                <Button
-                  size="xs"
-                  colorScheme="blue"
-                  borderRadius="full"
-                  onClick={() => handleDownloadImage(image.url_download)}
-                  p={0}
-                  minW="20px"
-                  h="20px"
-                  aria-label="Download imagem"
-                  // Desabilita o botão se a imagem for nova (ainda não salva) ou não tiver URL de download
-                  isDisabled={image.isNew || !image.url_download}
-                >
-                  <Icon as={FiDownload} w={3} h={3} />
-                </Button>
-              </Flex>
-            </Box>
-          ))}
-        </Grid>
-      )}
     </Flex>
   );
 };
