@@ -57,8 +57,7 @@ export default function HeroSection() {
       alignItems="center"
       position="relative"
       overflow="hidden"
-      bg="gray.100"
-      _dark={{ bg: "gray.900" }}
+      bg="gray.900"
     >
       <Box
         position="absolute"
@@ -70,7 +69,6 @@ export default function HeroSection() {
         bgSize="cover"
         bgPosition="center"
         opacity={0.1}
-        _dark={{ opacity: 0.2 }}
       />
       <Container maxW="7xl" zIndex={1}>
         <Grid
@@ -103,17 +101,10 @@ export default function HeroSection() {
                 >
                   Transforme a gestão de certificação e assinatura digital
                 </chakra.span>
-                <chakra.span color="gray.800" _dark={{ color: "white" }}>
-                  {" "}
-                  da sua construtora.
-                </chakra.span>
+                <chakra.span color="white"> da sua construtora.</chakra.span>
               </Heading>
 
-              <Text
-                fontSize={{ base: "lg", md: "xl" }}
-                color="gray.600"
-                _dark={{ color: "gray.300" }}
-              >
+              <Text fontSize={{ base: "lg", md: "xl" }} color="gray.300">
                 Unimos Construtoras, CCAs, Cartórios e Certificadoras em um
                 único ambiente integrado, inteligente e seguro.
               </Text>
@@ -133,8 +124,7 @@ export default function HeroSection() {
                   size="lg"
                   rightIcon={<FaArrowRight />}
                   colorScheme="gray"
-                  color="gray.700"
-                  _dark={{ color: "whiteAlpha.900" }}
+                  color="whiteAlpha.900"
                   transition="transform 0.2s"
                   _hover={{
                     transform: "translateY(-2px)",

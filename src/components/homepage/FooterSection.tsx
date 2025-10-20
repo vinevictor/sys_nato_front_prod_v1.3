@@ -6,9 +6,11 @@ import {
   Heading,
   HStack,
   Icon,
+  Image,
   Link,
   SimpleGrid,
   Text,
+  useColorMode,
   VStack,
 } from "@chakra-ui/react";
 import { TriangleUpIcon } from "@chakra-ui/icons";
@@ -26,6 +28,7 @@ const sitemapLinks = [
 ];
 
 export default function FooterSection() {
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Box
       bg="gray.200"
@@ -41,7 +44,15 @@ export default function FooterSection() {
           {/* Coluna 1: Logo e Descrição */}
           <VStack spacing={4} align="flex-start">
             <HStack align="center">
-              <Icon as={TriangleUpIcon} w={5} h={5} color="green.400" />
+              <Image
+                src={
+                  colorMode === "light" ? "/logo ligth.png" : "/logo dark.png"
+                }
+                alt="SisNATO"
+                height="20px"
+                objectFit="contain"
+              />
+              {/* <Icon as={TriangleUpIcon} w={5} h={5} color="green.400" />
               <Heading
                 as="h3"
                 size="md"
@@ -49,7 +60,7 @@ export default function FooterSection() {
                 _dark={{ color: "white" }}
               >
                 SisNATO
-              </Heading>
+              </Heading> */}
             </HStack>
             <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
               O futuro da certificação e assinatura digital no mercado

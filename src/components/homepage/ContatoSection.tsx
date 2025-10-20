@@ -18,6 +18,7 @@ import {
   Textarea,
   VStack,
   chakra,
+  useToast,
 } from "@chakra-ui/react";
 import {
   FaMapMarkerAlt,
@@ -28,6 +29,7 @@ import {
 import { EmailIcon } from "@chakra-ui/icons";
 import SectionBackgroundPattern from "./SectionBackgroundPattern";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 // --- DADOS PARA O CARD DE INFORMAÇÕES ---
 const contactInfo = [
@@ -67,7 +69,62 @@ const MotionGridItem = motion(GridItem);
 const MotionVStack = motion(VStack);
 
 export default function ContatoSection() {
-  // Estilo aprimorado para os inputs
+  // --- LÓGICA DO FORMULÁRIO ---
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    empresa: "",
+    mensagem: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast();
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao enviar a mensagem.");
+      }
+
+      toast({
+        title: "Mensagem Enviada!",
+        description: "Obrigado pelo seu contato. Responderemos em breve.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      // Limpa o formulário
+      setFormData({ nome: "", email: "", empresa: "", mensagem: "" });
+    } catch (error) {
+      toast({
+        title: "Erro!",
+        description:
+          "Não foi possível enviar sua mensagem. Tente novamente mais tarde.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const inputStyles = {
     bg: "whiteAlpha.600",
     borderColor: "gray.300",
