@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("🚀 ~ POST ~ body:", body);
     const { nome, email, empresa, mensagem } = body;
 
     if (!nome || !email || !mensagem) {
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     const nestApiResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_NESTJS_API_URL}/mail/contact`,
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/mail/contact`,
       {
         method: "POST",
         headers: {
@@ -22,8 +23,10 @@ export async function POST(request: Request) {
         body: JSON.stringify(body),
       }
     );
+    console.log("🚀 ~ POST ~ nestApiResponse:", nestApiResponse);
 
     const data = await nestApiResponse.json();
+    console.log("🚀 ~ POST ~ data:", data);
 
     if (!nestApiResponse.ok) {
       return NextResponse.json(data, { status: nestApiResponse.status });
