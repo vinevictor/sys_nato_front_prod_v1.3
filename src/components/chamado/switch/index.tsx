@@ -1,16 +1,20 @@
+import BtnChamado from "@/components/chamado/btn";
 import { GetSessionServer } from "@/lib/auth_confg";
 import {
   Badge,
   Box,
   Button,
   Code,
+  Container,
   Divider,
   Flex,
   Heading,
-  Link,
+  Icon,
   Text,
+  VStack,
 } from "@chakra-ui/react";
-import BtnChamado from "@/components/chamado/btn";
+import Link from "next/link";
+import { MdAdd, MdChatBubble, MdSearch } from "react-icons/md";
 import FiltroChamados from "../filtro/filtroChamado";
 
 interface TypeChamado {
@@ -80,6 +84,36 @@ async function getChamadosAllOptions(session: any): Promise<TypeChamado[]> {
   return data ?? [];
 }
 
+// Função para definir cor do badge de status
+function getStatusColor(status: string) {
+  switch (status) {
+    case "ABERTO":
+      return "blue";
+    case "EM_ANDAMENTO":
+      return "yellow";
+    case "LV2":
+      return "purple";
+    case "CONCLUIDO":
+      return "green";
+    default:
+      return "gray";
+  }
+}
+
+// Função para definir cor do badge de prioridade
+function getPrioridadeColor(prioridade: string) {
+  switch (prioridade?.toUpperCase()) {
+    case "ALTA":
+      return "red";
+    case "MEDIA":
+      return "orange";
+    case "BAIXA":
+      return "green";
+    default:
+      return "gray";
+  }
+}
+
 export default async function ChamadoSwitch({
   searchParams,
 }: {
@@ -103,107 +137,312 @@ export default async function ChamadoSwitch({
     ...new Set(todosChamadosParaOpcoes.map((c: TypeChamado) => c.prioridade)),
   ].filter(Boolean);
 
-  const departamentosUnicos: string[] = [
-    ...new Set(todosChamadosParaOpcoes.map((c: TypeChamado) => c.departamento)),
-  ].filter(Boolean);
-
   return (
-    <Flex
-      minH="88.6vh"
-      w="100%"
-      bg="#F8F8F8"
-      justifyContent={"center"}
-      px={{ base: 4, md: "8rem", lg: "15rem" }}
+    <Container
+      maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
+      py={{ base: 4, md: 5, lg: 6 }}
+      px={{ base: 3, sm: 4, md: 5, lg: 6 }}
     >
-      <Flex w={"100%"} minH={"100%"} py={4} flexDir={"column"} gap={4}>
+      <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
+        {/* Cabeçalho da Página */}
         <Flex
-          justifyContent={"space-between"}
-          alignItems={"end"}
-          mb={10}
-          flexWrap="wrap"
-          gap={4}
+          bg="white"
+          _dark={{ bg: "gray.800", borderBottomColor: "#00d672" }}
+          borderBottomWidth="2px"
+          borderBottomColor="#00713D"
+          p={{ base: 4, sm: 5, md: 6 }}
+          align="center"
+          justify="space-between"
+          wrap="wrap"
+          gap={{ base: 3, md: 4 }}
+          borderRadius={{ base: "md", md: "lg", xl: "xl" }}
+          borderBottomRadius={0}
+          shadow={{ base: "sm", md: "md", lg: "lg" }}
+          flexDir={{ base: "column", md: "row" }}
         >
-          <Box>
-            <Heading>Chamados de Suporte</Heading>
-            <Flex gap={2} flexWrap="wrap" mt={2}>
-              <Text fontWeight="bold">
-                {chamadosFiltrados.length} chamados encontrados
-              </Text>
-            </Flex>
-          </Box>
-          <Flex>
-            <Button as={Link} href="/chamado/novo" colorScheme="green">
-              Novo Chamado
-            </Button>
-          </Flex>
-        </Flex>
-
-        <FiltroChamados
-          statusUnicos={statusUnicos}
-          prioridadesUnicas={prioridadesUnicas}
-          departamentosUnicos={departamentosUnicos}
-        />
-
-        <Divider my={4} borderColor="gray.300" />
-
-        <Flex flexDir={"column"} gap={3}>
-          {chamadosFiltrados.length > 0 ? (
-            chamadosFiltrados.map((item: TypeChamado) => (
-              <Box
-                key={item.id}
-                p={4}
-                borderRadius="15px"
-                shadow="md"
-                bg="#fff"
-                border="1px solid"
-                borderColor="gray.200"
+          {/* Título com ícone */}
+          <Flex align="center" gap={{ base: 2, md: 3 }}>
+            <Box
+              p={{ base: 1.5, md: 2 }}
+              bg="green.50"
+              _dark={{ bg: "green.900" }}
+              borderRadius="md"
+              display={{ base: "none", sm: "block" }}
+            >
+              <MdChatBubble size={32} color="#00713D" />
+            </Box>
+            <Box>
+              <Heading
+                fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+                color="#023147"
+                _dark={{ color: "gray.100" }}
               >
-                <Flex justifyContent={"space-between"} alignItems={"start"}>
-                  <Flex flexDir={"column"} gap={3}>
-                    <Flex gap={2} alignItems={"center"} flexWrap="wrap">
-                      <Text fontSize={"md"} fontWeight={"bold"}>
-                        {item.titulo}
-                      </Text>
-                      <Badge colorScheme="blue">{item.status}</Badge>
-                      <Badge colorScheme="yellow">{item.prioridade}</Badge>
-                    </Flex>
-                    <Flex gap={2} flexWrap="wrap">
-                      <Text fontSize={"sm"}>Solicitante: {item.user_nome}</Text>
-                      •
-                      <Text fontSize={"sm"}>
-                        Departamento: {item.departamento}
-                      </Text>
-                    </Flex>
-                    <Flex gap={4} flexWrap="wrap">
-                      <Code>{`ID: ${item.id}`}</Code>
-                      <Code>
-                        {`Aberto em: ${new Date(
-                          item.createAt
-                        ).toLocaleDateString("pt-BR")}`}
-                      </Code>
-                      {item.updatedAt && (
-                        <Code>
-                          {`Última atualização: ${new Date(
-                            item.updatedAt
-                          ).toLocaleDateString("pt-BR")}`}
-                        </Code>
-                      )}
-                    </Flex>
-                  </Flex>
-                  <Flex gap={2}>
-                    <BtnChamado name="Editar" id={item.id} type="edit" />
-                    <BtnChamado name="Excluir" id={item.id} type="delete" />
-                  </Flex>
-                </Flex>
-              </Box>
-            ))
-          ) : (
-            <Text textAlign="center" p={10} color="gray.500">
-              Nenhum chamado encontrado com os filtros aplicados.
-            </Text>
-          )}
+                Chamados de Suporte
+              </Heading>
+              <Text
+                fontSize={{ base: "xs", md: "sm" }}
+                color="gray.600"
+                _dark={{ color: "gray.400" }}
+                display={{ base: "none", sm: "block" }}
+              >
+                Gerencie e acompanhe seus chamados
+              </Text>
+            </Box>
+          </Flex>
+
+          {/* Botão Criar Chamado */}
+          <Button
+            as={Link}
+            href="/chamado/novo"
+            leftIcon={<MdAdd />}
+            colorScheme="green"
+            bg="#00713D"
+            size={{ base: "md", md: "lg" }}
+            transition="all 0.2s"
+            w={{ base: "full", md: "auto" }}
+            _hover={{
+              bg: "#005a31",
+              transform: "translateY(-2px)",
+              shadow: "lg",
+            }}
+            _active={{ transform: "translateY(0)" }}
+            _dark={{
+              bg: "#00d672",
+              color: "gray.900",
+              _hover: { bg: "#00c060" },
+            }}
+          >
+            Novo Chamado
+          </Button>
         </Flex>
-      </Flex>
-    </Flex>
+
+        {/* Conteúdo da Página */}
+        <VStack
+          spacing={6}
+          align="stretch"
+          bg="white"
+          _dark={{ bg: "gray.800" }}
+          p={{ base: 4, md: 6 }}
+          borderRadius="xl"
+          borderTopRadius={0}
+          shadow="lg"
+          minH="400px"
+        >
+          {/* Filtros */}
+          <FiltroChamados
+            statusUnicos={statusUnicos}
+            prioridadesUnicas={prioridadesUnicas}
+          />
+
+          {/* Contador de resultados */}
+          <Flex justify="space-between" align="center" px={2}>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              color="gray.600"
+              _dark={{ color: "gray.400" }}
+            >
+              {chamadosFiltrados.length}{" "}
+              {chamadosFiltrados.length === 1
+                ? "chamado encontrado"
+                : "chamados encontrados"}
+            </Text>
+          </Flex>
+
+          <Divider borderColor="gray.300" _dark={{ borderColor: "gray.600" }} />
+
+          {/* Lista de Chamados */}
+          <Box w="full">
+            {chamadosFiltrados.length > 0 ? (
+              <VStack spacing={4} align="stretch">
+                {chamadosFiltrados.map((item: TypeChamado) => (
+                  <Box
+                    key={item.id}
+                    bg="white"
+                    borderRadius="xl"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    overflow="hidden"
+                    transition="all 0.3s"
+                    _hover={{
+                      transform: "translateY(-4px)",
+                      shadow: "xl",
+                      borderColor: "#00713D",
+                    }}
+                    _dark={{
+                      bg: "gray.800",
+                      borderColor: "gray.700",
+                      _hover: {
+                        borderColor: "#00d672",
+                      },
+                    }}
+                  >
+                    <Box p={{ base: 4, md: 5 }}>
+                      <Flex
+                        justifyContent="space-between"
+                        alignItems="start"
+                        gap={4}
+                        flexDir={{ base: "column", md: "row" }}
+                      >
+                        {/* Informações do Chamado */}
+                        <Flex flexDir="column" gap={3} flex="1">
+                          {/* Título e Badges */}
+                          <Flex gap={2} alignItems="center" flexWrap="wrap">
+                            <Heading
+                              size={{ base: "sm", md: "md" }}
+                              color="#023147"
+                              _dark={{ color: "gray.100" }}
+                            >
+                              {item.titulo}
+                            </Heading>
+                            <Badge
+                              colorScheme={getStatusColor(item.status)}
+                              fontSize="xs"
+                              px={2}
+                              py={1}
+                              borderRadius="md"
+                            >
+                              {item.status}
+                            </Badge>
+                            <Badge
+                              colorScheme={getPrioridadeColor(item.prioridade)}
+                              fontSize="xs"
+                              px={2}
+                              py={1}
+                              borderRadius="md"
+                            >
+                              {item.prioridade?.toUpperCase()}
+                            </Badge>
+                          </Flex>
+
+                          {/* Informações adicionais */}
+                          <Flex gap={2} flexWrap="wrap" alignItems="center">
+                            <Text
+                              fontSize="sm"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                              Solicitante: {item.user_nome}
+                            </Text>
+                            <Text color="gray.400">•</Text>
+                            <Text
+                              fontSize="sm"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                              Departamento: {item.departamento}
+                            </Text>
+                          </Flex>
+
+                          {/* Metadados */}
+                          <Flex gap={3} flexWrap="wrap">
+                            <Code
+                              fontSize="xs"
+                              colorScheme="gray"
+                              px={2}
+                              py={1}
+                              borderRadius="md"
+                            >
+                              ID: {item.id}
+                            </Code>
+                            <Code
+                              fontSize="xs"
+                              colorScheme="gray"
+                              px={2}
+                              py={1}
+                              borderRadius="md"
+                            >
+                              Aberto em:{" "}
+                              {new Date(item.createAt).toLocaleDateString(
+                                "pt-BR"
+                              )}
+                            </Code>
+                            {item.updatedAt && (
+                              <Code
+                                fontSize="xs"
+                                colorScheme="gray"
+                                px={2}
+                                py={1}
+                                borderRadius="md"
+                              >
+                                Atualizado:{" "}
+                                {new Date(item.updatedAt).toLocaleDateString(
+                                  "pt-BR"
+                                )}
+                              </Code>
+                            )}
+                          </Flex>
+                        </Flex>
+
+                        {/* Botões de Ação */}
+                        <Flex
+                          gap={2}
+                          flexShrink={0}
+                          flexDir={{ base: "row", md: "column", lg: "row" }}
+                          w={{ base: "full", md: "auto" }}
+                        >
+                          <BtnChamado name="Editar" id={item.id} type="edit" />
+                          <BtnChamado
+                            name="Excluir"
+                            id={item.id}
+                            type="delete"
+                          />
+                        </Flex>
+                      </Flex>
+                    </Box>
+                  </Box>
+                ))}
+              </VStack>
+            ) : (
+              <Flex
+                w="full"
+                minH="300px"
+                justifyContent="center"
+                alignItems="center"
+                bg="gray.50"
+                _dark={{ bg: "gray.900" }}
+                borderRadius="lg"
+                p={8}
+                flexDir="column"
+                gap={4}
+              >
+                <Icon as={MdSearch} w={16} h={16} color="gray.400" />
+                <Text
+                  fontSize="lg"
+                  color="gray.600"
+                  _dark={{ color: "gray.400" }}
+                  textAlign="center"
+                >
+                  Nenhum chamado encontrado
+                </Text>
+                <Text
+                  fontSize="sm"
+                  color="gray.500"
+                  _dark={{ color: "gray.500" }}
+                  textAlign="center"
+                >
+                  Tente ajustar os filtros ou criar um novo chamado
+                </Text>
+                <Button
+                  as={Link}
+                  href="/chamado/novo"
+                  leftIcon={<MdAdd />}
+                  colorScheme="green"
+                  bg="#00713D"
+                  _hover={{ bg: "#005a31" }}
+                  _dark={{
+                    bg: "#00d672",
+                    color: "gray.900",
+                    _hover: { bg: "#00c060" },
+                  }}
+                >
+                  Criar Primeiro Chamado
+                </Button>
+              </Flex>
+            )}
+          </Box>
+        </VStack>
+      </VStack>
+    </Container>
   );
 }

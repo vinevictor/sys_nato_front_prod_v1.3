@@ -1,7 +1,7 @@
 "use client";
-import { Box, Button, Flex, Text, Textarea } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text, Textarea } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
-import { FiSend } from "react-icons/fi";
+import { FiSend, FiMessageSquare } from "react-icons/fi";
 import React from "react";
 
 interface MensagensProps {
@@ -39,7 +39,6 @@ export default function MensagensChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chat: MensagemObj[] = data || [];
 
-  
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
@@ -63,197 +62,182 @@ export default function MensagensChat({
     setMessage("");
   };
 
- 
-  const mensagens = chat.map((item: MensagemObj) => {
-    if (!session?.id) return null;
-    const isCurrentUser = item.autor_id === session?.id;
+  const mensagens = chat
+    .map((item: MensagemObj) => {
+      if (!session?.id) return null;
+      const isCurrentUser = item.autor_id === session?.id;
 
-    return (
-      <Flex
-        key={item.id}
-        justify={isCurrentUser ? "flex-end" : "flex-start"}
-        width="100%"
-        mb={3}
-        px={{ base: 2, md: 3 }}
-      >
-        <Box
-          maxW={{ base: "90%", sm: "85%", md: "75%" }}
-          bg={isCurrentUser ? "blue.500" : "white"}
-          color={isCurrentUser ? "white" : "gray.800"}
-          p={{ base: 3, md: 4 }}
-          borderRadius={isCurrentUser ? "20px 20px 5px 20px" : "20px 20px 20px 5px"}
-          boxShadow="md"
-          border={!isCurrentUser ? "1px solid" : "none"}
-          borderColor={!isCurrentUser ? "gray.200" : "transparent"}
-          position="relative"
-          _dark={{
-            bg: isCurrentUser ? "blue.600" : "gray.700",
-            color: isCurrentUser ? "white" : "gray.100",
-            borderColor: !isCurrentUser ? "gray.600" : "transparent"
-          }}
+      return (
+        <Flex
+          key={item.id}
+          justify={isCurrentUser ? "flex-end" : "flex-start"}
+          width="100%"
+          mb={2}
         >
-          {!isCurrentUser && (
+          <Box
+            maxW={{ base: "85%", md: "75%" }}
+            bg={isCurrentUser ? "#00713D" : "white"}
+            color={isCurrentUser ? "white" : "gray.800"}
+            p={3}
+            borderRadius="lg"
+            borderBottomRightRadius={isCurrentUser ? "4px" : "lg"}
+            borderBottomLeftRadius={isCurrentUser ? "lg" : "4px"}
+            boxShadow="sm"
+            border={!isCurrentUser ? "1px solid" : "none"}
+            borderColor={!isCurrentUser ? "gray.200" : "transparent"}
+            _dark={{
+              bg: isCurrentUser ? "#00d672" : "gray.700",
+              color: isCurrentUser ? "gray.900" : "gray.100",
+              borderColor: !isCurrentUser ? "gray.600" : "transparent",
+            }}
+          >
+            {!isCurrentUser && (
+              <Text
+                fontSize="xs"
+                color="gray.500"
+                _dark={{ color: "gray.400" }}
+                mb={1}
+                fontWeight="semibold"
+              >
+                {item.autor}
+              </Text>
+            )}
+
+            <Text
+              mb={1}
+              wordBreak="break-word"
+              fontSize="sm"
+              lineHeight="1.5"
+            >
+              {item.mensagem}
+            </Text>
+
             <Text
               fontSize="xs"
-              color="gray.500"
-              _dark={{ color: "gray.400" }}
-              mb={1}
-              fontWeight="medium"
+              color={isCurrentUser ? "whiteAlpha.800" : "gray.500"}
+              _dark={{
+                color: isCurrentUser ? "blackAlpha.700" : "gray.400",
+              }}
+              textAlign="right"
             >
-              {item.autor}
+              {item.hora}
             </Text>
-          )}
+          </Box>
+        </Flex>
+      );
+    })
+    .filter(Boolean);
 
-          <Text
-            mb={2}
-            wordBreak="break-word"
-            fontSize={{ base: "sm", md: "md" }}
-            lineHeight="1.4"
-          >
-            {item.mensagem}
-          </Text>
-
-          <Text
-            fontSize="xs"
-            color={isCurrentUser ? "blue.100" : "gray.500"}
-            _dark={{ color: isCurrentUser ? "blue.200" : "gray.400" }}
-            textAlign="right"
-            fontWeight="medium"
-          >
-            {item.hora}
-          </Text>
-        </Box>
-      </Flex>
-    );
-  });
-
+  // Estado quando não há ID (chat não disponível)
   if (!id) {
     return (
-      <Box
+      <Flex
         h="full"
         w="full"
-        display="flex"
+        direction="column"
         bg="gray.50"
         borderRadius="lg"
         boxShadow="md"
         border="1px solid"
         borderColor="gray.200"
-        p={{ base: 3, md: 4 }}
-        flexDir="column"
-        justifyContent="center"
-        position="relative"
+        _dark={{ borderColor: "gray.700", bg: "gray.900"}}
         overflow="hidden"
-        _dark={{ bg: "gray.900", borderColor: "gray.700" }}
       >
+        {/* Header */}
         <Box
-          bg="green.50"
-          borderRadius="lg"
-          flex="1"
-          mb={4}
-          border="1px solid"
-          borderColor="green.200"
-          position="relative"
-          _dark={{ bg: "gray.800", borderColor: "gray.600" }}
-        />
-
-        <Flex gap={2} align="flex-end">
-          <Textarea
-            placeholder="Selecione uma conversa para começar..."
-            h="60px"
-            resize="none"
-            borderRadius="lg"
-            border="1px solid"
-            borderColor="gray.300"
-            bg="gray.100"
-            isDisabled
-            fontSize={{ base: "sm", md: "md" }}
-            _dark={{ bg: "gray.800", color: "gray.400", borderColor: "gray.600" }}
-          />
-          <Button
-            leftIcon={<FiSend />}
-            colorScheme="green"
-            isDisabled
-            size={{ base: "md", md: "lg" }}
-            px={{ base: 4, md: 6 }}
-          >
-            Enviar
-          </Button>
-        </Flex>
-
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          bg="whiteAlpha.300"
-          _dark={{ bg: "blackAlpha.500" }}
-          backdropFilter="blur(1px)"
-          borderRadius="lg"
-          zIndex={1}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          px={4}
+          py={3}
+          borderBottom="1px solid"
+          borderColor="gray.200"
+          _dark={{ borderColor: "gray.700" }}
         >
+          <Heading size="sm" color="#023147" _dark={{ color: "gray.100" }}>
+            Mensagens
+          </Heading>
+        </Box>
+
+        {/* Estado Vazio */}
+        <Flex
+          flex="1"
+          direction="column"
+          align="center"
+          justify="center"
+          p={6}
+          gap={3}
+        >
+          <Box color="gray.400" _dark={{ color: "gray.600" }}>
+            <FiMessageSquare size={48} />
+          </Box>
           <Text
+            fontSize="md"
             color="gray.600"
-            fontSize={{ base: "sm", md: "md" }}
-            fontWeight="medium"
+            _dark={{ color: "gray.400" }}
             textAlign="center"
-            bg="white"
-            px={4}
-            py={2}
-            borderRadius="md"
-            shadow="sm"
-            _dark={{ color: "gray.300", bg: "gray.800" }}
+            fontWeight="medium"
           >
             Chat indisponível
           </Text>
-        </Box>
-      </Box>
+          <Text
+            fontSize="sm"
+            color="gray.500"
+            _dark={{ color: "gray.500" }}
+            textAlign="center"
+          >
+            Salve o chamado para habilitar o chat
+          </Text>
+        </Flex>
+      </Flex>
     );
   }
 
+  // Estado normal (chat disponível)
   return (
-    <Box
+    <Flex
+      h="full"
       w="full"
-      display="flex"
+      direction="column"
       bg="white"
       borderRadius="lg"
-      boxShadow="lg"
+      boxShadow="md"
       border="1px solid"
       borderColor="gray.200"
-      p={{ base: 3, md: 4 }}
-      flexDir="column"
+      _dark={{ borderColor: "gray.700", bg: "gray.800" }}
       overflow="hidden"
-      flex={1}
-      minH={0}
-      _dark={{ bg: "gray.800", borderColor: "gray.700" }}
     >
+      {/* Header */}
       <Box
-        bgGradient="linear(to-b, green.50, green.100)"
-        borderRadius="lg"
+        px={4}
+        py={3}
+        borderBottom="1px solid"
+        borderColor="gray.200"
+        _dark={{ borderColor: "gray.700", bg: "gray.900"}}
+        bg="gray.50"
+      >
+        <Heading size="sm" color="#023147" _dark={{ color: "gray.100" }}>
+          Mensagens
+        </Heading>
+      </Box>
+
+      {/* Área de Mensagens */}
+      <Box
         flex="1"
         overflowY="auto"
-        mb={4}
-        p={2}
-        border="1px solid"
-        borderColor="green.200"
-        position="relative"
-        _dark={{ bgGradient: "linear(to-b, gray.900, gray.800)", borderColor: "gray.600" }}
+        p={4}
+        bg="gray.50"
+        _dark={{ bg: "gray.900" }}
         css={{
           "&::-webkit-scrollbar": {
-            width: "6px",
+            width: "8px",
           },
           "&::-webkit-scrollbar-track": {
             background: "transparent",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#48bb78",
-            borderRadius: "3px",
+            background: "#CBD5E0",
+            borderRadius: "4px",
           },
           "&::-webkit-scrollbar-thumb:hover": {
-            background: "#38a169",
+            background: "#A0AEC0",
           },
         }}
       >
@@ -263,83 +247,107 @@ export default function MensagensChat({
             align="center"
             justify="center"
             direction="column"
-            color="gray.500"
-            _dark={{ color: "gray.400" }}
             textAlign="center"
-            p={4}
+            gap={2}
           >
-            <Text fontSize={{ base: "sm", md: "md" }} mb={2}>
+            <Box color="gray.400" _dark={{ color: "gray.600" }}>
+              <FiMessageSquare size={40} />
+            </Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              color="gray.500"
+              _dark={{ color: "gray.400" }}
+            >
               Nenhuma mensagem ainda
             </Text>
-            <Text fontSize="xs">
-              Comece uma conversa digitando uma mensagem abaixo
+            <Text fontSize="xs" color="gray.500" _dark={{ color: "gray.400" }}>
+              Comece uma conversa digitando abaixo
             </Text>
           </Flex>
         ) : (
-          <Flex flexDirection="column" gap={1} minH="full" justify="flex-end">
+          <Flex flexDirection="column" gap={2}>
             {mensagens}
             <div ref={messagesEndRef} />
           </Flex>
         )}
       </Box>
 
-      <Flex gap={2} align="flex-end">
-        <Box flex={1}>
-          <Textarea
-            placeholder="Digite sua mensagem..."
-            h="60px"
-            minH="60px"
-            resize="none"
-            borderRadius="lg"
-            border="2px solid"
-            borderColor="gray.200"
-            bg="gray.50"
-            disabled={disabled}
-            fontSize={{ base: "sm", md: "md" }}
-            _hover={{ borderColor: "gray.300", bg: "white" }}
-            _focus={{
-              borderColor: "blue.400",
-              bg: "white",
-              boxShadow: "0 0 0 1px var(--chakra-colors-blue-400)",
+      {/* Input de Mensagem */}
+      <Box
+        p={4}
+        borderTop="1px solid"
+        borderColor="gray.200"
+        _dark={{ borderColor: "gray.700", bg: "gray.800" }}
+        bg="white"
+      >
+        <Flex gap={2} align="flex-end">
+          <Box flex={1}>
+            <Textarea
+              placeholder="Digite sua mensagem... (Enter para enviar, Shift+Enter para nova linha)"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              disabled={disabled}
+              minH="60px"
+              maxH="120px"
+              resize="none"
+              borderRadius="lg"
+              border="1px solid"
+              borderColor="gray.300"
+              bg="gray.50"
+              fontSize="sm"
+              _hover={{ borderColor: "#00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+                bg: "white",
+              }}
+              _dark={{
+                bg: "gray.700",
+                borderColor: "gray.600",
+                color: "gray.100",
+                _hover: { borderColor: "#00d672" },
+                _focus: {
+                  borderColor: "#00d672",
+                  boxShadow: "0 0 0 1px #00d672",
+                  bg: "gray.600",
+                },
+              }}
+              aria-label="Campo de mensagem"
+            />
+          </Box>
+          <Button
+            leftIcon={<FiSend />}
+            colorScheme="green"
+            bg="#00713D"
+            onClick={handleSend}
+            isDisabled={!message.trim() || disabled}
+            size="md"
+            minW="100px"
+            _hover={{
+              bg: "#005a31",
+              transform: "translateY(-2px)",
+              shadow: "md",
             }}
+            _active={{ transform: "translateY(0)" }}
             _dark={{
-              bg: "gray.700",
-              borderColor: "gray.600",
-              color: "gray.100",
-              _hover: { borderColor: "gray.500", bg: "gray.600" },
-              _focus: {
-                borderColor: "blue.500",
-                bg: "gray.600",
-                boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)",
-              }
+              bg: "#00d672",
+              color: "gray.900",
+              _hover: { bg: "#00c060" },
             }}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-          />
-        </Box>
-        <Button
-          leftIcon={<FiSend />}
-          colorScheme="green"
-          onClick={handleSend}
-          isDisabled={!message.trim()}
-          size={{ base: "md", md: "lg" }}
-          px={{ base: 4, md: 6 }}
-          shadow="md"
-          _hover={{
-            transform: "translateY(-1px)",
-            shadow: "lg",
-          }}
-          transition="all 0.2s"
-        >
-          <Text display={{ base: "none", sm: "block" }}>Enviar</Text>
-        </Button>
-      </Flex>
-    </Box>
+            transition="all 0.2s"
+            aria-label="Enviar mensagem"
+          >
+            <Text display={{ base: "none", sm: "block" }}>Enviar</Text>
+          </Button>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }
