@@ -25,6 +25,7 @@ const publicRoutes = [
   "/faq/primeiro-acesso",
   "/faq/recuperacao-senhas",
   "/faq/recuperacao-senhas",
+  "/api/contact",
 ];
 
 export async function middleware(req: NextRequest) {

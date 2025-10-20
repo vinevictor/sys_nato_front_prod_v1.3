@@ -89,6 +89,7 @@ export default function ContatoSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log("🚀 ~ ContatoSection ~ formData:", formData);
 
     try {
       const response = await fetch("/api/contact", {
@@ -98,6 +99,7 @@ export default function ContatoSection() {
         },
         body: JSON.stringify(formData),
       });
+      console.log("🚀 ~ handleSubmit ~ response:", response);
 
       if (!response.ok) {
         throw new Error("Falha ao enviar a mensagem.");
@@ -275,20 +277,30 @@ export default function ContatoSection() {
               border="1px"
               borderColor="gray.200"
               boxShadow="md"
+              onSubmit={handleSubmit}
             >
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} w="full">
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel color="gray.700" _dark={{ color: "gray.200" }}>
                     Nome
                   </FormLabel>
-                  <Input placeholder="Seu nome" {...inputStyles} />
+                  <Input
+                    placeholder="Seu nome"
+                    name="nome"
+                    value={formData.nome}
+                    onChange={handleChange}
+                    {...inputStyles}
+                  />
                 </FormControl>
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel color="gray.700" _dark={{ color: "gray.200" }}>
                     E-mail
                   </FormLabel>
                   <Input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="voce@empresa.com"
                     {...inputStyles}
                   />
@@ -299,7 +311,13 @@ export default function ContatoSection() {
                 <FormLabel color="gray.700" _dark={{ color: "gray.200" }}>
                   Empresa
                 </FormLabel>
-                <Input placeholder="Nome da sua empresa" {...inputStyles} />
+                <Input
+                  placeholder="Nome da sua empresa"
+                  name="empresa"
+                  value={formData.empresa}
+                  onChange={handleChange}
+                  {...inputStyles}
+                />
               </FormControl>
 
               <FormControl>
@@ -307,6 +325,9 @@ export default function ContatoSection() {
                   Mensagem
                 </FormLabel>
                 <Textarea
+                  name="mensagem"
+                  value={formData.mensagem}
+                  onChange={handleChange}
                   placeholder="Como podemos ajudar?"
                   rows={5}
                   {...inputStyles}
@@ -319,6 +340,8 @@ export default function ContatoSection() {
                   rightIcon={<FaPaperPlane />}
                   transition="transform 0.2s"
                   _hover={{ transform: "translateY(-2px)" }}
+                  type="submit"
+                  isLoading={isSubmitting}
                 >
                   Enviar Mensagem
                 </Button>
