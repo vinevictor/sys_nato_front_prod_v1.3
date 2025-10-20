@@ -14,6 +14,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { MdNotificationsActive } from "react-icons/md";
 import { useState } from "react";
 
 export default function ModalAddAlerta() {
@@ -72,10 +73,34 @@ export default function ModalAddAlerta() {
   return (
     <>
       <Button
-        colorScheme="red"
-        size="md"
-        variant={"outline"}
+        leftIcon={<MdNotificationsActive size={20} />}
+        bg="#F59E0B"
+        color="white"
+        size={{ base: "sm", md: "md" }}
+        fontSize={{ base: "sm", md: "md" }}
         onClick={() => onOpen()}
+        shadow="md"
+        borderWidth="2px"
+        borderColor="#F59E0B"
+        _hover={{
+          bg: "#D97706",
+          borderColor: "#D97706",
+          transform: "translateY(-2px)",
+          shadow: "lg",
+        }}
+        _active={{
+          transform: "translateY(0)",
+          shadow: "md",
+        }}
+        _dark={{
+          bg: "#F59E0B",
+          borderColor: "#FBBF24",
+          _hover: {
+            bg: "#D97706",
+            borderColor: "#F59E0B",
+          },
+        }}
+        transition="all 0.2s"
       >
         Alerta Geral
       </Button>

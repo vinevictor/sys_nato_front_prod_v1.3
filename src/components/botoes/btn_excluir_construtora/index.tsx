@@ -19,12 +19,8 @@ import { MdOutlineCancel } from "react-icons/md";
 
 interface BtnExcluirUserProps {
   id?: number;
-  status?: boolean;
 }
-export default function BtmExcluirConstrutora({
-  id,
-  status,
-}: BtnExcluirUserProps) {
+export default function BtmExcluirConstrutora({ id }: BtnExcluirUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const route = useRouter();
@@ -65,49 +61,41 @@ export default function BtmExcluirConstrutora({
 
   return (
     <>
-      {status ? (
-        <>
-          <Tooltip label="Excluir Construtora">
-            <IconButton
+      <Tooltip label="Excluir Construtora">
+        <IconButton
+          colorScheme="red"
+          variant="outline"
+          icon={<BsFillTrashFill />}
+          aria-label="Delete"
+          onClick={onOpen}
+        />
+      </Tooltip>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+
+        <ModalContent>
+          <ModalBody p={10}>
+            <Text fontWeight={"bold"} fontSize={"20px"} textAlign={"center"}>
+              Você tem certeza de que deseja deletar Esta Construtora?
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button leftIcon={<MdOutlineCancel />} onClick={onClose}>
+              Cancelar
+            </Button>
+
+            <Button
+              leftIcon={<BsFillTrashFill />}
+              onClick={handleExcluir}
               colorScheme="red"
-              variant="outline"
-              icon={<BsFillTrashFill />}
-              aria-label="Delete"
-              onClick={onOpen}
-            />
-          </Tooltip>
-
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-
-            <ModalContent>
-              <ModalBody p={10}>
-                <Text
-                  fontWeight={"bold"}
-                  fontSize={"20px"}
-                  textAlign={"center"}
-                >
-                  Você tem certeza de que deseja deletar Esta Construtora?
-                </Text>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button leftIcon={<MdOutlineCancel />} onClick={onClose}>
-                  Cancelar
-                </Button>
-
-                <Button
-                  leftIcon={<BsFillTrashFill />}
-                  onClick={handleExcluir}
-                  colorScheme="red"
-                >
-                  Confirmar Exclusão
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </>
-      ) : null}
+            >
+              Confirmar Exclusão
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

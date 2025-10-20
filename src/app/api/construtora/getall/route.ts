@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         },
         next: {
           tags: ["construtora-all"],
-          revalidate: 60 * 30,
+          revalidate: 60 * 20,
         },
       }
     );

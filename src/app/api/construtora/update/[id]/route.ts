@@ -4,45 +4,41 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
-    if (!id) {
-      return NextResponse.json({ message: "ID da Construtora não fornecido" }, { status: 400 });
-    }
+    const data = await request.json();
     const session = await GetSessionServer();
-
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-
-    const request = await fetch(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/construtora/${id}`,
       {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
+        body: JSON.stringify(data),
       }
     );
-    if (!request.ok) {
-      const res = await request.json();
-      return NextResponse.json(
-        { message: res.message },
-        { status: request.status }
-      );
+
+    if (!response.ok) {
+      throw new Error("Erro ao atualizar construtora");
     }
+    const retorno = await response.json();
+
     revalidateTag("construtora-all");
-    revalidateTag("construtora-all-page");
     return NextResponse.json(
-      { message: "Construtora Desativada com sucesso" },
+      {
+        message: "Construtora atualizada com sucesso",
+        data: { response: retorno.data },
+      },
       { status: 200 }
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error }, { status: 500 });
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }

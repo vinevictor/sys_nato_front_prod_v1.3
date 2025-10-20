@@ -1,28 +1,33 @@
 "use client";
 
-import { IconButton, Tooltip } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { IconButton, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { BsFillPencilFill } from "react-icons/bs";
+import ModalEditarConstrutora from "@/components/construtoraCard/modal";
 
 interface BtnEditarConstrutoraProps {
   id: number;
 }
 
 export function BtnEditarConstrutora({ id }: BtnEditarConstrutoraProps) {
-  const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleRedirect = () => {
-    router.push(`/construtoras/${id}`);
-  };
   return (
-    <Tooltip label="Editar Construtora">
-      <IconButton
-        colorScheme="blue"
-        variant="outline"
-        icon={<BsFillPencilFill />}
-        aria-label="Edit"
-        onClick={handleRedirect}
+    <>
+      <Tooltip label="Editar Construtora">
+        <IconButton
+          colorScheme="blue"
+          variant="outline"
+          icon={<BsFillPencilFill />}
+          aria-label="Edit"
+          onClick={onOpen}
+        />
+      </Tooltip>
+
+      <ModalEditarConstrutora
+        isOpen={isOpen}
+        onClose={onClose}
+        construtoraId={id}
       />
-    </Tooltip>
+    </>
   );
 }

@@ -18,10 +18,11 @@ export async function GET() {
           },
           next: {
             tags: ["relatorio-all"],
-            revalidate: 60 * 30,
+            revalidate: 60 * 3,
           },
         });
         const res = await req.json();
+
         if (!req.ok) {
             throw new Error(res.message);
         }
