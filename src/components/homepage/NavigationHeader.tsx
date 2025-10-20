@@ -16,6 +16,7 @@ import Link from "next/link";
 
 export default function NavigationHeader() {
   const { colorMode, toggleColorMode } = useColorMode();
+  console.log("🚀 ~ NavigationHeader ~ colorMode:", colorMode);
 
   return (
     <Box
@@ -31,7 +32,7 @@ export default function NavigationHeader() {
           {/* Logo */}
           <Box>
             <Image
-              src={"/SisnatoLogoL.png"}
+              src={colorMode === "light" ? "/logo ligth.png" : "/logo dark.png"}
               alt="SisNATO"
               height="40px"
               objectFit="contain"
