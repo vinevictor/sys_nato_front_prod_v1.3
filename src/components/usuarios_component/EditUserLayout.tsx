@@ -1,5 +1,8 @@
 "use client";
 
+import BotaoCancelar from "@/components/botoes/btn_cancelar";
+import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
+import UserRegisterProvider from "@/provider/UserRegister";
 import {
   Box,
   Container,
@@ -12,9 +15,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MdEdit, MdPerson } from "react-icons/md";
-import { CardCreateUpdate } from "@/implementes/cardCreateUpdate";
-import UserRegisterProvider from "@/provider/UserRegister";
-import BotaoCancelar from "@/components/botoes/btn_cancelar";
 import { UpdateUser } from "@/actions/user/service";
 import Permissoes from "@/components/usuarios_component/permissoes";
 import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
@@ -26,13 +26,13 @@ interface EditUserLayoutProps {
 
 /**
  * Layout de edição de usuário (Client Component)
- * 
+ *
  * Renderiza o formulário de edição com todas as seções:
  * - Dados Pessoais
  * - Associações
  * - Acesso e Hierarquia
  * - Permissões
- * 
+ *
  * @param id - ID do usuário
  * @param data - Dados do usuário
  * @returns Layout completo de edição

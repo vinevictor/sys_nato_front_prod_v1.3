@@ -26,7 +26,6 @@ export async function GET(request: Request): Promise<NextResponse> {
     const andamento = searchParams.get("andamento");
     const construtora = searchParams.get("construtora");
     const empreendimento = searchParams.get("empreendimento");
-    console.log("🚀 ~ GET ~ empreedimento:", empreendimento);
     const financeiro = searchParams.get("financeiro");
     const id = searchParams.get("id");
     const pagina = searchParams.get("pagina");

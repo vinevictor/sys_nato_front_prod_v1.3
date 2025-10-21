@@ -14,7 +14,7 @@ export async function CreateSessionServer(payload = {}) {
   const jwt = await new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("4h")
+    .setExpirationTime("10h")
     .sign(secret);
 
   const { exp } = await OpenSessionToken(jwt);

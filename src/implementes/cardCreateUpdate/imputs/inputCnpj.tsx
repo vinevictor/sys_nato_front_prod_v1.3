@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
 
-import ApiCpnj from "@/actions/financeira/api/cnpj";
+// import ApiCpnj from "@/actions/financeira/api/cnpj";
 import { FinanceiraContext } from "@/context/FinanceiraContext";
 import {
   Box,

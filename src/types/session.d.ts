@@ -140,6 +140,7 @@ interface UserRoler {
   lista_finace?: boolean;
   empreendimento?: boolean;
   relatorio?: boolean;
+  natosign?: boolean;
 }
 
 interface AuthUser {

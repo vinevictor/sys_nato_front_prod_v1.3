@@ -1,22 +1,29 @@
 "use client";
+import Loading from "@/app/loading";
+import { SelectPgComponent } from "@/components/home/imputs/selectPg";
 import { SessionServer } from "@/types/session";
 import {
   Box,
   Button,
   Flex,
+  Heading,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Select,
+  SimpleGrid,
   Table,
   Tbody,
+  Text,
   Th,
   Thead,
   Tr,
+  VStack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Loading from "@/app/loading";
-import { InputComponentFilterHome } from "@/components/home/imputs/input";
-import { SelectComponentFilterHome } from "@/components/home/imputs/select";
-import { SelectPgComponent } from "@/components/home/imputs/selectPg";
+import { MdBadge, MdSearch } from "react-icons/md";
 import { TableComponentNatosign } from "./lista";
 
 interface DadoCompomentListProps {
@@ -88,11 +95,15 @@ export const DadoCompomentListNatosign = ({
   dados,
   session,
 }: DadoCompomentListProps) => {
-  const router = useRouter();
+  const cardBorderColor = useColorModeValue("gray.200", "gray.700");
+  const filtersBg = useColorModeValue("gray.50", "gray.900");
+  const tableWrapperBg = useColorModeValue("white", "gray.800");
+  const infoTextColor = useColorModeValue("gray.600", "gray.300");
+  const headerBg = useColorModeValue("gray.100", "gray.700");
+
   const [ListaDados, setListaDados] = useState<
     natosign.NatosignObjectType[] | null
   >(null);
-  console.log("🚀 ~ DadoCompomentListNatosign ~ ListaDados:", ListaDados);
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Total, setTotal] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -103,7 +114,7 @@ export const DadoCompomentListNatosign = ({
   const [dataInicio, setDataInicio] = useState<string | null>(null);
   const [dataFim, setDataFim] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
-  const [pagina, setPagina] = useState<number | null>(1);
+  const [pagina, setPagina] = useState<number>(1);
 
   useEffect(() => {
     if (dados) {
@@ -191,249 +202,424 @@ export const DadoCompomentListNatosign = ({
     setIsLoading(false);
   };
 
+  const temFiltrosAtivos = Boolean(
+    nome || status || ccaId || id || dataInicio || dataFim
+  );
+
   return (
-    <>
+    <VStack spacing={{ base: 5, md: 6 }} align="stretch" w="full">
+      {/* Área de Filtros */}
       <Box
-        display={"flex"}
-        flexDir={"column"}
-        gap={{ base: 2, xl: 6 }}
-        w={{ base: "100%", xl: "80%" }}
-        h={"100%"}
-        px={4}
-        py={3}
+        w="full"
+        bg={filtersBg}
+        p={{ base: 4, md: 6 }}
+        borderRadius="lg"
+        borderWidth="1px"
+        borderColor={cardBorderColor}
       >
-        <Flex w="full" justifyContent={"end"}>
-          <Button
-            bg="blue.500"
-            color="white"
-            w={{ base: "100%", xl: "auto" }}
-            _hover={{ bg: "blue.600" }}
-            onClick={() => router.push("/natosign/create")}
-          >
-            Criar envelope
-          </Button>
-        </Flex>
-        <Flex
-          flexDir={{ base: "column", xl: "row" }}
-          justifyContent="center"
-          gap={{ base: 2, xl: 4 }}
+        <Heading size="sm" mb={4} color="#023147" _dark={{ color: "gray.100" }}>
+          Filtrar Envelopes
+        </Heading>
+
+        <SimpleGrid
+          columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 6 }}
+          spacing={4}
         >
-          <Flex flexWrap="wrap" gap={4} justifyContent="flex-start" w="full">
-            <Box w={{ base: "48%", md: "20%", xl: "10rem" }}>
-              <InputComponentFilterHome
-                textAlign={"start"}
+          <Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              mb={2}
+              color="gray.700"
+              _dark={{ color: "gray.300" }}
+            >
+              ID do Envelope
+            </Text>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={MdBadge} color="gray.400" />
+              </InputLeftElement>
+              <Input
                 type="number"
-                placeholder="ID do Envelope"
+                placeholder="Digite o ID"
                 value={id ?? ""}
                 onChange={(e) => setId(e.target.value)}
+                bg="white"
+                _dark={{ bg: "gray.800", borderColor: "gray.600" }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
               />
-            </Box>
+            </InputGroup>
+          </Box>
 
-            <Box w={{ base: "48%", md: "40%", xl: "20rem" }}>
-              <InputComponentFilterHome
-                placeholder="Nome do Signatário"
+          <Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              mb={2}
+              color="gray.700"
+              _dark={{ color: "gray.300" }}
+            >
+              Nome do Signatário
+            </Text>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={MdSearch} color="gray.400" />
+              </InputLeftElement>
+              <Input
+                placeholder="Digite o nome"
                 value={nome ?? ""}
                 onChange={(e) => setNome(e.target.value)}
+                bg="white"
+                _dark={{ bg: "gray.800", borderColor: "gray.600" }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
               />
-            </Box>
+            </InputGroup>
+          </Box>
 
-            <Box w={{ base: "48%", md: "20%", xl: "10rem" }}>
-              <Select
-                textColor={"#00713D"}
-                _hover={{ borderColor: "#00613C" }}
-                borderColor={"#00713D"}
-                placeholder="Status"
-                size="sm"
-                borderRadius="1rem"
-                value={status ?? ""}
-                onChange={(e) => setStatus(e.target.value)}
+          <Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              mb={2}
+              color="gray.700"
+              _dark={{ color: "gray.300" }}
+            >
+              Status
+            </Text>
+            <Select
+              placeholder="Selecione..."
+              value={status ?? ""}
+              onChange={(e) => setStatus(e.target.value)}
+              bg="white"
+              color="gray.800"
+              borderColor="gray.300"
+              _hover={{ borderColor: "#00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
+              _dark={{
+                bg: "gray.800",
+                borderColor: "gray.600",
+                color: "gray.100",
+              }}
+              sx={{
+                "& option": {
+                  bg: "white",
+                  color: "gray.800",
+                },
+                "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
+                  bg: "gray.800",
+                  color: "gray.100",
+                },
+              }}
+            >
+              <option value="done">Finalizado</option>
+              <option value="waiting">Aguardando</option>
+              <option value="signing">Assinando</option>
+              <option value="rejected">Rejeitado</option>
+            </Select>
+          </Box>
+
+          {session?.user.hierarquia === "ADM" && (
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color="gray.700"
+                _dark={{ color: "gray.300" }}
               >
-                <option value="done">Finalizado</option>
-                <option value="waiting">Aguardando</option>
-                <option value="signing">Assinando</option>
-                <option value="rejected">Rejeitado</option>
+                Financeira (CCA)
+              </Text>
+              <Select
+                placeholder="Selecione..."
+                value={ccaId?.toString() ?? ""}
+                onChange={(e) => setCcaId(Number(e.target.value))}
+                bg="white"
+                color="gray.800"
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  color: "gray.100",
+                }}
+                sx={{
+                  "& option": { bg: "white", color: "gray.800" },
+                  "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
+                    bg: "gray.800",
+                    color: "gray.100",
+                  },
+                }}
+              >
+                {DataFinanceiro.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.fantasia}
+                  </option>
+                ))}
               </Select>
             </Box>
+          )}
 
-            {session?.user.hierarquia === "ADM" && (
-              <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
-                <SelectComponentFilterHome
-                  Data={DataFinanceiro}
-                  place="Financeira (CCA)"
-                  value={ccaId?.toString() ?? ""}
-                  onChange={(e) => setCcaId(Number(e.target.value))}
-                />
-              </Box>
-            )}
+          <Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              mb={2}
+              color="gray.700"
+              _dark={{ color: "gray.300" }}
+            >
+              Data Início
+            </Text>
+            <Input
+              type="date"
+              value={dataInicio ?? ""}
+              onChange={(e) => setDataInicio(e.target.value)}
+              bg="white"
+              borderColor="gray.300"
+              _hover={{ borderColor: "#00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
+              _dark={{
+                bg: "gray.800",
+                borderColor: "gray.600",
+                color: "gray.100",
+              }}
+            />
+          </Box>
 
-            <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
-              <InputComponentFilterHome
-                type="date"
-                value={dataInicio ?? ""}
-                onChange={(e) => setDataInicio(e.target.value)}
-              />
-            </Box>
-            <Box w={{ base: "48%", md: "30%", xl: "15rem" }}>
-              <InputComponentFilterHome
-                type="date"
-                value={dataFim ?? ""}
-                onChange={(e) => setDataFim(e.target.value)}
-              />
-            </Box>
-          </Flex>
+          <Box>
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              mb={2}
+              color="gray.700"
+              _dark={{ color: "gray.300" }}
+            >
+              Data Fim
+            </Text>
+            <Input
+              type="date"
+              value={dataFim ?? ""}
+              onChange={(e) => setDataFim(e.target.value)}
+              bg="white"
+              borderColor="gray.300"
+              _hover={{ borderColor: "#00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
+              _dark={{
+                bg: "gray.800",
+                borderColor: "gray.600",
+                color: "gray.100",
+              }}
+            />
+          </Box>
+        </SimpleGrid>
 
-          <Box w={{ base: "100%", xl: "auto" }}>
+        {/* Contador de resultados e botão de limpar filtros */}
+        <Flex
+          mt={4}
+          justify="space-between"
+          align="center"
+          flexWrap="wrap"
+          gap={3}
+        >
+          <Text fontSize="sm" color={infoTextColor}>
+            {Total}{" "}
+            {Total === 1 ? "envelope encontrado" : "envelopes encontrados"}
+          </Text>
+
+          <Flex gap={2}>
             <Button
+              colorScheme="green"
               bg="#00713D"
-              w={{ base: "100%", xl: "auto" }}
-              textColor="white"
-              variant="solid"
-              _hover={{ bg: "#00631B" }}
-              size="md"
+              size="sm"
               onClick={filtroPrimario}
+              _hover={{ bg: "#005a31" }}
+              _dark={{
+                bg: "#00d672",
+                color: "gray.900",
+                _hover: { bg: "#00c060" },
+              }}
             >
               Filtrar
             </Button>
-          </Box>
-          <Box w={{ base: "100%", xl: "auto" }}>
-            <Button
-              bg="#00713D"
-              w={{ base: "100%", xl: "auto" }}
-              textColor="white"
-              variant="solid"
-              _hover={{ bg: "#00631B" }}
-              size="md"
-              onClick={HandleFilterBlank}
-            >
-              Limpar
-            </Button>
-          </Box>
-        </Flex>
-
-        {IsLoading && <Loading />}
-        {!IsLoading && (
-          <Flex
-            w={"full"}
-            bg={"gray.50"}
-            shadow={"lg"}
-            borderRadius={"15px"}
-            p={{ base: "10px", xl: "20px" }}
-            alignContent={"center"}
-            justifyContent={"space-evenly"}
-            flexDir={"column"}
-            border={"1px solid"}
-            borderColor={"gray.200"}
-          >
-            <Box
-              w="full"
-              overflowX="auto" // <<< A MÁGICA ACONTECE AQUI
-              bg={"gray.50"}
-              shadow={"lg"}
-              borderRadius={"15px"}
-              border={"1px solid"}
-              borderColor={"gray.200"}
-            >
-              <Table
-                variant="simple"
+            {temFiltrosAtivos && (
+              <Button
                 size="sm"
-                bg={"gray.100"}
-                borderRadius={"15px"}
+                variant="ghost"
+                colorScheme="red"
+                onClick={HandleFilterBlank}
               >
-                <Thead>
-                  <Tr>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"80px"}
-                    >
-                      ID
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"200px"}
-                    >
-                      SIGNATÁRIOS
-                    </Th>
-                    <Th
-                      minW={"80px"}
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      whiteSpace="nowrap"
-                    >
-                      ASSINATURAS
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"120px"}
-                    >
-                      STATUS
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"150px"}
-                    >
-                      DATA CRIAÇÃO
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"150px"}
-                      whiteSpace="nowrap"
-                    >
-                      ATUALIZADO EM
-                    </Th>
-                    <Th
-                      fontSize={"lg"}
-                      p={"0.8rem"}
-                      borderBottomColor={"gray.300"}
-                      minW={"130px"}
-                      textAlign="center"
-                    >
-                      FUNÇÕES
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {ListaDados?.map((item) => (
+                Limpar Filtros
+              </Button>
+            )}
+          </Flex>
+        </Flex>
+      </Box>
+
+      {/* Loading */}
+      {IsLoading && <Loading />}
+
+      {/* Tabela de Envelopes */}
+      {!IsLoading && (
+        <Box
+          w="full"
+          bg={tableWrapperBg}
+          borderRadius="lg"
+          borderWidth="1px"
+          borderColor={cardBorderColor}
+          shadow="md"
+          overflow="hidden"
+        >
+          <Box w="full" overflowX="auto">
+            <Table variant="simple" size="sm">
+              <Thead bg={headerBg}>
+                <Tr>
+                  <Th
+                    minW="80px"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    ID
+                  </Th>
+                  <Th
+                    minW="220px"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Signatários
+                  </Th>
+                  <Th
+                    minW="120px"
+                    whiteSpace="nowrap"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Assinaturas
+                  </Th>
+                  <Th
+                    minW="140px"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Status
+                  </Th>
+                  <Th
+                    minW="160px"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Data criação
+                  </Th>
+                  <Th
+                    minW="160px"
+                    whiteSpace="nowrap"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Atualizado em
+                  </Th>
+                  <Th
+                    minW="140px"
+                    textAlign="center"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    Funções
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {ListaDados && ListaDados.length > 0 ? (
+                  ListaDados.map((item) => (
                     <TableComponentNatosign
                       key={item.UUID}
                       dados={item}
                       session={session ?? null}
                     />
-                  ))}
-                </Tbody>
-              </Table>
-            </Box>
+                  ))
+                ) : (
+                  <Tr>
+                    <Th colSpan={7}>
+                      <Flex
+                        w="full"
+                        minH="200px"
+                        justifyContent="center"
+                        alignItems="center"
+                        flexDir="column"
+                        gap={4}
+                        py={8}
+                      >
+                        <Text
+                          fontSize="lg"
+                          color="gray.600"
+                          _dark={{ color: "gray.400" }}
+                          textAlign="center"
+                        >
+                          {temFiltrosAtivos
+                            ? "Nenhum envelope encontrado com os filtros aplicados"
+                            : "Nenhum envelope cadastrado ainda."}
+                        </Text>
+                      </Flex>
+                    </Th>
+                  </Tr>
+                )}
+              </Tbody>
+            </Table>
+          </Box>
+
+          {/* Paginação */}
+          {ListaDados && ListaDados.length > 0 && (
             <Flex
-              w={"full"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              pt={3}
+              mt={{ base: 4, md: 5 }}
+              px={{ base: 4, md: 6 }}
+              pb={{ base: 4, md: 5 }}
+              direction={{ base: "column", md: "row" }}
+              justify="space-between"
+              gap={{ base: 3, md: 4 }}
+              align={{ base: "flex-start", md: "center" }}
+              bg="gray.50"
+              _dark={{ bg: "gray.900" }}
             >
-              <Box>Total de registros: {Total}</Box>
-              <Flex gap={2}>
-                paginas:
+              <Text fontSize="sm" color={infoTextColor}>
+                Total de registros: {Total}
+              </Text>
+              <Flex gap={3} align="center" wrap="wrap">
+                <Text fontSize="sm" color={infoTextColor}>
+                  Páginas:
+                </Text>
                 <SelectPgComponent
                   total={Total || 0}
                   ClientQtd={dados?.data.length || 0}
-                  SelectPage={pagina || 1}
+                  SelectPage={pagina}
                   setSelectPage={setPagina}
                   SetVewPage={irParaPagina}
                 />
               </Flex>
             </Flex>
-          </Flex>
-        )}
-      </Box>
-    </>
+          )}
+        </Box>
+      )}
+    </VStack>
   );
 };

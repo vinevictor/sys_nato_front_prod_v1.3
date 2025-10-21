@@ -1,13 +1,23 @@
 import Loading from "@/app/loading";
 import BarChart from "@/components/barChart";
 import CardInfoDashboard from "@/components/cardInfoDashboard";
+import CidadesProximasTable from "@/components/dashboard/cidades-proximas";
 import LineChart from "@/components/lineChart.tsx";
 import PieChart from "@/components/pieChart";
 import { GetSessionServer } from "@/lib/auth_confg";
-import { Box, Flex, Grid, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  Grid,
+  GridItem,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { Suspense } from "react";
 import { FaRegClock } from "react-icons/fa6";
-import { LuClipboardCheck, LuTag } from "react-icons/lu";
+import { LuClipboardCheck, LuLayoutDashboard, LuTag } from "react-icons/lu";
 
 // Definir tipos
 interface SessionServer {
@@ -141,97 +151,153 @@ async function DashboardContent({
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     return (
-      <Flex 
-        w="full" 
-        h="full" 
-        flexDir="column" 
-        p={{ base: 4, md: 6 }} 
-        gap={6} 
-        overflowX="hidden" 
-        overflowY="auto"
+      <Container
+        maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
+        py={{ base: 4, md: 5, lg: 6 }}
+        px={{ base: 3, sm: 4, md: 5, lg: 6 }}
       >
-        <SimpleGrid
-          columns={{ base: 1, sm: 2, lg: 3 }}
-          spacing={4}
-          w="100%"
-        >
-          <CardInfoDashboard
-            title="Total Solicitações"
-            value={totalSolicitacoesGlobal}
-            icon={<LuClipboardCheck />}
-          />
-          <CardInfoDashboard
-            title="Média de Horas p/ Certificação"
-            value={mediaGlobalHHMMSS}
-            icon={<FaRegClock />}
-          />
-          <CardInfoDashboard
-            title="Problemas Registrados"
-            value={quantidadeTags}
-            icon={<LuTag />}
-          />
-        </SimpleGrid>
-
-        <Grid
-          templateColumns={{ 
-            base: "1fr", 
-            lg: "1fr 1fr" 
-          }}
-          templateRows={{ 
-            base: "auto auto auto", 
-            lg: "auto auto" 
-          }}
-          gap={6}
-          w="full"
-          minH="fit-content"
-        >
-          <Box 
-            gridColumn={{ base: "1", lg: "1 / -1" }}
-            h={{ base: "250px", md: "350px" }}
-            w="full"
-            minW={0}
+        <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
+          <Flex
+            bg="white"
+            _dark={{ bg: "gray.800", borderBottomColor: "#00d672" }}
+            borderBottomWidth="2px"
+            borderBottomColor="#00713D"
+            p={{ base: 4, sm: 5, md: 6 }}
+            align="center"
+            justify="space-between"
+            wrap="wrap"
+            gap={{ base: 3, md: 4 }}
+            borderRadius={{ base: "md", md: "lg", xl: "xl" }}
+            borderBottomRadius={0}
+            shadow={{ base: "sm", md: "md", lg: "lg" }}
+            flexDir={{ base: "column", md: "row" }}
           >
-            <LineChart 
-              labels={mesAnoLabels} 
-              dataValues={MediaHorasConvertida} 
-            />
-          </Box>
+            <Flex align="center" gap={{ base: 2, md: 3 }}>
+              <Box
+                p={{ base: 1.5, md: 2 }}
+                bg="green.50"
+                _dark={{ bg: "green.900" }}
+                borderRadius="md"
+                display={{ base: "none", sm: "block" }}
+              >
+                <LuLayoutDashboard size={32} color="#00713D" />
+              </Box>
+              <Box>
+                <Heading
+                  fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+                  size={{ base: "md", md: "lg" }}
+                  color="#023147"
+                  _dark={{ color: "gray.100" }}
+                >
+                  Painel de Monitoramento
+                </Heading>
+                <Text
+                  fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                  color="gray.600"
+                  _dark={{ color: "gray.400" }}
+                  display={{ base: "none", sm: "block" }}
+                >
+                  Acompanhe as principais métricas de certificações e solicitações.
+                </Text>
+              </Box>
+            </Flex>
+          </Flex>
 
-          <Box 
-            h={{ base: "400px", md: "350px" }}
-            w="full"
-            minW={0}
+          <VStack
+            spacing={{ base: 5, md: 6, lg: 8 }}
+            align="stretch"
+            bg="white"
+            _dark={{ bg: "gray.800" }}
+            p={{ base: 4, md: 6 }}
+            borderRadius="xl"
+            borderTopRadius={0}
+            shadow="lg"
+            minH="400px"
           >
-            <BarChart
-              lista_tags={lista_tags}
-              labelTitle="Quantidade de Tags: "
-              dataQuantidades={quantidadeTags}
-            />
-          </Box>
-
-          <Box 
-            h="380px"
-            w="full"
-            minW={0}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Box
-              w={{ base: "100%", lg: "80%" }}
-              h="full"
-              maxW="400px"
+            <Grid
+              templateColumns={{ base: "1fr", xl: "2fr 1fr" }}
+              gap={{ base: 5, md: 6, lg: 8 }}
+              w="full"
             >
-              <PieChart
-                title="Video Conferência e Presencial"
-                colors={["#00713C", "#1D1D1B"]}
-                labels={["Video Conf.", "Presencial"]}
-                dataValues={[totalVideoConferencia, totalInterna]}
-              />
-            </Box>
-          </Box>
-        </Grid>
-      </Flex>
+              <GridItem>
+                <VStack spacing={{ base: 5, md: 6 }} align="stretch">
+                  <Box
+                    h={{ base: "340px", md: "380px" }}
+                    w="full"
+                    bg="gray.50"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    borderRadius="lg"
+                    p={1}
+                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
+                  >
+                    <Box w="full" h="100%">
+                      <LineChart
+                        labels={mesAnoLabels}
+                        dataValues={MediaHorasConvertida}
+                      />
+                    </Box>
+                  </Box>
+
+                  <Box
+                    h={{ base: "380px", md: "420px" }}
+                    w="full"
+                    bg="gray.50"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    borderRadius="lg"
+                    p={1}
+                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
+                  >
+                    <Box w="full" h="100%">
+                      <BarChart
+                        lista_tags={lista_tags}
+                      />
+                    </Box>
+                  </Box>
+                </VStack>
+              </GridItem>
+
+              <GridItem>
+                <VStack spacing={{ base: 5, md: 6 }} align="stretch">
+                  <CardInfoDashboard
+                    title="TMA"
+                    value={mediaGlobalHHMMSS}
+                    icon={<FaRegClock size={22} />}
+                  />
+
+                  <Box
+                    h={{ base: "340px", md: "380px" }}
+                    w="full"
+                    bg="gray.50"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    borderRadius="lg"
+                    p={1}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
+                  >
+                    <Box w="full" maxW="400px">
+                      <PieChart
+                        title="Video Conferência e Presencial"
+                        colors={["#00713C", "#1D1D1B"]}
+                        labels={["Video Conf.", "Presencial"]}
+                        dataValues={[totalVideoConferencia, totalInterna]}
+                      />
+                    </Box>
+                  </Box>
+                </VStack>
+              </GridItem>
+
+              <GridItem colSpan={{ base: 1, xl: 2 }}>
+                <CidadesProximasTable />
+              </GridItem>
+            </Grid>
+          </VStack>
+        </VStack>
+      </Container>
     );
 
   } catch (error) {

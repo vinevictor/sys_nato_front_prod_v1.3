@@ -79,9 +79,8 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [bugReports, setBugReports] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
-  const [cont, setCont] = useState(0);
   const [selectedBug, setSelectedBug] = useState<Notification | null>(null);
-  
+
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -94,40 +93,38 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
   const subtextColor = useColorModeValue("gray.600", "gray.400");
   const modalDescBg = useColorModeValue("gray.50", "gray.700");
 
-  // Contador de alertas
-  const unreadCount = cont;
+  // Combina e conta todas as notificações
+  const allNotifications = [...bugReports, ...notifications];
+  const unreadCount = allNotifications.length;
 
 
   /**
    * Busca a lista de alertas
    */
   const handleFetchAlertas = async () => {
-    if (session?.role?.alert) {
-      setLoading(true);
-      try {
-        const url = "/api/alerts/geral/findAll";
-        const req = await fetch(url);
-        const res = await req.json();
-        if (req.ok) {
-          // Mapeia os alertas para o formato esperado
-          const alertasMapeados = Array.isArray(res) ? res.map((item: any) => ({
-            id: item.id,
-            titulo: item.titulo,
-            descricao: item.descricao,
-            solicitacao_id: item.solicitacao_id,
-            type: "warning" as const,
-            read: false,
-          })) : [];
-          const filteredAlertas = alertasMapeados.filter((item) => item.solicitacao_id !== null);
-          setNotifications(filteredAlertas);
-          setCont(filteredAlertas.length);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar alertas:", error);
-        setNotifications([]);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      const url = "/api/alerts/geral/findAll";
+      const req = await fetch(url);
+      const res = await req.json();
+      if (req.ok) {
+        // Mapeia os alertas para o formato esperado
+        const alertasMapeados = Array.isArray(res) ? res.map((item: any) => ({
+          id: item.id,
+          titulo: item.titulo,
+          descricao: item.descricao,
+          solicitacao_id: item.solicitacao_id,
+          type: "warning" as const,
+          read: false,
+        })) : [];
+        const filteredAlertas = alertasMapeados.filter((item) => item.solicitacao_id !== null);
+        setNotifications(filteredAlertas);
       }
+    } catch (error) {
+      console.error("Erro ao buscar alertas:", error);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,7 +149,6 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
               read: false,
             }));
             setBugReports(bugsMapeados);
-            setCont(cont + bugsMapeados.length);
           } else {
             setBugReports([]);
           }
@@ -184,12 +180,6 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
   };
 
   /**
-   * Combina e conta todas as notificações
-   */
-  const allNotifications = [...bugReports, ...notifications];
-  const totalCount = allNotifications.length;
-
-  /**
    * Carrega todos os dados ao abrir o menu
    */
   const handleOpenMenu = async () => {
@@ -203,16 +193,6 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
     const interval = setInterval(handleOpenMenu, 30000);
     return () => clearInterval(interval);
   }, [session]);
-
-  // Atualiza o contador total
-  useEffect(() => {
-    setCont(totalCount);
-  }, [totalCount]);
-
-  // Não renderiza se o usuário não tiver permissão
-  if (!session?.role?.alert) {
-    return null;
-  }
 
   return (
     <>

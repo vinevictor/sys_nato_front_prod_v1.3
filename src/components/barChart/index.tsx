@@ -1,28 +1,8 @@
 "use client";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels"; // Importando o plugin de rótulos
 import React from "react";
-import { Box } from "@chakra-ui/react";
-
-// Registrar os componentes do Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
+import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { BarChart as MuiBarChart } from "@mui/x-charts/BarChart";
+import MuiChartsProvider from "@/components/charts/mui-charts-provider";
 
 interface TagData {
   descricao: string;
@@ -31,11 +11,13 @@ interface TagData {
 
 interface BarChartProps {
   lista_tags: TagData[];
-  labelTitle: string;
-  dataQuantidades: number;
 }
 
 export default function BarChart({ lista_tags }: BarChartProps) {
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
+  const borderColor = isDark ? "gray.700" : "rgba(187, 187, 187, 0.22)";
+
   const maiorMenor = lista_tags.sort((a, b) => b.quantidade - a.quantidade);
 
   // Selecionar as 5 tags com mais quantidade
@@ -51,111 +33,77 @@ export default function BarChart({ lista_tags }: BarChartProps) {
     { descricao: "Outras", quantidade: totalOutros },
   ];
 
-  // Definindo as cores personalizadas para as barras
-  const colors = [
-    "rgba(255, 99, 132)", // Rosa claro
-    "rgba(255, 159, 64)", // Laranja claro
-    "rgba(255, 205, 86)", // Amarelo claro
-    "rgba(75, 192, 192)", // Verde claro
-    "rgba(54, 162, 235)", // Azul claro
-    "rgba(153, 102, 255)", // Roxo claro
+  // Cores vibrantes e variadas para cada barra
+  const barColors = [
+    "#FF6384", // Rosa
+    "#FF9F40", // Laranja
+    "#FFCD56", // Amarelo
+    "#4BC0C0", // Turquesa
+    "#36A2EB", // Azul
+    "#9966FF", // Roxo
   ];
-
-  const data = {
-    labels: finalTags.map((tag) => tag.descricao),
-    display: false,
-    datasets: [
-      {
-        label: "Quantidade",
-        data: finalTags.map((tag) => tag.quantidade),
-        backgroundColor: colors.slice(0, finalTags.length), // Atribui cores baseadas no número de tags
-        borderColor: colors
-          .slice(0, finalTags.length)
-          .map((color) => color.replace("0.2", "1")), // Ajusta a borda para uma cor mais forte
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      title: {
-        display: true,
-        text: "Problemas Registrados :",
-        position: "top" as const,
-        align: "start" as const,
-        font: {
-          size: 16,
-        },
-        padding: {
-          bottom: 30,
-        },
-      },
-      tooltip: {
-        borderColor: "#00713C",
-        borderWidth: 2,
-        titleFont: {
-          size: 14,
-          weight: "bold" as const,
-          color: "#00713C",
-        },
-        bodyFont: {
-          size: 12,
-          color: "#333",
-        },
-        padding: 12,
-        cornerRadius: 10,
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        callbacks: {
-          label: (context: any) => {
-            const descricao = finalTags[context.dataIndex].descricao;
-            const quantidade = context.raw;
-            return `${descricao}: ${quantidade} registros`;
-          },
-        },
-      },
-      datalabels: {
-        color: "black",
-        font: {
-          size: 12,
-        },
-        formatter: (value: number) => `${value}`,
-      },
-    },
-    scales: {
-      x: {
-        display: true,
-        title: {
-          display: false,
-          text: "Tags",
-        },
-        ticks: {
-          autoSkip: true,
-          maxTicksLimit: 20,
-          font: {
-            size: 10,
-          },
-        },
-      },
-    },
-  };
 
   return (
     <Box
       h="full"
       w={"full"}
-      p={2}
+      p={1}
       bg="white"
       borderRadius="md"
       boxShadow="md"
+      borderWidth="1px"
+      borderColor={borderColor}
       display="flex"
-      justifyContent="center"
+      flexDir="column"
+      gap={3}
+      justifyContent="flex-start"
       alignItems="center"
       _hover={{ boxShadow: "xl" }}
+      _dark={{
+        bg: "gray.900",
+        borderColor: "gray.700",
+        boxShadow: "dark-lg",
+      }}
     >
-      <Bar data={data} options={options} />
+      <MuiChartsProvider>
+        <Text
+          fontSize={{ base: "md", md: "lg" }}
+          fontWeight="semibold"
+          color={isDark ? "gray.100" : "#1A202C"}
+        >
+          Problemas Possíveis
+        </Text>
+        <MuiBarChart
+          height={isDark ? 400 : 380}
+          xAxis={[
+            {
+              scaleType: "band",
+              data: finalTags.map((tag) => tag.descricao),
+              label: "Categorias",
+              tickLabelStyle: {
+                fontSize: 10,
+                angle: -45,
+                textAnchor: "end",
+              },
+            },
+          ]}
+          yAxis={[
+            {
+              label: "Quantidade",
+            },
+          ]}
+          series={finalTags.map((tag, index) => ({
+            data: finalTags.map((t, i) => (i === index ? t.quantidade : 0)),
+            label: tag.descricao,
+            stack: "total",
+            color: barColors[index % barColors.length],
+            valueFormatter: (value: number | null) =>
+              value !== null && value > 0 ? `${value} registros` : "",
+          }))}
+          margin={{ top: 40, bottom: 100, left: 20, right: 10 }}
+          grid={{ horizontal: true, vertical: false }}
+        />
+      </MuiChartsProvider>
     </Box>
   );
 }

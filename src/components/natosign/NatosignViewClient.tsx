@@ -1,24 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
+  Badge,
   Box,
+  Button,
   Flex,
   Heading,
-  Text,
-  Badge,
-  SimpleGrid,
-  Divider,
-  Button,
-  VStack,
-  HStack,
-  AspectRatio,
   Link,
+  SimpleGrid,
+  Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FiDownload, FiExternalLink, FiRefreshCw } from "react-icons/fi";
 import { SignatarioCard } from "./SignatarioCard";
+import { PDFViewer } from "./PDFViewer";
 
 const InfoItem = ({
   label,
@@ -28,10 +26,23 @@ const InfoItem = ({
   value: React.ReactNode;
 }) => (
   <Box>
-    <Text fontSize="sm" color="gray.500">
+    <Text
+      fontSize="xs"
+      fontWeight="semibold"
+      color="gray.600"
+      textTransform="uppercase"
+      letterSpacing="wide"
+      mb={1}
+      _dark={{ color: "gray.400" }}
+    >
       {label}
     </Text>
-    <Text fontSize="md" fontWeight="medium">
+    <Text
+      fontSize="md"
+      fontWeight="medium"
+      color="#023147"
+      _dark={{ color: "gray.100" }}
+    >
       {value}
     </Text>
   </Box>
@@ -62,6 +73,7 @@ export default function NatosignViewClient({ envelope }: any) {
   const router = useRouter();
   const toast = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleUpdateStatus = async () => {
     setIsUpdating(true);
@@ -89,6 +101,92 @@ export default function NatosignViewClient({ envelope }: any) {
     }
   };
 
+  const handleDownloadAss = async (filename: string) => {
+    setIsDownloading(true);
+    try {
+      const urlApi = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign/download/${envelope.UUID}`;
+      console.log("🚀 ~ handleDownloadAss ~ urlApi:", urlApi)
+      const response = await fetch(urlApi);
+      if (!response.ok) {
+        throw new Error("Falha ao baixar o arquivo.");
+      }
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+
+      toast({
+        title: "Download Iniciado!",
+        description: "O arquivo está sendo baixado.",
+        status: "success",
+        isClosable: true,
+        duration: 3000,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao baixar",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownload = async (url: string, filename: string) => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Falha ao baixar o arquivo.");
+      }
+
+      // Obter o ArrayBuffer e converter para Blob
+      const arrayBuffer = await response.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+      // Criar URL temporária para o blob
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      // Criar e clicar no link de download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+
+      // Limpar após um pequeno delay para garantir que o download iniciou
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      }, 100);
+
+      toast({
+        title: "Download Iniciado!",
+        description: "O arquivo está sendo baixado.",
+        status: "success",
+        isClosable: true,
+        duration: 3000,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao baixar",
+        description: error.message || "Não foi possível baixar o arquivo.",
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const signatarios = envelope.signatarios || [];
   const createdAtFormatted = new Date(envelope.createdAt).toLocaleString(
     "pt-BR"
@@ -96,34 +194,63 @@ export default function NatosignViewClient({ envelope }: any) {
   const updatedAtFormatted = new Date(envelope.updatedAt).toLocaleString(
     "pt-BR"
   );
+  const pdfUrl = envelope.doc_modificado_viw || envelope.doc_original_viw;
+
+  console.log("🚀 ~ envelope:", envelope);
+
+  const shouldShowUpdateButton = (): boolean => {
+    const statusFinalizado =
+      envelope.status === "done" || envelope.status === "completed";
+    const documentoNaoDisponivel = !envelope.doc_modificado_down;
+
+    return documentoNaoDisponivel || !statusFinalizado;
+  };
+
+
 
   return (
-    <Box
-      w={{ base: "100%", lg: "80%", xl: "70%" }}
-      bg="white"
-      p={{ base: 4, md: 8 }}
-      borderRadius="lg"
-      shadow="md"
-    >
-      <VStack spacing={6} align="stretch">
-        <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
-          <Heading as="h1" size="lg">
-            Detalhes do Envelope
-          </Heading>
-          <HStack>
-            {getStatusBadge(envelope.status, envelope.status_view)}
-            <Button
-              size="sm"
-              leftIcon={<FiRefreshCw />}
-              onClick={handleUpdateStatus}
-              isLoading={isUpdating}
-              colorScheme="teal"
-            >
-              Sincronizar Status
-            </Button>
-          </HStack>
-        </Flex>
-        <Divider />
+    <VStack spacing={{ base: 5, md: 6 }} align="stretch" w="full">
+      {/* Header com ação */}
+      <Flex
+        justify="space-between"
+        align="center"
+        wrap="wrap"
+        gap={4}
+        pb={4}
+        borderBottomWidth="1px"
+        borderBottomColor="gray.200"
+        _dark={{ borderBottomColor: "gray.700" }}
+      >
+        <Heading size="md" color="#023147" _dark={{ color: "gray.100" }}>
+          Detalhes do Envelope
+        </Heading>
+        <Button
+          leftIcon={<FiRefreshCw />}
+          onClick={handleUpdateStatus}
+          isLoading={isUpdating}
+          size={{ base: "sm", md: "md" }}
+          colorScheme="green"
+          bg="#00713D"
+          _hover={{ bg: "#005a31" }}
+          _dark={{
+            bg: "#00d672",
+            color: "gray.900",
+            _hover: { bg: "#00c060" },
+          }}
+        >
+          Sincronizar Status
+        </Button>
+      </Flex>
+
+      {/* Informações principais */}
+      <Box
+        bg="gray.50"
+        p={{ base: 4, md: 6 }}
+        borderRadius="lg"
+        borderWidth="1px"
+        borderColor="gray.200"
+        _dark={{ bg: "gray.900", borderColor: "gray.700" }}
+      >
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           <InfoItem label="ID" value={envelope.id} />
           <InfoItem label="UUID" value={envelope.UUID} />
@@ -132,73 +259,140 @@ export default function NatosignViewClient({ envelope }: any) {
           <InfoItem label="Última Atualização" value={updatedAtFormatted} />
           <InfoItem label="Status do Pagamento" value={envelope.status_pg} />
         </SimpleGrid>
-        <Divider />
-        <Box>
-          <Heading as="h2" size="md" mb={4}>
-            Documentos
+      </Box>
+
+      {/* Documentos */}
+      <Box>
+        <Heading size="sm" mb={4} color="#023147" _dark={{ color: "gray.100" }}>
+          Documentos
+        </Heading>
+        <Flex gap={3} wrap="wrap">
+          <Button
+            as={Link}
+            href={envelope.doc_modificado_viw}
+            isExternal
+            leftIcon={<FiExternalLink />}
+            size={{ base: "sm", md: "md" }}
+            colorScheme="blue"
+            bg="#3B82F6"
+            _hover={{ bg: "#2563EB" }}
+            disabled={!envelope.doc_modificado_viw}
+          >
+            Visualizar
+          </Button>
+          <Button
+            onClick={() =>
+              handleDownloadAss(`${envelope.original_name}_assinado.pdf`)
+            }
+            // disabled={shouldShowUpdateButton()}
+            leftIcon={<FiDownload />}
+            size={{ base: "sm", md: "md" }}
+            colorScheme="green"
+            bg="#00713D"
+            _hover={{ bg: "#005a31" }}
+            _dark={{
+              bg: "#00d672",
+              color: "gray.900",
+              _hover: { bg: "#00c060" },
+            }}
+            isLoading={isDownloading}
+            loadingText="Baixando..."
+          >
+            Baixar Assinado
+          </Button>
+          <Button
+            onClick={() =>
+              handleDownload(
+                envelope.doc_original_down,
+                `${envelope.original_name}_original.pdf`
+              )
+            }
+            leftIcon={<FiDownload />}
+            size={{ base: "sm", md: "md" }}
+            variant="outline"
+            colorScheme="gray"
+            borderColor="gray.300"
+            _dark={{ borderColor: "gray.600" }}
+            isLoading={isDownloading}
+            loadingText="Baixando..."
+          >
+            Baixar Original
+          </Button>
+        </Flex>
+      </Box>
+
+      {/* Signatários */}
+      <Box>
+        <Heading size="sm" mb={4} color="#023147" _dark={{ color: "gray.100" }}>
+          Signatários
+        </Heading>
+        {signatarios.length > 0 ? (
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+            {signatarios.map((signer: any) => (
+              <SignatarioCard key={signer.id} signer={signer} />
+            ))}
+          </SimpleGrid>
+        ) : (
+          <Flex
+            w="full"
+            minH="150px"
+            justifyContent="center"
+            alignItems="center"
+            bg="gray.50"
+            _dark={{ bg: "gray.900" }}
+            borderRadius="lg"
+            p={8}
+          >
+            <Text fontSize="md" color="gray.600" _dark={{ color: "gray.400" }}>
+              Nenhum signatário associado.
+            </Text>
+          </Flex>
+        )}
+      </Box>
+
+      {/* Pré-visualização do PDF */}
+      <Box>
+        <Flex justify="space-between" align="center" mb={4} wrap="wrap" gap={3}>
+          <Heading size="sm" color="#023147" _dark={{ color: "gray.100" }}>
+            Pré-visualização do Documento
           </Heading>
-          <HStack spacing={4} wrap="wrap">
+          {pdfUrl && (
             <Button
               as={Link}
-              href={envelope.doc_modificado_viw}
+              href={pdfUrl}
               isExternal
-              colorScheme="blue"
+              size="sm"
               leftIcon={<FiExternalLink />}
+              colorScheme="blue"
+              variant="outline"
             >
-              Visualizar
+              Abrir em nova aba
             </Button>
-            <Button
-              as={Link}
-              href={envelope.doc_modificado_down}
-              colorScheme="green"
-              leftIcon={<FiDownload />}
-            >
-              Baixar Assinado
-            </Button>
-            <Button
-              as={Link}
-              href={envelope.doc_original_down}
-              colorScheme="gray"
-              leftIcon={<FiDownload />}
-            >
-              Baixar Original
-            </Button>
-          </HStack>
-        </Box>
-        <Divider />
-        <Box>
-          <Heading as="h2" size="md" mb={4}>
-            Signatários
-          </Heading>
-          {signatarios.length > 0 ? (
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-              {signatarios.map((signer: any) => (
-                <SignatarioCard key={signer.id} signer={signer} />
-              ))}
-            </SimpleGrid>
-          ) : (
-            <Text color="gray.500">Nenhum signatário associado.</Text>
           )}
-        </Box>
-        <Divider />
-        <Box>
-          <Heading as="h2" size="md" mb={4}>
-            Pré-visualização
-          </Heading>
-          <AspectRatio ratio={4 / 5} maxH="70vh">
-            <iframe
-              title="Pré-visualização do PDF"
-              src={envelope.doc_modificado_viw || envelope.doc_original_viw}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "1px solid #E2E8F0",
-                borderRadius: "8px",
-              }}
-            />
-          </AspectRatio>
-        </Box>
-      </VStack>
-    </Box>
+        </Flex>
+        {pdfUrl ? (
+          <PDFViewer fileUrl={pdfUrl} />
+        ) : (
+          <Flex
+            w="full"
+            minH="200px"
+            justify="center"
+            align="center"
+            borderWidth="1px"
+            borderColor="gray.200"
+            borderRadius="lg"
+            bg="gray.50"
+            _dark={{
+              bg: "gray.900",
+              borderColor: "gray.700",
+            }}
+          >
+            <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
+              Nenhum documento disponível para pré-visualização.
+            </Text>
+          </Flex>
+        )}
+      </Box>
+    </VStack>
   );
 }
