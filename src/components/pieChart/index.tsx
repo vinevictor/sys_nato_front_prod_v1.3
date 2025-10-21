@@ -1,11 +1,9 @@
 "use client";
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
-import { Pie } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels"; // Importa o plugin para os rótulos de dados
+import { Box, Flex, Text, useColorMode } from "@chakra-ui/react";
 import { FaChartPie } from "react-icons/fa6";
-
-ChartJS.register(ArcElement, Tooltip, Legend, Title, ChartDataLabels); // Registra o plugin
+import { PieChart as MuiPieChart } from "@mui/x-charts/PieChart";
+import { pieArcLabelClasses } from "@mui/x-charts/PieChart";
+import MuiChartsProvider from "@/components/charts/mui-charts-provider";
 
 interface PieChartProps {
   labels: string[];
@@ -20,47 +18,31 @@ export default function PieChart({
   colors,
   title,
 }: PieChartProps) {
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Solicitações",
-        data: dataValues,
-        backgroundColor: colors,
-        borderWidth: 1,
-      },
-    ],
-  };
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
+  const textColor = isDark ? "#E2E8F0" : "#1A202C";
+  const iconColor = isDark ? "#00d672" : "#047857";
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: false,
-        text: title,
-      },
-      datalabels: {
-        display: true,
-        color: "white",
-        font: {
-          weight: "bold" as const,
-          size: 12,
-        },
-        formatter: (value: number, ctx: any) => {
-          const total = ctx.dataset.data.reduce(
-            (acc: number, val: number) => acc + val,
-            0
-          );
-          const percentage = ((value / total) * 100).toFixed(1);
-          return `${percentage}%`;
-        },
-      },
-    },
-  };
+  // Ajustar cores para dark mode - usar cores mais claras
+  const adjustedColors = isDark && colors
+    ? colors.map((color) => {
+        // Se for o verde escuro #00713C, usar verde claro
+        if (color === "#00713C") return "#00d672";
+        // Se for o preto #1D1D1B, usar cinza claro
+        if (color === "#1D1D1B") return "#718096";
+        return color;
+      })
+    : colors;
+
+  const total = dataValues.reduce((acc, value) => acc + value, 0);
+  const dataset = labels.map((label, index) => ({
+    id: label,
+    value: dataValues[index],
+    label,
+    color: adjustedColors?.[index],
+    formattedValue:
+      total > 0 ? `${((dataValues[index] / total) * 100).toFixed(1)}%` : "0%",
+  }));
 
   return (
     <Flex
@@ -70,10 +52,11 @@ export default function PieChart({
       p={2}
       direction="column"
       gap={2}
+      bg="transparent"
     >
       <Flex justifyContent={"center"} alignItems={"center"} gap={2} minH="40px">
-        <FaChartPie color="#666" />
-        <Text fontWeight="bold" fontSize="sm" color="gray.700">
+        <FaChartPie color={iconColor} size={18} />
+        <Text fontWeight="semibold" fontSize="sm" color={textColor}>
           {title}
         </Text>
       </Flex>
@@ -83,12 +66,53 @@ export default function PieChart({
         bg="white"
         borderRadius="md"
         boxShadow="md"
-        p={4}
+        borderWidth="1px"
+        borderColor={isDark ? "gray.700" : "rgba(187, 187, 187, 0.22)"}
+        p={2}
         _hover={{ boxShadow: "xl" }}
         w="full"
         minH={0}
+        _dark={{
+          bg: "gray.900",
+          boxShadow: "dark-lg",
+        }}
       >
-        <Pie data={data} options={options} />
+        <MuiChartsProvider>
+          <MuiPieChart
+            height={300}
+            series={[
+              {
+                innerRadius: 70,
+                outerRadius: 110,
+                cornerRadius: 8,
+                paddingAngle: 3,
+                data: dataset.map((item) => ({
+                  id: item.id,
+                  value: item.value,
+                  label: item.label,
+                  color: item.color,
+                  arcLabel: item.formattedValue,
+                })),
+                valueFormatter: (item) => `${item.value}`,
+                highlightScope: { fade: "global", highlight: "item" },
+              },
+            ]}
+            slotProps={{
+              noDataOverlay: {
+                message: "Sem dados para exibir",
+              },
+            }}
+            sx={{
+              [`.${pieArcLabelClasses.root}`]: {
+                fill: "white",
+                fontSize: 14,
+                fontWeight: 800,
+                textShadow: "0 2px 4px rgba(0,0,0,0.6)",
+              },
+            }}
+            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          />
+        </MuiChartsProvider>
       </Box>
     </Flex>
   );

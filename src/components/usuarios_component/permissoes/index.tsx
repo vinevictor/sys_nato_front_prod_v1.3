@@ -31,6 +31,7 @@ const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
       label: "Pode editar Solicitação",
       tag: "solicitacao",
     },
+    { name: "natosign", label: "Pode criar NatoSign", tag: "natosign" },
   ];
 
 interface Props {

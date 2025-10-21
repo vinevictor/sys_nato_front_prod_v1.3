@@ -1,29 +1,7 @@
 "use client";
-import { Box } from "@chakra-ui/react";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  Filler,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
-
-// Registra os componentes do Chart.js
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  Filler
-);
+import { Box, useColorMode } from "@chakra-ui/react";
+import { LineChart as MuiLineChart } from "@mui/x-charts/LineChart";
+import MuiChartsProvider from "@/components/charts/mui-charts-provider";
 
 interface LineChartProps {
   labels: string[];
@@ -34,127 +12,80 @@ interface LineChartProps {
 function secondsToTime(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
     2,
     "0"
-  )}:${String(secs).padStart(2, "0")}`;
+  )}`;
 }
 
 export default function LineChart({ labels, dataValues }: LineChartProps) {
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Média de Horas",
-        data: dataValues,
-        borderColor: "#00713C",
-        backgroundColor: "rgba(0, 113, 60, 0.2)",
-        borderWidth: 2,
-        fill: true,
-        pointBorderColor: "#00713C", // Cor da borda dos pontos
-        pointBackgroundColor: "#fff", // Cor de fundo dos pontos
-        pointRadius: 6, // Tamanho dos pontos
-        pointHoverRadius: 10, // Aumenta o tamanho dos pontos ao passar o mouse
-        pointHoverBackgroundColor: "#00713C", // Cor de fundo dos pontos ao passar o mouse
-        pointHoverBorderColor: "#fff", // Cor da borda ao passar o mouse
-        datalabels: {
-          display: false,
-        },
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: {
-        display: false,
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: "Média de Horas por Certificado",
-        position: "top" as const,
-        align: "start" as const,
-        font: {
-          size: 16,
-          weight: "bold" as const,
-        },
-        padding: {
-          bottom: 30,
-        },
-        color: "#333",
-      },
-      tooltip: {
-        enabled: true,
-        borderColor: "#00713C",
-        borderWidth: 2,
-        titleFont: {
-          size: 14,
-          weight: "bold" as const,
-          color: "#00713C",
-        },
-        bodyFont: {
-          size: 12,
-          color: "#333",
-        },
-        padding: 12,
-        cornerRadius: 10,
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        callbacks: {
-          label: function (context: any) {
-            const value = context.raw;
-            return `Horas: ${secondsToTime(value)}`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
-        title: {
-          display: false,
-          text: "Horas",
-        },
-        ticks: {
-          callback: function (tickValue: string | number) {
-            return secondsToTime(Number(tickValue));
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
-    elements: {
-      point: {
-        hoverBorderWidth: 3,
-        hoverBackgroundColor: "#00713C",
-        borderWidth: 3,
-        borderColor: "#00713C",
-      },
-    },
-  };
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
 
   return (
     <Box
       h="full"
-      w={"full"}
-      p={2}
+      w="full"
+      p={1}
       bg="white"
       borderRadius="md"
       boxShadow="md"
+      borderWidth="1px"
+      borderColor={isDark ? "gray.700" : "rgba(187, 187, 187, 0.22)"}
+      _dark={{
+        bg: "gray.900",
+        boxShadow: "dark-lg",
+      }}
       _hover={{ boxShadow: "xl" }}
     >
-      <Line data={data} options={options} />
+      <MuiChartsProvider>
+        <MuiLineChart
+          height={isDark ? 360 : 350}
+          series={[
+            {
+              id: "tma",
+              label: "TMA - Tempo Médio de Atendimento",
+              data: dataValues,
+              curve: "linear",
+              showMark: true,
+              area: false,
+              color: "#00d672",
+              valueFormatter: (value) => secondsToTime(Number(value)),
+            },
+          ]}
+          xAxis={[
+            {
+              id: "meses",
+              data: labels,
+              scaleType: "band",
+              label: "Período",
+              tickLabelStyle: {
+                fontSize: 11,
+                angle: 0,
+              },
+            },
+          ]}
+          yAxis={[
+            {
+              id: "tempo",
+              label: "Tempo",
+              valueFormatter: (value: number | null) =>
+                value !== null ? secondsToTime(Number(value)) : "0",
+              tickLabelStyle: {
+                fontSize: 11,
+              },
+              min: 0,
+            },
+          ]}
+          grid={{ horizontal: true, vertical: false }}
+          margin={{ left: 20, right: 10, top: 5, bottom: 45 }}
+          slotProps={{
+            noDataOverlay: {
+              message: "Sem dados para exibir",
+            },
+          }}
+        />
+      </MuiChartsProvider>
     </Box>
   );
 }

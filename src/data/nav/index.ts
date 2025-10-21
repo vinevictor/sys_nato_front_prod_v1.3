@@ -24,6 +24,12 @@ export const defaultNavItems: NavItem[] = [
     role: "DIRETO",
   },
   {
+    name: "NatoFit",
+    icon: CgBriefcase,
+    href: "/",
+    role: "FIT",
+  },
+  {
     name: "FAQ",
     icon: CgToday,
     href: "/faq",
@@ -33,6 +39,6 @@ export const defaultNavItems: NavItem[] = [
     name: "NatoSign",
     icon: FaSignature,
     href: "/natosign",
-    role: "SIGN",
+    role: "natosign",
   },
 ];

@@ -199,7 +199,7 @@ export const DadoCompomentList = ({
   const [Financeiro, setFinanceiro] = useState<number | null>(null);
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Id, setId] = useState<number | null>(null);
-  const [Pagina, setPagina] = useState<number | null>(null);
+  const [Pagina, setPagina] = useState<number>(1);
   const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -276,6 +276,7 @@ export const DadoCompomentList = ({
 
   const filtroPrimario = useCallback(async () => {
     setIsLoading(true);
+    setPagina(1); // Reset para página 1 ao filtrar
     if (!ListaDados) return;
     const filtro = await FirlterData(
       {
@@ -285,6 +286,7 @@ export const DadoCompomentList = ({
         empreendimento: Empreendimento,
         financeiro: Financeiro,
         id: Id,
+        pagina: 1, // Sempre buscar primeira página ao filtrar
       },
       session
     );
@@ -306,7 +308,7 @@ export const DadoCompomentList = ({
     setEmpreendimento(null);
     setFinanceiro(null);
     setId(null);
-    setPagina(null);
+    setPagina(1);
     const data = await FirlterData(
       {
         nome: null,
@@ -315,7 +317,7 @@ export const DadoCompomentList = ({
         empreendimento: null,
         financeiro: null,
         id: null,
-        pagina: null,
+        pagina: 1,
       },
       session
     );
@@ -326,9 +328,8 @@ export const DadoCompomentList = ({
     router.refresh();
   }, [session, router]);
 
-  const NextPage = useCallback(async () => {
+  const NextPage = useCallback(async (page: number) => {
     setIsLoading(true);
-    if (Pagina === null) return;
     const data = await FirlterData(
       {
         nome: Nome,
@@ -337,14 +338,16 @@ export const DadoCompomentList = ({
         empreendimento: Empreendimento,
         financeiro: Financeiro,
         id: Id,
-        pagina: Pagina,
+        pagina: page,
       },
       session
     );
-    setListaDados(data.data);
-    setPagina(Pagina);
+    if (data?.data) {
+      setListaDados(data.data);
+      setTotal(data.total);
+    }
     setIsLoading(false);
-  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, Pagina, session]);
+  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, session]);
 
   return (
     <>
@@ -629,8 +632,8 @@ export const DadoCompomentList = ({
                 <Box color={textColorSecondary}>Páginas:</Box>
                 <SelectPgComponent
                   total={Total || 0}
-                  ClientQtd={dados?.data.length || 0}
-                  SelectPage={Pagina || 1}
+                  ClientQtd={ListaDados?.length || 0}
+                  SelectPage={Pagina}
                   setSelectPage={setPagina}
                   SetVewPage={NextPage}
                 />

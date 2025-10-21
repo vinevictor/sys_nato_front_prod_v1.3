@@ -1,48 +1,81 @@
-import { IconButton, Select } from "@chakra-ui/react";
-import { IoIosArrowForward } from "react-icons/io";
+import { Flex, IconButton, Text, useColorModeValue } from "@chakra-ui/react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 interface SelectPgProps {
   total: number;
   ClientQtd: number;
   SelectPage: number;
   setSelectPage: (page: number) => void;
-  SetVewPage: (page: number) => void;
+  SetVewPage: (page: number) => Promise<void>;
 }
 
-export const SelectPgComponent = ({ total, ClientQtd, SelectPage, setSelectPage, SetVewPage }: SelectPgProps) => {
-  const OptionsSelect = () => {
-    if (!total || !ClientQtd) return null; // Verifica se total e ClientQtd existem
-    const TotalPages = Math.ceil(total / ClientQtd);
-    const options = [];
-    for (let i = 1; i <= TotalPages; i++) {
-      options.push(
-        <option key={i} value={i}>
-          {i}
-        </option>
-      );
-    }
-    return options;
+/**
+ * Controla a navegação entre páginas exibindo botões anterior/próxima e seletor numérico.
+ * Também aplica estilos consistentes com os layouts claro e escuro.
+ */
+export const SelectPgComponent = ({
+  total,
+  ClientQtd,
+  SelectPage,
+  setSelectPage,
+  SetVewPage,
+}: SelectPgProps) => {
+  const totalPages = ClientQtd > 0 ? Math.ceil(total / ClientQtd) : 1;
+  const isPrevDisabled = SelectPage <= 1 || totalPages <= 1;
+  const isNextDisabled = SelectPage >= totalPages || totalPages <= 1;
+  const textMuted = useColorModeValue("gray.600", "gray.300");
+
+  const goToPage = async (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setSelectPage(page);
+    await SetVewPage(page);
   };
+
   return (
-    <>
-      <Select
-        size={"xs"}
-        borderRadius={"5px"}
-        value={SelectPage}
-        name="SelectedPage"
-        onChange={(e: { target: { value: any } }) => {
-          setSelectPage(Number(e.target.value));
-        }}
-      >
-        <OptionsSelect />
-      </Select>
+    <Flex align="center" gap={3} flexWrap="wrap">
       <IconButton
-        icon={<IoIosArrowForward />}
-        size={"xs"}
+        aria-label="Página anterior"
+        icon={<FiChevronLeft />}
+        size="sm"
+        variant="ghost"
         colorScheme="green"
-        aria-label={""}
-        onClick={() => SetVewPage(SelectPage)}
+        isDisabled={isPrevDisabled}
+        onClick={() => goToPage(SelectPage - 1)}
       />
-    </>
+
+      <Flex align="center" gap={1} minW="fit-content">
+        <Text fontSize="sm" color={textMuted}>
+          Página
+        </Text>
+        <Text
+          fontSize="sm"
+          fontWeight="semibold"
+          color={useColorModeValue("gray.800", "gray.100")}
+          px={3}
+          py={1}
+          borderRadius="md"
+          borderWidth="1px"
+          borderColor={useColorModeValue("gray.300", "gray.600")}
+          bg={useColorModeValue("white", "gray.800")}
+          minW="40px"
+          textAlign="center"
+        >
+          {SelectPage}
+        </Text>
+        <Text fontSize="sm" color={textMuted}>
+          de {totalPages}
+        </Text>
+      </Flex>
+
+      <IconButton
+        aria-label="Próxima página"
+        icon={<FiChevronRight />}
+        size="sm"
+        variant="ghost"
+        colorScheme="green"
+        isDisabled={isNextDisabled}
+        onClick={() => goToPage(SelectPage + 1)}
+      />
+    </Flex>
   );
 };
