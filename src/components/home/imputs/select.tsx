@@ -1,39 +1,31 @@
-import { Select, SelectProps } from "@chakra-ui/react";
-import { memo, useMemo } from "react";
+import { Select, SelectProps, useColorModeValue } from "@chakra-ui/react";
+import { memo } from "react";
 
-interface SelectPropsComponent extends SelectProps {
-  Data: any;
-  place: string;
-}
+type SelectComponentProps = SelectProps;
 
+export const SelectComponentFilterHome = memo(
+  ({ children, ...props }: SelectComponentProps) => {
+    const inputBg = useColorModeValue("white", "gray.700");
+    const inputBorder = useColorModeValue("gray.300", "gray.600");
+    const inputFocusBorder = useColorModeValue("#00713D", "#00d672");
+    const textColor = useColorModeValue("#023147", "white");
 
-export const SelectComponentFilterHome = memo(({ Data, place , ...props }: SelectPropsComponent) => {
-  const options = useMemo(() => {
-    if (!Data || Data.length === 0) return null;
-    return Data.map((item: any) => (
-      <option key={item.id} value={item.id}>
-        {item.fantasia || item.nome}
-      </option>
-    ));
-  }, [Data]);
-
-  return (
-    <Select
-      textColor={"#00713D"}
-      _hover={{ borderColor: "#00613C" }}
-      borderColor={"#00713D"}
-      placeholder={place}
-      _dark={{
-        borderColor: "#00d672",
-        textColor: "white",
-      }}
-      size="sm"
-      borderRadius="0.5rem"
-      {...props}
-    >
-      {options}
-    </Select>
-  );
-});
+    return (
+      <Select
+        bg={inputBg}
+        color={textColor}
+        borderColor={inputBorder}
+        focusBorderColor={inputFocusBorder}
+        _hover={{ borderColor: inputFocusBorder }}
+        size="md"
+        borderRadius="md"
+        transition="all 0.2s"
+        {...props}
+      >
+        {children}
+      </Select>
+    );
+  }
+);
 
 SelectComponentFilterHome.displayName = "SelectComponentFilterHome";

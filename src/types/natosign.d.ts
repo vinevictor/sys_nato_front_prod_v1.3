@@ -22,6 +22,7 @@ declare namespace natosign {
     doc_original_down: string;
     doc_modificado_viw: string;
     doc_modificado_down: string;
+    public_link: string;
     original_name: string;
     hash: string;
     valor: number;

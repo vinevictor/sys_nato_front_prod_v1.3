@@ -26,6 +26,7 @@ export async function GET(request: Request, { params }: IParams) {
     }
 
     const backendUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign/status/${id}`;
+    console.log("🚀 ~ GET ~ backendUrl:", backendUrl)
 
     const backendResponse = await fetch(backendUrl, {
       method: "GET",

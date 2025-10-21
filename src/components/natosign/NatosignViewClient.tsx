@@ -69,7 +69,55 @@ const getStatusBadge = (status: string, statusView: string) => {
   );
 };
 
-export default function NatosignViewClient({ envelope }: any) {
+type EnvelopeType = {
+  UUID: string;
+  ativo: boolean;
+  background_sheet: string;
+  cca: {
+    id: number;
+    cnpj: string;
+    razaosocial: string;
+    fantasia: string;
+    tel: string;
+  };
+  cca_id: number;
+  construtora_id: number;
+  construtora: {
+    id: number;
+    cnpj: string;
+    razaosocial: string;
+    fantasia: string;
+    tel: string;
+  };
+  createdAt: string;
+  description: string;
+  doc_modificado_down: string;
+  doc_modificado_viw: string;
+  doc_original_down: string;
+  doc_original_viw: string;
+  hash: string;
+  id: number;
+  message: string;
+  original_name: string;
+  public_link: string;
+  signatarios: any[];
+  status: string;
+  status_pg: string;
+  status_view: string;
+  title: string;
+  type: string;
+  updatedAt: string;
+  user_id: number;
+  valor: number;
+};
+
+interface NatosignViewClientProps {
+  envelope: EnvelopeType;
+}
+
+export default function NatosignViewClient({
+  envelope,
+}: NatosignViewClientProps) {
   const router = useRouter();
   const toast = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -122,7 +170,12 @@ export default function NatosignViewClient({ envelope }: any) {
         // ZIP file (50 4B)
         mimeType = "application/zip";
         extension = ".zip";
-      } else if (uint8Array[0] === 0x25 && uint8Array[1] === 0x50 && uint8Array[2] === 0x44 && uint8Array[3] === 0x46) {
+      } else if (
+        uint8Array[0] === 0x25 &&
+        uint8Array[1] === 0x50 &&
+        uint8Array[2] === 0x44 &&
+        uint8Array[3] === 0x46
+      ) {
         // PDF file (25 50 44 46 = %PDF)
         mimeType = "application/pdf";
         extension = ".pdf";
@@ -191,17 +244,11 @@ export default function NatosignViewClient({ envelope }: any) {
   );
   const pdfUrl = envelope.doc_modificado_viw || envelope.doc_original_viw;
 
-  console.log("🚀 ~ envelope:", envelope);
-
   const shouldShowUpdateButton = (): boolean => {
     const statusFinalizado =
       envelope.status === "done" || envelope.status === "completed";
-    const documentoNaoDisponivel = !envelope.doc_modificado_down;
-
-    return documentoNaoDisponivel || !statusFinalizado;
+    return !statusFinalizado;
   };
-
-
 
   return (
     <VStack spacing={{ base: 5, md: 6 }} align="stretch" w="full">
@@ -264,7 +311,7 @@ export default function NatosignViewClient({ envelope }: any) {
         <Flex gap={3} wrap="wrap">
           <Button
             as={Link}
-            href={envelope.doc_modificado_viw}
+            onClick={() => window.open(envelope.public_link, "_blank")}
             isExternal
             leftIcon={<FiExternalLink />}
             size={{ base: "sm", md: "md" }}
@@ -279,7 +326,7 @@ export default function NatosignViewClient({ envelope }: any) {
             onClick={() =>
               handleDownload(
                 envelope.doc_modificado_down,
-                `${envelope.original_name}_assinado`
+                `Assinado_${envelope.original_name}`
               )
             }
             leftIcon={<FiDownload />}
@@ -292,10 +339,31 @@ export default function NatosignViewClient({ envelope }: any) {
               color: "gray.900",
               _hover: { bg: "#00c060" },
             }}
+            disabled={shouldShowUpdateButton()}
             isLoading={isDownloading}
             loadingText="Baixando..."
           >
             Baixar Assinado
+          </Button>
+          <Button
+            onClick={() =>
+              window.open(envelope.background_sheet, "_blank")
+            }
+            leftIcon={<FiDownload />}
+            size={{ base: "sm", md: "md" }}
+            colorScheme="green"
+            bg="#00713D"
+            _hover={{ bg: "#005a31" }}
+            _dark={{
+              bg: "#00d672",
+              color: "gray.900",
+              _hover: { bg: "#00c060" },
+            }}
+            disabled={shouldShowUpdateButton()}
+            isLoading={isDownloading}
+            loadingText="Baixando..."
+          >
+            Baixar Logs
           </Button>
           <Button
             onClick={() =>

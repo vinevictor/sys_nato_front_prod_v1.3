@@ -34,7 +34,6 @@ export const TableComponentNatosign = ({
     totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
 
   const getStatusBadge = (status: string) => {
-    console.log("🚀 ~ getStatusBadge ~ status:", status)
     const statusStyles: Record<string, { bg: string; color: string }> = {
       new: { bg: "#3B82F6", color: "#FFFFFF" },
       draft: { bg: "#3B82F6", color: "#FFFFFF" },
@@ -154,9 +153,14 @@ export const TableComponentNatosign = ({
         <Flex gap={2} justify="center">
           <Tooltip label="Visualizar Envelope">
             <IconButton
-              as={Link}
-              href={dados.doc_modificado_viw || dados.doc_original_viw}
-              isExternal
+              onClick={() =>
+                window.open(
+                  dados.public_link ||
+                    dados.doc_modificado_viw ||
+                    dados.doc_original_viw,
+                  "_blank"
+                )
+              }
               bg="blue.400"
               color="white"
               variant="solid"
