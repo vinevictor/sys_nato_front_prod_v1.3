@@ -12,7 +12,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  Select,
   Table,
   Tbody,
   Th,
@@ -352,20 +351,26 @@ export const DadoCompomentList = ({
   return (
     <>
       <Box
-        display={"flex"}
-        flexDir={"column"}
-        gap={{ base: 2, md: 3, xl: 4 }}
         w="full"
-        h="full"
-        px={{ base: 2, md: 3 }}
-        py={{ base: 2, md: 3 }}
+        maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
+        mx="auto"
+        py={{ base: 4, md: 5, lg: 6 }}
+        px={{ base: 3, sm: 4, md: 5, lg: 6 }}
       >
-        <Flex
-          flexDir={{ base: "column", xl: "row" }}
-          justifyContent="center"
-          gap={{ base: 2, md: 3 }}
-          alignItems={{ base: "stretch", xl: "flex-start" }}
+        {/* Seção de Filtros */}
+        <Box
+          bg="white"
+          _dark={{ bg: "gray.800" }}
+          p={{ base: 4, md: 5 }}
+          borderRadius="lg"
+          shadow="md"
+          mb={{ base: 5, md: 6 }}
         >
+          <Flex
+            flexDir={{ base: "column", xl: "row" }}
+            gap={{ base: 3, md: 4 }}
+            alignItems={{ base: "stretch", xl: "flex-start" }}
+          >
           <Flex
             flexWrap="wrap"
             gap={{ base: 2, md: 3 }}
@@ -373,25 +378,8 @@ export const DadoCompomentList = ({
             w="full"
           >
             <Box w={{ base: "100%", md: "15%", xl: "5rem" }} minW="80px">
-              {theme === "dark" ? (
-                <InputComponentFilterHome
-                  textAlign={"start"}
-                  type="number"
-                  placeholder="ID"
-                  value={Id?.toString() || ""}
-                  _placeholder={{ color: "white" }}
-                  onChange={(e) => {
-                    const value = e.target.value.trim();
-                    if (value === "") {
-                      setId(null);
-                    } else if (!isNaN(Number(value)) && Number(value) > 0) {
-                      setId(Number(value));
-                    }
-                  }}
-                />
-              ) : (
               <InputComponentFilterHome
-                textAlign={"start"}
+                textAlign="start"
                 type="number"
                 placeholder="ID"
                 value={Id?.toString() || ""}
@@ -404,38 +392,20 @@ export const DadoCompomentList = ({
                   }
                 }}
               />
-              )}
             </Box>
 
             <Box w={{ base: "100%", md: "30%", xl: "20rem" }} minW="200px">
-              {theme === "dark" ? (
               <InputComponentFilterHome
                 type="text"
-                  value={Nome ?? ""}
-                  _placeholder={{ color: "white" }}
-                  onChange={(e) => setNome(e.target.value.toUpperCase())}
-                />
-              ) : (
-                <InputComponentFilterHome
-                  type="text"
+                placeholder="Nome"
                 value={Nome ?? ""}
                 onChange={(e) => setNome(e.target.value.toUpperCase())}
               />
-              )}
             </Box>
 
             <Box w={{ base: "100%", sm: "48%", md: "20%", xl: "10rem" }} minW="120px">
-              <Select
-                textColor={"#00713D"}
-                _hover={{ borderColor: "#00613C" }}
-                borderColor={"#00713D"}
+              <SelectComponentFilterHome
                 placeholder="Andamento"
-                size="sm"
-                _dark={{
-                  borderColor: "#00d672",
-                  textColor: "white",
-                }}
-                borderRadius="0.5rem"
                 value={Andamento ?? ""}
                 onChange={(e) => setAndamento(e.target.value)}
               >
@@ -444,34 +414,49 @@ export const DadoCompomentList = ({
                 <option value="APROVADO">APROVADO</option>
                 <option value="EMITIDO">EMITIDO</option>
                 <option value="REVOGADO">REVOGADO</option>
-              </Select>
+              </SelectComponentFilterHome>
             </Box>
 
             <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "13rem" }} minW="150px">
               <SelectComponentFilterHome
-                Data={DataConstrutora}
-                place="Construtora"
+                placeholder="Construtora"
                 value={Construtora?.toString() ?? ""}
                 onChange={(e) => setConstrutora(Number(e.target.value))}
-              />
+                >
+                  {DataConstrutora.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.nome}
+                    </option>
+                  ))}
+              </SelectComponentFilterHome>
             </Box>
 
             <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }} minW="180px">
               <SelectComponentFilterHome
-                Data={DataEmpreendimento}
-                place="Empreendimento"
+                placeholder="Empreendimento"
                 value={Empreendimento?.toString() ?? ""}
                 onChange={(e) => setEmpreendimento(Number(e.target.value))}
-              />
+                >
+                  {DataEmpreendimento.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.nome}
+                    </option>
+                  ))}
+              </SelectComponentFilterHome>
             </Box>
 
             <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }} minW="150px">
               <SelectComponentFilterHome
-                Data={DataFinanceiro}
-                place="Financeiro"
+                placeholder="Financeiro"
                 value={Financeiro?.toString() ?? ""}
                 onChange={(e) => setFinanceiro(Number(e.target.value))}
-              />
+                >
+                  {DataFinanceiro.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.nome}
+                    </option>
+                  ))}
+              </SelectComponentFilterHome>
             </Box>
           </Flex>
 
@@ -481,31 +466,38 @@ export const DadoCompomentList = ({
             flexDir={{ base: "row", xl: "row" }}
           >
             <Button
-              bg={theme === "dark" ? "#00d672" : "#00713D"}
+              colorScheme="green"
+              bg="#00713D"
+              _hover={{ bg: "#005a31" }}
+              _dark={{
+                bg: "#00d672",
+                color: "gray.900",
+                _hover: { bg: "#00c060" },
+              }}
               flex={{ base: 1, xl: "none" }}
               minW={{ xl: "120px" }}
-              borderRadius="0.5rem"
-              color="white"
-              size="sm"
-              _hover={{ bg: theme === "dark" ? "#00b85d" : "#00631B" }}
+              size="md"
               onClick={filtroPrimario}
             >
               Filtrar
             </Button>
             <Button
-              bg={theme === "dark" ? "#00d672" : "#00713D"}
+              variant="outline"
+              colorScheme="gray"
+              borderColor="gray.300"
+              _dark={{ borderColor: "gray.600" }}
               flex={{ base: 1, xl: "none" }}
               minW={{ xl: "120px" }}
-              borderRadius="0.5rem"
-              color="white"
-              size="sm"
-              _hover={{ bg: theme === "dark" ? "#00b85d" : "#00631B" }}
+              size="md"
               onClick={HandleFilterBlank}
             >
               Limpar
             </Button>
           </Flex>
-        </Flex>
+          </Flex>
+        </Box>
+
+        {/* Área de Resultados */}
         {IsLoading && <Loading />}
         {!IsLoading && (
           <Flex

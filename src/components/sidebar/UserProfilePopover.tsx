@@ -155,7 +155,7 @@ export default function UserProfilePopover({
           <MenuDivider />
 
           {/* Opção: Perfil */}
-          <MenuItem
+          {/* <MenuItem
             as={Link}
             bg="transparent"
             href="/perfil"
@@ -171,7 +171,7 @@ export default function UserProfilePopover({
             color={textColor}
           >
             Meu Perfil
-          </MenuItem>
+          </MenuItem> */}
 
           {/* Opção: Tema (Dark/Light Mode) */}
           <MenuItem
@@ -207,7 +207,7 @@ export default function UserProfilePopover({
           </MenuItem>
 
           {/* Opção: Notificações */}
-          <MenuItem
+          {/* <MenuItem
             onClick={handleNotificationToggle}
             icon={
               <Icon
@@ -237,7 +237,7 @@ export default function UserProfilePopover({
                 ml={2}
               />
             </Flex>
-          </MenuItem>
+          </MenuItem> */}
 
           <MenuDivider />
 
