@@ -101,44 +101,6 @@ export default function NatosignViewClient({ envelope }: any) {
     }
   };
 
-  const handleDownloadAss = async (filename: string) => {
-    setIsDownloading(true);
-    try {
-      const urlApi = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign/download/${envelope.UUID}`;
-      console.log("🚀 ~ handleDownloadAss ~ urlApi:", urlApi)
-      const response = await fetch(urlApi);
-      if (!response.ok) {
-        throw new Error("Falha ao baixar o arquivo.");
-      }
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-
-      toast({
-        title: "Download Iniciado!",
-        description: "O arquivo está sendo baixado.",
-        status: "success",
-        isClosable: true,
-        duration: 3000,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Erro ao baixar",
-        description: error.message,
-        status: "error",
-        isClosable: true,
-      });
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   const handleDownload = async (url: string, filename: string) => {
     setIsDownloading(true);
     try {
@@ -147,9 +109,42 @@ export default function NatosignViewClient({ envelope }: any) {
         throw new Error("Falha ao baixar o arquivo.");
       }
 
-      // Obter o ArrayBuffer e converter para Blob
+      // Obter o ArrayBuffer
       const arrayBuffer = await response.arrayBuffer();
-      const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+      // Detectar o tipo de arquivo pelos bytes iniciais (magic numbers)
+      const uint8Array = new Uint8Array(arrayBuffer);
+      let mimeType = "application/octet-stream";
+      let extension = "";
+
+      // Verificar assinatura do arquivo
+      if (uint8Array[0] === 0x50 && uint8Array[1] === 0x4b) {
+        // ZIP file (50 4B)
+        mimeType = "application/zip";
+        extension = ".zip";
+      } else if (uint8Array[0] === 0x25 && uint8Array[1] === 0x50 && uint8Array[2] === 0x44 && uint8Array[3] === 0x46) {
+        // PDF file (25 50 44 46 = %PDF)
+        mimeType = "application/pdf";
+        extension = ".pdf";
+      } else {
+        // Tentar obter do Content-Type do response
+        const contentType = response.headers.get("content-type");
+        if (contentType) {
+          mimeType = contentType;
+          if (contentType.includes("pdf")) extension = ".pdf";
+          else if (contentType.includes("zip")) extension = ".zip";
+        }
+      }
+
+      // Garantir que o filename tenha a extensão correta
+      let finalFilename = filename;
+      if (extension && !filename.toLowerCase().endsWith(extension)) {
+        // Remove extensão incorreta se existir
+        finalFilename = filename.replace(/\.(pdf|zip)$/i, "") + extension;
+      }
+
+      // Criar blob com o tipo correto
+      const blob = new Blob([arrayBuffer], { type: mimeType });
 
       // Criar URL temporária para o blob
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -157,7 +152,7 @@ export default function NatosignViewClient({ envelope }: any) {
       // Criar e clicar no link de download
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = filename;
+      link.download = finalFilename;
       link.style.display = "none";
       document.body.appendChild(link);
       link.click();
@@ -170,7 +165,7 @@ export default function NatosignViewClient({ envelope }: any) {
 
       toast({
         title: "Download Iniciado!",
-        description: "O arquivo está sendo baixado.",
+        description: `Baixando ${finalFilename}`,
         status: "success",
         isClosable: true,
         duration: 3000,
@@ -282,9 +277,11 @@ export default function NatosignViewClient({ envelope }: any) {
           </Button>
           <Button
             onClick={() =>
-              handleDownloadAss(`${envelope.original_name}_assinado.pdf`)
+              handleDownload(
+                envelope.doc_modificado_down,
+                `${envelope.original_name}_assinado`
+              )
             }
-            // disabled={shouldShowUpdateButton()}
             leftIcon={<FiDownload />}
             size={{ base: "sm", md: "md" }}
             colorScheme="green"
@@ -304,7 +301,7 @@ export default function NatosignViewClient({ envelope }: any) {
             onClick={() =>
               handleDownload(
                 envelope.doc_original_down,
-                `${envelope.original_name}_original.pdf`
+                `${envelope.original_name}_original`
               )
             }
             leftIcon={<FiDownload />}

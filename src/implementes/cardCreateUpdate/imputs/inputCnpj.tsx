@@ -16,6 +16,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { mask, unMask } from "remask";
 import { FaSearch } from "react-icons/fa";
 import { PulseLoader } from "react-spinners";
+import ApiCpnj from "@/actions/financeira/api/cnpj";
 
 export interface InputCnpjProps extends InputProps {
   setValueCnpj?: string;
