@@ -232,7 +232,7 @@ export default function ExperienciaSection() {
                   color="blue.600"
                   _dark={{ color: "blue.300" }}
                 >
-                  5.000+
+                  15.000+
                 </Heading>
                 <Text
                   fontSize="sm"
