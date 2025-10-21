@@ -1,8 +1,10 @@
 "use client";
 
+import { EmailIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  chakra,
   Container,
   Flex,
   FormControl,
@@ -16,20 +18,18 @@ import {
   SimpleGrid,
   Text,
   Textarea,
-  VStack,
-  chakra,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
-import {
-  FaMapMarkerAlt,
-  FaPhoneAlt,
-  FaGlobe,
-  FaPaperPlane,
-} from "react-icons/fa";
-import { EmailIcon } from "@chakra-ui/icons";
-import SectionBackgroundPattern from "./SectionBackgroundPattern";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useState } from "react";
+import {
+  FaGlobe,
+  FaMapMarkerAlt,
+  FaPaperPlane,
+  FaPhoneAlt,
+} from "react-icons/fa";
+import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
 // --- DADOS PARA O CARD DE INFORMAÇÕES ---
 const contactInfo = [
@@ -49,15 +49,15 @@ const contactInfo = [
 ];
 
 // --- ANIMAÇÕES ---
-const titleVariants = {
+const titleVariants: Variants = {
   hidden: { opacity: 0, y: -20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
-const leftColumnVariants = {
+const leftColumnVariants: Variants = {
   hidden: { opacity: 0, x: -50 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
-const rightColumnVariants = {
+const rightColumnVariants: Variants = {
   hidden: { opacity: 0, x: 50 },
   visible: {
     opacity: 1,

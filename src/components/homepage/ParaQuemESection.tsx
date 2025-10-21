@@ -1,21 +1,21 @@
 "use client";
 
+import { CheckIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  chakra,
   Container,
-  Heading,
-  Text,
-  VStack,
   Grid,
   GridItem,
+  Heading,
   List,
-  ListItem,
   ListIcon,
-  chakra,
+  ListItem,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { CheckIcon } from "@chakra-ui/icons";
+import { motion, Variants } from "framer-motion";
 import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
 const audienceData = [
@@ -51,12 +51,12 @@ const audienceData = [
   },
 ];
 
-const leftColumnVariants = {
+const leftColumnVariants: Variants = {
   hidden: { opacity: 0, x: -50 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const rightColumnVariants = {
+const rightColumnVariants: Variants = {
   hidden: { opacity: 0, x: 50 },
   visible: {
     opacity: 1,

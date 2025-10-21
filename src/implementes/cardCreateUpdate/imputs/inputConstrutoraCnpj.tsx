@@ -18,6 +18,7 @@ import { FaSearch } from "react-icons/fa";
 import { PulseLoader } from "react-spinners";
 
 import { ConstrutoraContext } from "@/context/ConstrutoraContex";
+import ApiCpnj from "@/actions/financeira/api/cnpj";
 
 export interface InputCnpjProps extends InputProps {
   setValueCnpj?: string;
