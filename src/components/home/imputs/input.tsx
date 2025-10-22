@@ -1,21 +1,27 @@
-import { Input, InputProps } from "@chakra-ui/react";
+import { Input, InputProps, useColorModeValue } from "@chakra-ui/react";
 import { memo } from "react";
 
 type InputComponentProps = InputProps;
 
 export const InputComponentFilterHome = memo(({ ...props }: InputComponentProps) => {
+  const inputBg = useColorModeValue("white", "gray.700");
+  const inputBorder = useColorModeValue("gray.300", "gray.600");
+  const inputFocusBorder = useColorModeValue("#00713D", "#00d672");
+  const textColor = useColorModeValue("#023147", "white");
+  const placeholderColor = useColorModeValue("gray.500", "gray.400");
+
   return (
     <Input
-      textColor={"#00713D"}
-      _hover={{ borderColor: "#00613C" }}
-      borderColor={"#00713D"}
+      bg={inputBg}
+      color={textColor}
+      borderColor={inputBorder}
+      focusBorderColor={inputFocusBorder}
+      _hover={{ borderColor: inputFocusBorder }}
+      _placeholder={{ color: placeholderColor }}
       placeholder="Nome"
-      _dark={{
-        borderColor: "#00d672",
-        textColor: "white",
-      }}
-      size="sm"
-      borderRadius="0.5rem"
+      size="md"
+      borderRadius="md"
+      transition="all 0.2s"
       {...props}
     />
   );

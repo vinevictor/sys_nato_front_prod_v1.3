@@ -299,26 +299,64 @@ export default function CreateNatosign() {
   };
 
   return (
-    <Flex w="full" justify="center" p={8}>
-      <Box
-        w={{ base: "100%", md: "80%", lg: "60%" }}
-        bg="white"
-        p={8}
-        borderRadius="lg"
-        shadow="md"
-      >
-        <IconButton
-          aria-label="Voltar"
-          bgColor={"transparent"}
-          size={"md"}
-          color={"black"}
-          icon={<ArrowBackIcon />}
-          onClick={() => router.back()}
-        ></IconButton>
-        <VStack spacing={8} align="stretch">
-          <Heading as="h1" size="lg" textAlign="center">
-            Criar Novo Envelope de Assinatura
-          </Heading>
+    <Box
+      w="full"
+      maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
+      mx="auto"
+      py={{ base: 4, md: 5, lg: 6 }}
+      px={{ base: 3, sm: 4, md: 5, lg: 6 }}
+    >
+      <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
+        {/* Cabeçalho */}
+        <Flex
+          bg="white"
+          _dark={{ bg: "gray.800", borderBottomColor: "#00d672" }}
+          borderBottomWidth="2px"
+          borderBottomColor="#00713D"
+          p={{ base: 4, sm: 5, md: 6 }}
+          align="center"
+          justify="space-between"
+          wrap="wrap"
+          gap={{ base: 3, md: 4 }}
+          borderRadius={{ base: "md", md: "lg", xl: "xl" }}
+          borderBottomRadius={0}
+          shadow={{ base: "sm", md: "md", lg: "lg" }}
+        >
+          <Flex align="center" gap={{ base: 2, md: 3 }} w="full">
+            <IconButton
+              aria-label="Voltar"
+              icon={<ArrowBackIcon />}
+              onClick={() => router.back()}
+              variant="ghost"
+              size={{ base: "sm", md: "md" }}
+              color="#023147"
+              _dark={{ color: "gray.100" }}
+              _hover={{
+                bg: "gray.100",
+                _dark: { bg: "gray.700" },
+              }}
+            />
+            <Heading
+              fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+              size={{ base: "md", md: "lg" }}
+              color="#023147"
+              _dark={{ color: "gray.100" }}
+            >
+              Criar Novo Envelope
+            </Heading>
+          </Flex>
+        </Flex>
+
+        {/* Área de Conteúdo */}
+        <Box
+          bg="white"
+          _dark={{ bg: "gray.800" }}
+          p={{ base: 4, md: 6, lg: 8 }}
+          borderRadius="xl"
+          borderTopRadius={0}
+          shadow="lg"
+        >
+          <VStack spacing={{ base: 6, md: 8 }} align="stretch">
 
           {step === 1 && (
             <Step1
@@ -342,15 +380,36 @@ export default function CreateNatosign() {
             <Step3 formData={formData} setFormData={setFormData} />
           )}
 
-          <Flex justify={step === 1 ? "flex-end" : "space-between"}>
+          <Flex
+            justify={step === 1 ? "flex-end" : "space-between"}
+            pt={{ base: 4, md: 6 }}
+            borderTopWidth="1px"
+            borderTopColor="gray.200"
+            _dark={{ borderTopColor: "gray.700" }}
+            gap={3}
+            wrap="wrap"
+          >
             {step > 1 && (
-              <Button onClick={prevStep} variant="outline">
+              <Button
+                onClick={prevStep}
+                variant="outline"
+                colorScheme="gray"
+                size={{ base: "md", md: "lg" }}
+                borderColor="gray.300"
+                _dark={{ borderColor: "gray.600" }}
+              >
                 Voltar
               </Button>
             )}
 
             {step < 3 && (
-              <Button onClick={nextStep} colorScheme="blue">
+              <Button
+                onClick={nextStep}
+                colorScheme="blue"
+                bg="#3B82F6"
+                _hover={{ bg: "#2563EB" }}
+                size={{ base: "md", md: "lg" }}
+              >
                 Próximo
               </Button>
             )}
@@ -359,14 +418,23 @@ export default function CreateNatosign() {
               <Button
                 onClick={handleSubmit}
                 colorScheme="green"
+                bg="#00713D"
+                _hover={{ bg: "#005a31" }}
+                _dark={{
+                  bg: "#00d672",
+                  color: "gray.900",
+                  _hover: { bg: "#00c060" },
+                }}
                 isLoading={isLoading}
+                size={{ base: "md", md: "lg" }}
               >
                 Enviar Envelope
               </Button>
             )}
           </Flex>
-        </VStack>
-      </Box>
-    </Flex>
+          </VStack>
+        </Box>
+      </VStack>
+    </Box>
   );
 }
