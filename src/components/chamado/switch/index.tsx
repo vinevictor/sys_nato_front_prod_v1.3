@@ -1,3 +1,4 @@
+"use client";
 import BtnChamado from "@/components/chamado/btn";
 import { GetSessionServer } from "@/lib/auth_confg";
 import {
@@ -14,7 +15,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { MdAdd, MdChatBubble, MdSearch } from "react-icons/md";
+import { MdAdd, MdChatBubble } from "react-icons/md";
 import FiltroChamados from "../filtro/filtroChamado";
 
 interface TypeChamado {
@@ -406,7 +407,7 @@ export default async function ChamadoSwitch({
                 flexDir="column"
                 gap={4}
               >
-                <Icon as={MdSearch} w={16} h={16} color="gray.400" />
+                <Icon w={16} h={16} color="gray.400" />
                 <Text
                   fontSize="lg"
                   color="gray.600"

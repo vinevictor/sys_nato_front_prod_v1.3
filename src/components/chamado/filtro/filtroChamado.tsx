@@ -100,7 +100,7 @@ export default function FiltroChamados({
             </Text>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
-                <Icon as={MdSearch} color="gray.400" />
+                <Icon color="gray.400" />
               </InputLeftElement>
               <Input
                 name="busca"
