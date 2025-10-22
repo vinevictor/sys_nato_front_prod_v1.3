@@ -13,7 +13,6 @@ import {
 import { motion } from "framer-motion";
 import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
-
 // --- SUB-COMPONENTE PARA O CARD DE PASSO ---
 interface StepCardProps {
   index: number;
@@ -85,7 +84,7 @@ const stepsData = [
   "O SisNATO executa a identificação com o NatoID.",
   "Se necessário, agenda atendimento presencial via NatoHUB.",
   "Certificado emitido, contrato segue para NatoSign.",
-  "Cartório recebe pelo SisNATO-Doc para registro.",
+  "Cliente, Construtora, CCA Recebem o link em seu e-mail e assinam com BirdID.",
   "Tudo monitorado com relatórios e auditoria.",
 ];
 
