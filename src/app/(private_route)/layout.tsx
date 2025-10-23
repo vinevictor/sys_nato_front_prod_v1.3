@@ -25,6 +25,8 @@
 import { SidebarLayout } from "@/components/sidebar";
 import { GetSessionServer } from "@/lib/auth_confg";
 
+export const dynamic = "force-dynamic";
+
 interface PrivateLayoutProps {
   children: React.ReactNode;
 }
