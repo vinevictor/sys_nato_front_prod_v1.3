@@ -598,7 +598,7 @@ export const DadoCompomentList = ({
               >
                 {DataEmpreendimento.map((item: any) => (
                   <option key={item.id} value={item.id}>
-                    {item.fantasia}
+                    {item.nome}
                   </option>
                 ))}
               </Select>
@@ -638,7 +638,7 @@ export const DadoCompomentList = ({
               >
                 {DataFinanceiro.map((item: any) => (
                   <option key={item.id} value={item.id}>
-                    {item.nome}
+                    {item.fantasia}
                   </option>
                 ))}
               </Select>
