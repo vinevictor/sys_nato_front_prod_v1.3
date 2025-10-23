@@ -1,29 +1,39 @@
 "use client";
-import Loading from "@/app/loading";
-import { BugReport } from "@/components/bug";
 import useHomeContex from "@/hook/useHomeContex";
 import {
   Box,
   Button,
   Flex,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Select,
+  SimpleGrid,
   Table,
   Tbody,
+  Text,
   Th,
   Thead,
   Tr,
-  useToast,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ImClock } from "react-icons/im";
-import { InputComponentFilterHome } from "../imputs/input";
-import { SelectComponentFilterHome } from "../imputs/select";
 import { SelectPgComponent } from "../imputs/selectPg";
 import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
+import { TableRowsSkeleton, CardSkeleton } from "./skeleton";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
+import {
+  MdAccountBalance,
+  MdBadge,
+  MdBusiness,
+  MdSearch,
+  MdTimeline,
+} from "react-icons/md";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;
@@ -52,16 +62,6 @@ const fetchFinanceiroAll = async () => {
   }
 };
 
-// Função helper para extrair dados do objeto/array
-const extractDataArray = (dados: any): solictacao.SolicitacaoObjectType[] => {
-  if (Array.isArray(dados)) {
-    return dados;
-  }
-  if (dados && typeof dados === "object" && Array.isArray(dados.data)) {
-    return dados.data;
-  }
-  return [];
-};
 
 const RequestDataBlank = async () => {
   try {
@@ -110,8 +110,8 @@ export const DadoCompomentList = ({
   session,
 }: DadoCompomentListProps) => {
   const [ListaDados, setListaDados] = useState<
-    solictacao.SolicitacaoObjectType[] | null
-  >(null);
+    solictacao.SolicitacaoObjectType[]
+  >([]);
   const [Nome, setNome] = useState<string | null>(null);
   const [Andamento, setAndamento] = useState<string | null>(null);
   const [Empreendimento, setEmpreendimento] = useState<number | null>(null);
@@ -123,7 +123,7 @@ export const DadoCompomentList = ({
   const [Total, setTotal] = useState<number>(0);
   const [PagAtual, setPagAtual] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
-  const [IsGeralLoading, setIsGeralLoading] = useState<boolean>(false);
+  const [ShowSkeleton, setShowSkeleton] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
   const toast = useToast();
 
@@ -134,6 +134,15 @@ export const DadoCompomentList = ({
   const bgTableInner = useColorModeValue("gray.100", "gray.700");
   const borderBottomColor = useColorModeValue("gray.300", "gray.600");
   const textColorSecondary = useColorModeValue("gray.700", "gray.200");
+  const filterBg = useColorModeValue("white", "gray.900");
+  const filterBorder = useColorModeValue("gray.200", "gray.700");
+  const filterTitleColor = useColorModeValue("#023147", "gray.100");
+  const filterCaptionColor = useColorModeValue("gray.600", "gray.400");
+
+  // Cores para botões e filtros (padrão do sistema)
+  const buttonBg = useColorModeValue("#00713D", "#00d672");
+  const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
+  const buttonColor = useColorModeValue("white", "gray.900");
 
   const { data } = useHomeContex();
 
@@ -142,15 +151,36 @@ export const DadoCompomentList = ({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    
+
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Delay de 2 segundos antes de mostrar skeleton
   useEffect(() => {
-    setIsGeralLoading(true);
+    let timer: NodeJS.Timeout;
+
+    if (IsLoading) {
+      // Inicia timer de 2 segundos
+      timer = setTimeout(() => {
+        setShowSkeleton(true);
+      }, 2000);
+    } else {
+      // Se não está carregando, esconde skeleton imediatamente
+      setShowSkeleton(false);
+    }
+
+    // Cleanup: limpa o timer se o componente desmontar ou IsLoading mudar
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [IsLoading]);
+
+  useEffect(() => {
     setListaDados(dados?.data || []);
     setTotal(dados?.total || 0);
     setPagAtual(dados?.pagina || 0);
@@ -174,7 +204,6 @@ export const DadoCompomentList = ({
         }
       })();
     }
-    setIsGeralLoading(false);
   }, [data, dados, session]);
 
   const filtroPrimario = async () => {
@@ -245,10 +274,6 @@ export const DadoCompomentList = ({
     }
   };
 
-  if (IsGeralLoading) {
-    return <Loading />;
-  }
-
   return (
     <>
       <Box
@@ -260,202 +285,366 @@ export const DadoCompomentList = ({
         px={{ base: 2, md: 3 }}
         py={{ base: 2, md: 3 }}
       >
-        <Flex
-          flexDir={{ base: "column", xl: "row" }}
-          justifyContent="center"
-          gap={{ base: 2, md: 3 }}
-          alignItems={{ base: "stretch", xl: "flex-start" }}
+        <Box
+          bg={filterBg}
+          border="1px solid"
+          borderColor={filterBorder}
+          borderRadius="lg"
+          p={{ base: 4, md: 6 }}
+          shadow="sm"
         >
           <Flex
-            flexWrap="wrap"
-            gap={{ base: 2, md: 3 }}
-            justifyContent="flex-start"
-            w="full"
+            direction={{ base: "column", md: "row" }}
+            justifyContent="space-between"
+            align={{ base: "flex-start", md: "center" }}
+            gap={{ base: 4, md: 6 }}
           >
-            <Box w={{ base: "100%", md: "15%", xl: "5rem" }} minW="80px">
-              {theme === "light" ? (
-                <InputComponentFilterHome
-                  textAlign={"start"}
-                  type="number"
-                  placeholder="ID"
-                  value={Id?.toString() || ""}
-                  onChange={(e) => {
-                    const value = e.target.value.trim();
-                    if (value === "") {
-                      setId(null);
-                    } else if (!isNaN(Number(value)) && Number(value) > 0) {
-                      setId(Number(value));
-                    }
-                  }}
-                />
-              ) : (
-                <InputComponentFilterHome
-                  textAlign={"start"}
-                  type="number"
-                  placeholder="ID"
-                  _dark={{
-                    borderColor: "#00d672",
-                    textColor: "white",
-                  }}
-                  _placeholder={{
-                    color: "white",
-                  }}
-                  value={Id?.toString() || ""}
-                  onChange={(e) => {
-                    const value = e.target.value.trim();
-                    if (value === "") {
-                      setId(null);
-                    } else if (!isNaN(Number(value)) && Number(value) > 0) {
-                      setId(Number(value));
-                    }
-                  }}
-                />
-              )}
-            </Box>
-
-            <Box w={{ base: "100%", md: "30%", xl: "20rem" }} minW="200px">
-             {theme === 'light' ? (
-                <InputComponentFilterHome
-                  textAlign={"start"}
-                  type="text"
-                  placeholder="Nome"
-                  value={Nome ?? ""}
-                  onChange={(e) => setNome(e.target.value.toUpperCase())}
-                />
-              ) : (
-                <InputComponentFilterHome
-                  textAlign={"start"}
-                  type="text"
-                  placeholder="Nome"
-                  _dark={{
-                    borderColor: "#00d672",
-                    textColor: "white",
-                  }}
-                  _placeholder={{
-                    color: "white",
-                  }}
-                  value={Nome ?? ""}
-                  onChange={(e) => setNome(e.target.value.toUpperCase())}
-                />
-              )}
-            </Box>
-            <Box
-              w={{ base: "100%", sm: "48%", md: "20%", xl: "10rem" }}
-              minW="120px"
-            >
-              <Select
-                textColor={"#00713D"}
-                _hover={{ borderColor: "#00613C" }}
-                borderColor={"#00713D"}
-                placeholder="Andamento"
-                size="sm"
-                _dark={{
-                  borderColor: "#00d672",
-                  textColor: "white",
-                }}
-                borderRadius="0.5rem"
-                value={Andamento ?? ""}
-                onChange={(e) => setAndamento(e.target.value)}
+            <Box>
+              <Text
+                fontSize={{ base: "lg", md: "xl" }}
+                fontWeight="semibold"
+                color={filterTitleColor}
               >
-                <option value="">Todos</option>
-                <option value="VAZIO">VAZIO</option>
-                <option value="INICIADO">INICIADO</option>
-                <option value="APROVADO">APROVADO</option>
-                <option value="EMITIDO">EMITIDO</option>
-                <option value="REVOGADO">REVOGADO</option>
-              </Select>
-            </Box>
-
-            <Box
-              w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }}
-              minW="180px"
-            >
-              <SelectComponentFilterHome
-                Data={DataEmpreendimento}
-                placeholder="Empreendimento"
-                value={Empreendimento?.toString() ?? ""}
-                onChange={(e) => setEmpreendimento(Number(e.target.value))}
-              />
-            </Box>
-
-            <Box
-              w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }}
-              minW="150px"
-            >
-              <SelectComponentFilterHome
-                Data={DataFinanceiro}
-                placeholder="Financeiro"
-                value={Financeiro?.toString() ?? ""}
-                onChange={(e) => setFinanceiro(Number(e.target.value))}
-              />
+                Filtrar Solicitações Diretas
+              </Text>
+              <Text
+                mt={1}
+                fontSize={{ base: "sm", md: "md" }}
+                color={filterCaptionColor}
+              >
+                Utilize os campos abaixo para refinar os resultados apresentados.
+              </Text>
             </Box>
           </Flex>
 
-          <Flex
-            gap={{ base: 2, md: 3 }}
-            w={{ base: "full", xl: "auto" }}
-            flexDir={{ base: "row", xl: "row" }}
-          >
-            <Button
-              bg={theme === "dark" ? "#00d672" : "#00713D"}
-              flex={{ base: 1, xl: "none" }}
-              minW={{ xl: "120px" }}
-              borderRadius="0.5rem"
-              color="white"
-              size="sm"
-              _hover={{ bg: theme === "dark" ? "#00b85d" : "#00631B" }}
-              onClick={filtroPrimario}
-              isLoading={IsLoading}
+          <Box mt={{ base: 4, md: 6 }}>
+            <SimpleGrid
+              columns={{ base: 1, sm: 2, lg: 3, xl: 5 }}
+              spacing={{ base: 3, md: 4 }}
             >
-              Filtrar
-            </Button>
-            <Button
-              bg={theme === "dark" ? "#00d672" : "#00713D"}
-              flex={{ base: 1, xl: "none" }}
-              minW={{ xl: "120px" }}
-              borderRadius="0.5rem"
-              color="white"
-              size="sm"
-              _hover={{ bg: theme === "dark" ? "#00b85d" : "#00631B" }}
-              onClick={HandleFilterBlank}
-              isLoading={IsLoading}
-            >
-              Limpar
-            </Button>
-          </Flex>
-        </Flex>
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  ID da Solicitação
+                </Text>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={MdBadge} color="gray.400" />
+                  </InputLeftElement>
+                  <Input
+                    type="number"
+                    placeholder="Digite o ID"
+                    value={Id?.toString() || ""}
+                    onChange={(e) => {
+                      const value = e.target.value.trim();
+                      if (value === "") {
+                        setId(null);
+                      } else if (!isNaN(Number(value)) && Number(value) > 0) {
+                        setId(Number(value));
+                      }
+                    }}
+                    bg="white"
+                    borderColor="gray.300"
+                    color="#023147"
+                    _hover={{ borderColor: "#00713D" }}
+                    _focus={{
+                      borderColor: "#00713D",
+                      boxShadow: "0 0 0 1px #00713D",
+                    }}
+                    _placeholder={{ color: "gray.500" }}
+                    _dark={{
+                      bg: "gray.800",
+                      borderColor: "gray.600",
+                      color: "gray.100",
+                      _hover: { borderColor: "#00d672" },
+                      _focus: {
+                        borderColor: "#00d672",
+                        boxShadow: "0 0 0 1px #00d672",
+                      },
+                      _placeholder: { color: "gray.400" },
+                    }}
+                  />
+                </InputGroup>
+              </Box>
 
-        {/* Mostrar loading */}
-        {IsLoading && <Loading />}
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  Nome da Solicitação
+                </Text>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <Icon as={MdSearch} color="gray.400" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="Digite o nome"
+                    value={Nome ?? ""}
+                    onChange={(e) => setNome(e.target.value.toUpperCase())}
+                    bg="white"
+                    borderColor="gray.300"
+                    color="#023147"
+                    _hover={{ borderColor: "#00713D" }}
+                    _focus={{
+                      borderColor: "#00713D",
+                      boxShadow: "0 0 0 1px #00713D",
+                    }}
+                    _placeholder={{ color: "gray.500" }}
+                    _dark={{
+                      bg: "gray.800",
+                      borderColor: "gray.600",
+                      color: "gray.100",
+                      _hover: { borderColor: "#00d672" },
+                      _focus: {
+                        borderColor: "#00d672",
+                        boxShadow: "0 0 0 1px #00d672",
+                      },
+                      _placeholder: { color: "gray.400" },
+                    }}
+                  />
+                </InputGroup>
+              </Box>
 
-        {/* Mostrar dados quando existem */}
-        {!IsLoading && ListaDados && ListaDados.length > 0 && (
-          <>
-            <Flex
-              w="full"
-              bg={bgTable}
-              shadow="lg"
-              borderRadius="15px"
-              p={{ base: "10px", md: "15px", xl: "20px" }}
-              alignContent="center"
-              justifyContent="space-evenly"
-              flexDir="column"
-              border="1px solid"
-              borderColor={borderTable}
-            >
-              {/* Renderização condicional: Cards para mobile, Tabela para desktop */}
-              {isMobile ? (
-                // Cards para mobile
-                <Box w="full">
-                  {ListaDados.map((item) => (
-                    <CardComponentHome
-                      key={item.id}
-                      dados={item}
-                      session={session ?? null}
-                    />
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  Status (Andamento)
+                </Text>
+                <Select
+                  placeholder="Selecione..."
+                  value={Andamento ?? ""}
+                  onChange={(e) => setAndamento(e.target.value)}
+                  bg="white"
+                  color="#023147"
+                  borderColor="gray.300"
+                  icon={<MdTimeline />}
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                  _dark={{
+                    bg: "gray.800",
+                    borderColor: "gray.600",
+                    color: "gray.100",
+                    _hover: { borderColor: "#00d672" },
+                    _focus: {
+                      borderColor: "#00d672",
+                      boxShadow: "0 0 0 1px #00d672",
+                    },
+                  }}
+                  sx={{
+                    "& option": {
+                      bg: "white",
+                      color: "gray.800",
+                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
+                      bg: "gray.800",
+                      color: "gray.100",
+                    },
+                  }}
+                >
+                  <option value="">Todos</option>
+                  <option value="VAZIO">VAZIO</option>
+                  <option value="INICIADO">INICIADO</option>
+                  <option value="APROVADO">APROVADO</option>
+                  <option value="EMITIDO">EMITIDO</option>
+                  <option value="REVOGADO">REVOGADO</option>
+                </Select>
+              </Box>
+
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  Empreendimento
+                </Text>
+                <Select
+                  placeholder="Selecione..."
+                  value={Empreendimento?.toString() ?? ""}
+                  onChange={(e) => setEmpreendimento(Number(e.target.value))}
+                  bg="white"
+                  color="#023147"
+                  borderColor="gray.300"
+                  icon={<MdBusiness />}
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                  _dark={{
+                    bg: "gray.800",
+                    borderColor: "gray.600",
+                    color: "gray.100",
+                    _hover: { borderColor: "#00d672" },
+                    _focus: {
+                      borderColor: "#00d672",
+                      boxShadow: "0 0 0 1px #00d672",
+                    },
+                  }}
+                  sx={{
+                    "& option": {
+                      bg: "white",
+                      color: "gray.800",
+                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
+                      bg: "gray.800",
+                      color: "gray.100",
+                    },
+                  }}
+                >
+                  {DataEmpreendimento.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.nome}
+                    </option>
                   ))}
-                </Box>
-              ) : (
+                </Select>
+              </Box>
+
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  Financeiro (CCA)
+                </Text>
+                <Select
+                  placeholder="Selecione..."
+                  value={Financeiro?.toString() ?? ""}
+                  onChange={(e) => setFinanceiro(Number(e.target.value))}
+                  bg="white"
+                  color="#023147"
+                  borderColor="gray.300"
+                  icon={<MdAccountBalance />}
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                  _dark={{
+                    bg: "gray.800",
+                    borderColor: "gray.600",
+                    color: "gray.100",
+                    _hover: { borderColor: "#00d672" },
+                    _focus: {
+                      borderColor: "#00d672",
+                      boxShadow: "0 0 0 1px #00d672",
+                    },
+                  }}
+                  sx={{
+                    "& option": {
+                      bg: "white",
+                      color: "gray.800",
+                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
+                      bg: "gray.800",
+                      color: "gray.100",
+                    },
+                  }}
+                >
+                  {DataFinanceiro.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.fantasia}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+            </SimpleGrid>
+
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              gap={3}
+              mt={{ base: 5, md: 6 }}
+              wrap="wrap"
+            >
+              <Text fontSize="sm" color={filterCaptionColor}>
+                {Total} {Total === 1 ? "registro encontrado" : "registros encontrados"}
+              </Text>
+
+              <Flex gap={3} wrap="wrap">
+                <Button
+                  variant="outline"
+                  colorScheme="gray"
+                  borderColor="gray.300"
+                  _hover={{ borderColor: "gray.500", bg: "gray.100" }}
+                  _dark={{ borderColor: "gray.600", _hover: { bg: "gray.700" } }}
+                  minW="140px"
+                  size="sm"
+                  onClick={HandleFilterBlank}
+                  isLoading={IsLoading}
+                >
+                  Limpar filtros
+                </Button>
+                <Button
+                  bg={buttonBg}
+                  color={buttonColor}
+                  minW="140px"
+                  borderRadius="md"
+                  size="sm"
+                  transition="all 0.2s"
+                  _hover={{
+                    bg: buttonHoverBg,
+                    transform: "translateY(-1px)",
+                    shadow: "md",
+                  }}
+                  _active={{ transform: "translateY(0)" }}
+                  onClick={filtroPrimario}
+                  isLoading={IsLoading}
+                >
+                  Filtrar
+                </Button>
+              </Flex>
+            </Flex>
+          </Box>
+        </Box>
+
+        {/* Estrutura da tabela sempre visível */}
+        <Flex
+          w="full"
+          bg={bgTable}
+          shadow="lg"
+          borderRadius="15px"
+          p={{ base: "10px", md: "15px", xl: "20px" }}
+          alignContent="center"
+          justifyContent="space-evenly"
+          flexDir="column"
+          border="1px solid"
+          borderColor={borderTable}
+        >
+          {/* Renderização condicional: Cards para mobile, Tabela para desktop */}
+          {isMobile ? (
+            // Cards para mobile
+            <Box w="full">
+              {ShowSkeleton ? (
+                <CardSkeleton />
+              ) : ListaDados && ListaDados.length > 0 ? (
+                ListaDados.map((item) => (
+                  <CardComponentHome
+                    key={item.id}
+                    dados={item}
+                    session={session ?? null}
+                  />
+                ))
+              ) : null}
+            </Box>
+          ) : (
                 // Tabela para desktop
                 <Box overflowX="auto" w="full">
                   <Table
@@ -548,51 +737,53 @@ export const DadoCompomentList = ({
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {ListaDados.map((item) => (
-                        <TableComponent
-                          key={item.id}
-                          dados={item}
-                          session={session ?? null}
-                        />
-                      ))}
+                      {ShowSkeleton ? (
+                        <TableRowsSkeleton />
+                      ) : ListaDados && ListaDados.length > 0 ? (
+                        ListaDados.map((item) => (
+                          <TableComponent
+                            key={item.id}
+                            dados={item}
+                            session={session ?? null}
+                          />
+                        ))
+                      ) : null}
                     </Tbody>
                   </Table>
                 </Box>
               )}
 
-              {/* Footer com paginação */}
-              <Flex
-                w="full"
-                justifyContent={{ base: "center", md: "space-between" }}
-                alignItems="center"
-                pt={3}
-                flexDir={{ base: "column", md: "row" }}
-                gap={{ base: 2, md: 0 }}
-              >
-                <Box
-                  fontSize={{ base: "sm", md: "md" }}
-                  color={textColorSecondary}
-                >
-                  Total de registros: {Total}
-                </Box>
-                <Flex
-                  gap={2}
-                  alignItems="center"
-                  fontSize={{ base: "sm", md: "md" }}
-                >
-                  <Box color={textColorSecondary}>Páginas:</Box>
-                  <SelectPgComponent
-                    total={Total || 0}
-                    ClientQtd={ListaDados.length || 0}
-                    SelectPage={PagAtual}
-                    setSelectPage={setPagina}
-                    SetVewPage={NextPage}
-                  />
-                </Flex>
-              </Flex>
+          {/* Footer com paginação */}
+          <Flex
+            w="full"
+            justifyContent={{ base: "center", md: "space-between" }}
+            alignItems="center"
+            pt={3}
+            flexDir={{ base: "column", md: "row" }}
+            gap={{ base: 2, md: 0 }}
+          >
+            <Box
+              fontSize={{ base: "sm", md: "md" }}
+              color={textColorSecondary}
+            >
+              Total de registros: {Total}
+            </Box>
+            <Flex
+              gap={2}
+              alignItems="center"
+              fontSize={{ base: "sm", md: "md" }}
+            >
+              <Box color={textColorSecondary}>Páginas:</Box>
+              <SelectPgComponent
+                total={Total || 0}
+                ClientQtd={ListaDados?.length || 0}
+                SelectPage={PagAtual}
+                setSelectPage={setPagina}
+                SetVewPage={NextPage}
+              />
             </Flex>
-          </>
-        )}
+          </Flex>
+        </Flex>
       </Box>
     </>
   );
