@@ -1,41 +1,45 @@
 "use client";
-import { BugReport } from "@/components/bug";
 import useHomeContex from "@/hook/useHomeContex";
-import { SessionServer } from "@/types/session";
+import type { SessionServer } from "@/types/session";
+import type { solictacao } from "@/types/solicitacao";
 import {
   Box,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
   Flex,
+  Heading,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  SimpleGrid,
   Table,
   Tbody,
+  Text,
   Th,
   Thead,
   Tr,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState, useCallback } from "react";
-import { ImClock } from "react-icons/im";
-import { InputComponentFilterHome } from "../imputs/input";
-import { SelectComponentFilterHome } from "../imputs/select";
-import { SelectPgComponent } from "../imputs/selectPg";
-import { TableComponent } from "./table";
-import { CardComponent } from "./card";
-import { BtnListNow } from "../imputs/BtnListNow";
-import BtnAlertList from "../imputs/BtnAlertList";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { ImClock } from "react-icons/im";
+import {
+  MdAccountBalance,
+  MdBadge,
+  MdBusiness,
+  MdSearch,
+  MdTimeline,
+} from "react-icons/md";
+import { SelectPgComponent } from "../imputs/selectPg";
 import Loading from "@/app/loading";
-import { solictacao } from "@/types/solicitacao";
+import { CardComponent } from "./card";
+import { TableComponent } from "./table";
 
 interface DadoCompomentListProps {
   dados: solictacao.SolicitacaoGetType | null;
-  session: SessionNext.Server | null;
+  session: SessionServer | null;
 }
 
 interface FirlterDataProps {
@@ -58,14 +62,15 @@ const FirlterData = async (
     id,
     pagina,
   }: FirlterDataProps,
-  session: SessionServer | SessionNext.Server | null
+  session: SessionServer | null
 ) => {
   const filter = [];
 
   if (nome) filter.push(`nome=${nome}`);
   if (andamento) filter.push(`andamento=${andamento}`);
   if (Number(construtora) > 0) filter.push(`construtora=${construtora}`);
-  if (Number(empreendimento) > 0) filter.push(`empreendimento=${empreendimento}`);
+  if (Number(empreendimento) > 0)
+    filter.push(`empreendimento=${empreendimento}`);
   if (Number(financeiro) > 0) filter.push(`financeiro=${financeiro}`);
   if (Number(id) > 0) filter.push(`id=${id}`);
   if (Number(pagina) > 0) filter.push(`pagina=${pagina}`);
@@ -94,31 +99,34 @@ const FirlterData = async (
 const fetchConstrutoraAll = async () => {
   try {
     const resq = await fetch(`/api/construtora/getall`);
-    
+
     // Check if response is ok
     if (!resq.ok) {
-      console.error('fetchConstrutoraAll failed:', resq.status, resq.statusText);
+      console.error(
+        "fetchConstrutoraAll failed:",
+        resq.status,
+        resq.statusText
+      );
       return [];
     }
-    
+
     // Check if response has content
     const text = await resq.text();
     if (!text) {
-      console.warn('fetchConstrutoraAll: Empty response');
+      console.warn("fetchConstrutoraAll: Empty response");
       return [];
     }
-    
+
     // Try to parse JSON
     try {
       const data = JSON.parse(text);
       return data;
     } catch (parseError) {
-      console.error('fetchConstrutoraAll: Invalid JSON response', parseError);
+      console.error("fetchConstrutoraAll: Invalid JSON response", parseError);
       return [];
     }
-    
   } catch (error) {
-    console.error('fetchConstrutoraAll error:', error);
+    console.error("fetchConstrutoraAll error:", error);
     return [];
   }
 };
@@ -126,28 +134,34 @@ const fetchConstrutoraAll = async () => {
 const fetchEmpreendimentoAll = async () => {
   try {
     const resq = await fetch(`/api/empreendimento/getall`);
-    
+
     if (!resq.ok) {
-      console.error('fetchEmpreendimentoAll failed:', resq.status, resq.statusText);
+      console.error(
+        "fetchEmpreendimentoAll failed:",
+        resq.status,
+        resq.statusText
+      );
       return [];
     }
-    
+
     const text = await resq.text();
     if (!text) {
-      console.warn('fetchEmpreendimentoAll: Empty response');
+      console.warn("fetchEmpreendimentoAll: Empty response");
       return [];
     }
-    
+
     try {
       const data = JSON.parse(text);
       return data;
     } catch (parseError) {
-      console.error('fetchEmpreendimentoAll: Invalid JSON response', parseError);
+      console.error(
+        "fetchEmpreendimentoAll: Invalid JSON response",
+        parseError
+      );
       return [];
     }
-    
   } catch (error) {
-    console.error('fetchEmpreendimentoAll error:', error);
+    console.error("fetchEmpreendimentoAll error:", error);
     return [];
   }
 };
@@ -155,28 +169,27 @@ const fetchEmpreendimentoAll = async () => {
 const fetchFinanceiroAll = async () => {
   try {
     const resq = await fetch(`/api/financeira/getall`);
-    
+
     if (!resq.ok) {
-      console.error('fetchFinanceiroAll failed:', resq.status, resq.statusText);
+      console.error("fetchFinanceiroAll failed:", resq.status, resq.statusText);
       return [];
     }
-    
+
     const text = await resq.text();
     if (!text) {
-      console.warn('fetchFinanceiroAll: Empty response');
+      console.warn("fetchFinanceiroAll: Empty response");
       return [];
     }
-    
+
     try {
       const data = JSON.parse(text);
       return data;
     } catch (parseError) {
-      console.error('fetchFinanceiroAll: Invalid JSON response', parseError);
+      console.error("fetchFinanceiroAll: Invalid JSON response", parseError);
       return [];
     }
-    
   } catch (error) {
-    console.error('fetchFinanceiroAll error:', error);
+    console.error("fetchFinanceiroAll error:", error);
     return [];
   }
 };
@@ -203,7 +216,7 @@ export const DadoCompomentList = ({
   const [Total, setTotal] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const theme = useColorModeValue('light', 'dark');
+  const theme = useColorModeValue("light", "dark");
 
   // Cores responsivas ao tema
   const bgTable = useColorModeValue("gray.50", "gray.800");
@@ -211,6 +224,15 @@ export const DadoCompomentList = ({
   const bgTableInner = useColorModeValue("gray.100", "gray.700");
   const borderBottomColor = useColorModeValue("gray.300", "gray.600");
   const textColorSecondary = useColorModeValue("gray.700", "gray.200");
+  const filterBg = useColorModeValue("white", "gray.900");
+  const filterBorder = useColorModeValue("gray.200", "gray.700");
+  const filterTitleColor = useColorModeValue("#023147", "gray.100");
+  const filterCaptionColor = useColorModeValue("gray.600", "gray.400");
+
+  // Cores para botões e filtros (padrão do sistema)
+  const buttonBg = useColorModeValue("#00713D", "#00d672");
+  const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
+  const buttonColor = useColorModeValue("white", "gray.900");
 
   // Detecta se é mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -222,10 +244,10 @@ export const DadoCompomentList = ({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    
+
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
@@ -252,7 +274,7 @@ export const DadoCompomentList = ({
         const [construtoras, empreendimentos, financeiros] = await Promise.all([
           fetchConstrutoraAll(),
           fetchEmpreendimentoAll(),
-          fetchFinanceiroAll()
+          fetchFinanceiroAll(),
         ]);
         setDataConstrutora(construtoras);
         setDataEmpreendimento(empreendimentos);
@@ -297,7 +319,16 @@ export const DadoCompomentList = ({
       setMesageError("Nenhum dado encontrado");
     }
     setIsLoading(false);
-  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, session, ListaDados]);
+  }, [
+    Nome,
+    Andamento,
+    Construtora,
+    Empreendimento,
+    Financeiro,
+    Id,
+    session,
+    ListaDados,
+  ]);
 
   const HandleFilterBlank = useCallback(async () => {
     setIsLoading(true);
@@ -327,313 +358,487 @@ export const DadoCompomentList = ({
     router.refresh();
   }, [session, router]);
 
-  const NextPage = useCallback(async (page: number) => {
-    setIsLoading(true);
-    const data = await FirlterData(
-      {
-        nome: Nome,
-        andamento: Andamento,
-        construtora: Construtora,
-        empreendimento: Empreendimento,
-        financeiro: Financeiro,
-        id: Id,
-        pagina: page,
-      },
-      session
-    );
-    if (data?.data) {
-      setListaDados(data.data);
-      setTotal(data.total);
-    }
-    setIsLoading(false);
-  }, [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, session]);
+  const NextPage = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      const data = await FirlterData(
+        {
+          nome: Nome,
+          andamento: Andamento,
+          construtora: Construtora,
+          empreendimento: Empreendimento,
+          financeiro: Financeiro,
+          id: Id,
+          pagina: page,
+        },
+        session
+      );
+      if (data?.data) {
+        setListaDados(data.data);
+        setTotal(data.total);
+      }
+      setIsLoading(false);
+    },
+    [Nome, Andamento, Construtora, Empreendimento, Financeiro, Id, session]
+  );
 
   return (
     <>
       <Box
-        w="full"
-        maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
-        mx="auto"
-        py={{ base: 4, md: 5, lg: 6 }}
-        px={{ base: 3, sm: 4, md: 5, lg: 6 }}
+        bg={filterBg}
+        border="1px solid"
+        borderColor={filterBorder}
+        borderRadius="lg"
+        p={{ base: 4, md: 6 }}
+        shadow="sm"
+        mb={{ base: 5, md: 6 }}
       >
-        {/* Seção de Filtros */}
-        <Box
-          bg="white"
-          _dark={{ bg: "gray.800" }}
-          p={{ base: 4, md: 5 }}
-          borderRadius="lg"
-          shadow="md"
-          mb={{ base: 5, md: 6 }}
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          justifyContent="space-between"
+          align={{ base: "flex-start", md: "center" }}
+          gap={{ base: 4, md: 6 }}
         >
-          <Flex
-            flexDir={{ base: "column", xl: "row" }}
-            gap={{ base: 3, md: 4 }}
-            alignItems={{ base: "stretch", xl: "flex-start" }}
+          <Box>
+            <Heading
+              fontSize={{ base: "lg", md: "xl" }}
+              fontWeight="semibold"
+              color={filterTitleColor}
+            >
+              Filtrar Solicitações
+            </Heading>
+            <Text
+              mt={1}
+              fontSize={{ base: "sm", md: "md" }}
+              color={filterCaptionColor}
+            >
+              Utilize os campos abaixo para refinar os resultados.
+            </Text>
+          </Box>
+        </Flex>
+
+        <Box mt={{ base: 4, md: 6 }}>
+          <SimpleGrid
+            columns={{ base: 1, sm: 2, lg: 3, xl: 6 }}
+            spacing={{ base: 3, md: 4 }}
           >
-          <Flex
-            flexWrap="wrap"
-            gap={{ base: 2, md: 3 }}
-            justifyContent="flex-start"
-            w="full"
-          >
-            <Box w={{ base: "100%", md: "15%", xl: "5rem" }} minW="80px">
-              <InputComponentFilterHome
-                textAlign="start"
-                type="number"
-                placeholder="ID"
-                value={Id?.toString() || ""}
-                onChange={(e) => {
-                  const value = e.target.value.trim();
-                  if (value === "") {
-                    setId(null);
-                  } else if (!isNaN(Number(value)) && Number(value) > 0) {
-                    setId(Number(value));
-                  }
-                }}
-              />
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                ID da Solicitação
+              </Text>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={MdBadge} color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  type="number"
+                  placeholder="ID"
+                  value={Id?.toString() || ""}
+                  onChange={(e) => {
+                    const value = e.target.value.trim();
+                    if (value === "") {
+                      setId(null);
+                    } else if (!isNaN(Number(value)) && Number(value) > 0) {
+                      setId(Number(value));
+                    }
+                  }}
+                  bg="white"
+                  _dark={{ bg: "gray.800", borderColor: "gray.600" }}
+                  borderColor="gray.300"
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                />
+              </InputGroup>
             </Box>
 
-            <Box w={{ base: "100%", md: "30%", xl: "20rem" }} minW="200px">
-              <InputComponentFilterHome
-                type="text"
-                placeholder="Nome"
-                value={Nome ?? ""}
-                onChange={(e) => setNome(e.target.value.toUpperCase())}
-              />
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                Nome do Cliente
+              </Text>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={MdSearch} color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  type="text"
+                  placeholder="Nome"
+                  value={Nome ?? ""}
+                  onChange={(e) => setNome(e.target.value.toUpperCase())}
+                  bg="white"
+                  _dark={{ bg: "gray.800", borderColor: "gray.600" }}
+                  borderColor="gray.300"
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                />
+              </InputGroup>
             </Box>
 
-            <Box w={{ base: "100%", sm: "48%", md: "20%", xl: "10rem" }} minW="120px">
-              <SelectComponentFilterHome
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                Status (Andamento)
+              </Text>
+              <Select
                 placeholder="Andamento"
                 value={Andamento ?? ""}
                 onChange={(e) => setAndamento(e.target.value)}
+                icon={<MdTimeline />}
+                bg="white"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  color: "gray.100",
+                }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+                sx={{
+                  "& option": { bg: "white", color: "gray.800" },
+                  "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                    { bg: "gray.800", color: "gray.100" },
+                }}
               >
                 <option value="VAZIO">VAZIO</option>
                 <option value="INICIADO">INICIADO</option>
                 <option value="APROVADO">APROVADO</option>
                 <option value="EMITIDO">EMITIDO</option>
                 <option value="REVOGADO">REVOGADO</option>
-              </SelectComponentFilterHome>
+              </Select>
             </Box>
 
-            <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "13rem" }} minW="150px">
-              <SelectComponentFilterHome
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                Construtora
+              </Text>
+              <Select
                 placeholder="Construtora"
                 value={Construtora?.toString() ?? ""}
                 onChange={(e) => setConstrutora(Number(e.target.value))}
-                >
-                  {DataConstrutora.map((item: any) => (
-                    <option key={item.id} value={item.id}>
-                      {item.nome}
-                    </option>
-                  ))}
-              </SelectComponentFilterHome>
+                icon={<MdBusiness />}
+                bg="white"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  color: "gray.100",
+                }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+                sx={{
+                  "& option": { bg: "white", color: "gray.800" },
+                  "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                    { bg: "gray.800", color: "gray.100" },
+                }}
+              >
+                {DataConstrutora.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.nome}
+                  </option>
+                ))}
+              </Select>
             </Box>
 
-            <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }} minW="180px">
-              <SelectComponentFilterHome
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                Empreendimento
+              </Text>
+              <Select
                 placeholder="Empreendimento"
                 value={Empreendimento?.toString() ?? ""}
                 onChange={(e) => setEmpreendimento(Number(e.target.value))}
-                >
-                  {DataEmpreendimento.map((item: any) => (
-                    <option key={item.id} value={item.id}>
-                      {item.nome}
-                    </option>
-                  ))}
-              </SelectComponentFilterHome>
+                icon={<MdBusiness />}
+                bg="white"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  color: "gray.100",
+                }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+                sx={{
+                  "& option": { bg: "white", color: "gray.800" },
+                  "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                    { bg: "gray.800", color: "gray.100" },
+                }}
+              >
+                {DataEmpreendimento.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.nome}
+                  </option>
+                ))}
+              </Select>
             </Box>
 
-            <Box w={{ base: "100%", sm: "48%", md: "30%", xl: "15rem" }} minW="150px">
-              <SelectComponentFilterHome
+            <Box>
+              <Text
+                fontSize="sm"
+                fontWeight="medium"
+                mb={2}
+                color={filterTitleColor}
+              >
+                Financeiro (CCA)
+              </Text>
+              <Select
                 placeholder="Financeiro"
                 value={Financeiro?.toString() ?? ""}
                 onChange={(e) => setFinanceiro(Number(e.target.value))}
-                >
-                  {DataFinanceiro.map((item: any) => (
-                    <option key={item.id} value={item.id}>
-                      {item.nome}
-                    </option>
-                  ))}
-              </SelectComponentFilterHome>
-            </Box>
-          </Flex>
-
-          <Flex
-            gap={{ base: 2, md: 3 }}
-            w={{ base: "full", xl: "auto" }}
-            flexDir={{ base: "row", xl: "row" }}
-          >
-            <Button
-              colorScheme="green"
-              bg="#00713D"
-              _hover={{ bg: "#005a31" }}
-              _dark={{
-                bg: "#00d672",
-                color: "gray.900",
-                _hover: { bg: "#00c060" },
-              }}
-              flex={{ base: 1, xl: "none" }}
-              minW={{ xl: "120px" }}
-              size="md"
-              onClick={filtroPrimario}
-            >
-              Filtrar
-            </Button>
-            <Button
-              variant="outline"
-              colorScheme="gray"
-              borderColor="gray.300"
-              _dark={{ borderColor: "gray.600" }}
-              flex={{ base: 1, xl: "none" }}
-              minW={{ xl: "120px" }}
-              size="md"
-              onClick={HandleFilterBlank}
-            >
-              Limpar
-            </Button>
-          </Flex>
-          </Flex>
-        </Box>
-
-        {/* Área de Resultados */}
-        {IsLoading && <Loading />}
-        {!IsLoading && (
-          <Flex
-            w="full"
-            bg={bgTable}
-            shadow="lg"
-            borderRadius="15px"
-            p={{ base: "10px", md: "15px", xl: "20px" }}
-            alignContent="center"
-            justifyContent="space-evenly"
-            flexDir="column"
-            border="1px solid"
-            borderColor={borderTable}
-          >
-            {/* Renderização condicional: Cards para mobile, Tabela para desktop */}
-            {isMobile ? (
-              // Cards para mobile
-              <Box w="full">
-                {ListaDados?.map((item) => (
-                  <CardComponent
-                    key={item.id}
-                    dados={item}
-                    session={session ?? null}
-                  />
+                icon={<MdAccountBalance />}
+                bg="white"
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.600",
+                  color: "gray.100",
+                }}
+                borderColor="gray.300"
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+                sx={{
+                  "& option": { bg: "white", color: "gray.800" },
+                  "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                    { bg: "gray.800", color: "gray.100" },
+                }}
+              >
+                {DataFinanceiro.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.nome}
+                  </option>
                 ))}
-              </Box>
-            ) : (
-              // Tabela para desktop
-              <Box overflowX="auto" w="full">
-                <Table
-                  variant="simple"
-                  size="sm"
-                  bg={bgTableInner}
-                  borderRadius="15px"
-                >
-                  <Thead>
-                    <Tr>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "12rem", md: "17rem" }}
-                        textAlign="center"
-                      >
-                        FUNÇÕES
-                      </Th>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "4rem", md: "5rem" }}
-                      >
-                        ID
-                      </Th>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                      >
-                        NOME
-                      </Th>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "12rem", md: "15rem" }}
-                      >
-                        CONST - CCA
-                      </Th>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "10rem", md: "13rem" }}
-                      >
-                        AGENDAMENTO
-                      </Th>
-                      <Th
-                        fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "7rem", md: "8rem" }}
-                      >
-                        Andamento
-                      </Th>
-                      <Th
-                        p={{ base: "0.5rem", md: "0.8rem" }}
-                        borderBottomColor={borderBottomColor}
-                        w={{ base: "4rem", md: "5rem" }}
-                        fontSize={{ base: "18px", md: "22px" }}
-                      >
-                        <Flex justifyContent="center">
-                          <ImClock />
-                        </Flex>
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {ListaDados?.map((item) => (
-                      <TableComponent
-                        key={item.id}
-                        dados={item}
-                        session={session ?? null}
-                      />
-                    ))}
-                  </Tbody>
-                </Table>
-              </Box>
-            )}
+              </Select>
+            </Box>
+          </SimpleGrid>
 
-            {/* Footer com paginação */}
-            <Flex
-              w="full"
-              justifyContent={{ base: "center", md: "space-between" }}
-              alignItems="center"
-              pt={3}
-              flexDir={{ base: "column", md: "row" }}
-              gap={{ base: 2, md: 0 }}
-            >
-              <Box fontSize={{ base: "sm", md: "md" }} color={textColorSecondary}>
-                Total de registros: {Total}
-              </Box>
-              <Flex gap={2} alignItems="center" fontSize={{ base: "sm", md: "md" }}>
-                <Box color={textColorSecondary}>Páginas:</Box>
-                <SelectPgComponent
-                  total={Total || 0}
-                  ClientQtd={ListaDados?.length || 0}
-                  SelectPage={Pagina}
-                  setSelectPage={setPagina}
-                  SetVewPage={NextPage}
-                />
-              </Flex>
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            gap={3}
+            mt={{ base: 5, md: 6 }}
+            wrap="wrap"
+          >
+            <Text fontSize="sm" color={filterCaptionColor}>
+              {Total}{" "}
+              {Total === 1 ? "registro encontrado" : "registros encontrados"}
+            </Text>
+
+            <Flex gap={3} wrap="wrap">
+              <Button
+                variant="outline"
+                colorScheme="gray"
+                borderColor="gray.300"
+                _hover={{ borderColor: "gray.500", bg: "gray.100" }}
+                _dark={{ borderColor: "gray.600", _hover: { bg: "gray.700" } }}
+                minW="140px"
+                size="sm"
+                onClick={HandleFilterBlank}
+                isLoading={IsLoading}
+              >
+                Limpar filtros
+              </Button>
+              <Button
+                bg={buttonBg}
+                color={buttonColor}
+                minW="140px"
+                borderRadius="md"
+                size="sm"
+                transition="all 0.2s"
+                _hover={{
+                  bg: buttonHoverBg,
+                  transform: "translateY(-1px)",
+                  shadow: "md",
+                }}
+                _active={{ transform: "translateY(0)" }}
+                onClick={filtroPrimario}
+                isLoading={IsLoading}
+              >
+                Filtrar
+              </Button>
             </Flex>
           </Flex>
-        )}
+        </Box>
       </Box>
+
+      {/* Área de Resultados */}
+      {IsLoading && <Loading />}
+      {!IsLoading && (
+        <Flex
+          w="full"
+          bg={bgTable}
+          shadow="lg"
+          borderRadius="15px"
+          p={{ base: "10px", md: "15px", xl: "20px" }}
+          alignContent="center"
+          justifyContent="space-evenly"
+          flexDir="column"
+          border="1px solid"
+          borderColor={borderTable}
+        >
+          {/* Renderização condicional: Cards para mobile, Tabela para desktop */}
+          {isMobile ? (
+            // Cards para mobile
+            <Box w="full">
+              {ListaDados?.map((item) => (
+                <CardComponent
+                  key={item.id}
+                  dados={item}
+                  session={session ?? null}
+                />
+              ))}
+            </Box>
+          ) : (
+            // Tabela para desktop
+            <Box overflowX="auto" w="full">
+              <Table
+                variant="simple"
+                size="sm"
+                bg={bgTableInner}
+                borderRadius="15px"
+              >
+                <Thead>
+                  <Tr>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "12rem", md: "17rem" }}
+                      textAlign="center"
+                    >
+                      FUNÇÕES
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "4rem", md: "5rem" }}
+                    >
+                      ID
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                    >
+                      NOME
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "12rem", md: "15rem" }}
+                    >
+                      CONST - CCA
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "10rem", md: "13rem" }}
+                    >
+                      AGENDAMENTO
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "7rem", md: "8rem" }}
+                    >
+                      Andamento
+                    </Th>
+                    <Th
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "4rem", md: "5rem" }}
+                      fontSize={{ base: "18px", md: "22px" }}
+                    >
+                      <Flex justifyContent="center">
+                        <ImClock />
+                      </Flex>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {ListaDados?.map((item) => (
+                    <TableComponent
+                      key={item.id}
+                      dados={item}
+                      session={session ?? null}
+                    />
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+          )}
+
+          {/* Footer com paginação */}
+          <Flex
+            w="full"
+            justifyContent={{ base: "center", md: "space-between" }}
+            alignItems="center"
+            pt={3}
+            flexDir={{ base: "column", md: "row" }}
+            gap={{ base: 2, md: 0 }}
+          >
+            <Box fontSize={{ base: "sm", md: "md" }} color={textColorSecondary}>
+              Total de registros: {Total}
+            </Box>
+            <Flex
+              gap={2}
+              alignItems="center"
+              fontSize={{ base: "sm", md: "md" }}
+            >
+              <Box color={textColorSecondary}>Páginas:</Box>
+              <SelectPgComponent
+                total={Total || 0}
+                ClientQtd={ListaDados?.length || 0}
+                SelectPage={Pagina}
+                setSelectPage={setPagina}
+                SetVewPage={NextPage}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
     </>
   );
 };

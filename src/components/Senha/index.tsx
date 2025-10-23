@@ -25,55 +25,53 @@ export const SenhaComponent = ({ setvalue, onvalue, envClick }: SenhaProps) => {
     onvalue(value);
   };
   
-  // Cores dinâmicas baseadas no tema
-  const inputBg = useColorModeValue("white", "gray.700");
-  const inputBorder = useColorModeValue("#E2E8F0", "gray.600");
-  const inputHoverBorder = useColorModeValue("#CBD5E0", "gray.500");
-  const inputFocusBorder = useColorModeValue("#3182CE", "blue.400");
-  const iconColor = useColorModeValue("#718096", "gray.400");
-  const iconHoverBg = useColorModeValue("gray.100", "gray.600");
-  const iconHoverColor = useColorModeValue("#2D3748", "gray.200");
+  // Cores dinâmicas baseadas no tema (padrão do sistema)
+  const inputBg = useColorModeValue("white", "gray.800");
+  const inputBorder = useColorModeValue("gray.300", "gray.600");
+  const inputHoverBorder = useColorModeValue("#00713D", "green.500");
+  const inputFocusBorder = useColorModeValue("#00713D", "green.500");
+  const iconColor = useColorModeValue("gray.600", "gray.400");
+  const iconHoverBg = useColorModeValue("green.50", "green.900");
+  const iconHoverColor = useColorModeValue("#00713D", "green.400");
 
   return (
     <>
       <InputGroup size="lg">
-        <Input 
+        <Input
           pr="4.5rem"
-          height="48px"
           type={show ? "text" : "password"}
           value={setvalue}
           onChange={handleonvalue}
-          border="2px solid"
-          borderColor={inputBorder}
-          borderRadius="8px"
-          fontSize="16px"
           bg={inputBg}
+          borderColor={inputBorder}
           placeholder="Digite sua senha"
-          _hover={{ 
+          _hover={{
             borderColor: inputHoverBorder
           }}
-          _focus={{ 
+          _focus={{
             borderColor: inputFocusBorder,
             boxShadow: `0 0 0 1px ${inputFocusBorder}`
           }}
+          _dark={{ bg: "gray.800", borderColor: "gray.600" }}
           onKeyDownCapture={(e) => {
             if (e.key === "Enter") {
               envClick();
             }
           }}
         />
-        <InputRightElement width="4.5rem" height="48px">
-          <Button 
-            h="32px" 
-            size="sm" 
+        <InputRightElement width="4.5rem">
+          <Button
+            h="32px"
+            size="sm"
             onClick={handleClick}
             bg="transparent"
             color={iconColor}
-            _hover={{ 
+            _hover={{
               bg: iconHoverBg,
               color: iconHoverColor
             }}
-            borderRadius="6px"
+            borderRadius="md"
+            transition="all 0.2s"
           >
             {show ? <FaEyeSlash /> : <IoEyeSharp />}
           </Button>

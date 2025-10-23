@@ -17,19 +17,19 @@ export default function LoginPage() {
   const showSideImage = useBreakpointValue({ base: false, lg: true });
   const theme = useColorModeValue("light", "dark");
   
-  // Cores dinâmicas baseadas no tema
+  // Cores dinâmicas baseadas no tema (seguindo padrões do sistema)
   const bgColor = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("#2D3748", "gray.100");
-  const subtextColor = useColorModeValue("#718096", "gray.400");
-  const linkColor = useColorModeValue("#3182CE", "blue.400");
-  const linkHoverColor = useColorModeValue("#2C5282", "blue.300");
+  const textColor = useColorModeValue("#023147", "gray.100");
+  const subtextColor = useColorModeValue("gray.600", "gray.400");
+  const linkColor = useColorModeValue("#00713D", "green.400");
+  const linkHoverColor = useColorModeValue("#005a31", "green.300");
   const decorBg1 = useColorModeValue(
-    "linear-gradient(135deg, rgba(49, 130, 206, 0.05) 0%, rgba(66, 153, 225, 0.1) 100%)",
-    "linear-gradient(135deg, rgba(49, 130, 206, 0.1) 0%, rgba(66, 153, 225, 0.2) 100%)"
+    "linear-gradient(135deg, rgba(0, 113, 61, 0.05) 0%, rgba(0, 214, 114, 0.1) 100%)",
+    "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.2) 100%)"
   );
   const decorBg2 = useColorModeValue(
-    "linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(104, 211, 145, 0.1) 100%)",
-    "linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(104, 211, 145, 0.2) 100%)"
+    "linear-gradient(135deg, rgba(0, 113, 61, 0.08) 0%, rgba(0, 90, 49, 0.12) 100%)",
+    "linear-gradient(135deg, rgba(0, 214, 114, 0.12) 0%, rgba(0, 192, 96, 0.18) 100%)"
   );
   
   return (
@@ -49,14 +49,17 @@ export default function LoginPage() {
             width="100%"
             height="100%"
           />
-          {/* Overlay com gradiente sutil */}
+          {/* Overlay com gradiente sutil - usando cores primárias */}
           <Box
             position="absolute"
             top="0"
             left="0"
             right="0"
             bottom="0"
-            bg="linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)"
+            bg="linear-gradient(135deg, rgba(0, 113, 61, 0.15) 0%, rgba(0, 90, 49, 0.35) 100%)"
+            _dark={{
+              bg: "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.25) 100%)"
+            }}
           />
         </Box>
       )}
@@ -147,25 +150,41 @@ export default function LoginPage() {
           </Box>
         </VStack>
 
-        {/* Decoração de fundo sutil */}
+        {/* Decoração de fundo sutil - múltiplos elementos */}
         <Box
           position="absolute"
           top="-50px"
           right="-50px"
-          width="200px"
-          height="200px"
+          width={{ base: "150px", md: "200px", lg: "250px" }}
+          height={{ base: "150px", md: "200px", lg: "250px" }}
           borderRadius="full"
           bg={decorBg1}
+          filter="blur(60px)"
+          opacity={0.6}
           zIndex="-1"
         />
         <Box
           position="absolute"
           bottom="-30px"
           left="-30px"
-          width="150px"
-          height="150px"
+          width={{ base: "120px", md: "150px", lg: "180px" }}
+          height={{ base: "120px", md: "150px", lg: "180px" }}
           borderRadius="full"
           bg={decorBg2}
+          filter="blur(50px)"
+          opacity={0.5}
+          zIndex="-1"
+        />
+        <Box
+          position="absolute"
+          top="40%"
+          right="-20px"
+          width={{ base: "100px", md: "120px" }}
+          height={{ base: "100px", md: "120px" }}
+          borderRadius="full"
+          bg={decorBg1}
+          filter="blur(40px)"
+          opacity={0.4}
           zIndex="-1"
         />
       </Flex>
