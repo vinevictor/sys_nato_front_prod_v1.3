@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Loading from "@/app/loading";
 import BarChart from "@/components/barChart";
 import CardInfoDashboard from "@/components/cardInfoDashboard";
@@ -17,7 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { FaRegClock } from "react-icons/fa6";
-import { LuClipboardCheck, LuLayoutDashboard, LuTag } from "react-icons/lu";
+import { LuLayoutDashboard } from "react-icons/lu";
+
 
 // Definir tipos
 interface SessionServer {
@@ -42,9 +45,7 @@ interface ApiResponse {
   };
 }
 
-export const dynamic = 'force-dynamic';
-
-export default async function DashBoard() {
+export default async function DashboardPage() {
   const session = await GetSessionServer();
 
   return (
@@ -55,9 +56,9 @@ export default async function DashBoard() {
 }
 
 async function DashboardContent({
-  session
+  session,
 }: {
-  session: SessionServer | null
+  session: SessionServer | null;
 }) {
   // Função para buscar dados da API com tratamento de erro
   const fetchData = async (): Promise<ApiResponse> => {
@@ -83,7 +84,7 @@ async function DashboardContent({
 
       return response.json();
     } catch (error) {
-      console.error('Erro ao buscar dados do dashboard:', error);
+      console.error("Erro ao buscar dados do dashboard:", error);
       // Retornar dados padrão ou relançar o erro
       throw error;
     }
@@ -110,38 +111,35 @@ async function DashboardContent({
     const quantidadeTags = tags.total_tags;
 
     // Quantidade Total Solicitações
-    const totalSolicitacoes = data.map(item => item.total);
+    const totalSolicitacoes = data.map((item) => item.total);
     const totalSolicitacoesGlobal = totalSolicitacoes.reduce(
       (acc, item) => acc + item,
       0
     );
 
     // Extrair dados para cálculos
-    const arrayVideoConferencia = data.map(item => item.videoConferencia);
-    const arrayInterna = data.map(item => item.interna);
-    
+    const arrayVideoConferencia = data.map((item) => item.videoConferencia);
+    const arrayInterna = data.map((item) => item.interna);
+
     const totalVideoConferencia = arrayVideoConferencia.reduce(
       (acc, item) => acc + item,
       0
     );
-    const totalInterna = arrayInterna.reduce(
-      (acc, item) => acc + item,
-      0
-    );
+    const totalInterna = arrayInterna.reduce((acc, item) => acc + item, 0);
 
     // Removi a lógica de manipulação artificial dos dados
     // Se precisar de lógica de negócio específica, documente o motivo
 
     // Dados de mês/ano para os labels
-    const mesAnoLabels = data.map(item => `${item.mes}/${item.ano}`);
+    const mesAnoLabels = data.map((item) => `${item.mes}/${item.ano}`);
 
     // Dados para o LineChart - convertendo para segundos
-    const MediaHorasConvertida = data.map(item => 
+    const MediaHorasConvertida = data.map((item) =>
       timeToSeconds(item.mediaHoras)
     );
 
     // Cálculo da média global
-    const mediasSegundos = data.map(item => timeToSeconds(item.mediaHoras));
+    const mediasSegundos = data.map((item) => timeToSeconds(item.mediaHoras));
     const mediaGlobalSeg = Math.round(
       mediasSegundos.reduce((a, b) => a + b, 0) / mediasSegundos.length
     );
@@ -197,7 +195,8 @@ async function DashboardContent({
                   _dark={{ color: "gray.400" }}
                   display={{ base: "none", sm: "block" }}
                 >
-                  Acompanhe as principais métricas de certificações e solicitações.
+                  Acompanhe as principais métricas de certificações e
+                  solicitações.
                 </Text>
               </Box>
             </Flex>
@@ -250,9 +249,7 @@ async function DashboardContent({
                     _dark={{ bg: "gray.900", borderColor: "gray.700" }}
                   >
                     <Box w="full" h="100%">
-                      <BarChart
-                        lista_tags={lista_tags}
-                      />
+                      <BarChart lista_tags={lista_tags} />
                     </Box>
                   </Box>
                 </VStack>
@@ -299,7 +296,6 @@ async function DashboardContent({
         </VStack>
       </Container>
     );
-
   } catch (error) {
     // Componente de erro ou fallback
     return (

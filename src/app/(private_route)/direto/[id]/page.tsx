@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import MensagensChatDireto from "@/components/direto/mesage";
 import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";

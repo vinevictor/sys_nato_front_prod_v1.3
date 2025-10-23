@@ -1,7 +1,7 @@
 // Esta rota utiliza autenticação baseada em sessão/cookies.
 // O Next.js exige que rotas que usam dados dinâmicos sejam marcadas como dinâmicas.
 // Veja: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering
-// export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
