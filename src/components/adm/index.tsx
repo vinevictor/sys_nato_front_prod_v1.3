@@ -1,5 +1,4 @@
 "use client";
-import Loading from "@/app/loading";
 import Alertas from "@/components/adm/alertas";
 import CardAdmUsuario from "@/components/adm/card";
 
@@ -36,8 +35,17 @@ interface RelatorioType {
   pendente: number;
 }
 
+const INITIAL_RELATORIO: RelatorioType = {
+  relatorios: 0,
+  aprovado: 0,
+  pendente: 0,
+  em_analise: 0,
+  cobrancas_aberto: "R$ 0,00",
+  envelopes: 0,
+};
+
 export default function AdmSwitch() {
-  const [dados, setDados] = useState<RelatorioType | null>(null);
+  const [dados, setDados] = useState<RelatorioType>(INITIAL_RELATORIO);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
   const session = useSession();
@@ -92,9 +100,8 @@ export default function AdmSwitch() {
       py={{ base: 4, md: 5, lg: 6 }} 
       px={{ base: 3, sm: 4, md: 5, lg: 6 }}
     >
-      {dados && (
-        <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
-          {/* Cabeçalho da Página */}
+      <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
+        {/* Cabeçalho da Página */}
           <Flex
             bg="white"
             _dark={{ bg: "gray.800" }}
@@ -169,37 +176,37 @@ export default function AdmSwitch() {
                     w="full"
                   >
                     <CardAdmUsuario
-                      count={loading ? null : dados?.relatorios}
+                      count={dados.relatorios}
                       title={"Relatórios Gerados"}
                       icon={<LuFileText size={24} />}
                       loading={loading}
                     />
                     <CardAdmUsuario
-                      count={loading ? null : dados?.cobrancas_aberto}
+                      count={dados.cobrancas_aberto}
                       title={"Cobranças em Aberto"}
                       icon={<LuDollarSign size={24} />}
                       loading={loading}
                     />
                     <CardAdmUsuario
-                      count={loading ? null : dados?.envelopes}
+                      count={dados.envelopes}
                       title={"Envelopes Criados"}
                       icon={<MdMail size={24} />}
                       loading={loading}
                     />
                     <CardAdmUsuario
-                      count={loading ? null : dados?.em_analise}
+                      count={dados.em_analise}
                       title={"Relatórios Em Análise"}
                       icon={<MdAnalytics size={24} />}
                       loading={loading}
                     />
                     <CardAdmUsuario
-                      count={loading ? null : dados?.pendente}
+                      count={dados.pendente}
                       title={"Relatórios Pendente"}
                       icon={<MdPending size={24} />}
                       loading={loading}
                     />
                     <CardAdmUsuario
-                      count={loading ? null : dados?.aprovado}
+                      count={dados.aprovado}
                       title={"Relatórios Aprovados"}
                       icon={<MdCheckCircle size={24} />}
                       loading={loading}
@@ -239,8 +246,7 @@ export default function AdmSwitch() {
               </Box>
             </>
           )}
-        </VStack>
-      )}
+      </VStack>
     </Container>
   );
 }
