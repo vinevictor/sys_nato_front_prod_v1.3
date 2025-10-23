@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { MdChatBubble } from "react-icons/md";
 interface BtnChamadoProps {
   name: string;
   id: number;
@@ -36,7 +37,7 @@ export default function BtnChamado({ name, id, type }: BtnChamadoProps) {
       : { colorScheme: "red", variant: "solid" };
   return (
     <Button {...CssInject} size="lg" onClick={handleIniciarAtendimento}>
-      {name}
+      {type === "edit" ? <MdChatBubble /> : null}{name}
     </Button>
   );
 }

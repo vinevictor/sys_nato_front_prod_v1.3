@@ -13,52 +13,42 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   MdBadge,
   MdCheckCircle,
   MdPriorityHigh,
-  MdSearch,
 } from "react-icons/md";
+
+type FormFilterType = {
+  busca?: string;
+  id?: string;
+  status?: string;
+  prioridade?: string;
+};
 
 interface FiltroChamadosProps {
   statusUnicos: string[];
   prioridadesUnicas: string[];
+  Search: (formFilter: FormFilterType) => void;
 }
 
 export default function FiltroChamados({
   statusUnicos,
   prioridadesUnicas,
+  Search,
 }: FiltroChamadosProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const [busca, setBusca] = useState(searchParams.get("busca") || "");
-  const [id, setId] = useState(searchParams.get("id") || "");
-  const [status, setStatus] = useState(searchParams.get("status") || "");
-  const [prioridade, setPrioridade] = useState(
-    searchParams.get("prioridade") || ""
-  );
-
-  useEffect(() => {
-    setBusca(searchParams.get("busca") || "");
-    setId(searchParams.get("id") || "");
-    setStatus(searchParams.get("status") || "");
-    setPrioridade(searchParams.get("prioridade") || "");
-  }, [searchParams]);
+  const [busca, setBusca] = useState('');
+  const [id, setId] = useState('');
+  const [status, setStatus] = useState('');
+  const [prioridade, setPrioridade] = useState('');
 
   const handleFilter = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-
-    if (busca) params.set("busca", busca);
-    if (id) params.set("id", id);
-    if (status) params.set("status", status);
-    if (prioridade) params.set("prioridade", prioridade);
-
-    router.push(`${pathname}?${params.toString()}`);
+    if (busca) Search({ busca });
+    if (id) Search({ id });
+    if (status) Search({ status });
+    if (prioridade) Search({ prioridade });
   };
 
   const handleClear = () => {
@@ -66,7 +56,6 @@ export default function FiltroChamados({
     setId("");
     setStatus("");
     setPrioridade("");
-    router.push(pathname);
   };
 
   const temFiltrosAtivos = busca || id || status || prioridade;
