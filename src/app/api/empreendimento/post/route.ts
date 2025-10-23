@@ -1,6 +1,7 @@
 import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {

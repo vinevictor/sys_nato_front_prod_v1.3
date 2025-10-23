@@ -212,11 +212,8 @@ export const DadoCompomentList = ({
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Id, setId] = useState<number | null>(null);
   const [Pagina, setPagina] = useState<number>(1);
-  const [MesageError, setMesageError] = useState<string | null>(null);
   const [Total, setTotal] = useState<number>(0);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const theme = useColorModeValue("light", "dark");
 
   // Cores responsivas ao tema
   const bgTable = useColorModeValue("gray.50", "gray.800");
@@ -316,7 +313,6 @@ export const DadoCompomentList = ({
       setTotal(filtro.total);
     } else {
       setListaDados(null);
-      setMesageError("Nenhum dado encontrado");
     }
     setIsLoading(false);
   }, [
@@ -353,7 +349,6 @@ export const DadoCompomentList = ({
     );
     setListaDados(data.data);
     setTotal(data.total);
-    setMesageError(null);
     setIsLoading(false);
     router.refresh();
   }, [session, router]);
@@ -563,7 +558,7 @@ export const DadoCompomentList = ({
               >
                 {DataConstrutora.map((item: any) => (
                   <option key={item.id} value={item.id}>
-                    {item.nome}
+                    {item.fantasia}
                   </option>
                 ))}
               </Select>
@@ -603,7 +598,7 @@ export const DadoCompomentList = ({
               >
                 {DataEmpreendimento.map((item: any) => (
                   <option key={item.id} value={item.id}>
-                    {item.nome}
+                    {item.fantasia}
                   </option>
                 ))}
               </Select>

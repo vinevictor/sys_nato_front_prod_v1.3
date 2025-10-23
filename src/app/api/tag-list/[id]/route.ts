@@ -2,6 +2,8 @@ import { GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export const DELETE = async (
   req: Request,
   { params }: { params: { id: string } }
