@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+"use client";
 
 import {
   Container,
@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { MdGavel, MdCheckCircle, MdBlock } from "react-icons/md";
 
-export default async function TermsOfServicePage() {
+export default function TermsOfServicePage() {
   return (
     <Box
       w="full"

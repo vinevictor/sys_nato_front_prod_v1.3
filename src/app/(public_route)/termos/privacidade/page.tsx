@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+"use client";
 
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { MdCheckCircle, MdShield } from "react-icons/md";
 
-export default async function PrivacyPolicyPage() {
+export default function PrivacyPolicyPage() {
   return (
     <Box
       w="full"
