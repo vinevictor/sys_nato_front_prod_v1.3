@@ -147,15 +147,9 @@ export default function ChamadoSwitchClient() {
     return () => controller.abort();
   }, []);
 
-  const statusUnicos = useMemo(
-    () => Array.from(new Set(dados.map((c) => c.status))).filter(Boolean),
-    [dados]
-  );
+  const statusUnicos = ["ABERTO", "EM_ANDAMENTO", "LV2", "CONCLUIDO"];
 
-  const prioridadesUnicas = useMemo(
-    () => Array.from(new Set(dados.map((c) => c.prioridade))).filter(Boolean),
-    [dados]
-  );
+  const prioridadesUnicas = ["baixa", "media", "alta"];
 
   const handleFilter = useCallback(
     (formFilter: FormFilterType) => {
