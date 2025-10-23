@@ -263,7 +263,8 @@ export default function ChamadoSwitchClient({
                       </Button>
                     </Link>
 
-                    <BtnChamado chamado={chamado} />
+                    <BtnChamado name="Editar" id={chamado.id} type="edit" />
+                    <BtnChamado name="Excluir" id={chamado.id} type="delete" />
                   </Flex>
                 </Flex>
               </Box>
