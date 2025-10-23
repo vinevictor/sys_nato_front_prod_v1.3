@@ -10,12 +10,16 @@ import {
   Flex,
   Heading,
   Icon,
+  Skeleton,
   Text,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { MdAdd, MdChatBubble } from "react-icons/md";
 import FiltroChamados from "../filtro/filtroChamado";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface TypeChamado {
   id: number;
@@ -75,19 +79,134 @@ function getPrioridadeColor(prioridade: string) {
   }
 }
 
-interface ChamadoSwitchClientProps {
-  chamadosFiltrados: TypeChamado[];
-  statusUnicos: string[];
-  prioridadesUnicas: string[];
-  searchParams: PageProps["searchParams"];
-}
+type FormFilterType = {
+  busca?: string;
+  id?: string;
+  status?: string;
+  prioridade?: string;
+};
 
-export default function ChamadoSwitchClient({
-  chamadosFiltrados,
-  statusUnicos,
-  prioridadesUnicas,
-  searchParams,
-}: ChamadoSwitchClientProps) {
+export default function ChamadoSwitchClient() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [dados, setDados] = useState<TypeChamado[]>([]);
+  const [listaFiltrada, setListaFiltrada] = useState<TypeChamado[]>([]);
+  const [erro, setErro] = useState<string | null>(null);
+  const toast = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const carregarChamados = async () => {
+      try {
+        setErro(null);
+        const req = await fetch("/api/chamado", {
+          signal: controller.signal,
+          cache: "no-store",
+        });
+
+        if (!req.ok) {
+          const mensagem = "Erro ao buscar chamados";
+          setErro(mensagem);
+          toast({
+            title: "Erro",
+            description: mensagem,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          setDados([]);
+          setListaFiltrada([]);
+          setIsLoading(false);
+          return;
+        }
+
+        const res = await req.json();
+        setDados(res);
+        setListaFiltrada(res);
+        setIsLoading(false);
+      } catch (error: any) {
+        if (error?.name === "AbortError") return;
+        const mensagem = "Erro ao buscar chamados";
+        setErro(mensagem);
+        toast({
+          title: "Erro",
+          description: mensagem,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setDados([]);
+        setListaFiltrada([]);
+        setIsLoading(false);
+      }
+    };
+
+    carregarChamados();
+
+    return () => controller.abort();
+  }, []);
+
+  const statusUnicos = useMemo(
+    () => Array.from(new Set(dados.map((c) => c.status))).filter(Boolean),
+    [dados]
+  );
+
+  const prioridadesUnicas = useMemo(
+    () => Array.from(new Set(dados.map((c) => c.prioridade))).filter(Boolean),
+    [dados]
+  );
+
+  const handleFilter = useCallback(
+    (formFilter: FormFilterType) => {
+      if (!dados.length) {
+        setListaFiltrada([]);
+        return;
+      }
+
+      const { busca, id, status, prioridade } = formFilter;
+      const possuiFiltros = Boolean(busca || id || status || prioridade);
+
+      if (!possuiFiltros) {
+        setListaFiltrada(dados);
+        return;
+      }
+
+      const normaliza = (valor?: string | number | null) =>
+        valor?.toString().toLowerCase().trim();
+
+      const filtrados = dados.filter((item) => {
+        const buscaNormalizada = normaliza(busca);
+        const idNormalizado = normaliza(id);
+        const statusNormalizado = normaliza(status);
+        const prioridadeNormalizada = normaliza(prioridade);
+
+        const atendeBusca = buscaNormalizada
+          ? [item.titulo, item.descricao, item.user_nome, item.id]
+              .map((campo) => normaliza(campo))
+              .some((valor) => valor?.includes(buscaNormalizada))
+          : true;
+
+        const atendeId = idNormalizado
+          ? normaliza(item.id)?.includes(idNormalizado)
+          : true;
+
+        const atendeStatus = statusNormalizado
+          ? normaliza(item.status) === statusNormalizado
+          : true;
+
+        const atendePrioridade = prioridadeNormalizada
+          ? normaliza(item.prioridade) === prioridadeNormalizada
+          : true;
+
+        return atendeBusca && atendeId && atendeStatus && atendePrioridade;
+      });
+
+      setListaFiltrada(filtrados);
+    },
+    [dados]
+  );
+
   return (
     <Container
       maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
@@ -156,11 +275,68 @@ export default function ChamadoSwitchClient({
         <FiltroChamados
           statusUnicos={statusUnicos}
           prioridadesUnicas={prioridadesUnicas}
+          Search={handleFilter}
         />
 
         {/* Lista de Chamados */}
         <VStack spacing={4} align="stretch">
-          {chamadosFiltrados.length === 0 ? (
+          {isLoading ? (
+            [...Array(3)].map((_, index) => (
+              <Box
+                key={`chamado-skeleton-${index}`}
+                bg="white"
+                _dark={{ bg: "gray.800", borderColor: "gray.700" }}
+                p={6}
+                borderRadius="xl"
+                shadow="lg"
+                borderWidth="1px"
+                borderColor="gray.200"
+              >
+                <Flex
+                  direction={{ base: "column", md: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", md: "center" }}
+                  gap={4}
+                >
+                  <VStack align="start" spacing={3} flex={1} w="full">
+                    <Flex align="center" gap={3} wrap="wrap" w="full">
+                      <Skeleton
+                        height="20px"
+                        width={{ base: "60%", md: "40%" }}
+                        borderRadius="md"
+                      />
+                      <Skeleton
+                        height="24px"
+                        width="90px"
+                        borderRadius="full"
+                      />
+                      <Skeleton
+                        height="24px"
+                        width="90px"
+                        borderRadius="full"
+                      />
+                    </Flex>
+
+                    <VStack align="start" spacing={2} w="full">
+                      <Skeleton height="16px" width="100%" />
+                      <Skeleton height="16px" width="85%" />
+                    </VStack>
+
+                    <Flex gap={4} w="full">
+                      <Skeleton height="14px" width="35%" />
+                      <Skeleton height="14px" width="30%" />
+                    </Flex>
+                  </VStack>
+
+                  <Flex gap={3} align="center">
+                    <Skeleton height="32px" width="120px" borderRadius="md" />
+                    <Skeleton height="32px" width="110px" borderRadius="md" />
+                    <Skeleton height="32px" width="110px" borderRadius="md" />
+                  </Flex>
+                </Flex>
+              </Box>
+            ))
+          ) : listaFiltrada.length === 0 ? (
             <Box
               bg="white"
               _dark={{ bg: "gray.800" }}
@@ -179,7 +355,7 @@ export default function ChamadoSwitchClient({
               </Text>
             </Box>
           ) : (
-            chamadosFiltrados.map((chamado: TypeChamado) => (
+            listaFiltrada.map((chamado: TypeChamado) => (
               <Box
                 key={chamado.id}
                 bg="white"
@@ -249,21 +425,11 @@ export default function ChamadoSwitchClient({
 
                   {/* Ações */}
                   <Flex gap={3} align="center">
-                    <Link
-                      href={`/chamado/${chamado.id}`}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <Button
-                        colorScheme="blue"
-                        variant="outline"
-                        size="sm"
-                        leftIcon={<MdChatBubble />}
-                      >
-                        Ver Detalhes
-                      </Button>
-                    </Link>
-
-                    <BtnChamado name="Editar" id={chamado.id} type="edit" />
+                    <BtnChamado
+                      name="Ver Detalhes"
+                      id={chamado.id}
+                      type="edit"
+                    />
                     <BtnChamado name="Excluir" id={chamado.id} type="delete" />
                   </Flex>
                 </Flex>

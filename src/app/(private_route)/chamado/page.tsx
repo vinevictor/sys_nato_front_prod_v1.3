@@ -1,25 +1,11 @@
-import ChamadoSwitch from "@/components/chamado/switch";
+import ChamadoSwitchClient from "@/components/chamado/switch/client";
 
 export const dynamic = "force-dynamic";
 
-interface PageProps {
-  searchParams: {
-    id?: string;
-    busca?: string;
-    status?: string;
-    prioridade?: string;
-    departamento?: string;
-  };
-}
-
-export default async function ChamadoPage({
-  searchParams = {},
-}: {
-  searchParams?: PageProps["searchParams"];
-}) {
+export default async function ChamadoPage() {
   return (
     <>
-      <ChamadoSwitch searchParams={searchParams} />
+      <ChamadoSwitchClient />
     </>
   );
 }
