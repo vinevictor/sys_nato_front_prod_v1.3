@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { ChamadoRootComponent } from "@/components/chamado";
 import { GetSessionServer } from "@/lib/auth_confg";
 import {

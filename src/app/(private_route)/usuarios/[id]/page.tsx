@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import Loading from "@/app/loading";
 import { GetSessionServer } from "@/lib/auth_confg";

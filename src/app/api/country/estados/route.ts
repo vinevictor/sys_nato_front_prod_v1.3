@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
-
+export const dynamic = "force-dynamic";
 /**
  * Retorna a lista de estados/províncias de todos os países
  * 

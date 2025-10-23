@@ -5,6 +5,8 @@ export const metadata: Metadata = {
   title: "CADASTRO DE USUÁRIO",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function CadastrarUsuarioPage() {
   return (
     <>
