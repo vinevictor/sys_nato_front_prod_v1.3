@@ -21,7 +21,6 @@ import { Suspense } from "react";
 import { FaRegClock } from "react-icons/fa6";
 import { LuLayoutDashboard } from "react-icons/lu";
 
-
 // Definir tipos
 interface SessionServer {
   token: string;
@@ -98,6 +97,9 @@ async function DashboardContent({
 
   // Função para converter segundos em formato HH:mm:ss
   const secondsToTime = (seconds: number): string => {
+    if (isNaN(seconds)) {
+      return "00:00:00";
+    }
     return new Date(seconds * 1000).toISOString().slice(11, 19);
   };
 
