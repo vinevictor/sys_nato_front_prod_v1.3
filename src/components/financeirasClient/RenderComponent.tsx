@@ -18,6 +18,7 @@ import {
   Text,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,7 +32,6 @@ import {
 } from "react-icons/md";
 
 interface FinanceirasClientProps {
-  data: any[];
   session: Session.SessionServer;
 }
 
@@ -44,10 +44,11 @@ interface FinanceirasClientProps {
  * @param data - Lista de financeiras
  * @returns Componente de página de financeiras
  */
-export default function FinanceirasClient({ data, session }: FinanceirasClientProps) {
+export default function FinanceirasClient({ session }: FinanceirasClientProps) {
   const [financeiras, setFinanceiras] = useState<any[]>([]);
   const [dadosFiltrados, setDadosFiltrados] = useState<any[]>([]);
   const router = useRouter();
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Estados dos filtros
@@ -58,9 +59,34 @@ export default function FinanceirasClient({ data, session }: FinanceirasClientPr
   const [filtroStatus, setFiltroStatus] = useState("");
 
   useEffect(() => {
-    setFinanceiras(data);
-    setDadosFiltrados(data);
-  }, [data]);
+    GetFinanceiras();
+  }, []);
+
+  const GetFinanceiras = async () => { 
+    try {
+      const req = await fetch("/api/financeira/getall");
+      const res = await req.json();
+      if (!req.ok) {
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar os dados",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setFinanceiras(res);
+      setDadosFiltrados(res);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os dados",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }
 
   // Função de filtro
   useEffect(() => {

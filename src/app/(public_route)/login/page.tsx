@@ -1,37 +1,46 @@
 "use client";
 
 import { FormLogin } from "@/components/login_form";
-import { 
-  Flex, 
-  Box, 
-  Text, 
-  Image, 
-  Link, 
+import {
+  Flex,
+  Box,
+  Text,
+  Link,
   VStack,
   useBreakpointValue,
-  useColorModeValue 
+  useColorMode,
+  Skeleton,
 } from "@chakra-ui/react";
+import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function LoginPage() {
-  // Controla se deve mostrar a imagem lateral baseado no breakpoint
-  const showSideImage = useBreakpointValue({ base: false, lg: true });
-  const theme = useColorModeValue("light", "dark");
-  
+  const [mounted, setMounted] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [logoLoaded, setLogoLoaded] = useState(false);
+  const showSideImage = useBreakpointValue({ base: false, lg: true }, { ssr: true });
+  const { colorMode } = useColorMode();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Evita FOUC - define cores baseadas no modo atual após montagem
+  const isDark = mounted && colorMode === "dark";
+
   // Cores dinâmicas baseadas no tema (seguindo padrões do sistema)
-  const bgColor = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("#023147", "gray.100");
-  const subtextColor = useColorModeValue("gray.600", "gray.400");
-  const linkColor = useColorModeValue("#00713D", "green.400");
-  const linkHoverColor = useColorModeValue("#005a31", "green.300");
-  const decorBg1 = useColorModeValue(
-    "linear-gradient(135deg, rgba(0, 113, 61, 0.05) 0%, rgba(0, 214, 114, 0.1) 100%)",
-    "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.2) 100%)"
-  );
-  const decorBg2 = useColorModeValue(
-    "linear-gradient(135deg, rgba(0, 113, 61, 0.08) 0%, rgba(0, 90, 49, 0.12) 100%)",
-    "linear-gradient(135deg, rgba(0, 214, 114, 0.12) 0%, rgba(0, 192, 96, 0.18) 100%)"
-  );
-  
+  const bgColor = isDark ? "gray.800" : "white";
+  const textColor = isDark ? "gray.100" : "#023147";
+  const subtextColor = isDark ? "gray.400" : "gray.600";
+  const linkColor = isDark ? "green.400" : "#00713D";
+  const linkHoverColor = isDark ? "green.300" : "#005a31";
+  const decorBg1 = isDark
+    ? "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.2) 100%)"
+    : "linear-gradient(135deg, rgba(0, 113, 61, 0.05) 0%, rgba(0, 214, 114, 0.1) 100%)";
+  const decorBg2 = isDark
+    ? "linear-gradient(135deg, rgba(0, 214, 114, 0.12) 0%, rgba(0, 192, 96, 0.18) 100%)"
+    : "linear-gradient(135deg, rgba(0, 113, 61, 0.08) 0%, rgba(0, 90, 49, 0.12) 100%)";
+
   return (
     <Flex height="100vh" overflow="hidden">
       {/* Painel Lateral com Imagem - Visível apenas em telas grandes */}
@@ -42,25 +51,45 @@ export default function LoginPage() {
           display={{ base: "none", lg: "block" }}
           w={{ base: "100%", lg: "30%" }}
         >
-          <Image
-            src="/formulario-de-preenchimento.jpg"
-            alt="Formulário de Preenchimento"
-            objectFit="cover"
+          {!imageLoaded && (
+            <Skeleton
+              width="100%"
+              height="100%"
+              startColor={isDark ? "gray.700" : "gray.200"}
+              endColor={isDark ? "gray.600" : "gray.300"}
+            />
+          )}
+          <Box
+            position="relative"
             width="100%"
             height="100%"
-          />
-          {/* Overlay com gradiente sutil - usando cores primárias */}
-          <Box
-            position="absolute"
-            top="0"
-            left="0"
-            right="0"
-            bottom="0"
-            bg="linear-gradient(135deg, rgba(0, 113, 61, 0.15) 0%, rgba(0, 90, 49, 0.35) 100%)"
-            _dark={{
-              bg: "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.25) 100%)"
-            }}
-          />
+            opacity={imageLoaded ? 1 : 0}
+            transition="opacity 0.3s ease-in-out"
+          >
+            <Image
+              src="/formulario-de-preenchimento.jpg"
+              alt="Formulário de Preenchimento"
+              fill
+              style={{ objectFit: "cover" }}
+              priority
+              quality={85}
+              sizes="30vw"
+              onLoad={() => setImageLoaded(true)}
+            />
+            {/* Overlay com gradiente sutil - usando cores primárias */}
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              right="0"
+              bottom="0"
+              bg={
+                isDark
+                  ? "linear-gradient(135deg, rgba(0, 214, 114, 0.1) 0%, rgba(0, 192, 96, 0.25) 100%)"
+                  : "linear-gradient(135deg, rgba(0, 113, 61, 0.15) 0%, rgba(0, 90, 49, 0.35) 100%)"
+              }
+            />
+          </Box>
         </Box>
       )}
 
@@ -79,24 +108,48 @@ export default function LoginPage() {
         <VStack spacing="8" width="100%" maxWidth="400px">
           {/* Logo */}
           <Box textAlign="center">
-            {theme === "light" ? (
-              <Image
-                src="/sisnatologo_dark.png"
-                alt="Logo SISNATO"
+            {!mounted ? (
+              // Skeleton durante SSR/hidratação
+              <Skeleton
                 width={{ base: "120px", md: "150px" }}
                 height={{ base: "120px", md: "150px" }}
+                borderRadius="md"
                 mx="auto"
                 mb="8"
+                startColor={isDark ? "gray.700" : "gray.200"}
+                endColor={isDark ? "gray.600" : "gray.300"}
               />
             ) : (
-              <Image
-                src="/sisnatologo_light.png"
-                alt="Logo SISNATO"
+              <Box
+                position="relative"
                 width={{ base: "120px", md: "150px" }}
-                height={{ base: "160px", md: "180px" }}
+                height={{ base: isDark ? "160px" : "120px", md: isDark ? "180px" : "150px" }}
                 mx="auto"
                 mb="8"
-              />
+                opacity={logoLoaded ? 1 : 0}
+                transition="opacity 0.3s ease-in-out"
+              >
+                {!logoLoaded && (
+                  <Skeleton
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    borderRadius="md"
+                    startColor={isDark ? "gray.700" : "gray.200"}
+                    endColor={isDark ? "gray.600" : "gray.300"}
+                  />
+                )}
+                <Image
+                  src={isDark ? "/sisnatologo_light.png" : "/sisnatologo_dark.png"}
+                  alt="Logo SISNATO"
+                  fill
+                  style={{ objectFit: "contain" }}
+                  priority
+                  quality={90}
+                  sizes="(max-width: 768px) 120px, 150px"
+                  onLoad={() => setLogoLoaded(true)}
+                />
+              </Box>
             )}
             <Text
               fontSize={{ base: "28px", md: "32px", lg: "36px" }}
