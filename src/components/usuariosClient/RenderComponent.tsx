@@ -17,7 +17,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { 
   MdPersonAdd, 
   MdPeople, 
@@ -129,81 +129,106 @@ function extrairEmpreendimentosUnicos(usuarios: UsuarioType[]) {
  * @param dados - Lista de usuários
  * @returns Componente de página de usuários
  */
+type FiltrosUsuarios = {
+  id: string;
+  nome: string;
+  construtora: string;
+  empreendimento: string;
+  financeiro: string;
+  status: string;
+};
+
+const FILTROS_PADRAO: FiltrosUsuarios = {
+  id: "",
+  nome: "",
+  construtora: "",
+  empreendimento: "",
+  financeiro: "",
+  status: "",
+};
+
 export default function UsuariosPage({ dados }: UserProviderProps) {
   const [Dados, setDados] = useState<UsuarioType[]>([]);
   const [dadosFiltrados, setDadosFiltrados] = useState<UsuarioType[]>([]);
   const router = useRouter();
 
-  // Estados dos filtros
-  const [filtroId, setFiltroId] = useState("");
-  const [filtroNome, setFiltroNome] = useState("");
-  const [filtroConstrutora, setFiltroConstrutora] = useState("");
-  const [filtroEmpreendimento, setFiltroEmpreendimento] = useState("");
-  const [filtroFinanceiro, setFiltroFinanceiro] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState("");
+  // Apenas filtros digitados - SEM estado de filtros aplicados
+  const [filtros, setFiltros] = useState<FiltrosUsuarios>(FILTROS_PADRAO);
 
+  // Atualiza os filtros - APENAS armazena o valor, SEM processar nada
+  const atualizarFiltro = (campo: keyof FiltrosUsuarios, valor: string) => {
+    setFiltros((prev) => ({
+      ...prev,
+      [campo]: valor,
+    }));
+  };
+
+  // Inicializa os dados quando o componente monta
   useEffect(() => {
     setDados(dados);
     setDadosFiltrados(dados);
   }, [dados]);
 
-  const construtorasUnicas = extrairConstrutorasUnicas(Dados);
-  const financeirosUnicos = extrairFinanceirosUnicos(Dados);
-  const empreendimentosUnicos = extrairEmpreendimentosUnicos(Dados);
+  // Listas únicas - calculadas apenas uma vez
+  const construtorasUnicas = useMemo(() => extrairConstrutorasUnicas(Dados), [Dados]);
+  const financeirosUnicos = useMemo(() => extrairFinanceirosUnicos(Dados), [Dados]);
+  const empreendimentosUnicos = useMemo(() => extrairEmpreendimentosUnicos(Dados), [Dados]);
 
-  // Função de filtro
-  useEffect(() => {
+  // APLICA OS FILTROS - SÓ executa quando o usuário clica no botão
+  const aplicarFiltros = () => {
     let resultados = [...Dados];
 
-    // Filtro por ID
-    if (filtroId) {
+    if (filtros.id) {
       resultados = resultados.filter((usuario) =>
-        usuario.id.toString().includes(filtroId)
+        usuario.id.toString().includes(filtros.id)
       );
     }
 
-    // Filtro por Nome
-    if (filtroNome) {
+    if (filtros.nome) {
       resultados = resultados.filter((usuario) =>
-        usuario.nome.toLowerCase().includes(filtroNome.toLowerCase())
+        usuario.nome.toLowerCase().includes(filtros.nome.toLowerCase())
       );
     }
 
-    // Filtro por Construtora
-    if (filtroConstrutora) {
+    if (filtros.construtora) {
       resultados = resultados.filter((usuario) =>
         usuario.construtoras.some(
-          (c) => c.construtora.id.toString() === filtroConstrutora
+          (c) => c.construtora.id.toString() === filtros.construtora
         )
       );
     }
 
-    // Filtro por Empreendimento
-    if (filtroEmpreendimento) {
+    if (filtros.empreendimento) {
       resultados = resultados.filter((usuario) =>
         usuario.empreendimentos.some(
-          (e) => e.empreendimento.id.toString() === filtroEmpreendimento
+          (e) => e.empreendimento.id.toString() === filtros.empreendimento
         )
       );
     }
 
-    // Filtro por Financeiro
-    if (filtroFinanceiro) {
+    if (filtros.financeiro) {
       resultados = resultados.filter((usuario) =>
         usuario.financeiros.some(
-          (f) => f.financeiro.id.toString() === filtroFinanceiro
+          (f) => f.financeiro.id.toString() === filtros.financeiro
         )
       );
     }
 
-    // Filtro por Status (Ativo/Inativo)
-    if (filtroStatus) {
-      const statusBooleano = filtroStatus === "true";
-      resultados = resultados.filter((usuario) => usuario.status === statusBooleano);
+    if (filtros.status) {
+      const statusBooleano = filtros.status === "true";
+      resultados = resultados.filter(
+        (usuario) => usuario.status === statusBooleano
+      );
     }
 
     setDadosFiltrados(resultados);
-  }, [filtroId, filtroNome, filtroConstrutora, filtroEmpreendimento, filtroFinanceiro, filtroStatus, Dados]);
+  };
+
+  // Limpa todos os filtros
+  const limparFiltros = () => {
+    setFiltros({ ...FILTROS_PADRAO });
+    setDadosFiltrados(Dados);
+  };
 
   return (
     <Container maxW="95%" py={{ base: 4, md: 6 }} px={{ base: 4, md: 6 }}>
@@ -325,8 +350,8 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                     </InputLeftElement>
                     <Input
                       placeholder="Buscar por ID"
-                      value={filtroId}
-                      onChange={(e) => setFiltroId(e.target.value)}
+                      value={filtros.id}
+                      onChange={(e) => atualizarFiltro("id", e.target.value)}
                       bg="white"
                       _dark={{ bg: "gray.800", borderColor: "gray.600" }}
                       borderColor="gray.300"
@@ -356,8 +381,8 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                     </InputLeftElement>
                     <Input
                       placeholder="Buscar por nome"
-                      value={filtroNome}
-                      onChange={(e) => setFiltroNome(e.target.value)}
+                      value={filtros.nome}
+                      onChange={(e) => atualizarFiltro("nome", e.target.value)}
                       bg="white"
                       _dark={{ bg: "gray.800", borderColor: "gray.600" }}
                       borderColor="gray.300"
@@ -383,8 +408,8 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                   </Text>
                   <Select
                     placeholder="Todas as construtoras"
-                    value={filtroConstrutora}
-                    onChange={(e) => setFiltroConstrutora(e.target.value)}
+                    value={filtros.construtora}
+                    onChange={(e) => atualizarFiltro("construtora", e.target.value)}
                     bg="white"
                     color="gray.800"
                     borderColor="gray.300"
@@ -431,8 +456,10 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                   </Text>
                   <Select
                     placeholder="Todos os empreendimentos"
-                    value={filtroEmpreendimento}
-                    onChange={(e) => setFiltroEmpreendimento(e.target.value)}
+                    value={filtros.empreendimento}
+                    onChange={(e) =>
+                      atualizarFiltro("empreendimento", e.target.value)
+                    }
                     bg="white"
                     color="gray.800"
                     borderColor="gray.300"
@@ -479,8 +506,8 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                   </Text>
                   <Select
                     placeholder="Todos os financeiros"
-                    value={filtroFinanceiro}
-                    onChange={(e) => setFiltroFinanceiro(e.target.value)}
+                    value={filtros.financeiro}
+                    onChange={(e) => atualizarFiltro("financeiro", e.target.value)}
                     bg="white"
                     color="gray.800"
                     borderColor="gray.300"
@@ -527,8 +554,8 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                   </Text>
                   <Select
                     placeholder="Todos os status"
-                    value={filtroStatus}
-                    onChange={(e) => setFiltroStatus(e.target.value)}
+                    value={filtros.status}
+                    onChange={(e) => atualizarFiltro("status", e.target.value)}
                     bg="white"
                     color="gray.800"
                     borderColor="gray.300"
@@ -561,7 +588,13 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
               </SimpleGrid>
 
               {/* Contador de resultados */}
-              <Flex mt={4} justify="space-between" align="center">
+              <Flex
+                mt={4}
+                justify="space-between"
+                align={{ base: "stretch", md: "center" }}
+                flexDir={{ base: "column", md: "row" }}
+                gap={2}
+              >
                 <Text
                   fontSize="sm"
                   color="gray.600"
@@ -569,24 +602,49 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                 >
                   {dadosFiltrados.length} {dadosFiltrados.length === 1 ? "usuário encontrado" : "usuários encontrados"}
                 </Text>
-                
-                {(filtroId || filtroNome || filtroConstrutora || filtroEmpreendimento || filtroFinanceiro || filtroStatus) && (
+                <Flex
+                  gap={2}
+                  flexDir={{ base: "column", md: "row" }}
+                  align={{ base: "stretch", md: "center" }}
+                >
                   <Button
                     size="sm"
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() => {
-                      setFiltroId("");
-                      setFiltroNome("");
-                      setFiltroConstrutora("");
-                      setFiltroEmpreendimento("");
-                      setFiltroFinanceiro("");
-                      setFiltroStatus("");
+                    leftIcon={<MdSearch />}
+                    colorScheme="green"
+                    bg="#00713D"
+                    color="white"
+                    onClick={aplicarFiltros}
+                    transition="all 0.2s"
+                    _hover={{
+                      bg: "#005a31",
+                      transform: "translateY(-1px)",
+                      shadow: "md",
+                    }}
+                    _active={{ transform: "translateY(0)" }}
+                    _dark={{
+                      bg: "#00d672",
+                      color: "gray.900",
+                      _hover: { bg: "#00c060" },
                     }}
                   >
-                    Limpar Filtros
+                    Aplicar Filtros
                   </Button>
-                )}
+                  {(filtros.id ||
+                    filtros.nome ||
+                    filtros.construtora ||
+                    filtros.empreendimento ||
+                    filtros.financeiro ||
+                    filtros.status) && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      colorScheme="red"
+                      onClick={limparFiltros}
+                    >
+                      Limpar Filtros
+                    </Button>
+                  )}
+                </Flex>
               </Flex>
             </Box>
 
@@ -618,14 +676,7 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
                   <Button
                     colorScheme="green"
                     variant="outline"
-                    onClick={() => {
-                      setFiltroId("");
-                      setFiltroNome("");
-                      setFiltroConstrutora("");
-                      setFiltroEmpreendimento("");
-                      setFiltroFinanceiro("");
-                      setFiltroStatus("");
-                    }}
+                    onClick={limparFiltros}
                   >
                     Limpar Filtros
                   </Button>

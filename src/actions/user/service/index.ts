@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function UpdateUser(_: any, data: FormData) {
+  console.log("🚀 ~ UpdateUser ~ data:", data)
   const session = await GetSessionServer();
   if (!session) {
     return {
@@ -30,7 +31,7 @@ export async function UpdateUser(_: any, data: FormData) {
   const cpf = (data.get("cpf") as string)?.replace(/\D/g, "") ?? "";
   const nome = data.get("nome") ?? "";
   const usuario = data.get("usuario") ?? "";
-  const telefone = (data.get("telefone") as string).replace(/\D/g, "") ?? "";
+  const telefone = (data.get("whatsapp") as string).replace(/\D/g, "") ?? "";
   const email = data.get("email") ?? "";
   const ListConstrutora =
     (data.get("construtora") as string)?.split(",").map(Number) ?? [];
@@ -68,6 +69,7 @@ export async function UpdateUser(_: any, data: FormData) {
     construtora: ListConstrutora,
     role: roleEdit,
   };
+  console.log("🚀 ~ UpdateUser ~ body:", body)
 
   const req = await fetch(
     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/update/${id}`,

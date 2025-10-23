@@ -1,5 +1,5 @@
 "use client";
-import { Box, Input, InputProps, Text } from "@chakra-ui/react";
+import { Box, Input, InputProps, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { PulseLoader } from "react-spinners";
 import { mask } from "remask";
@@ -12,9 +12,10 @@ interface InputTel1Props extends InputProps {
 
 export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
   const [tel1, setTel1] = useState<string>("");
-  const [Teste, setTeste] = useState<number>(0);
+  const [Teste, setTeste] = useState<string>("");
   const [Error, setError] = useState<boolean>(false);
   const [Loading, setLoading] = useState<boolean>(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (tell) {
@@ -24,6 +25,7 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
   }, [tell]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
     if (e.target) {
       const value = e.target.value;
       const valorLimpo = value.replace(/[^0-9]/g, "");
@@ -36,11 +38,11 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
     const request = await fetch("/api/consulta/whatsapp", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        telefone: numero
-      })
+        telefone: numero,
+      }),
     });
     const data = await request.json();
 
@@ -56,16 +58,23 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
       const valorLimpo = value.replace(/[^0-9]/g, "");
       if (valorLimpo.length > 9) {
         setLoading(true);
+        setTeste(valorLimpo);
         const request = await CheckWhatsApp(valorLimpo);
-        console.log("🚀 ~ HandleChekTel ~ request:", request)
         if (request) {
-          setTeste(1);
+          setTeste(valorLimpo);
           setError(false);
           setLoading(false);
         } else {
-          setTeste(0);
+          setTeste('');
           setError(true);
           setLoading(false);
+          toast({
+            title: "Erro",
+            description: "Telefone não possui WhatsApp",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
         }
       }
     }
