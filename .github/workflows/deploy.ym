@@ -1,0 +1,71 @@
+# Nome do Workflow
+name: CI & Deploy to VPS
+
+# Gatilho: Quando rodar? 
+# Neste caso, toda vez que houver um 'push' (envio) para a branch 'main'
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # -----------------------------------------------
+  # JOB 1: Testar e Construir (CI)
+  # -----------------------------------------------
+  build-and-test:
+    name: Build & Test
+    # Rodar em uma máquina virtual do GitHub (Ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Baixar o código do repositório
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Configurar o Node.js (ajuste a versão se precisar)
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # <-- Mude aqui se sua versão do Node for diferente
+        cache: 'yarn'
+
+    # 3. Instalar as dependências
+    - name: Install dependencies
+      run: yarn install
+
+    # 4. Rodar o Lint (teste de sintaxe)
+    - name: Run Lint
+      run: yarn lint
+
+    # 5. Rodar o Build (verificar se compila)
+    - name: Run Build
+      run: yarn build
+
+  # -----------------------------------------------
+  # JOB 2: Fazer o Deploy (CD)
+  # -----------------------------------------------
+  deploy:
+    name: Deploy to VPS
+    # Só rodar se o job 'build-and-test' passar
+    needs: build-and-test 
+    
+    # Rodar em uma máquina virtual do GitHub (Ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Usar uma Action pronta para facilitar o SSH
+    - name: Deploy to VPS via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        # Puxar os segredos que salvamos no GitHub
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+        
+        # Comandos que serão executados no seu VPS
+        # IMPORTANTE: Troque 'seu/projeto' pelo caminho real do seu projeto no VPS
+        script: |
+          cd /var/www/html/frontend/sys_nato_front_prod_v1.3  # <-- MUDE AQUI
+          git pull origin main
+          yarn install
+          yarn build
+          pm2 restart all # Ou 'pm2 restart nome-do-app'

@@ -16,7 +16,7 @@ import {
 import { IoCheckmark } from "react-icons/io5";
 import SectionBackgroundPattern from "./SectionBackgroundPattern";
 
-const Feature = (props: React.PropsWithChildren<{}>) => {
+const Feature = (props: React.PropsWithChildren) => {
   return (
     <Flex alignSelf="start" w="full">
       <Icon
