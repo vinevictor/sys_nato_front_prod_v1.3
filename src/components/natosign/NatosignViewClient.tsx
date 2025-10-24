@@ -323,12 +323,8 @@ export default function NatosignViewClient({
             Visualizar
           </Button>
           <Button
-            onClick={() =>
-              handleDownload(
-                envelope.doc_modificado_down,
-                `Assinado_${envelope.original_name}`
-              )
-            }
+            as={Link}
+           href={envelope.doc_modificado_down}
             leftIcon={<FiDownload />}
             size={{ base: "sm", md: "md" }}
             colorScheme="green"

@@ -25,6 +25,7 @@ import { SelectPgComponent } from "../imputs/selectPg";
 import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 import { TableRowsSkeleton, CardSkeleton } from "./skeleton";
+import { CompartilharModal } from "./CompartilharModal";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
 import {
@@ -128,7 +129,6 @@ export const DadoCompomentList = ({
   const toast = useToast();
 
   // Cores responsivas ao tema
-  const theme = useColorModeValue('light', 'dark');
   const bgTable = useColorModeValue("gray.50", "gray.800");
   const borderTable = useColorModeValue("gray.200", "gray.600");
   const bgTableInner = useColorModeValue("gray.100", "gray.700");
@@ -274,6 +274,7 @@ export const DadoCompomentList = ({
     }
   };
 
+
   return (
     <>
       <Box
@@ -312,7 +313,8 @@ export const DadoCompomentList = ({
                 fontSize={{ base: "sm", md: "md" }}
                 color={filterCaptionColor}
               >
-                Utilize os campos abaixo para refinar os resultados apresentados.
+                Utilize os campos abaixo para refinar os resultados
+                apresentados.
               </Text>
             </Box>
           </Flex>
@@ -449,10 +451,11 @@ export const DadoCompomentList = ({
                       bg: "white",
                       color: "gray.800",
                     },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
-                      bg: "gray.800",
-                      color: "gray.100",
-                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                      {
+                        bg: "gray.800",
+                        color: "gray.100",
+                      },
                   }}
                 >
                   <option value="">Todos</option>
@@ -501,10 +504,11 @@ export const DadoCompomentList = ({
                       bg: "white",
                       color: "gray.800",
                     },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
-                      bg: "gray.800",
-                      color: "gray.100",
-                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                      {
+                        bg: "gray.800",
+                        color: "gray.100",
+                      },
                   }}
                 >
                   {DataEmpreendimento.map((item: any) => (
@@ -552,10 +556,11 @@ export const DadoCompomentList = ({
                       bg: "white",
                       color: "gray.800",
                     },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option": {
-                      bg: "gray.800",
-                      color: "gray.100",
-                    },
+                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
+                      {
+                        bg: "gray.800",
+                        color: "gray.100",
+                      },
                   }}
                 >
                   {DataFinanceiro.map((item: any) => (
@@ -575,7 +580,8 @@ export const DadoCompomentList = ({
               wrap="wrap"
             >
               <Text fontSize="sm" color={filterCaptionColor}>
-                {Total} {Total === 1 ? "registro encontrado" : "registros encontrados"}
+                {Total}{" "}
+                {Total === 1 ? "registro encontrado" : "registros encontrados"}
               </Text>
 
               <Flex gap={3} wrap="wrap">
@@ -584,7 +590,10 @@ export const DadoCompomentList = ({
                   colorScheme="gray"
                   borderColor="gray.300"
                   _hover={{ borderColor: "gray.500", bg: "gray.100" }}
-                  _dark={{ borderColor: "gray.600", _hover: { bg: "gray.700" } }}
+                  _dark={{
+                    borderColor: "gray.600",
+                    _hover: { bg: "gray.700" },
+                  }}
                   minW="140px"
                   size="sm"
                   onClick={HandleFilterBlank}
@@ -645,113 +654,113 @@ export const DadoCompomentList = ({
               ) : null}
             </Box>
           ) : (
-                // Tabela para desktop
-                <Box overflowX="auto" w="full">
-                  <Table
-                    variant="simple"
-                    size="sm"
-                    bg={bgTableInner}
-                    borderRadius="15px"
-                  >
-                    <Thead>
-                      <Tr>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "12rem", md: "17rem" }}
-                          textAlign="center"
-                        >
-                          FUNÇÕES
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "4rem", md: "5rem" }}
-                        >
-                          ID
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                        >
-                          NOME
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "10rem", md: "13rem" }}
-                          textAlign="center"
-                        >
-                          AGENDAMENTO
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "7rem", md: "8rem" }}
-                          textAlign="center"
-                        >
-                          PG
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "9rem", md: "10rem" }}
-                          textAlign="center"
-                        >
-                          DATA PG
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "11rem", md: "13rem" }}
-                          textAlign="center"
-                        >
-                          CONFIRMADO PG
-                        </Th>
-                        <Th
-                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "7rem", md: "8rem" }}
-                          textAlign="center"
-                        >
-                          Andamento
-                        </Th>
-                        <Th
-                          p={{ base: "0.5rem", md: "0.8rem" }}
-                          borderBottomColor={borderBottomColor}
-                          w={{ base: "4rem", md: "5rem" }}
-                          fontSize={{ base: "18px", md: "22px" }}
-                        >
-                          <Flex justifyContent="center">
-                            <ImClock />
-                          </Flex>
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {ShowSkeleton ? (
-                        <TableRowsSkeleton />
-                      ) : ListaDados && ListaDados.length > 0 ? (
-                        ListaDados.map((item) => (
-                          <TableComponent
-                            key={item.id}
-                            dados={item}
-                            session={session ?? null}
-                          />
-                        ))
-                      ) : null}
-                    </Tbody>
-                  </Table>
-                </Box>
-              )}
+            // Tabela para desktop
+            <Box overflowX="auto" w="full">
+              <Table
+                variant="simple"
+                size="sm"
+                bg={bgTableInner}
+                borderRadius="15px"
+              >
+                <Thead>
+                  <Tr>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "12rem", md: "17rem" }}
+                      textAlign="center"
+                    >
+                      FUNÇÕES
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "4rem", md: "5rem" }}
+                    >
+                      ID
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                    >
+                      NOME
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "10rem", md: "13rem" }}
+                      textAlign="center"
+                    >
+                      AGENDAMENTO
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "7rem", md: "8rem" }}
+                      textAlign="center"
+                    >
+                      PG
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "9rem", md: "10rem" }}
+                      textAlign="center"
+                    >
+                      DATA PG
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "11rem", md: "13rem" }}
+                      textAlign="center"
+                    >
+                      CONFIRMADO PG
+                    </Th>
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "7rem", md: "8rem" }}
+                      textAlign="center"
+                    >
+                      Andamento
+                    </Th>
+                    <Th
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "4rem", md: "5rem" }}
+                      fontSize={{ base: "18px", md: "22px" }}
+                    >
+                      <Flex justifyContent="center">
+                        <ImClock />
+                      </Flex>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {ShowSkeleton ? (
+                    <TableRowsSkeleton />
+                  ) : ListaDados && ListaDados.length > 0 ? (
+                    ListaDados.map((item) => (
+                      <TableComponent
+                        key={item.id}
+                        dados={item}
+                        session={session ?? null}
+                      />
+                    ))
+                  ) : null}
+                </Tbody>
+              </Table>
+            </Box>
+          )}
 
           {/* Footer com paginação */}
           <Flex
@@ -762,10 +771,7 @@ export const DadoCompomentList = ({
             flexDir={{ base: "column", md: "row" }}
             gap={{ base: 2, md: 0 }}
           >
-            <Box
-              fontSize={{ base: "sm", md: "md" }}
-              color={textColorSecondary}
-            >
+            <Box fontSize={{ base: "sm", md: "md" }} color={textColorSecondary}>
               Total de registros: {Total}
             </Box>
             <Flex
