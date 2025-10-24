@@ -17,7 +17,6 @@ import { MdBadge, MdBusiness, MdContentCopy, MdPeople, MdPhone } from "react-ico
 import { mask } from "remask";
 import BtmExcluirConstrutora from "../botoes/btn_excluir_construtora";
 import { BtnEditarConstrutora } from "../botoes/btn_editar_construtoras";
-import { BtmConstrutoraListUser } from "../botoes/btn_construtora_list_user";
 import BtnToggleStatusConstrutora from "../botoes/btn_toggle_status_construtora";
 
 interface TypeConstrutora {

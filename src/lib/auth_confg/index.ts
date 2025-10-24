@@ -145,8 +145,9 @@ export async function GetSessionServer() {
 }
 
 export async function DeleteSession() {
-  cookies().delete("session-token");
-  cookies().delete("session-role"); // Limpa cache auxiliar
+  const session= await cookies();
+   session.delete("session-token");
+   session.delete("session-role"); // Limpa cache auxiliar
 }
 
 export async function GetSessionServerApi() {

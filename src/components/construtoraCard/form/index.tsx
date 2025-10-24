@@ -50,12 +50,12 @@ export default function ConstrutoraForm({
   onSaving,
 }: ConstrutoraFormProps) {
   const [form, setForm] = useState({
-    cnpj: "",
-    razaosocial: "",
-    fantasia: "",
-    tel: "",
-    email: "",
-    valor_cert: 100,
+    cnpj: construtoraData?.cnpj || "",
+    razaosocial: construtoraData?.razaosocial || "",
+    fantasia: construtoraData?.fantasia || "",
+    tel: construtoraData?.tel || "",
+    email: construtoraData?.email || "",
+    valor_cert: construtoraData?.valor_cert || 100,
   });
 
   const [isSearchingCNPJ, setIsSearchingCNPJ] = useState(false);
@@ -67,12 +67,12 @@ export default function ConstrutoraForm({
   useEffect(() => {
     if (construtoraData) {
       setForm({
-        cnpj: construtoraData.cnpj || "",
-        razaosocial: construtoraData.razaosocial || "",
-        fantasia: construtoraData.fantasia || "",
-        tel: construtoraData.tel || "",
-        email: construtoraData.email || "",
-        valor_cert: construtoraData.valor_cert || 100,
+        cnpj: construtoraData?.cnpj || "",
+        razaosocial: construtoraData?.razaosocial || "",
+        fantasia: construtoraData?.fantasia || "",
+        tel: construtoraData?.tel || "",
+        email: construtoraData?.email || "",
+        valor_cert: construtoraData?.valor_cert || 100,
       });
     }
   }, [construtoraData]);

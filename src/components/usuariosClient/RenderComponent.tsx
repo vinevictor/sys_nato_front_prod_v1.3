@@ -31,7 +31,23 @@ import {
 import { useRouter } from "next/navigation";
 
 export interface UserProviderProps {
-  dados: UsuarioType[];
+  dados: UsuarioType[] | { data: UsuarioType[] };
+}
+
+/**
+ * Normaliza a estrutura recebida garantindo sempre um array de usuários.
+ * Aceita tanto um array direto quanto objetos no formato { data: UsuarioType[] }.
+ */
+function normalizarUsuarios(dados: UserProviderProps["dados"]): UsuarioType[] {
+  if (Array.isArray(dados)) {
+    return dados;
+  }
+
+  if (dados && Array.isArray(dados.data)) {
+    return dados.data;
+  }
+
+  return [];
 }
 
 type UsuarioType = {
@@ -163,11 +179,13 @@ export default function UsuariosPage({ dados }: UserProviderProps) {
     }));
   };
 
+  const usuariosNormalizados = useMemo(() => normalizarUsuarios(dados), [dados]);
+
   // Inicializa os dados quando o componente monta
   useEffect(() => {
-    setDados(dados);
-    setDadosFiltrados(dados);
-  }, [dados]);
+    setDados(usuariosNormalizados);
+    setDadosFiltrados(usuariosNormalizados);
+  }, [usuariosNormalizados]);
 
   // Listas únicas - calculadas apenas uma vez
   const construtorasUnicas = useMemo(() => extrairConstrutorasUnicas(Dados), [Dados]);

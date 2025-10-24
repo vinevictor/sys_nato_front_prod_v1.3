@@ -5,31 +5,25 @@ export type Cargo = {
 };
 
 
-export const CargoOptions:  Cargo[] = [
-    {
-        id : 1,
-        Label: 'Vendedor',
-        param: 'vendedor',
-
-    },
-    {
-        id : 2,
-        Label: 'Construtor',
-        param: 'construtor',
-    },
-    {
-        id : 3,
-        Label: 'Gerente',
-        param: 'gerente',
-    },
-    {
-        id : 4,
-        Label: 'Financeiro',
-        param: 'financeiro',
-    },
-    {
-        id : 5,
-        Label: 'Admin',
-        param: 'admin',
-    }
-]
+export const CargoOptions: Cargo[] = [
+  {
+    id: 1,
+    Label: "Cadastrante (user)",
+    param: "Cadastrante",
+  },
+  {
+    id: 2,
+    Label: "Construtor (gestor da construtora)",
+    param: "Construtor",
+  },
+  {
+    id: 4,
+    Label: "CCA (gestor do CCA)",
+    param: "CCA",
+  },
+  {
+    id: 5,
+    Label: "Admin",
+    param: "admin",
+  },
+];
