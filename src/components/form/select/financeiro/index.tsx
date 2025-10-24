@@ -43,6 +43,7 @@ export default function SelectFinanceira({
   const [ListFin, setListFin] = useState<FinanceiraType[]>(
     FormFin && FormFin.length > 0 ? FormFin : []
   );
+  console.log("🚀 ~ SelectFinanceira ~ ListFin:", ListFin);
   const [financeira, setFinanceira] = useState<number>(FormFinId ?? 0);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState<boolean>(true);

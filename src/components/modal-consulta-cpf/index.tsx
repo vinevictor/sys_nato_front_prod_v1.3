@@ -101,6 +101,7 @@ export default function ModalConsultaRegistro({
 
         if (request.ok) {
           const response = await request.json();
+          console.log("🚀 ~ handleSubmit ~ response:", response);
 
           if (response.cpf) {
             setSolicitacoes(response.solicitacoes);
@@ -122,7 +123,6 @@ export default function ModalConsultaRegistro({
               status: "success",
               duration: 3000,
               isClosable: true,
-              
             });
             setIsContinue(true);
             onCpfChange(CPF);
@@ -167,10 +167,10 @@ export default function ModalConsultaRegistro({
   const warningIcon = useColorModeValue("orange.600", "orange.300");
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={() => {}} 
-      isCentered 
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      isCentered
       size="xl"
       closeOnOverlayClick={false}
       closeOnEsc={false}
@@ -349,7 +349,8 @@ export default function ModalConsultaRegistro({
                     >
                       <Icon as={IoWarning} color={warningIcon} fontSize="20" />
                       <Text fontSize="sm" color={textColor}>
-                        Solicitação já existente. Favor abrir um chamado ou entrar em contato com nossa equipe.
+                        Solicitação já existente. Favor abrir um chamado ou
+                        entrar em contato com nossa equipe.
                       </Text>
                     </Flex>
                   )}

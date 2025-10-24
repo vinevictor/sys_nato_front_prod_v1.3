@@ -96,7 +96,8 @@ export default function Step1({
           borderColor={selectedBorder}
           color={selectedTextColor}
         >
-          <strong>{availableCcas[0].fantasia}</strong> (selecionado automaticamente)
+          <strong>{availableCcas[0].fantasia}</strong> (selecionado
+          automaticamente)
         </Text>
       );
     }
@@ -144,7 +145,8 @@ export default function Step1({
           borderColor={selectedBorder}
           color={selectedTextColor}
         >
-          <strong>{availableConst[0].fantasia}</strong> (selecionado automaticamente)
+          <strong>{availableConst[0].fantasia}</strong> (selecionado
+          automaticamente)
         </Text>
       );
     }
@@ -199,8 +201,10 @@ export default function Step1({
           _hover={{ borderColor: inputFocusBorder }}
           size="md"
         >
-          <option value="simple">Simples</option>
-          <option value="qualified">Qualificada</option>
+          <option value="simple">Simples - Sem Certificado Digital </option>
+          <option value="qualified">
+            Qualificada - Com Certificado Digital
+          </option>
         </Select>
       </FormControl>
 

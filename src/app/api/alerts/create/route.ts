@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!session.user?.role?.alert) {
+    if (!session.user?.role?.alerta) {
       return NextResponse.json(
         { message: "Você não tem permissão para criar um alerta" },
         { status: 401 }
@@ -29,10 +29,15 @@ export async function POST(request: Request) {
         body: JSON.stringify(data),
       }
     );
+    console.log("🚀 ~ POST ~ response:", response);
     revalidateTag("alert-geral-all");
     const retorno = await response.json();
+    console.log("🚀 ~ POST ~ retorno:", retorno);
     return NextResponse.json(retorno, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ message: error.message.join("\n") || error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: error.message.join("\n") || error.message },
+      { status: 500 }
+    );
   }
 }
