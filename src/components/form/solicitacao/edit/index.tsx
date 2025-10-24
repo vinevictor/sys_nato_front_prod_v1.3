@@ -146,6 +146,7 @@ interface SolicitacaoType {
 }
 
 function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
+  console.log("🚀 ~ FormSolicitacaoEdit ~ data:", data.tags);
   const toast = useToast();
   const router = useRouter();
   const [form, setForm] = useState<SolicitacaoType>(data);
@@ -216,7 +217,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
         justify="space-between"
         boxShadow="2xl"
       >
-        <Heading 
+        <Heading
           size={{ base: "sm", md: "md" }}
           color="#023147"
           _dark={{ color: "gray.100" }}
@@ -261,9 +262,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             id="dt_nascimento"
             type="date"
             label="Data de Nascimento"
-            value={
-              form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""
-            }
+            value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
             onvalue={(value) => handleChange("dt_nascimento", value)}
             required
             isReadOnly={!isAdmin}
@@ -304,24 +303,24 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             isWhatsapp
           />
         </Flex>
-          <SelectConstEmpFinCor
-            session={session}
-            isAdmin={isAdmin}
-            Form={form}
-            ValueConstrutora={(value: number) =>
-              handleChange("construtoraId", Number(value))
-            }
-            ValueEmpreendimento={(value: number) =>
-              handleChange("empreendimentoId", Number(value))
-            }
-            ValueFinanceira={(value: number) =>
-              handleChange("financeiroId", Number(value))
-            }
-            ValueCorretor={(value: number) =>
-              handleChange("corretorId", Number(value))
-            }
-            edit
-          />
+        <SelectConstEmpFinCor
+          session={session}
+          isAdmin={isAdmin}
+          Form={form}
+          ValueConstrutora={(value: number) =>
+            handleChange("construtoraId", Number(value))
+          }
+          ValueEmpreendimento={(value: number) =>
+            handleChange("empreendimentoId", Number(value))
+          }
+          ValueFinanceira={(value: number) =>
+            handleChange("financeiroId", Number(value))
+          }
+          ValueCorretor={(value: number) =>
+            handleChange("corretorId", Number(value))
+          }
+          edit
+        />
         <Divider borderColor="gray.300" _dark={{ borderColor: "gray.600" }} />
 
         {/* Linha 3: Protocolo, Andamento, Tags */}
@@ -393,13 +392,26 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
               minH="56px"
             >
               <Flex align="center" gap={2}>
-                <Icon as={AiOutlineWarning} color="red.600" _dark={{ color: "red.400" }} boxSize={7} />
+                <Icon
+                  as={AiOutlineWarning}
+                  color="red.600"
+                  _dark={{ color: "red.400" }}
+                  boxSize={7}
+                />
                 {form.alertanow ? (
-                  <Text color="red.700" _dark={{ color: "red.200" }} fontSize="md">
+                  <Text
+                    color="red.700"
+                    _dark={{ color: "red.200" }}
+                    fontSize="md"
+                  >
                     Alerta criado, se for necessário cancelar
                   </Text>
                 ) : (
-                  <Text color="red.700" _dark={{ color: "red.200" }} fontSize="md">
+                  <Text
+                    color="red.700"
+                    _dark={{ color: "red.200" }}
+                    fontSize="md"
+                  >
                     Somente em caso de cliente presente na unidade
                   </Text>
                 )}
@@ -431,7 +443,11 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
                   _dark={{ color: "blue.400" }}
                   boxSize={7}
                 />
-                <Text color="blue.700" _dark={{ color: "blue.200" }} fontSize="md">
+                <Text
+                  color="blue.700"
+                  _dark={{ color: "blue.200" }}
+                  fontSize="md"
+                >
                   Cliente atendido via Aplicativo NatoId
                 </Text>
               </Flex>
@@ -452,75 +468,72 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
         borderTopColor="gray.200"
         _dark={{ bg: "gray.900", borderTopColor: "gray.700" }}
       >
-          {Hierarquia === "ADM" && (
-            <BotaoSisapp
-              body={data}
-              ativo={data.sisapp ? data.sisapp : false}
-            />
-          )}
-          {form?.ativo && Hierarquia === "ADM" && <ResendSms id={form?.id} />}
-          <Button
-            colorScheme="orange"
-            size={"sm"}
-            onClick={() => router.push(`/chamado/novo?id=${id}`)}
-          >
-            Chamado
-          </Button>
-          <BtCreateAlertCliente
-            corretorId={form?.corretor?.id ?? 0}
-            solicitacaoId={form?.id}
-            solicitacaoNome={form?.nome}
-            isAdmin={session?.hierarquia === "ADM"}
-          />
-          {form?.distrato &&
-            form?.ativo &&
-            ((Hierarquia === "ADM" && (
+        {Hierarquia === "ADM" && (
+          <BotaoSisapp body={data} ativo={data.sisapp ? data.sisapp : false} />
+        )}
+        {form?.ativo && Hierarquia === "ADM" && <ResendSms id={form?.id} />}
+        <Button
+          colorScheme="orange"
+          size={"sm"}
+          onClick={() => router.push(`/chamado/novo?id=${id}`)}
+        >
+          Chamado
+        </Button>
+        <BtCreateAlertCliente
+          corretorId={form?.corretor?.id ?? 0}
+          solicitacaoId={form?.id}
+          solicitacaoNome={form?.nome}
+          isAdmin={session?.hierarquia === "ADM"}
+        />
+        {form?.distrato &&
+          form?.ativo &&
+          ((Hierarquia === "ADM" && (
+            <>
+              <BtRemoverDistrato id={form?.id} />
+            </>
+          )) ||
+            (Hierarquia === "CCA" && (
               <>
                 <BtRemoverDistrato id={form?.id} />
               </>
-            )) ||
-              (Hierarquia === "CCA" && (
-                <>
-                  <BtRemoverDistrato id={form?.id} />
-                </>
-              )))}
-          {!form?.id_fcw && form?.ativo && (
-            <CriarFcweb Dados={form} user={session!} />
-          )}
-          <BotaoPausar id={form?.id} statusPause={data?.pause} />
-          <BtnIniciarAtendimento
-            hierarquia={Hierarquia}
-            status={
-              data?.statusAtendimento
-                ? data.statusAtendimento
-                : form?.statusAtendimento
-            }
-            aprovacao={form?.andamento}
-            id={form?.id}
-          />
-          {session?.hierarquia === "ADM" && !data?.ativo && (
-            <ReativarButton
-              size={"sm"}
-              px={8}
-              colorScheme="red"
-              solicitacaoId={id}
-            >
-              Reativar
-            </ReativarButton>
-          )}
-          {!data?.distrato && (
-            <BtnBasicSave
-              size={"sm"}
-              bg={"green.500"}
-              color={"white"}
-              onClick={handlesubmit}
-              _hover={{ bg: "green.600" }}
-              spinner={<BeatLoader size={8} color="white" />}
-              isLoading={isLoading}
-            >
-              Salvar
-            </BtnBasicSave>
-          )}
+            )))}
+        {!form?.id_fcw && form?.ativo && (
+          <CriarFcweb Dados={form} user={session!} />
+        )}
+        <BotaoPausar id={form?.id} statusPause={data?.pause} />
+        <BtnIniciarAtendimento
+          hierarquia={Hierarquia}
+          status={
+            data?.statusAtendimento
+              ? data.statusAtendimento
+              : form?.statusAtendimento
+          }
+          aprovacao={form?.andamento}
+          id={form?.id}
+        />
+        {session?.hierarquia === "ADM" && !data?.ativo && (
+          <ReativarButton
+            size={"sm"}
+            px={8}
+            colorScheme="red"
+            solicitacaoId={id}
+          >
+            Reativar
+          </ReativarButton>
+        )}
+        {!data?.distrato && (
+          <BtnBasicSave
+            size={"sm"}
+            bg={"green.500"}
+            color={"white"}
+            onClick={handlesubmit}
+            _hover={{ bg: "green.600" }}
+            spinner={<BeatLoader size={8} color="white" />}
+            isLoading={isLoading}
+          >
+            Salvar
+          </BtnBasicSave>
+        )}
       </Flex>
     </VStack>
   );
