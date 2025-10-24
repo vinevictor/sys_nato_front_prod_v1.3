@@ -27,10 +27,10 @@ async function ConstrutorasData() {
         Authorization: `Bearer ${session.token}`,
       },
       cache: "no-store",
-      // next: {
-      //   revalidate: 60 * 10, // 10 minutos
-      //   tags: ["construtora-all-page"],
-      // },
+      next: {
+        revalidate: 60 * 10, // 10 minutos
+        tags: ["construtora-all-page"],
+      },
     });
 
     if (!req.ok) {

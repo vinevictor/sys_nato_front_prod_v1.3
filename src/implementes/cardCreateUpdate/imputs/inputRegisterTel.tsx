@@ -12,7 +12,8 @@ interface InputTel1Props extends InputProps {
 
 export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
   const [tel1, setTel1] = useState<string>("");
-  const [Teste, setTeste] = useState<string>("");
+  const [Teste, setTeste] = useState<string>(tell ?? "");
+  console.log("🚀 ~ InputRegisterTel ~ Teste:", Teste)
   const [Error, setError] = useState<boolean>(false);
   const [Loading, setLoading] = useState<boolean>(false);
   const toast = useToast();
@@ -65,7 +66,7 @@ export const InputRegisterTel = ({ Index, tell, ...props }: InputTel1Props) => {
           setError(false);
           setLoading(false);
         } else {
-          setTeste('');
+          setTeste(valorLimpo);
           setError(true);
           setLoading(false);
           toast({

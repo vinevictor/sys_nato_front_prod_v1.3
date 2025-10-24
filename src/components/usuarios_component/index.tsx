@@ -15,7 +15,7 @@ import {
   VStack 
 } from "@chakra-ui/react";
 import { mask } from "remask";
-import React from "react";
+import React, { memo } from "react";
 import { 
   MdBadge, 
   MdPerson, 
@@ -46,7 +46,7 @@ interface UsuariosType {
  * @returns Grid de cards de usuários
  */
 
-export default function Usuarios({ data }: UsuariosType) {
+const Usuarios = memo(function Usuarios({ data }: UsuariosType) {
   const toast = useToast();
 
   const copiarTelefone = (telefone: string) => {
@@ -307,4 +307,6 @@ export default function Usuarios({ data }: UsuariosType) {
       ))}
     </SimpleGrid>
   );
-}
+});
+
+export default Usuarios;
