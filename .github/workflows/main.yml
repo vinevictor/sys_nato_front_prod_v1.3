@@ -1,5 +1,5 @@
 # Nome do Workflow
-name: CI & Deploy to VPS
+name: CI & Deploy to VPS - Frontend
 
 # Gatilho: Quando rodar? 
 # Neste caso, toda vez que houver um 'push' (envio) para a branch 'main'
@@ -30,15 +30,33 @@ jobs:
 
     # 3. Instalar as dependências
     - name: Install dependencies
-      run: yarn install
+      run: yarn
 
     # 4. Rodar o Lint (teste de sintaxe)
-    - name: Run Lint
+    - name: Test de sintaxe
       run: yarn lint
 
     # 5. Rodar o Build (verificar se compila)
-    - name: Run Build
+    - name: Teste de compilação
       run: yarn build
+
+    # if se der erro
+    - name: Notify Discord on Failure
+      if: failure()
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }} # Puxa o segredo
+        content: "🚨 ATENÇÃO: O deploy falhou!
+            Clique aqui para ver o log de erro:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" # Mensagem
+    
+    # if se der sucesso
+    - name: Notify Discord on Success
+      if: success()
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }} # Puxa o segredo
+        content: "✅ O deploy foi concluído com sucesso!" # Mensagem
 
   # -----------------------------------------------
   # JOB 2: Fazer o Deploy (CD)
@@ -66,6 +84,24 @@ jobs:
         script: |
           cd /var/www/html/frontend/sys_nato_front_prod_v1.3  # <-- MUDE AQUI
           git pull origin main
-          yarn install
+          yarn
           yarn build
           pm2 restart all # Ou 'pm2 restart nome-do-app'
+    
+    # if se der erro
+    - name: Notify Discord on Failure
+      if: failure()
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }} # Puxa o segredo
+        content: "🚨 ATENÇÃO: O deploy falhou!
+            Clique aqui para ver o log de erro:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" # Mensagem
+    
+    # if se der sucesso
+    - name: Notify Discord on Success
+      if: success()
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }} # Puxa o segredo
+        content: "✅ O deploy foi concluído com sucesso!" # Mensagem
