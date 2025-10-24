@@ -28,7 +28,7 @@ export async function PUT(
       ...(body.empreendimentoId && { empreendimento: body.empreendimentoId }),
       ...(body.id_fcw && { id_fcw: body.id_fcw }),
       ...(body.andamento && { andamento: body.andamento }),
-      gov: body.gov || false
+      gov: body.gov || false,
     };
     const session = await GetSessionServer();
 
@@ -49,65 +49,57 @@ export async function PUT(
     if (!response.ok) {
       throw new Error(`Erro ao buscar tags salvas: ${response.statusText}`);
     }
-    const tagsSalvas = await response.json();
+    const tagsSalvas: any[] = await response.json();
 
-    if (tagsSalvas.length < tags.length) {
-      try {
-        // selecionar ids das tags salvas
-        const tagsSalvasDescriptions = new Set(
-          tagsSalvas.map((tagSalva: any) => tagSalva.descricao)
-        );
+    const tagsDesejadasStrings: string[] = (body.tags || [])
+      .map((tag: any) => tag.label || tag.descricao)
+      .filter(Boolean);
 
-        // selecionar tags novas
-        const newTagsToCreate = tags.filter(
-          (novaTag: any) => !tagsSalvasDescriptions.has(novaTag.label)
-        );
+    const tagsSalvasMap = new Map(
+      tagsSalvas.map((tag) => [tag.descricao, tag.id])
+    );
+    const tagsDesejadasSet = new Set(tagsDesejadasStrings);
 
-        // criar tags novas
-        if (newTagsToCreate.length > 0) {
-          newTagsToCreate.map(async (tagToCreate: any) => {
-            const createResponse = await fetch(
-              `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${session?.token}`,
-                },
-                body: JSON.stringify({
-                  descricao: tagToCreate.label,
-                  solicitacao: +id,
-                }),
-              }
+    // Identificar quais tags precisam ser CRIADAS
+    const tagsParaCriar = tagsDesejadasStrings.filter(
+      (tagStr) => !tagsSalvasMap.has(tagStr)
+    );
+
+    // Identificar quais tags precisam ser DELETADAS
+    const tagsParaDeletar = tagsSalvas.filter(
+      (tagSalva) => !tagsDesejadasSet.has(tagSalva.descricao)
+    );
+
+    // [FIX] Executar criações em paralelo e ESPERAR (await)
+    if (tagsParaCriar.length > 0) {
+      const createPromises = tagsParaCriar.map((tagDescricao) => {
+        return fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify({
+            descricao: tagDescricao,
+            solicitacao: +id,
+          }),
+        }).then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              `Erro ao criar tag "${tagDescricao}": ${res.statusText}`
             );
-
-            if (!createResponse.ok) {
-              throw new Error(
-                `Erro ao criar tag "${tagToCreate.label}": ${createResponse.statusText}`
-              );
-            }
-
-            return createResponse.json();
-          });
-        }
-      } catch (error) {
-        console.error("Erro no processo de gerenciamento de tags:", error);
-      }
+          }
+          return res.json();
+        });
+      });
+      await Promise.all(createPromises);
     }
 
-    if (tagsSalvas.length > tags.length) {
-      // verificar quais a tags que foram removidas
-      const tagsRemovidas = tagsSalvas.filter(
-        (tagSalva: any) => !tags.some((tag: any) => tag.id === tagSalva.id)
-      );
-
-      // selecionar ids das tags removidas
-      const idsTagsRemovidas = tagsRemovidas.map((tag: any) => tag.id);
-
-      // deletar tags removidas
-      idsTagsRemovidas.map(async (id: number) => {
-        const deleteResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/${id}`,
+    // [FIX] Executar deleções em paralelo e ESPERAR (await)
+    if (tagsParaDeletar.length > 0) {
+      const deletePromises = tagsParaDeletar.map((tag) => {
+        return fetch(
+          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag/${tag.id}`,
           {
             method: "DELETE",
             headers: {
@@ -115,16 +107,16 @@ export async function PUT(
               Authorization: `Bearer ${session?.token}`,
             },
           }
-        );
-
-        if (!deleteResponse.ok) {
-          throw new Error(
-            `Erro ao deletar tag "${id}": ${deleteResponse.statusText}`
-          );
-        }
-
-        return deleteResponse.json();
+        ).then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              `Erro ao deletar tag "${tag.descricao}": ${res.statusText}`
+            );
+          }
+          return res.json();
+        });
       });
+      await Promise.all(deletePromises);
     }
 
     if (!session) {
