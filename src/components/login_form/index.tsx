@@ -36,6 +36,8 @@ export const FormLogin = () => {
   const buttonBg = useColorModeValue("#00713D", "#00d672");
   const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
   const buttonColor = useColorModeValue("white", "gray.900");
+  const bgColor = useColorModeValue("green.50", "green.900");
+  const bgOpacity = useColorModeValue(0.3, 0.1);
 
   const handlesubmit = async () => {
     setLoading(true);
@@ -86,8 +88,8 @@ export const FormLogin = () => {
               width={{ base: "400px", md: "600px" }}
               height={{ base: "400px", md: "600px" }}
               borderRadius="full"
-              bg={useColorModeValue("green.50", "green.900")}
-              opacity={useColorModeValue(0.3, 0.1)}
+              bg={bgColor}
+              opacity={bgOpacity}
               filter="blur(100px)"
               pointerEvents="none"
             />

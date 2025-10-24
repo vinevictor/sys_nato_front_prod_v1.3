@@ -70,6 +70,10 @@ declare namespace Session {
   interface Financeira {
     id: number;
     fantasia: string;
+    direto: boolean;
+    Intelesign_price: number;
+    Intelesign_status: boolean;
+    valor_cert: number;
   }
 
   /**
@@ -104,6 +108,7 @@ declare namespace Session {
     lista_finace?: boolean;
     empreendimento?: boolean;
     relatorio?: boolean;
+    natosign?: boolean;
   }
 }
 
@@ -120,9 +125,18 @@ interface Empreendimento {
   nome: string;
 }
 
+/**
+   * Financeira
+   * @param {number} id
+   * @param {string} fantasia
+   */
 interface Financeira {
   id: number;
   fantasia: string;
+  direto: boolean;
+  Intelesign_price: number;
+  Intelesign_status: boolean;
+  valor_cert: number;
 }
 
 interface UserRoler {

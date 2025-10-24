@@ -101,6 +101,7 @@ export default async function NatosignHome() {
           </Flex>
 
           {/* Ações (botões) */}
+  
           {(session?.user?.hierarquia === "ADM" ||
             session?.user?.role?.natosign) && (
             <Flex gap={2} wrap="wrap">
