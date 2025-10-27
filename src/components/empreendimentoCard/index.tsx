@@ -27,6 +27,7 @@ interface EmpreendimentosType {
   data: EmpreedimentoType[];
   listConstrutora: any[];
   listEstado: any[];
+  fechar: () => void;
 }
 
 /**
@@ -38,7 +39,7 @@ interface EmpreendimentosType {
  * @param data - Lista de empreendimentos
  * @returns Grid de cards de empreendimentos
  */
-export default function Empreendimentos({ data, listConstrutora, listEstado }: EmpreendimentosType) {
+export default function Empreendimentos({ data, listConstrutora, listEstado, fechar }: EmpreendimentosType) {
   const [Empreendimentos, setEmpreendimentos] = useState<EmpreedimentoType[]>(
     []
   );
@@ -272,7 +273,7 @@ export default function Empreendimentos({ data, listConstrutora, listEstado }: E
                 id={empreendimento.id}
                 ativo={empreendimento.status}
               />
-              <BtnEditarEmpreendimento id={empreendimento.id} listConstrutora={listConstrutora} listEstado={listEstado} />
+              <BtnEditarEmpreendimento id={empreendimento.id} listConstrutora={listConstrutora} listEstado={listEstado}  />
             </Flex>
           </Flex>
         );

@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     const retorno = await response.json();
 
     revalidateTag("construtora-all");
+    revalidateTag("construtora-all-page");
     return NextResponse.json(
       {
         message: "Registro criado com sucesso",

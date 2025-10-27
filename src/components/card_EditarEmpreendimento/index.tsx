@@ -57,6 +57,7 @@ interface CardUpdateEmpreendimentoProps {
   setEmpreendimentoCard?: EmpreendimentoCard; // Opcional para modo criação
   id?: number; // Se não tiver ID, é modo criação
   onSuccess?: () => void;
+  onClose?: () => void;
   lista: Construtora[];
   listEstado: any[];
 }
@@ -67,6 +68,7 @@ export function CardUpdateEmpreendimento({
   lista,
   listEstado,
   onSuccess,
+  onClose
 }: CardUpdateEmpreendimentoProps) {
   const toast = useToast();
   const router = useRouter();
@@ -476,6 +478,7 @@ export function CardUpdateEmpreendimento({
             <BotaoCancelar
               colorScheme="red"
               variant="outline"
+              onClick={onClose}
               size="lg"
               flex={{ base: "1", sm: "0 1 auto" }}
               minW={{ sm: "140px" }}
