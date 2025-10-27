@@ -1,4 +1,6 @@
+import { revalidate } from "@/app/api/direto/findAll/route";
 import { GetSessionServerApi } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -32,19 +34,19 @@ export async function PUT(
     if (!req.ok) {
       throw new Error("Erro ao atualizar empreendimento");
     }
-    
+    revalidateTag("empreendimento-all");
+    revalidateTag("empreendimento-all-page");
+
     return NextResponse.json(
       { message: "Empreendimento atualizado com sucesso", data },
       { status: 200 }
     );
   } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : "Erro ao atualizar empreendimento";
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Erro ao atualizar empreendimento";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

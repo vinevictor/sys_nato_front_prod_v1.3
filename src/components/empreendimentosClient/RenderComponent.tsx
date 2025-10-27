@@ -706,7 +706,7 @@ export default function EmpreendimentoPageClient({ dados }: UserProviderProps) {
           {/* Lista de Empreendimentos */}
           <Box w="full">
             {dadosFiltrados.length > 0 ? (
-              <Empreendimentos data={dadosFiltrados} listConstrutora={construtoraData} listEstado={estadoData} />
+              <Empreendimentos data={dadosFiltrados} listConstrutora={construtoraData} listEstado={estadoData} fechar={onClose} />
             ) : empreendimentos.length > 0 ? (
               <Flex
                 w="full"

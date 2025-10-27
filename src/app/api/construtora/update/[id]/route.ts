@@ -30,6 +30,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const retorno = await response.json();
 
     revalidateTag("construtora-all");
+    revalidateTag("construtora-all-page");
     return NextResponse.json(
       {
         message: "Construtora atualizada com sucesso",

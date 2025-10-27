@@ -14,7 +14,10 @@ export default async function EmpreendimentoPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.token}`,
       },
-      cache: "no-store", // Garante dados sempre atualizados
+      next: {
+        revalidate: 60 * 10,
+        tags: ["empreendimento-all-page"],
+      },
     }));
 
   if (!req.ok) {

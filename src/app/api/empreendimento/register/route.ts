@@ -27,6 +27,7 @@ export async function POST(request: Request) {
       throw new Error("Erro ao criar o registro");
     }
     revalidateTag("empreendimento-all");
+    revalidateTag("empreendimento-all-page");
     const retorno = await response.json();
     console.log(retorno);
     return NextResponse.json(
