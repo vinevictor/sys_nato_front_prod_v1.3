@@ -32,6 +32,7 @@ export async function DELETE(
       return new NextResponse("Invalid credentials", { status: 401 });
     }
     revalidateTag("empreendimento-all");
+    revalidateTag("empreendimento-all-page");
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error }, { status: 500 });
