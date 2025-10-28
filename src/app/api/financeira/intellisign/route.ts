@@ -19,10 +19,10 @@ export async function GET() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        next: {
-          tags: ["financeira-intellisign"],
-          revalidate: 60 * 30,
-        },
+        // next: {
+        //   tags: ["financeira-intellisign"],
+        //   revalidate: 60 * 30,
+        // },
       }
     );
 
