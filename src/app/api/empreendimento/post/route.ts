@@ -1,4 +1,5 @@
 import { GetSessionServerApi } from "@/lib/auth_confg";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.token}`,
         },
-        body: JSON.stringify({...body, status: false}),
+        body: JSON.stringify({ ...body, status: false }),
       }
     );
 
@@ -28,19 +29,16 @@ export async function POST(request: NextRequest) {
     if (!req.ok) {
       throw new Error("Erro ao criar empreendimento");
     }
-
+    revalidateTag("empreendimento-all");
+    revalidateTag("empreendimento-all-page");
     return NextResponse.json(
       { message: "Empreendimento criado com sucesso", data },
       { status: 201 }
     );
   } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : "Erro ao criar empreendimento";
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Erro ao criar empreendimento";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
