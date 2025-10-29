@@ -20,7 +20,10 @@ interface CidadeProxima {
 }
 
 const cidades: CidadeProxima[] = [
-  { cidade: "Ribeirão Preto/SP", cidadesProximas: "Jardinópolis / Luiz Antonio" },
+  {
+    cidade: "Ribeirão Preto/SP",
+    cidadesProximas: "Jardinópolis / Luiz Antonio",
+  },
   { cidade: "Serrana/SP", cidadesProximas: "-" },
   { cidade: "Botucatu/SP", cidadesProximas: "-" },
   { cidade: "Sorocaba/SP", cidadesProximas: "Itu" },
@@ -65,7 +68,7 @@ export default function CidadesProximasTable(): JSX.Element {
         color={isDark ? "gray.100" : "#1A202C"}
         mb={{ base: 2, md: 3 }}
       >
-        Cidades Próximas
+        Cidades com Atendimento Presencial
       </Text>
 
       <TableContainer
