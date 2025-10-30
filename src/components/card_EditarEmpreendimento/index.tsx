@@ -475,14 +475,14 @@ export function CardUpdateEmpreendimento({
             flexDirection={{ base: "column", sm: "row" }}
             width={{ base: "100%", sm: "auto" }}
           >
-            <BotaoCancelar
+            {/* <BotaoCancelar
               colorScheme="red"
               variant="outline"
               onClick={onClose}
               size="lg"
               flex={{ base: "1", sm: "0 1 auto" }}
               minW={{ sm: "140px" }}
-            />
+            /> */}
             <Button
               type="submit"
               colorScheme="green"
