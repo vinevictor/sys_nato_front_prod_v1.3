@@ -239,7 +239,7 @@ export default function ExperienciaSection() {
                   color="gray.600"
                   _dark={{ color: "gray.300" }}
                 >
-                  Documentos processados
+                  Clientes atendidos
                 </Text>
               </MotionVStack>
 

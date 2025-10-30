@@ -140,8 +140,17 @@ function PricingCard({
 
 const pricingData = [
   {
-    range: "1-100 Processos",
+    range: "1-100 Certificações",
     price: "R$ 75,90",
+    signer: "Assinador: R$ 5 / envelope",
+    support: "Suporte via WhatsApp",
+    benefits: "Gestor de conta exclusivo",
+    actionText: "Fale Conosco",
+    isHighlighted: false,
+  },
+  {
+    range: "101-400 Certificações",
+    price: "R$ 55,00",
     signer: "Assinador: R$ 3 / envelope",
     support: "Suporte via WhatsApp",
     benefits: "Gestor de conta exclusivo",
@@ -149,16 +158,7 @@ const pricingData = [
     isHighlighted: false,
   },
   {
-    range: "101-400 Processos",
-    price: "R$ 55,00",
-    signer: "Assinador: R$ 1 / envelope",
-    support: "Suporte via WhatsApp",
-    benefits: "Gestor de conta exclusivo",
-    actionText: "Fale Conosco",
-    isHighlighted: false,
-  },
-  {
-    range: "401-1000 Processos",
+    range: "401-1000 Certificações",
     price: "R$ 45,00",
     signer: "Assinador: GRÁTIS",
     support: "Suporte via WhatsApp",
@@ -167,7 +167,7 @@ const pricingData = [
     isHighlighted: true,
   },
   {
-    range: "1001-2000 Processos",
+    range: "1001-2000 Certificações",
     price: "R$ 34,90",
     signer: "Assinador: GRÁTIS",
     support: "Suporte via WhatsApp",

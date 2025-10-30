@@ -80,9 +80,9 @@ function StepCard({ index, text }: StepCardProps) {
 }
 
 const stepsData = [
-  "Cliente inicia o processo no portal da construtora.",
-  "O SisNATO executa a identificação com o NatoID.",
-  "Se necessário, agenda atendimento presencial via NatoHUB.",
+  "O Cliente inicia o seu processo de compra com a construtora ou imobiliaria.",
+  "O CCA sobe os dados do cliente para o portal sisnato.",
+  "Cliente agenda atendimento virtual ou presencial em nossa Rede NATOhub.",
   "Certificado emitido, contrato segue para NatoSign.",
   "Cliente, Construtora, CCA Recebem o link em seu e-mail e assinam com BirdID.",
   "Tudo monitorado com relatórios e auditoria.",

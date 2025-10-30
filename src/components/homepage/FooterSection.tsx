@@ -115,13 +115,13 @@ export default function FooterSection() {
               Contato
             </Heading>
             <VStack align="flex-start" spacing={2} fontSize="sm">
-              <Text>CNPJ: 20.220.831/0001-36</Text>
-              <Link
+              <Text>CNPJ: 14.000.930/0001-50</Text>
+              {/* <Link
                 href="mailto:contato@sisnato.com.br"
                 _hover={{ color: "green.500", _dark: { color: "green.300" } }}
               >
                 contato@sisnato.com.br
-              </Link>
+              </Link> */}
               <Link
                 href="tel:+551632897492"
                 _hover={{ color: "green.500", _dark: { color: "green.300" } }}

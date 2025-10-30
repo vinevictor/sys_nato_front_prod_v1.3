@@ -19,7 +19,9 @@ import { DadoCompomentListNatosign } from "./lista";
 const GetListaDados = async (
   session: SessionNext.Server | null
 ): Promise<natosign.NatosignGetType | null> => {
-  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign`;
+  const Financeiras = session?.user?.Financeira.map((item: any) => item.id);
+
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/intelesign?cca_id=${Financeiras}`;
   const user = await fetch(url, {
     method: "GET",
     headers: {
@@ -42,9 +44,9 @@ export default async function NatosignHome() {
   const session = await GetSessionServer();
   const data = await GetListaDados(session);
 
-  if (session?.user?.hierarquia !== "ADM") {
-    redirect("/home");
-  }
+  // if (session?.user?.hierarquia !== "ADM") {
+  //   redirect("/home");
+  // }
 
   return (
     <Container
@@ -95,13 +97,14 @@ export default async function NatosignHome() {
                 _dark={{ color: "gray.400" }}
                 display={{ base: "none", sm: "block" }}
               >
-                Gerencie envelopes, acompanhe status e acione novas assinaturas digitais.
+                Gerencie envelopes, acompanhe status e acione novas assinaturas
+                digitais.
               </Text>
             </Box>
           </Flex>
 
           {/* Ações (botões) */}
-  
+
           {(session?.user?.hierarquia === "ADM" ||
             session?.user?.role?.natosign) && (
             <Flex gap={2} wrap="wrap">
