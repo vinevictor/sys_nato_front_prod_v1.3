@@ -118,7 +118,7 @@ const solutionsData = [
     icon: FaFingerprint,
     title: "NatoID",
     description:
-      "Identificação segura via reconhecimento facial, CNH e biometria, com conformidade ICP-Brasil e operação remota/presencial.",
+      "Identificação segura via reconhecimento facial, envio de Documento com operação remota.",
   },
   {
     icon: FaPenNib,

@@ -36,8 +36,8 @@ const contactInfo = [
   { icon: FaMapMarkerAlt, text: "Ribeirão Preto – SP" },
   {
     icon: EmailIcon,
-    text: "contato@sisnato.com.br",
-    href: "mailto:contato@sisnato.com.br",
+    text: "interfacecertificadora@gmail.com",
+    href: "mailto:interfacecertificadora@gmail.com",
   },
   { icon: FaPhoneAlt, text: "(16) 3289-7492", href: "tel:+551632897492" },
   {
@@ -89,7 +89,6 @@ export default function ContatoSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("🚀 ~ ContatoSection ~ formData:", formData);
 
     try {
       const response = await fetch("/api/contact", {
@@ -99,7 +98,6 @@ export default function ContatoSection() {
         },
         body: JSON.stringify(formData),
       });
-      console.log("🚀 ~ handleSubmit ~ response:", response);
 
       if (!response.ok) {
         throw new Error("Falha ao enviar a mensagem.");
@@ -214,7 +212,7 @@ export default function ContatoSection() {
                   color="gray.600"
                   _dark={{ color: "gray.400" }}
                 >
-                  CNPJ: 20.220.831/0001-36
+                  CNPJ: 14.000.930/0001-50
                 </Text>
               </Box>
 
