@@ -82,7 +82,7 @@ jobs:
         # Comandos que serão executados no seu VPS
         # IMPORTANTE: Troque 'seu/projeto' pelo caminho real do seu projeto no VPS
         script: |
-          cd /var/www/html/frontend/sys_nato_front_prod_v1.3  # <-- MUDE AQUI
+          cd /var/www/html/frontend/sys_nato_front_prod_v1.3 # <-- MUDE AQUI
           git pull origin main
           yarn
           yarn build
