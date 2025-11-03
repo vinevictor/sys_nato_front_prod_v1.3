@@ -155,7 +155,7 @@ export default async function PageSolicitacoes({ params }: Props) {
               color="gray.800"
               _dark={{ color: "gray.100" }}
             >
-              Solicitação #{id}
+              Solicitação {id}
             </Heading>
             <Flex
               w={{ base: "full", md: "auto" }}

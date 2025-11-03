@@ -25,6 +25,7 @@ import {
   VStack,
   HStack,
   Heading,
+  IconButton,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import {
@@ -41,6 +42,7 @@ import { BeatLoader } from "react-spinners";
 import SelectConstEmpFinCor from "../../select";
 import BtnLimparFcw from "@/components/botoes/btn_lipar_fcw";
 import { RegisterContext } from "@/context/RegisterContex";
+import { FaCopy } from "react-icons/fa";
 interface FormSolicitacaoEditProps {
   id?: number;
   data: any;
@@ -281,7 +283,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             isReadOnly={!isAdmin}
           />
           <MaskedInput
-            boxWidth="28%"
+            boxWidth="25%"
             id="telefone"
             label="Whatsapp Com DDD"
             type="text"
@@ -292,8 +294,27 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             isWhatsapp
             isReadOnly={!isAdmin}
           />
+          <HStack align={"end"}>
+            <IconButton
+              icon={<Icon as={FaCopy} />}
+              aria-label="Copiar número"
+              size="sm"
+              colorScheme="green"
+              // variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(form?.telefone?.replace(/\D/g, "") || "");
+                toast({
+                  title: "Número copiado!",
+                  status: "success",
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }}
+            />
+          </HStack>
+          
           <MaskedInput
-            boxWidth="28%"
+            boxWidth="25%"
             id="telefone2"
             label="Whatsapp Com DDD 2"
             type="text"
