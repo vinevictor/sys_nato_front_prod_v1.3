@@ -6,7 +6,7 @@ import FormSolicitacaoEdit from "@/components/form/solicitacao/edit";
 import LogsComponent from "@/components/logsComponent";
 import ListAlertas from "@/components/solicitacao/alert";
 import SelectGov from "@/components/solicitacao/select_gov";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
 import { SolicitacaoIdType } from "@/types/solicitacao";
 import { Box, Container, Divider, Flex, Heading, Text } from "@chakra-ui/react";
@@ -74,7 +74,7 @@ const requestAlertas = async (id: number, token: string) => {
 
 export default async function PageSolicitacoes({ params }: Props) {
   const { id } = params;
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
   if (!id) {
     return <Error404 />;
   }

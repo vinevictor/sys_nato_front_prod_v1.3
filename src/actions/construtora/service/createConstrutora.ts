@@ -1,5 +1,5 @@
 "use server";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
@@ -19,7 +19,7 @@ export default async function CreateConstrutora(_: any, data: FormData) {
       tel: tel.trim(),
       email: email.trim(),
     };
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

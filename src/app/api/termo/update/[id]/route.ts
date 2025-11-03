@@ -1,4 +1,4 @@
-import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
+import { GetSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export async function PUT(
   try {
     const { id } = params;
     const { termoAceito } = await request.json();
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -38,13 +38,7 @@ export async function PUT(
         { status: res.statusCode }
       );
     }
-
-    // Atualiza cache de role após modificar termo
-    const roleResult = await updateAndCreateRoleCache(session.token, session.user.id);
-    if (!roleResult.success) {
-      console.warn("Aviso ao atualizar cache de role:", roleResult.error);
-    }
-
+    await updateAndCreateRoleCache(session.token, session.user.id)
     return NextResponse.json(
       { ...res, message: "Termo atualizado com sucesso" },
       { status: 200 }

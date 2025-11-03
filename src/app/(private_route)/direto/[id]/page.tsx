@@ -5,7 +5,7 @@ import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
 import LogsComponent from "@/components/logsComponent";
 import ListAlertas from "@/components/solicitacao/alert";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
 import { Box, Container, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
@@ -72,7 +72,7 @@ const requestAlertas = async (id: number, token: string) => {
 
 export default async function PageDireto({ params }: Props) {
   const { id } = params;
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
   if (!session) {
     return redirect("/home");
   }

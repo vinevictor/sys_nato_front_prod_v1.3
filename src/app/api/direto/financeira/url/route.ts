@@ -1,11 +1,11 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 // Arquivo em: app/api/direto/financeiras/[id]/route.ts
 export async function GET(_req: NextRequest) {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
   if (!session) return NextResponse.json("Unauthorized", { status: 401 });
 
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/financeiras/url`;

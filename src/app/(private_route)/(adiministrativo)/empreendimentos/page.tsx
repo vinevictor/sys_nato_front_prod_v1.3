@@ -1,11 +1,11 @@
 import EmpreendimentoPageClient from "@/components/empreendimentosClient/RenderComponent";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function EmpreendimentoPage() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   const req =await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/empreendimento`, {
       method: "GET",

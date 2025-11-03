@@ -2,7 +2,7 @@ import { Flex } from "@chakra-ui/react";
 import HomeProvider from "@/provider/HomeProvider";
 import ModalPrimeAsses from "../prime_asses";
 import ModalTermos from "../termos";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { DadoCompomentList } from "./lista";
 import { UserCompomentInfo } from "./user";
 import { solictacao } from "@/types/solicitacao";
@@ -28,7 +28,7 @@ const GetListaDados = async (
 };
 
 export default async function HomeSwitch() {
-  const session = await GetSessionServerApi();// 1
+  const session = await GetSessionServer();// 1
   const ListDados = await GetListaDados(session);
   return (
     <>

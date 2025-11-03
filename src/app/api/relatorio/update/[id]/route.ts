@@ -1,4 +1,4 @@
-import { DeleteSession, GetSessionServerApi } from "@/lib/auth_confg";
+import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
     if (!session) {
       await DeleteSession();
       return new NextResponse("Unauthorized", { status: 401 });

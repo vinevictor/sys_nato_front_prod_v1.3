@@ -1,4 +1,4 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const Body = await request.json();
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

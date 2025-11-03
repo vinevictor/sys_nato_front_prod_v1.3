@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 import Loading from "@/app/loading";
-import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import EditUserLayout from "@/components/usuarios_component/EditUserLayout";
 
 type Props = {
@@ -26,13 +26,6 @@ const fetchUser = async (id: number, token: string) => {
       console.error("Erro ao buscar dados do usuário:", reqest.statusText);
       return null;
     }
-
-    try {
-      await updateAndCreateRoleCache(token, id);
-    } catch (error) {
-      console.log("🚀 ~ error:", error);
-    }
-
     return res;
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
@@ -41,7 +34,7 @@ const fetchUser = async (id: number, token: string) => {
 };
 
 export default async function EditarUsuario({ params }: Props) {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   const id = Number(params.id);
   const data = await fetchUser(id, session?.token ?? "");

@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { ChamadoRootComponent } from "@/components/chamado";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import {
   Button,
   Container,
@@ -37,7 +37,7 @@ type Props = {
 
 export default async function EditarChamadoPage({ params }: Props) {
   const { id } = params;
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   const data = session && (await Requestes(id, session?.token));
 

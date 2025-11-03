@@ -2,7 +2,7 @@ import { DadoCompomentList } from "@/components/direto/lista";
 import { CompartilharModal } from "@/components/direto/lista/CompartilharModal";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
 import {
@@ -53,7 +53,7 @@ const GetListaDados = async (
  * @component
  */
 export default async function DiretoPage() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
   const ListDados = await GetListaDados(session);
 
   return (

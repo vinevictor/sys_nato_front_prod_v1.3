@@ -1,182 +1,297 @@
-import type { Session, SessionServer } from "@/types/session";
+// servidor: biblioteca de auth (removido 'use server')
+"use server";
 import * as jose from "jose";
 import { cookies } from "next/headers";
+import type { SessionServer } from "@/types/session";
 
-export async function OpenSessionToken(token: string): Promise<Session.SessionServer | null> {
-  if (!token || typeof token !== "string" || token.trim() === "") {
-    throw new Error("Token inválido ou vazio");
+type ExtendedAuthUser = SessionServer["user"] & {
+  status?: boolean;
+};
+
+type RoleCache = {
+  role: ExtendedAuthUser["role"] | null;
+  reset_password: boolean;
+  termos: boolean;
+  status: boolean;
+  hierarquia: ExtendedAuthUser["hierarquia"];
+  construtora: ExtendedAuthUser["construtora"];
+  empreendimento: ExtendedAuthUser["empreendimento"];
+  Financeira: ExtendedAuthUser["Financeira"];
+};
+
+function isRoleCache(value: unknown): value is RoleCache {
+  if (!value || typeof value !== "object") {
+    return false;
   }
 
-  const jwtKey = process.env.JWT_SIGNING_PRIVATE_KEY;
-  if (!jwtKey) {
-    throw new Error("JWT_SIGNING_PRIVATE_KEY não configurada no ambiente");
-  }
+  const data = value as Record<string, unknown>;
 
-  try {
-    const secret = new TextEncoder().encode(jwtKey);
-    const { payload } = await jose.jwtVerify(token, secret);
-    if (!payload || typeof payload !== "object") {
-      return null
-    }
-
-    return {
-      token,
-      user: payload.user as Session.AuthUser,
-      iat: payload.iat as number,
-      exp: payload.exp as number,
-    };
-  } catch (error) {
-    console.error("Erro ao verificar token JWT:", error);
-    throw new Error(`Falha na verificação do token: ${error instanceof Error ? error.message : "Erro desconhecido"}`);
-  }
+  return (
+    ("reset_password" in data && typeof data.reset_password === "boolean") &&
+    ("termos" in data && typeof data.termos === "boolean") &&
+    ("status" in data && typeof data.status === "boolean")
+  );
 }
 
-export async function CreateSessionServer(payload: Record<string, any> = {}): Promise<{ success: boolean; error?: string }> {
-  try {
-    const cookieStore = cookies();
-    const sessionToken = cookieStore.get("session-token");
-
-    if (sessionToken) {
-      cookieStore.delete("session-token");
-    }
-
-    // Validação do ambiente
-    const jwtKey = process.env.JWT_SIGNING_PRIVATE_KEY;
-    if (!jwtKey) {
-      const errorMsg = "JWT_SIGNING_PRIVATE_KEY não configurada no ambiente";
-      console.error(errorMsg);
-      return { success: false, error: errorMsg };
-    }
-
-    // Validação do payload
-    if (!payload || typeof payload !== "object") {
-      const errorMsg = "Payload inválido para criação de sessão";
-      console.error(errorMsg);
-      return { success: false, error: errorMsg };
-    }
-
-    // Criação do JWT
-    const secret = new TextEncoder().encode(jwtKey);
-    const jwt = await new jose.SignJWT(payload)
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("12h")
-      .sign(secret);
-
-    if (!jwt) {
-      const errorMsg = "Falha ao gerar token JWT";
-      console.error(errorMsg);
-      return { success: false, error: errorMsg };
-    }
-
-    // Verificação do token gerado
-    const sessionPayload = await OpenSessionToken(jwt);
-
-    if (!sessionPayload) {
-      throw new Error("Falha ao verificar o token gerado: payload vazio.");
-    }
-    const { exp } = sessionPayload;
-
-    if (!exp || typeof exp !== "number") {
-      const errorMsg = "Token gerado sem data de expiração válida";
-      cookieStore.delete('session-token');
-      console.error(errorMsg);
-    }
-
-    // Definição do cookie
-    cookieStore.set("session-token", jwt, {
-      expires: new Date((exp as number) * 1000),
-      path: "/",
-      httpOnly: true,
-    });
-
-    return { success: true };
-  } catch (error) {
-    const errorMsg = `Erro ao criar token de sessão: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
-    console.error(errorMsg, error);
-    return { success: false, error: errorMsg };
-  }
+export async function OpenSessionToken(token: string) {
+  const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
+  const { payload } = await jose.jwtVerify(token, secret);
+  return payload;
 }
 
+export async function CreateSessionServer(payload = {}) {
+  const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
+  const jwt = await new jose.SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("10h")
+    .sign(secret);
 
-export async function GetSessionServerApi(): Promise<SessionServer | null> {
-  // Validação do token principal
-  const cookieStore = await cookies();
-  const session = cookieStore.get("session-token");
+  const { exp } = await OpenSessionToken(jwt);
 
-  if (!session || !session.value || session.value.trim() === "") {
-    console.warn("Token de sessão não encontrado ou vazio");
-    return null;
-  }
-  const payload = await OpenSessionToken(session.value);
-
-  if (!payload || typeof payload !== "object") {
-    console.warn("Payload de sessão inválido recebido.");
-    await DeleteSession().catch(() => { });
-    return null;
-  }
-  const usercahe = await updateAndCreateRoleCache(payload?.token, payload?.user.id);
-
- 
-
-  const sessionRetorno: SessionServer = {
-    ...payload,
-    
-    user: {
-      ...payload.user, // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      empreendimento: usercahe?.empreendimento, 
-      construtora: usercahe?.construtora, 
-      Financeira: usercahe?.Financeira,
-      role: usercahe?.role,
-    } as Session.AuthUser,
-  };
-
-  return sessionRetorno;
-}
-
-export async function DeleteSession() {
-  const session = await cookies();
-  session.delete("session-token");
-  session.delete("session-role"); // Limpa cache auxiliar
+  cookies().set("session-token", jwt, {
+    expires: (exp as number) * 1000,
+    path: "/",
+    httpOnly: true,
+  });
 }
 
 /**
- * Busca os dados de role e outras informações associadas ao usuário na API
- * e os armazena em cookies separados para evitar sobrecarregar o JWT principal.
- * Isso funciona como um cache de dados no lado do cliente.
+ * Aplica valores padrão aos dados do usuário
+ * Centraliza a lógica de fallback para evitar duplicação
  */
-export async function updateAndCreateRoleCache(token: string, userId: number): Promise<Session.AuthUser | null> {
-  try {
-    const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${userId}`;
-    console.log("🚀 ~ updateAndCreateRoleCache ~ url:", url)
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
+function applyDefaultUserValues(user: ExtendedAuthUser) {
+  user.role = ({} as SessionServer["user"]["role"]);
+  user.reset_password = false;
+  user.termos = false;
+  user.status = false;
+  user.hierarquia = "USER";
+  user.construtora = [];
+  user.empreendimento = [];
+  user.Financeira = [];
+}
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      const errorMsg = `Erro ao buscar dados do usuário para cache: ${errorData.message || res.statusText}`;
-      console.error(errorMsg);
+/**
+ * Atualiza dados do usuário com dados da API
+ * Centraliza a lógica de mapeamento para evitar duplicação
+ */
+function updateUserDataFromApi(user: ExtendedAuthUser, apiData: any) {
+  user.role = (apiData.role as SessionServer["user"]["role"]) || ({} as SessionServer["user"]["role"]);
+  user.reset_password = apiData.reset_password || false;
+  user.termos = apiData.termos || false;
+  user.status = apiData.status || false;
+  user.hierarquia = apiData.hierarquia || "USER";
+  user.construtora = apiData.construtoras || [];
+  user.empreendimento = apiData.empreendimentos || [];
+  user.Financeira = apiData.financeiros || [];
+}
+
+/**
+ * Atualiza dados do usuário com dados do cookie
+ * Centraliza a lógica de mapeamento do cache
+ */
+function updateUserDataFromCache(user: ExtendedAuthUser, cacheData: RoleCache) {
+  user.role = cacheData.role || ({} as SessionServer["user"]["role"]);
+  user.reset_password = cacheData.reset_password || false;
+  user.termos = cacheData.termos || false;
+  user.status = cacheData.status || false;
+  user.hierarquia = cacheData.hierarquia || "USER";
+  user.construtora = cacheData.construtora || [];
+  user.empreendimento = cacheData.empreendimento || [];
+  user.Financeira = cacheData.Financeira || [];
+}
+
+/**
+ * Cria objeto de role normalizado para o cookie
+ */
+function createRolePayload(data: any): RoleCache {
+  return {
+    role: (data.role as SessionServer["user"]["role"]) || null,
+    reset_password: data.reset_password || false,
+    termos: data.termos || false,
+    status: data.status || false,
+    hierarquia: data.hierarquia || "USER",
+    construtora: data.construtoras || data.construtora || [],
+    empreendimento: data.empreendimentos || data.empreendimento || [],
+    Financeira: data.financeiros || data.Financeira || [],
+  };
+}
+
+/**
+ * Realiza o parse seguro dos dados de role armazenados no cookie
+ * Retorna null quando o conteúdo não é um JSON válido.
+ */
+function parseRoleCookie(value?: string | null): RoleCache | null {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+
+    if (!isRoleCache(parsed)) {
       return null;
     }
 
-    const data = await res.json()
-
-    return data;
+    return parsed;
   } catch (error) {
-    const errorMsg = `Falha ao atualizar cache de role: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
-    console.error(errorMsg, error);
+    console.warn("Aviso: Cookie session-role corrompido, recriando...", error);
     return null;
   }
 }
 
-export async function UpdateSessionServer() {
-  const session = await GetSessionServerApi();
-  if (session?.token && session?.user?.id) {
-    await updateAndCreateRoleCache(session.token, session.user.id);
+/**
+ * Valida o payload retornado pelo JWT garantindo a estrutura mínima esperada.
+ */
+function isValidSessionPayload(payload: unknown): payload is SessionServer {
+  if (!payload || typeof payload !== "object") {
+    return false;
   }
+
+  const data = payload as Record<string, unknown>;
+  const user = data.user as Record<string, unknown> | undefined;
+
+  return (
+    typeof data.token === "string" &&
+    typeof user === "object" &&
+    typeof user.id !== "undefined"
+  );
+}
+
+/**
+ * Busca dados do usuário da API e atualiza o cache
+ */
+async function fetchAndCacheUserData(
+  token: string,
+  userId: number,
+  user: ExtendedAuthUser,
+) {
+  try {
+    const apiData = await fetchUserData(token, userId);
+    updateUserDataFromApi(user, apiData);
+    
+    // Tenta criar cache em background sem bloquear
+    CreateRole(createRolePayload(apiData)).catch((err) => 
+      console.warn("Aviso: Não foi possível criar session-role:", err)
+    );
+  } catch (error) {
+    console.warn("Aviso: Erro ao buscar dados do usuário:", error);
+    applyDefaultUserValues(user);
+  }
+}
+
+/**
+ * Obtém sessão do servidor com cache otimizado
+ * Reduz duplicação de código e melhora performance
+ */
+export async function GetSessionServer(): Promise<SessionServer | null> {
+  try {
+    // Validação do token principal
+    const token = cookies().get("session-token");
+    if (!token) return null;
+
+    const payload = await OpenSessionToken(token.value);
+    if (!isValidSessionPayload(payload)) {
+      console.warn("Aviso: Payload de sessão inválido recebido.");
+      return null;
+    }
+
+    const session: SessionServer = {
+      ...payload,
+      user: { ...payload.user } as ExtendedAuthUser,
+    };
+
+    const roleData = parseRoleCookie(cookies().get("session-role")?.value);
+    const userId = session.user.id;
+
+    if (roleData) {
+      updateUserDataFromCache(session.user, roleData);
+      return session;
+    }
+
+    await fetchAndCacheUserData(session.token, userId, session.user);
+    return session;
+  } catch (error) {
+    console.error("Erro crítico na sessão:", error);
+    return null;
+  }
+}
+
+export async function DeleteSession() {
+  const session= await cookies();
+   session.delete("session-token");
+   session.delete("session-role"); // Limpa cache auxiliar
+}
+
+export async function GetSessionServerApi() {
+  try {
+    const token = cookies().get("session-token");
+    if (!token) {
+      return null;
+    }
+    const data: any = await OpenSessionToken(token.value);
+    return await Promise.resolve(data);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+// Função auxiliar para buscar dados do usuário (sem modificar cookies)
+async function fetchUserData(token: string, id: number) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        next: {
+          tags: ["user-get"],
+        },
+      }
+    );
+    const retorno = await response.json();
+    if (!response.ok) {
+      throw new Error(retorno.message || "Erro ao buscar dados do usuário");
+    }
+    return retorno;
+  } catch (error) {
+    console.error("Erro ao buscar dados do usuário:", error);
+    throw error;
+  }
+}
+
+// Função para criar cookie de role (apenas em Server Actions/Route Handlers)
+export async function updateAndCreateRoleCache(token: string, id: number) {
+  try {
+    const dataRole = await fetchUserData(token, id);
+    await CreateRole({
+      role: dataRole.role || null,
+      reset_password: dataRole.reset_password || false,
+      termos: dataRole.termos || false,
+      status: dataRole.status || false,
+      hierarquia: dataRole.hierarquia || "USER",
+      construtora: dataRole.construtoras || [],
+      empreendimento: dataRole.empreendimentos || [],
+      Financeira: dataRole.financeiros || [],
+    });
+    return dataRole;
+  } catch (error) {
+    console.error("Erro ao atualizar cache de role:", error);
+    throw error;
+  }
+}
+
+export async function CreateRole(role: any) {
+  // Simplificado: usa JSON.stringify em vez de JWT
+  const roleJson = JSON.stringify(role);
+
+  cookies().set("session-role", roleJson, {
+    expires: new Date(Date.now() + 20 * 60 * 1000), // 20 minutos
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+  });
 }

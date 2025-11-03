@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +53,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       Filter += `pagina=${pagina}`;
     }
 
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
     const token = session?.token;
 
     if (!session) {
