@@ -117,7 +117,7 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
       body: JSON.stringify({
         financeiroId: modalFinanceiro,
         empreendimentoId: modalEmpreendimento,
-        baseUrl: "https://sisnato.redebrasilrp.com.br/direto/cadastro",
+        baseUrl: "https://sisnato.com.br/direto/cadastro",
       }),
     })
       .then(async (res) => {
@@ -147,7 +147,7 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
     setDataEmpreendimento(empreendimentoList || []);
     setDataFinanceiro(filter || []);
   }, [session]);
-  
+
   const ColorLoader = () => {
     const theme = useColorModeValue("light", "dark");
     if (theme === "light") {
