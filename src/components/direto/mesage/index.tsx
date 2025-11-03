@@ -2,6 +2,7 @@
 
 import Loading from "@/app/loading";
 import MensagensChat from "@/components/mensagensChat";
+import { Session } from "@/types/session";
 import { Flex, useToast, VStack, Heading } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, memo, useEffect } from "react";
@@ -9,7 +10,7 @@ import { useState, useCallback, memo, useEffect } from "react";
 interface Props {
   Id: number;
   messages: MensagemObj[];
-  session: SessionNext.Client;
+  session: Session.AuthUser;
   disabled?: boolean;
 }
 

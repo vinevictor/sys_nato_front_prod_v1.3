@@ -22,12 +22,13 @@ import {
 import { FiLock } from "react-icons/fi";
 import { SetStateAction, useEffect, useState } from "react";
 import { SenhaComponent } from "../Senha";
+import { Session } from "@/types/session";
 
 /**
  * Interface para props do componente
  */
 interface Props {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 /**

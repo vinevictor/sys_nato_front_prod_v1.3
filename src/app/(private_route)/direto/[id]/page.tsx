@@ -8,6 +8,7 @@ import ListAlertas from "@/components/solicitacao/alert";
 import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
 import { Box, Container, Divider, Flex, Heading, Text } from "@chakra-ui/react";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 interface Props {
@@ -72,11 +73,14 @@ const requestAlertas = async (id: number, token: string) => {
 export default async function PageDireto({ params }: Props) {
   const { id } = params;
   const session = await GetSessionServer();
-  const user = session?.user;
-  const data = await requestData(+id, session?.token);
-  const logs = await requestLogs(+id, session?.token);
-  const alertas = await requestAlertas(+id, session?.token);
-  
+  if (!session) {
+    return redirect("/home");
+  }
+  const user = session?.user; // user can be null if session is null
+  const data = await requestData(+id, session?.token ); // Provide a default empty string if session?.token is undefined
+  const logs = await requestLogs(+id, session?.token ); // Provide a default empty string if session?.token is undefined
+  const alertas = await requestAlertas(+id, session?.token ); // Provide a default empty string if session?.token is undefined
+
   if (data.status === 404) {
     return <Error404 />;
   }
@@ -249,11 +253,7 @@ export default async function PageDireto({ params }: Props) {
         <Divider mb={{ base: 4, md: 6 }} />
 
         {/* Layout principal - Stack vertical em mobile, horizontal em desktop */}
-        <Flex
-          direction="column"
-          gap={{ base: 4, md: 6 }}
-          maxW="full"
-        >
+        <Flex direction="column" gap={{ base: 4, md: 6 }} maxW="full">
           {/* Linha 1 - Formulário (65%) e Chat (35%) */}
           <Flex
             direction={{ base: "column", lg: "row" }}
@@ -264,14 +264,18 @@ export default async function PageDireto({ params }: Props) {
           >
             {/* Formulário - 65% */}
             {data.data && (
-              <Box 
+              <Box
                 flex={{ base: "1", lg: "13" }}
                 minH={{ base: "360px", md: "420px" }}
                 h="full"
                 display="flex"
                 flexDir="column"
               >
-                <FormSolicitacaoDireto dados={data.data} Id={+id} session={user} />
+                <FormSolicitacaoDireto
+                  dados={data.data}
+                  Id={+id}
+                  session={user}
+                />
               </Box>
             )}
 
@@ -289,15 +293,15 @@ export default async function PageDireto({ params }: Props) {
               flexDir="column"
               _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
             >
-                <MensagensChatDireto
-                  Id={+id}
-                  messages={data.data?.obs ?? []}
-                  session={user}
-                  disabled={
-                    data.data?.andamento === "EMITIDO" ||
-                    data.data?.andamento === "APROVADO"
-                  }
-                />
+              <MensagensChatDireto
+                Id={+id}
+                messages={data.data?.obs ?? []}
+                session={user}
+                disabled={
+                  data.data?.andamento === "EMITIDO" ||
+                  data.data?.andamento === "APROVADO"
+                }
+              />
             </Box>
           </Flex>
 
@@ -319,7 +323,11 @@ export default async function PageDireto({ params }: Props) {
                 borderRadius="xl"
                 shadow="lg"
                 overflowY="auto"
-                _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.700",
+                  shadow: "md",
+                }}
               >
                 <Suspense fallback={<LogsComponent logs={logs.data} />}>
                   <LogsComponent logs={logs.data} />

@@ -15,13 +15,14 @@ import { GiBrazil } from "react-icons/gi";
 import BotaoMenu from "../bt_menu";
 import BotaoMobileMenu from "../bt_mobile_menu";
 import { FaSignature } from "react-icons/fa";
+import { Session } from "@/types/session";
 
 /**
  * Interface para tipagem das props do componente BotaoJuncao.
  * session: informações da sessão do usuário, podendo ser nulo.
  */
 interface BotoesFunctionProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser | null;
 }
 // Clean Code: Sempre renderize o container principal para evitar erro de hidratação
 // e garantir uma estrutura consistente entre server e client.

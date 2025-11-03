@@ -10,10 +10,11 @@ import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useMemo } from "react";
 import { solictacao } from "@/types/solicitacao";
+import { Session } from "@/types/session";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType;
-  session: SessionNext.Server | any | null;
+  session: Session.SessionServer | any | null;
 }
 
 export const TableComponent = memo(

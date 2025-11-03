@@ -19,10 +19,11 @@ import { DeletarIconComponent } from "../imputs/removeIcom";
 import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { solictacao } from "@/types/solicitacao";
+import { Session } from "@/types/session";
 
 interface CardComponentHomeProps {
   dados: solictacao.SolicitacaoObjectType;
-  session: SessionNext.Server | any | null;
+  session: Session.SessionServer | any | null;
 }
 
 export const CardComponentHome = ({

@@ -13,7 +13,6 @@ Esta versão traz melhorias significativas na experiência do usuário, na infra
 *   **Pipeline de CI/CD Automatizado**: Implementamos um fluxo de trabalho de Integração e Implantação Contínua (CI/CD) com GitHub Actions. Agora, cada `push` para a branch `main` aciona automaticamente testes de build e lint. Se aprovado, o deploy é realizado no servidor de produção (VPS), garantindo entregas mais rápidas e seguras.
 *   **Notificações de Deploy no Discord**: O pipeline de CI/CD está integrado ao Discord para enviar notificações em tempo real sobre o status dos builds e deploys, informando a equipe sobre sucessos e falhas instantaneamente.
 
-
 ### 🧹 Refatoração e Qualidade de Código
 
 *   **Otimização de Rotas da API**: Identificamos e documentamos rotas duplicadas, como a `/api/direto/tags/getall`, que foi marcada para remoção. Essa limpeza visa centralizar a lógica e simplificar a manutenção futura.

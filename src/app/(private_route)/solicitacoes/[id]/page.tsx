@@ -75,9 +75,14 @@ const requestAlertas = async (id: number, token: string) => {
 export default async function PageSolicitacoes({ params }: Props) {
   const { id } = params;
   const session = await GetSessionServer();
-  const user = session?.user;
+  if (!id) {
+    return <Error404 />;
+  }
+  if (!session) {
+    return <Error404 />;
+  }
+  const user = session.user;
   const data: SolicitacaoIdType = await requestData(+id, session?.token);
-  // console.log("🚀 ~ PageSolicitacoes ~ data:", data)
   const logs = await requestLogs(+id, session?.token);
   const alertas = await requestAlertas(+id, session?.token);
   if (data.status === 404) {
@@ -269,7 +274,7 @@ export default async function PageSolicitacoes({ params }: Props) {
             align="stretch"
           >
             {/* Formulário - 65% */}
-            {data.data && (
+            {data.data && user && (
               <Box flex={{ base: "1", lg: "13" }}>
                 <FormSolicitacaoEdit id={+id} data={data.data} session={user} />
               </Box>

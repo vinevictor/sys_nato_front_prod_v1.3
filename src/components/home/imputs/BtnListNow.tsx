@@ -1,12 +1,13 @@
 "use client";
 import useHomeContex from "@/hook/useHomeContex";
+import { Session } from "@/types/session";
 import { Button } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaListOl } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
 
 interface BtnListNowProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 // TODO: remover componente
 export const BtnListNow = ({ session }: BtnListNowProps) => {

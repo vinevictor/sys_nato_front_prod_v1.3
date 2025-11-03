@@ -4,9 +4,10 @@ import { mask } from "remask";
 import { BtnListNow } from "../imputs/BtnListNow";
 import BtnAlertList from "../imputs/BtnAlertList";
 import { memo, useMemo } from "react";
+import { Session } from "@/types/session";
 
 interface UserCompomentInfoProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 export const UserCompomentInfo = memo(({ session }: UserCompomentInfoProps) => {

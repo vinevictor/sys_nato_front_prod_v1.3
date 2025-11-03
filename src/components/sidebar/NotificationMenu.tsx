@@ -32,6 +32,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiBell, FiCheck, FiX, FiAlertCircle, FiInfo } from "react-icons/fi";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { Session } from "@/types/session";
 
 /**
  * Interface para definir uma notificação/alerta
@@ -59,7 +60,7 @@ interface BugReport {
  * Interface para props do componente
  */
 interface NotificationMenuProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 /**

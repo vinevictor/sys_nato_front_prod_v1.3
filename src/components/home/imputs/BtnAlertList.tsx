@@ -1,4 +1,5 @@
 "use client";
+import { Session } from "@/types/session";
 import {
   Box,
   Button,
@@ -19,7 +20,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { TbAlertSquareRounded } from "react-icons/tb";
 
 interface BtnAlertListProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 export default function BtnAlertList({ session }: BtnAlertListProps) {

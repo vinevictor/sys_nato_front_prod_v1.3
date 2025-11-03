@@ -2,6 +2,36 @@
 "use server";
 import * as jose from "jose";
 import { cookies } from "next/headers";
+import type { SessionServer } from "@/types/session";
+
+type ExtendedAuthUser = SessionServer["user"] & {
+  status?: boolean;
+};
+
+type RoleCache = {
+  role: ExtendedAuthUser["role"] | null;
+  reset_password: boolean;
+  termos: boolean;
+  status: boolean;
+  hierarquia: ExtendedAuthUser["hierarquia"];
+  construtora: ExtendedAuthUser["construtora"];
+  empreendimento: ExtendedAuthUser["empreendimento"];
+  Financeira: ExtendedAuthUser["Financeira"];
+};
+
+function isRoleCache(value: unknown): value is RoleCache {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const data = value as Record<string, unknown>;
+
+  return (
+    ("reset_password" in data && typeof data.reset_password === "boolean") &&
+    ("termos" in data && typeof data.termos === "boolean") &&
+    ("status" in data && typeof data.status === "boolean")
+  );
+}
 
 export async function OpenSessionToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
@@ -30,8 +60,8 @@ export async function CreateSessionServer(payload = {}) {
  * Aplica valores padrão aos dados do usuário
  * Centraliza a lógica de fallback para evitar duplicação
  */
-function applyDefaultUserValues(user: any) {
-  user.role = null;
+function applyDefaultUserValues(user: ExtendedAuthUser) {
+  user.role = ({} as SessionServer["user"]["role"]);
   user.reset_password = false;
   user.termos = false;
   user.status = false;
@@ -45,8 +75,8 @@ function applyDefaultUserValues(user: any) {
  * Atualiza dados do usuário com dados da API
  * Centraliza a lógica de mapeamento para evitar duplicação
  */
-function updateUserDataFromApi(user: any, apiData: any) {
-  user.role = apiData.role || null;
+function updateUserDataFromApi(user: ExtendedAuthUser, apiData: any) {
+  user.role = (apiData.role as SessionServer["user"]["role"]) || ({} as SessionServer["user"]["role"]);
   user.reset_password = apiData.reset_password || false;
   user.termos = apiData.termos || false;
   user.status = apiData.status || false;
@@ -60,8 +90,8 @@ function updateUserDataFromApi(user: any, apiData: any) {
  * Atualiza dados do usuário com dados do cookie
  * Centraliza a lógica de mapeamento do cache
  */
-function updateUserDataFromCache(user: any, cacheData: any) {
-  user.role = cacheData.role || null;
+function updateUserDataFromCache(user: ExtendedAuthUser, cacheData: RoleCache) {
+  user.role = cacheData.role || ({} as SessionServer["user"]["role"]);
   user.reset_password = cacheData.reset_password || false;
   user.termos = cacheData.termos || false;
   user.status = cacheData.status || false;
@@ -74,9 +104,9 @@ function updateUserDataFromCache(user: any, cacheData: any) {
 /**
  * Cria objeto de role normalizado para o cookie
  */
-function createRolePayload(data: any) {
+function createRolePayload(data: any): RoleCache {
   return {
-    role: data.role || null,
+    role: (data.role as SessionServer["user"]["role"]) || null,
     reset_password: data.reset_password || false,
     termos: data.termos || false,
     status: data.status || false,
@@ -88,9 +118,54 @@ function createRolePayload(data: any) {
 }
 
 /**
+ * Realiza o parse seguro dos dados de role armazenados no cookie
+ * Retorna null quando o conteúdo não é um JSON válido.
+ */
+function parseRoleCookie(value?: string | null): RoleCache | null {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+
+    if (!isRoleCache(parsed)) {
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.warn("Aviso: Cookie session-role corrompido, recriando...", error);
+    return null;
+  }
+}
+
+/**
+ * Valida o payload retornado pelo JWT garantindo a estrutura mínima esperada.
+ */
+function isValidSessionPayload(payload: unknown): payload is SessionServer {
+  if (!payload || typeof payload !== "object") {
+    return false;
+  }
+
+  const data = payload as Record<string, unknown>;
+  const user = data.user as Record<string, unknown> | undefined;
+
+  return (
+    typeof data.token === "string" &&
+    typeof user === "object" &&
+    typeof user.id !== "undefined"
+  );
+}
+
+/**
  * Busca dados do usuário da API e atualiza o cache
  */
-async function fetchAndCacheUserData(token: string, userId: string, user: any) {
+async function fetchAndCacheUserData(
+  token: string,
+  userId: number,
+  user: ExtendedAuthUser,
+) {
   try {
     const apiData = await fetchUserData(token, userId);
     updateUserDataFromApi(user, apiData);
@@ -109,35 +184,33 @@ async function fetchAndCacheUserData(token: string, userId: string, user: any) {
  * Obtém sessão do servidor com cache otimizado
  * Reduz duplicação de código e melhora performance
  */
-export async function GetSessionServer() {
+export async function GetSessionServer(): Promise<SessionServer | null> {
   try {
     // Validação do token principal
     const token = cookies().get("session-token");
     if (!token) return null;
 
-    const data: any = await OpenSessionToken(token.value);
-    if (!data) return null;
-
-    const dadosRetorno: any = data;
-    const cookieRole = cookies().get("session-role");
-
-    // Caso 1: Cache não existe - busca da API
-    if (!cookieRole) {
-      await fetchAndCacheUserData(data.token, data.user.id, dadosRetorno.user);
-      return dadosRetorno;
+    const payload = await OpenSessionToken(token.value);
+    if (!isValidSessionPayload(payload)) {
+      console.warn("Aviso: Payload de sessão inválido recebido.");
+      return null;
     }
 
-    // Caso 2: Cache existe - tenta usar
-    try {
-      const roleData = JSON.parse(cookieRole.value);
-      updateUserDataFromCache(dadosRetorno.user, roleData);
-      return dadosRetorno;
-    } catch (error) {
-      // Caso 3: Cache corrompido - revalida
-      console.warn("Aviso: Cookie session-role corrompido, recriando...", error);
-      await fetchAndCacheUserData(data.token, data.user.id, dadosRetorno.user);
-      return dadosRetorno;
+    const session: SessionServer = {
+      ...payload,
+      user: { ...payload.user } as ExtendedAuthUser,
+    };
+
+    const roleData = parseRoleCookie(cookies().get("session-role")?.value);
+    const userId = session.user.id;
+
+    if (roleData) {
+      updateUserDataFromCache(session.user, roleData);
+      return session;
     }
+
+    await fetchAndCacheUserData(session.token, userId, session.user);
+    return session;
   } catch (error) {
     console.error("Erro crítico na sessão:", error);
     return null;
@@ -165,7 +238,7 @@ export async function GetSessionServerApi() {
 }
 
 // Função auxiliar para buscar dados do usuário (sem modificar cookies)
-async function fetchUserData(token: string, id: string) {
+async function fetchUserData(token: string, id: number) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${id}`,
@@ -191,7 +264,7 @@ async function fetchUserData(token: string, id: string) {
 }
 
 // Função para criar cookie de role (apenas em Server Actions/Route Handlers)
-export async function updateAndCreateRoleCache(token: string, id: string) {
+export async function updateAndCreateRoleCache(token: string, id: number) {
   try {
     const dataRole = await fetchUserData(token, id);
     await CreateRole({

@@ -12,12 +12,13 @@ import NextLink from "next/link";
 import { redirect } from "next/navigation";
 import { FaSignature } from "react-icons/fa";
 import { DadoCompomentListNatosign } from "./lista";
+import { Session } from "@/types/session";
 
 /**
  * Busca a lista de envelopes cadastrados para o NatoSign diretamente na API.
  */
 const GetListaDados = async (
-  session: SessionNext.Server | null
+  session: Session.SessionServer | null
 ): Promise<natosign.NatosignGetType | null> => {
   const Financeiras = session?.user?.Financeira.map((item: any) => item.id);
 
