@@ -28,7 +28,13 @@ export async function PUT(
       }
     );
     const retorno = await response.json();
-    await updateAndCreateRoleCache(session.token, session.user.id)
+
+    // Atualiza cache de role após reset de senha
+    const roleResult = await updateAndCreateRoleCache(session.token, session.user.id);
+    if (!roleResult.success) {
+      console.warn("Aviso ao atualizar cache de role:", roleResult.error);
+    }
+
     revalidateTag("user-get");
     return NextResponse.json(retorno, { status: 200 });
   } catch (error) {

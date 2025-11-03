@@ -41,14 +41,17 @@ export async function POST(request: Request) {
     const { token, user } = data;
 
     // Cria sessão principal
-    await CreateSessionServer({ token, user });
+    const sessionResult = await CreateSessionServer({ token, user });
+    if (!sessionResult.success) {
+      console.error("Erro ao criar sessão:", sessionResult.error);
+      return NextResponse.json({ message: "Erro ao criar sessão do usuário" }, { status: 500 });
+    }
 
     // Cria cache de role (cookie session-role) - Route Handler pode modificar cookies
-    try {
-      await updateAndCreateRoleCache(token, user.id);
-    } catch (error) {
-      console.error("Erro ao criar cache de role:", error);
-      // Continua mesmo se falhar, pois será criado na próxima requisição
+    const roleResult = await updateAndCreateRoleCache(token, user.id);
+    if (!roleResult.success) {
+      console.warn("Aviso ao criar cache de role:", roleResult.error);
+      // Continua mesmo se falhar, não é crítico
     }
 
     return NextResponse.json({ message: "Login realizado com sucesso" }, { status: 200 });

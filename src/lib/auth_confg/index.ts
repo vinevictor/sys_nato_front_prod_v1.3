@@ -214,7 +214,10 @@ function isValidSessionPayload(payload: unknown): payload is SessionServer {
 }
 
 /**
- * Busca dados do usuário da API e atualiza o cache
+ * Busca dados do usuário da API e atualiza os dados da sessão
+ * NOTA: Esta função NÃO cria o cookie de role porque é chamada por GetSessionServer,
+ * que pode ser executada durante o render de Server Components (contexto somente leitura).
+ * Para criar/atualizar o cookie de role, use updateAndCreateRoleCache em Server Actions ou Route Handlers.
  */
 async function fetchAndCacheUserData(
   token: string,
@@ -245,11 +248,10 @@ async function fetchAndCacheUserData(
 
     updateUserDataFromApi(user, apiData);
 
-    // Tenta criar cache em background sem bloquear
-    const rolePayload = createRolePayload(apiData);
-    CreateRole(rolePayload).catch((err) =>
-      console.warn("Aviso: Não foi possível criar session-role:", err)
-    );
+    // NÃO criamos o cookie aqui porque GetSessionServer pode ser chamada
+    // durante render de Server Components (onde modificar cookies não é permitido).
+    // O cache deve ser criado explicitamente chamando updateAndCreateRoleCache
+    // em Server Actions ou Route Handlers quando apropriado.
   } catch (error) {
     console.warn("Aviso: Erro ao buscar dados do usuário:", error);
     applyDefaultUserValues(user);

@@ -38,7 +38,13 @@ export async function PUT(
         { status: res.statusCode }
       );
     }
-    await updateAndCreateRoleCache(session.token, session.user.id)
+
+    // Atualiza cache de role após modificar termo
+    const roleResult = await updateAndCreateRoleCache(session.token, session.user.id);
+    if (!roleResult.success) {
+      console.warn("Aviso ao atualizar cache de role:", roleResult.error);
+    }
+
     return NextResponse.json(
       { ...res, message: "Termo atualizado com sucesso" },
       { status: 200 }
