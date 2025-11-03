@@ -40,20 +40,25 @@ export async function OpenSessionToken(token: string) {
 }
 
 export async function CreateSessionServer(payload = {}) {
-  const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
-  const jwt = await new jose.SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("10h")
-    .sign(secret);
-
-  const { exp } = await OpenSessionToken(jwt);
-
-  cookies().set("session-token", jwt, {
-    expires: (exp as number) * 1000,
-    path: "/",
-    httpOnly: true,
-  });
+  try {
+    
+    const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
+    const jwt = await new jose.SignJWT(payload)
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("10h")
+      .sign(secret);
+  
+    const { exp } = await OpenSessionToken(jwt);
+  
+    (await cookies()).set("session-token", jwt, {
+      expires: (exp as number) * 1000,
+      path: "/",
+      httpOnly: true,
+    });
+  } catch (error) {
+    console.error("Erro ao criar token de sessão:", error);
+  }
 }
 
 /**
