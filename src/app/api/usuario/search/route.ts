@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     const Busca = [];
     if (searchParams.get("empreedimento")) {

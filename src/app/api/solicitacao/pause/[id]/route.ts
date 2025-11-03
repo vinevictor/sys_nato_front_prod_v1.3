@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function PUT(
   try {
     const { id } = params;
     const dados = await request.json();
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     // Verifica se o usuário está autenticado
     if (!session) {

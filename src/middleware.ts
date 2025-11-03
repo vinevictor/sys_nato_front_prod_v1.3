@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GetSessionServer } from "./lib/auth_confg";
+import { GetSessionServerApi } from "./lib/auth_confg";
 
 const publicRoutes = [
   "/",
@@ -29,7 +29,7 @@ const publicRoutes = [
 ];
 
 export async function middleware(req: NextRequest) {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   const { pathname } = req.nextUrl;
   const isPublicRoute = publicRoutes.includes(pathname);

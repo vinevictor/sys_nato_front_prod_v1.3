@@ -1,10 +1,10 @@
 
 "use server";
 
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 export default async function GetFinanceiras() {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   if (!session) {
     return null;

@@ -8,7 +8,7 @@ Rota responsável por excluir uma instância de tag específica, identificada pe
 
 ## Fluxo
 1.  Recebe o `id` da instância da tag na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, retorna um erro 401.
 4.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/tag/{id}`.
 5.  Retorna uma mensagem estática de sucesso ou uma mensagem de erro apropriada.

@@ -1,5 +1,5 @@
 "use server";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -19,7 +19,7 @@ export default async function UpdateConstrutora(_: any, data: FormData) {
     valor_cert: Number(valor_cert),
   };
 
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   if (!session) {
     return {

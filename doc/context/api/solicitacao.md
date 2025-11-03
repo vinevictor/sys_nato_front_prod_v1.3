@@ -9,7 +9,7 @@ Rota responsável por criar um novo registro de `solicitacao` no sistema. A rota
 ## Fluxo
 1.  Recebe os dados da nova solicitação no corpo (body) da requisição.
 2.  Verifica se há um parâmetro de consulta `sms` na URL.
-3.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+3.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 4.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/solicitacao`, repassando o parâmetro `sms` na URL da requisição para o backend.
 5.  O corpo da requisição para o Strapi contém os dados da solicitação.
 6.  Retorna a resposta da API do Strapi, que contém os dados da solicitação criada.

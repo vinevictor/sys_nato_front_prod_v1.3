@@ -24,7 +24,7 @@
 
 ## Sessão e Autorização
 - Token assinado com `JWT_SIGNING_PRIVATE_KEY` (via `jose`)
-- Cookie `session-token` gerenciado no server (`CreateSessionServer`/`GetSessionServer`)
+- Cookie `session-token` gerenciado no server (`CreateSessionServer`/`GetSessionServerApi`)
 - Dados de papéis e hierarquia enriquecidos a partir da API (`/user/get/:id`, `/user/role/:id`)
 - `middleware.ts` define `publicRoutes` e redireciona usuários não autenticados para `/login`
 

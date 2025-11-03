@@ -8,7 +8,7 @@ Rota responsável por registrar um "novo acordo" para uma `solicitacao` específ
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PUT` para a API do Strapi no endpoint `/solicitacao/novo_acordo/{id}`.
 4.  A requisição não envia um corpo (body), agindo como um gatilho para a mudança de estado no backend.
 5.  Retorna a resposta da API do Strapi, que deve conter os dados da solicitação com seu novo status.

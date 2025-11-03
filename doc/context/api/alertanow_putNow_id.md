@@ -8,7 +8,7 @@ Rota responsável por atualizar o status ou os dados de um alerta "agora" (now) 
 
 ## Fluxo
 1.  Recebe o `id` do alerta na URL e os dados para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PUT` para a API do Strapi no endpoint `/now/{id}` com os novos dados.
 4.  Após a atualização bem-sucedida, invalida o cache do Next.js para as tags `alertanow-list` and `alertanow-list-cont` para garantir que a lista e a contagem de alertas sejam atualizadas na próxima requisição.
 5.  Retorna uma mensagem de sucesso e os dados atualizados.

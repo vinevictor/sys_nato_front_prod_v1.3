@@ -8,7 +8,7 @@ Rota responsável por atualizar parcialmente (PATCH) um registro "direto" espec�
 
 ## Fluxo
 1.  Recebe o `id` do registro na URL e os dados para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/direto/{id}` com os novos dados.
 4.  A requisição utiliza caching (`force-cache`) com revalidação a cada 10 minutos (`revalidate: 60 * 10`).
 5.  Tenta parsear a resposta do backend como JSON. Se falhar, trata como texto plano.

@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import {
   Box,
   Container,
@@ -75,7 +75,7 @@ const getStatusBadge = (status: string) => {
 
 export default async function NatosignView({ params }: Props) {
   const { id } = params;
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
   const res = await requestData(+id, session?.token);
 
   // Validação de acesso

@@ -18,7 +18,7 @@ Rota responsável por buscar uma lista paginada de todas as solicitações, com 
 ## Fluxo
 1.  Extrai todos os parâmetros de consulta da URL da requisição.
 2.  Constrói dinamicamente uma string de filtro (`Filter`) com base nos parâmetros fornecidos e válidos.
-3.  Verifica a sessão do usuário (`GetSessionServer`).
+3.  Verifica a sessão do usuário (`GetSessionServerApi`).
 4.  Se não houver sessão, retorna erro 401.
 5.  Verifica se o token da sessão expirou. Se sim, redireciona o usuário para a página de login (`/login`).
 6.  Envia uma requisição GET para a API do Strapi no endpoint `/solicitacao`, anexando a string de filtro, se houver.

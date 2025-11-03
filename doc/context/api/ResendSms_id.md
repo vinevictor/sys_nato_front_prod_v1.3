@@ -8,7 +8,7 @@ Rota responsável por reenviar uma notificação SMS para uma solicitação espe
 
 ## Fluxo
 1. Recebe o parâmetro `id` da solicitação na URL.
-2. Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2. Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3. Se o usuário estiver autenticado, envia uma requisição GET para a API do Strapi no endpoint `/solicitacao/send/{id}`, incluindo o token de autenticação.
 4. Retorna a resposta da API do Strapi.
 5. Em caso de falha na autenticação ou erro na API, retorna uma mensagem e o status apropriado.

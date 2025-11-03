@@ -8,7 +8,7 @@ Rota responsável por excluir um relatório de bug (bug report) específico, ide
 
 ## Fluxo
 1.  Recebe o `id` do relatório de bug na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/bug/delete/{id}`.
 4.  Após a exclusão bem-sucedida, invalida o cache do Next.js para a tag `bug-report-all` para garantir que a lista de bugs seja atualizada.
 5.  Retorna a resposta da API do Strapi.

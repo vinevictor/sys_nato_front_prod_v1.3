@@ -8,7 +8,7 @@ Rota responsável por atualizar os dados de um usuário específico.
 
 ## Fluxo
 1.  Recebe o `id` do usuário na URL e os dados para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/user/update/{id}`.
 4.  Após a atualização bem-sucedida, invalida a tag de cache `usuarios_list`.
 5.  Retorna a resposta da API do Strapi.

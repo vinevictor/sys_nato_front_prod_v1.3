@@ -8,7 +8,7 @@ Rota responsável por criar novos chamados de suporte no sistema, enviando os da
 
 ## Fluxo
 1. Recebe dados do chamado em formato JSON no body da requisição.
-2. Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2. Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3. Encaminha os dados para a API do Strapi `/chamado` via POST, incluindo o token de autenticação.
 4. Retorna mensagem de sucesso e os dados do chamado criado.
 5. Em caso de erro, retorna mensagem e status apropriados.

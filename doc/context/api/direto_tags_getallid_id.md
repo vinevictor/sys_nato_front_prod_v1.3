@@ -8,7 +8,7 @@ Rota responsável por buscar uma única associação `direto-tag` pelo seu ID es
 
 ## Fluxo
 1.  Recebe o `id` da associação `direto-tag` na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/direto-tags/{id}`.
 4.  Retorna os dados da associação encontrada.
 5.  Em caso de falha, retorna uma mensagem de erro.

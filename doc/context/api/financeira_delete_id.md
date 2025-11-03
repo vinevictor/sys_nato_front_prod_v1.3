@@ -8,7 +8,7 @@ Rota responsável por excluir (ou desativar) um registro de `financeiro` especí
 
 ## Fluxo
 1.  Recebe o `id` do registro financeiro na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/financeiro/{id}`.
 4.  Se a exclusão for bem-sucedida, invalida o cache de dados associado a duas tags: `financeira-all` e `financeiras-list-page`.
 5.  Retorna a resposta da API do Strapi, que geralmente confirma a exclusão.

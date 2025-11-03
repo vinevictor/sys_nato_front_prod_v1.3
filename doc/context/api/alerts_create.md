@@ -8,7 +8,7 @@ Rota responsável por criar um novo alerta no sistema.
 
 ## Fluxo
 1.  Recebe os dados do alerta no corpo (body) da requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Verifica se o usuário possui a permissão específica para criar alertas (`session.user?.role?.alert`).
 4.  Se autenticado e autorizado, envia uma requisição `POST` para a API do Strapi no endpoint `/alert` com os dados do novo alerta.
 5.  Após a requisição, invalida o cache do Next.js para a tag `alert-geral-all` para garantir que a lista geral de alertas seja atualizada.

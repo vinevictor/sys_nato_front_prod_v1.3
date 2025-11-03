@@ -1,10 +1,10 @@
 "use server";
 
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 export default async function DeleteImgSuporte(id: number, index: number) {
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     
     if (!session) {
       return { error: true, message: "Unauthorized" };

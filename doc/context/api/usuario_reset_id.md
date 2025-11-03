@@ -8,7 +8,7 @@ Rota responsável por redefinir a senha de um usuário específico.
 
 ## Fluxo
 1.  Recebe o `id` do usuário na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/user/reset_password/{id}`.
 4.  **Atenção:** A nova senha é enviada como um valor fixo (`"1234"`) no corpo da requisição.
 5.  Após a operação, invalida a tag de cache `usuarios_list`.

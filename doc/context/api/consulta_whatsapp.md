@@ -8,7 +8,7 @@ Rota para verificar a existência de um número de telefone na base de dados int
 
 ## Fluxo
 1.  Recebe o `telefone` no corpo (body) da requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `GET` para a API do Strapi no endpoint `/checktel/{telefone}`.
 4.  Retorna a resposta da API do Strapi, que provavelmente indica se o telefone já está em uso.
 5.  Em caso de falha na autenticação ou erro na API, retorna uma mensagem e o status de erro apropriado.

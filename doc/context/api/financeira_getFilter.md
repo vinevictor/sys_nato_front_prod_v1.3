@@ -8,7 +8,7 @@ Rota responsável por buscar uma lista de `empreendimentos` com base em um duplo
 
 ## Fluxo
 1.  Recebe a requisição GET com os parâmetros de consulta `financeiro` e `construtora` na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/empreendimento/search`, passando os IDs da financeira e da construtora como parâmetros.
 4.  A requisição é feita com a opção `cache: "no-store"`, garantindo que os dados sejam sempre buscados do servidor.
 5.  Retorna a lista de empreendimentos que correspondem ao filtro.

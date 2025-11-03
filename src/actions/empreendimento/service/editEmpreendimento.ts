@@ -1,5 +1,5 @@
 "use server";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -15,7 +15,7 @@ export async function EditEmpreendimento(_: any, data: FormData) {
     return +element;
   });
 
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   if (!session) {
     return { status: 401, message: "Unauthorized", error: true };

@@ -8,7 +8,7 @@ Rota responsável por excluir (ou desativar, conforme a mensagem de sucesso) uma
 
 ## Fluxo
 1.  Recebe o `id` da construtora na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/construtora/{id}`.
 4.  Após a exclusão bem-sucedida, invalida o cache do Next.js para as tags `construtora-all` e `construtora-all-page` para garantir que as listas de construtoras sejam atualizadas.
 5.  Retorna uma mensagem de sucesso.

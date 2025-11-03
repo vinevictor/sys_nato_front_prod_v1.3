@@ -18,7 +18,7 @@ Esta rota executa duas operações principais em sequência:
 
 **2. Atualização de Dados Principais:**
 - Recebe o `id` da solicitação na URL e os dados no corpo (body) da requisição.
-- Verifica a sessão do usuário autenticado (`GetSessionServer`).
+- Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 - Constrói um objeto `dataSend` contendo apenas os campos permitidos para atualização (ex: `nome`, `email`, `cpf`, `corretorId`, etc.).
 - Envia uma requisição `PUT` para a API do Strapi no endpoint `/solicitacao/update/{id}` com o objeto `dataSend`.
 - Retorna a resposta da API do Strapi.

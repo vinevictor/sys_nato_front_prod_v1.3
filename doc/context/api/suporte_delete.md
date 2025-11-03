@@ -36,7 +36,7 @@ DELETE /api/suporte/delete
 ```
 
 ## Observações
-- **ALERTA DE SEGURANÇA:** Esta rota é **pública e não possui nenhum tipo de autenticação (`GetSessionServer`)**. Isso significa que qualquer pessoa com acesso à URL da API pode tentar excluir arquivos do servidor de suporte, representando um risco de segurança significativo. Recomenda-se fortemente a implementação de um mecanismo de autenticação e autorização.
+- **ALERTA DE SEGURANÇA:** Esta rota é **pública e não possui nenhum tipo de autenticação (`GetSessionServerApi`)**. Isso significa que qualquer pessoa com acesso à URL da API pode tentar excluir arquivos do servidor de suporte, representando um risco de segurança significativo. Recomenda-se fortemente a implementação de um mecanismo de autenticação e autorização.
 
 ## Arquivo
 - `src/app/api/suporte/delete/route.ts`

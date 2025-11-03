@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -12,7 +12,7 @@ export async function PUT(
     const { id } = params;
     const data = await request.json();
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

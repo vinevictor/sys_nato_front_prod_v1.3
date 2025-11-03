@@ -8,7 +8,7 @@ Rota responsável por buscar a lista completa de todos os empreendimentos cadast
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/empreendimento`.
 4.  A requisição utiliza caching do Next.js, associando os dados à tag `empreendimento-all` e definindo um tempo de revalidação de 30 minutos (`revalidate: 60 * 30`).
 5.  Retorna a lista de empreendimentos encontrados.

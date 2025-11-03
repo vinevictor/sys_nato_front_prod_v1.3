@@ -8,7 +8,7 @@ Rota para verificar a existência de um Cadastro de Pessoas Físicas (CPF) na ba
 
 ## Fluxo
 1.  Recebe o `cpf` na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/get-infos/checkcpf/{cpf}`.
 4.  Analisa a resposta do Strapi:
     - Se a resposta for um array vazio, significa que o CPF não está cadastrado, e a rota retorna `"cpf": false`.

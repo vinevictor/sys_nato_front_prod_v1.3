@@ -1,12 +1,12 @@
 "use server";
 import { SuporteTagsOptions } from "@/data/suporte"
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 export async function createSuportAlert(id: number, descricao: string, tags: number, urlFinal: any) {
     const tagObj = SuporteTagsOptions.find((tag) => tag.id === tags)
     const tag = tagObj ? tagObj.label : ''
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session) {
         return { error: true, message: "Unauthorized", data: null };
     }

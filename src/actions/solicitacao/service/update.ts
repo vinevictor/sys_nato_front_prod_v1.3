@@ -1,8 +1,8 @@
 "use server";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 export async function UpdateSolicitacao(_: any, data: FormData) {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
   if (!session) {
     return {
       error: true,
@@ -114,7 +114,7 @@ export async function UpdateSolicitacao(_: any, data: FormData) {
 }
 
 async function PostTags(value: any, id: number) {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
   const tags = JSON.parse(value);
 
   await fetch(

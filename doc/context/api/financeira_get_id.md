@@ -8,7 +8,7 @@ Rota responsável por buscar os dados de um registro `financeiro` específico, i
 
 ## Fluxo
 1.  Recebe o `id` do registro financeiro na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/financeiro/{id}`.
 4.  A requisição é feita com a opção `cache: "no-store"`, o que garante que os dados sejam sempre buscados do servidor, sem utilizar cache.
 5.  Retorna os dados do registro encontrado.

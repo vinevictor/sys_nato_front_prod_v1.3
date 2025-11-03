@@ -8,7 +8,7 @@ Rota responsável por registrar um novo `financeiro` (financeira) no sistema.
 
 ## Fluxo
 1.  Recebe os dados da nova financeira no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/financeiro` com os dados recebidos.
 4.  Se a criação for bem-sucedida, invalida o cache de dados associado à tag `financeira-all`.
 5.  Retorna uma mensagem de sucesso junto com os dados do registro criado.

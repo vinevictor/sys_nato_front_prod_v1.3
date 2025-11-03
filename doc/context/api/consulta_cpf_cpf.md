@@ -8,7 +8,7 @@ Rota responsável por verificar a existência de um Cadastro de Pessoas Físicas
 
 ## Fluxo
 1.  Recebe o `cpf` como parâmetro na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/get-infos/checkcpf/{cpf}`.
 4.  Analisa a resposta do backend:
     - Se o backend retornar uma lista vazia, significa que o CPF não existe. A rota retorna `"cpf": false`.

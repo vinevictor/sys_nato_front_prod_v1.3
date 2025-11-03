@@ -8,7 +8,7 @@ Rota responsável por excluir (ou desativar) uma `solicitacao` específica, iden
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/solicitacao/delete/{id}`.
 4.  Retorna a resposta da API do Strapi, que deve confirmar a exclusão.
 5.  Em caso de falha, retorna uma mensagem e o status de erro apropriado.

@@ -6,22 +6,11 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { username, password, ip, geolocation } = body ?? {};
+    const { username, password } = body ?? {};
 
     if (!username || !password) {
       return NextResponse.json({ message: "Credenciais inválidas." }, { status: 400 });
     }
-
-    const metadataHeaders: Record<string, string> = {};
-
-    if (typeof ip === "string" && ip.length > 0) {
-      metadataHeaders["x-client-ip"] = ip;
-    }
-
-    if (geolocation && typeof geolocation === "object") {
-      metadataHeaders["x-client-geo"] = JSON.stringify(geolocation);
-    }
-
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/auth`;
     const res = await fetch(
       url,

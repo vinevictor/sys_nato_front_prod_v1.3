@@ -44,7 +44,7 @@ curl -X POST \
 ```
 
 ## Observações
-- **ALERTA DE SEGURANÇA GRAVE:** Esta rota é **pública e não possui nenhum tipo de autenticação (`GetSessionServer`)**. Isso permite que qualquer pessoa com acesso à URL da API envie arquivos para o servidor de suporte, o que pode levar ao esgotamento de espaço em disco, upload de arquivos maliciosos e outros riscos de segurança. É **altamente recomendável** a implementação de um mecanismo de autenticação e autorização para esta rota.
+- **ALERTA DE SEGURANÇA GRAVE:** Esta rota é **pública e não possui nenhum tipo de autenticação (`GetSessionServerApi`)**. Isso permite que qualquer pessoa com acesso à URL da API envie arquivos para o servidor de suporte, o que pode levar ao esgotamento de espaço em disco, upload de arquivos maliciosos e outros riscos de segurança. É **altamente recomendável** a implementação de um mecanismo de autenticação e autorização para esta rota.
 
 ## Arquivo
 - `src/app/api/suporte/post/route.ts`

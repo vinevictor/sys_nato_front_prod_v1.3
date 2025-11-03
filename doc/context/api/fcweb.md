@@ -10,7 +10,7 @@ Rota responsável por um processo de duas etapas:
 
 ## Fluxo
 1.  Recebe os dados no corpo (body) da requisição. O corpo deve conter um `id` (referente à `solicitacao` interna) e o restante dos dados a serem enviados para a API externa.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Prepara as credenciais de autenticação (`Basic Auth`) para a API externa `fcweb` usando variáveis de ambiente (`USER_API`, `PASS_API`).
 4.  Envia uma requisição `POST` para `https://apifcweb.redebrasilrp.com.br/fcweb/import` com os dados da ficha (excluindo o `id` da solicitação).
 5.  Se a requisição externa for bem-sucedida, a API `fcweb` retorna um objeto contendo o `id` da ficha recém-criada.

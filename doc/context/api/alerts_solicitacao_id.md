@@ -8,7 +8,7 @@ Rota responsável por buscar os alertas associados a um cadastro de solicitaçã
 
 ## Fluxo
 1.  Recebe o `id` do cadastro (solicitação) na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/alert/get/cadastro/{id}`.
 4.  Retorna a lista de alertas relacionados àquela solicitação.
 5.  Em caso de falha na autenticação ou se a solicitação não for encontrada, retorna uma mensagem e o status de erro apropriado.

@@ -8,7 +8,7 @@ Rota responsável por criar um novo relatório de bug (bug report) no sistema.
 
 ## Fluxo
 1.  Recebe os dados do relatório de bug no corpo (body) da requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/bug` com os dados do novo relatório.
 4.  Após a criação bem-sucedida, invalida o cache do Next.js para a tag `bug-report-all` para garantir que a lista de bugs seja atualizada.
 5.  Retorna a resposta da API do Strapi.

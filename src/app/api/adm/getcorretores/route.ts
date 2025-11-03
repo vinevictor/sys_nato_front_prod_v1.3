@@ -1,11 +1,11 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request, response: Response) {
   try {
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     const body = await request.json();
 
     if (!session) {

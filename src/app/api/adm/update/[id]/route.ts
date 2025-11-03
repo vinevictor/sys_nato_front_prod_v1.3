@@ -4,7 +4,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 // Rota para atualizar um registro de solicitação usando apenas o Strapi (sem Prisma)
 // Essa rota utiliza o Strapi como fonte de dados, realizando a atualização de registros via fetch.
@@ -14,7 +14,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const { id } = params;
     const data = await request.json();
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

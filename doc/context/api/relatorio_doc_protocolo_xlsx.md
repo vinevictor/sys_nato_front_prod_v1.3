@@ -8,7 +8,7 @@ Rota responsável por fazer o download de um relatório específico, identificad
 
 ## Fluxo
 1.  Recebe o `protocolo` do relatório na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/relatorio/download/xlsx/{protocolo}`.
 4.  A requisição para o Strapi é autenticada com o token do usuário.
 5.  A rota espera receber um arquivo XLSX como resposta do Strapi.

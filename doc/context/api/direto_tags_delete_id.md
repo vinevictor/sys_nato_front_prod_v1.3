@@ -8,7 +8,7 @@ Rota responsável por excluir uma associação entre um registro "direto" e uma 
 
 ## Fluxo
 1.  Recebe o `id` da associação `direto-tag` na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/direto-tag/{id}`.
 4.  Retorna a resposta da API do Strapi, que geralmente confirma a exclusão.
 5.  Em caso de falha, retorna uma mensagem de erro.

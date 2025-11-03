@@ -1,5 +1,5 @@
 import { SidebarLayout } from "@/components/sidebar";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import type { Session, SessionServer } from "@/types/session";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ interface PrivateLayoutProps {
 
 
 export default async function PrivateLayout({ children }: PrivateLayoutProps) {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
   const clientSession = session?.user || null;
 
   return <SidebarLayout session={clientSession}>{children}</SidebarLayout>;

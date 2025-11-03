@@ -8,7 +8,7 @@ Rota responsável por buscar a lista completa de todos os registros de `relatori
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, a sessão atual é explicitamente deletada (`DeleteSession`) e um erro 401 é retornado.
 4.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/relatorio`.
 5.  A requisição é feita sem cache (`force-dynamic`).

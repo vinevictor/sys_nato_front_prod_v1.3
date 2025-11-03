@@ -1,7 +1,7 @@
 import { DadoCompomentList } from "@/components/home/lista";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
@@ -16,7 +16,7 @@ import {
 import { Metadata } from "next";
 import { MdHome } from "react-icons/md";
 
-// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServerApi)
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const GetListaDados = async (
-  session: Session.SessionServer | null
+  session: Session.SessionServer
 ): Promise<solictacao.SolicitacaoGetType | null> => {
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao`;
   const user = await fetch(url, {
@@ -40,6 +40,13 @@ const GetListaDados = async (
     console.error("GetListaDados status:", data.message);
     return null;
   }
+
+   try {
+        await updateAndCreateRoleCache(session.token, Number(session.user.id));
+      } catch (error) {
+        console.log("🚀 ~ error:", error);
+      }
+  
   return data;
 };
 
@@ -55,7 +62,9 @@ const GetListaDados = async (
  * @component
  */
 export default async function HomePage() {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
+
+  if (!session) return null;
 
   const ListDados = await GetListaDados(session);
 

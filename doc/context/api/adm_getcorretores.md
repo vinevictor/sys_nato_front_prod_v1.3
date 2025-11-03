@@ -8,7 +8,7 @@ Rota responsável por obter uma lista de corretores, provavelmente para preenche
 
 ## Fluxo
 1.  Recebe um corpo (body) na requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se o usuário estiver autenticado, encaminha a requisição (incluindo o body) para a API do Strapi no endpoint `/get-infos/get-corretores`.
 4.  Retorna a lista de corretores fornecida pelo backend.
 5.  Em caso de falha na autenticação ou erro na API, retorna uma mensagem e o status apropriado.

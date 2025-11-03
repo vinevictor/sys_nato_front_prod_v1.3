@@ -1,4 +1,4 @@
-import { GetSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
+import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export async function PUT(
   try {
     const { id } = params;
     const { termoAceito } = await request.json();
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
