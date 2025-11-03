@@ -1,4 +1,4 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import {
   Box,
   Button,
@@ -42,7 +42,7 @@ const GetListaDados = async (
  * Renderiza a página principal do NatoSign aplicando o layout padrão e a lista de envelopes.
  */
 export default async function NatosignHome() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
   const data = await GetListaDados(session);
 
   // if (session?.user?.hierarquia !== "ADM") {

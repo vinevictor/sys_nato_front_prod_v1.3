@@ -1,13 +1,13 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextRequest, NextResponse } from "next/server";
 
-// Configura a rota como dinâmica, pois usa cookies() via GetSessionServerApi
+// Configura a rota como dinâmica, pois usa cookies() via GetSessionServer
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
     if (!session) {
       return NextResponse.json(
         { message: "Solicitação não encontrada" },

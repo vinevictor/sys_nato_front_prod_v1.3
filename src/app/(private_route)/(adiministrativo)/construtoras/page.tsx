@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Box, Text } from "@chakra-ui/react";
 import ConstrutoraPage from "@/components/construtorasClient/RenderComponent";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import Loading from "@/app/loading";
 
 export const dynamic = "force-dynamic";
 
 async function ConstrutorasData() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   if (!session) {
     return redirect("/home");

@@ -3,7 +3,7 @@
 // Veja: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering
 export const dynamic = "force-dynamic";
 
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -13,7 +13,7 @@ export async function GET(
   try {
     const { id } = params;
 
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });

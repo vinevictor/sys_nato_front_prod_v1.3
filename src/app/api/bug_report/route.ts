@@ -1,4 +1,4 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer, GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 // Esta rota depende de autenticação baseada em sessão (cookies/token),

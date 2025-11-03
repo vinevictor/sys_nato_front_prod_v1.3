@@ -1,10 +1,10 @@
 "use server";
 
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 
 export async function GetAllSuporteId(id: number) {
 
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   const req = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/suporte/${id}`, {
     method: "GET",

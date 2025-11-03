@@ -1,11 +1,11 @@
 import UsuariosPage from "@/components/usuariosClient/RenderComponent";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function Usuarios() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
 
   if (!session) {

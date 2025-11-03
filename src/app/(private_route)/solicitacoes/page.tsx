@@ -1,5 +1,5 @@
 import SolicitacaoSWITCH from "@/components/solicitacao";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { Box } from "@chakra-ui/react";
 import { Metadata } from "next";
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
  * @component
  */
 export default async function Solicitacao() {
-  const session = await GetSessionServerApi(); 
+  const session = await GetSessionServer(); 
   if (!session) return null;
   
   return (

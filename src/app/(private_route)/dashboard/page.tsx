@@ -6,7 +6,7 @@ import CardInfoDashboard from "@/components/cardInfoDashboard";
 import CidadesProximasTable from "@/components/dashboard/cidades-proximas";
 import LineChart from "@/components/lineChart.tsx";
 import PieChart from "@/components/pieChart";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import {
   Box,
   Container,
@@ -45,7 +45,7 @@ interface ApiResponse {
 }
 
 export default async function DashboardPage() {
-  const session = await GetSessionServerApi();
+  const session = await GetSessionServer();
 
   return (
     <Suspense fallback={<Loading />}>

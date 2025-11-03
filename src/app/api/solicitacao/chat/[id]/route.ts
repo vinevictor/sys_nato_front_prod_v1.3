@@ -1,4 +1,4 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export async function PUT(
     const { id } = params;
     const req = await request.json();
  
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
 
     if (!session) {
       return NextResponse.json({ error: true, message: "Unauthorized" }, { status: 401 });

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { GetSessionServerApi } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = params;
-    const session = await GetSessionServerApi();
+    const session = await GetSessionServer();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
