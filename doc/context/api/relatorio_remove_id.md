@@ -8,7 +8,7 @@ Rota responsável por excluir um registro de `relatorio` específico, identifica
 
 ## Fluxo
 1.  Recebe o `id` do relatório na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, a sessão atual é explicitamente deletada (`DeleteSession`) e um erro 401 é retornado.
 4.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/relatorio/{id}`.
 5.  Se a exclusão for bem-sucedida, invalida o cache de dados associado à tag `relatorio-all`.

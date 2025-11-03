@@ -7,7 +7,7 @@ Rota responsável por buscar a lista completa de todas as tags disponíveis no s
 - **GET**
 
 ## Fluxo
-1.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+1.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 2.  Se não houver sessão, retorna um erro 401.
 3.  Se autenticado, envia uma requisição `GET` para a API do Strapi no endpoint `/tag-list`.
 4.  A requisição é feita sem cache (`force-dynamic`).

@@ -8,7 +8,7 @@ Rota responsável por excluir um tipo de tag específico do sistema, identificad
 
 ## Fluxo
 1.  Recebe o `id` do tipo de tag na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, retorna um erro 401.
 4.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/tag-list/{id}`.
 5.  Após a requisição, invalida o cache de dados associado à tag `get_tags`.

@@ -1,11 +1,11 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request, response: Response) {
   try {
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session) {
       return NextResponse.json(
         { message: "Usuário não autenticado" },

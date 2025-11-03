@@ -1,4 +1,4 @@
-import { DeleteSession, GetSessionServer } from "@/lib/auth_confg";
+import { DeleteSession, GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 // Esta rota depende de autenticação baseada em sessão (cookies/token),
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
     try {
-      const session = await GetSessionServer();
+      const session = await GetSessionServerApi();
       if (!session) {
         await DeleteSession();
         return NextResponse.json({ error: true, message: "Unauthorized"}, { status: 401 });

@@ -1,4 +1,4 @@
-import { GetSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
+import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function PUT(
   try {
     const data = await request.json();
     const { id } = params;
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -28,7 +28,13 @@ export async function PUT(
       }
     );
     const retorno = await response.json();
-    await updateAndCreateRoleCache(session.token, session.user.id)
+
+    // Atualiza cache de role após reset de senha
+    const roleResult = await updateAndCreateRoleCache(session.token, session.user.id);
+    if (!roleResult.success) {
+      console.warn("Aviso ao atualizar cache de role:", roleResult.error);
+    }
+
     revalidateTag("user-get");
     return NextResponse.json(retorno, { status: 200 });
   } catch (error) {

@@ -8,7 +8,7 @@ Rota responsável por excluir (ou desativar, dependendo da lógica do backend) u
 
 ## Fluxo
 1.  Recebe o `id` do empreendimento na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/empreendimento/delete/{id}`.
 4.  Se a exclusão for bem-sucedida, invalida o cache de dados associado à tag `empreendimento-all` usando `revalidateTag`.
 5.  Retorna a resposta da API do Strapi, que geralmente confirma a exclusão.

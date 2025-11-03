@@ -8,7 +8,7 @@ Rota responsável por buscar o histórico de logs de uma `solicitacao` específi
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/solicitacao/getlogs/{id}`.
 4.  A requisição é feita sem cache (`force-dynamic`).
 5.  Se a solicitação não for encontrada no backend, retorna um erro 404 com a mensagem "Solicitação não encontrada".

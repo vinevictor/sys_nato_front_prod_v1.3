@@ -8,7 +8,7 @@ Rota responsável por pausar uma `solicitacao` específica, identificada pelo se
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL e os dados da pausa no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PUT` para a API do Strapi no endpoint `/solicitacao/pause/{id}`.
 4.  O corpo da requisição para o Strapi contém o status da pausa (`pause`) e, opcionalmente, uma data para reativação (`reativar`).
 5.  Retorna a resposta da API do Strapi, que deve conter os dados da solicitação com seu novo status.

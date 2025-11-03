@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export const DELETE = async (
   try {
     const { id } = params;
     console.log("🚀 ~ DELETE ~ id:", id);
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

@@ -8,7 +8,7 @@ Rota responsável por buscar os dados de um empreendimento específico, identifi
 
 ## Fluxo
 1.  Recebe o `id` do empreendimento na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/empreendimento/{id}`.
 4.  Retorna os dados do empreendimento encontrado.
 5.  Em caso de falha na autenticação ou se o empreendimento não for encontrado, retorna uma mensagem e o status de erro apropriado.

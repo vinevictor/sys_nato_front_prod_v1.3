@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 interface IParams {
@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: IParams) {
       );
     }
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session?.token) {
       return new Response("Unauthorized", { status: 401 });
     }

@@ -1,10 +1,10 @@
 "use server";
 
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 export async function GetSuporteById(id: number) {
 
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   if (!session) {
     return { error: true, message: "Unauthorized", data: null };

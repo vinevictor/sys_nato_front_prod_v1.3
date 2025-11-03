@@ -8,7 +8,7 @@ Rota responsável por buscar todos os relatórios de bug (bug reports) cadastrad
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/bug`.
 4.  A requisição utiliza caching com revalidação a cada 1 hora (`revalidate: 60 * 60`) e a tag `bug-report-all`.
 5.  Retorna a lista de relatórios de bug.

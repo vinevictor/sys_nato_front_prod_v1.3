@@ -8,7 +8,7 @@ Rota responsável por buscar e filtrar usuários com base em múltiplos parâmet
 
 ## Fluxo
 1.  Recebe a requisição `GET` com parâmetros de consulta na URL (ex: `?nome=joao&email=...`).
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Constrói uma string de consulta com base nos parâmetros recebidos.
 4.  Se autenticado, envia uma requisição `GET` para a API do Strapi no endpoint `/user/Busca` com os parâmetros.
 5.  Recebe a lista de usuários do backend.

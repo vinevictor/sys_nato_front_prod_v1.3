@@ -8,7 +8,7 @@ Rota responsável por buscar dados para o dashboard com base em filtros específ
 
 ## Fluxo
 1.  Recebe os parâmetros de filtro no corpo (body) da requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/dashboard/get/infos/search` com os filtros recebidos.
 4.  Retorna os dados consolidados para o dashboard.
 5.  Em caso de falha na autenticação ou erro na API, retorna uma mensagem e o status de erro apropriado.

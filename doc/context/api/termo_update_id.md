@@ -9,7 +9,7 @@ Rota responsável por atualizar o status de aceitação dos termos de serviço p
 ## Fluxo
 1.  Recebe o `id` do usuário na URL.
 2.  Recebe um corpo (body) de requisição em formato JSON contendo o status do termo (a chave deve ser `termoAceito`).
-3.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+3.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 4.  Se não houver sessão, retorna um erro 401.
 5.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/user/aceitar/{id}`.
 6.  O corpo da requisição para o Strapi é modificado para `{"termo": valor}`.

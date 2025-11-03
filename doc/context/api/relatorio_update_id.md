@@ -8,7 +8,7 @@ Rota responsável por atualizar parcialmente um registro de `relatorio` específ
 
 ## Fluxo
 1.  Recebe o `id` do relatório na URL e os dados para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, a sessão atual é explicitamente deletada (`DeleteSession`) e um erro 401 é retornado.
 4.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/relatorio/{id}` com os novos dados.
 5.  Se a atualização for bem-sucedida, invalida o cache de dados associado à tag `relatorio-all`.

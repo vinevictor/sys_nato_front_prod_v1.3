@@ -8,7 +8,7 @@ Rota responsável por buscar uma lista de empreendimentos filtrada por um ID esp
 
 ## Fluxo
 1.  Recebe um `id` como parâmetro de filtro na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/empreendimento/filter/{id}`.
 4.  Retorna a lista de empreendimentos que correspondem ao filtro.
 5.  Em caso de falha, retorna uma mensagem e o status de erro apropriado.

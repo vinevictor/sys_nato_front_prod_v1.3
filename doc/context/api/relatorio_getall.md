@@ -8,7 +8,7 @@ Rota responsável por buscar dados numéricos e estatísticos gerais para os rel
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, a sessão atual é explicitamente deletada (`DeleteSession`) e um erro 401 é retornado.
 4.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/relatorio/numeros/geral`.
 5.  A requisição utiliza caching do Next.js, associando os dados à tag `relatorio-all` e definindo um tempo de revalidação de 30 minutos (`revalidate: 60 * 30`).

@@ -8,7 +8,7 @@ Rota responsável por buscar os dados de uma construtora específica, identifica
 
 ## Fluxo
 1.  Recebe o `id` da construtora na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/construtora/{id}`.
 4.  Gera um hash MD5 (ETag) a partir do corpo da resposta.
 5.  Verifica o header `If-None-Match` da requisição do cliente. Se o ETag corresponder, retorna `304 Not Modified`, indicando que o cliente pode usar a versão em cache.

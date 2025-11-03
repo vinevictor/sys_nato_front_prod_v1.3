@@ -8,7 +8,7 @@ Rota responsável por buscar todas as instâncias de tags associadas a uma `soli
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, retorna um erro 401.
 4.  Se autenticado, envia uma requisição `GET` para a API do Strapi no endpoint `/tag/solicitacao/{id}`.
 5.  Retorna a lista de tags associadas àquela solicitação.

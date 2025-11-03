@@ -12,7 +12,7 @@ Rota genérica para upload de arquivos. Ela recebe um arquivo e um tipo, e encam
 ## Fluxo
 1.  Recebe uma requisição `POST` com dados de formulário (`formData`).
 2.  Extrai o arquivo (`file`) e o tipo do documento (`type`) do formulário.
-3.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+3.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 4.  Constrói dinamicamente a URL do backend usando o `type` fornecido (ex: `/file/rg_frente`).
 5.  Se autenticado, envia o arquivo para a API do Strapi usando `multipart/form-data`.
 6.  Retorna a resposta da API do Strapi, que geralmente contém os detalhes do arquivo salvo.

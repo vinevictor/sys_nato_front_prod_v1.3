@@ -8,7 +8,7 @@ Rota responsável por buscar todas as construtoras cadastradas no sistema.
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se a sessão não for válida, a sessão é deletada e retorna `401 Unauthorized`.
 4.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/construtora`.
 5.  A requisição utiliza caching com revalidação a cada 30 minutos (`revalidate: 60 * 30`) e a tag `construtora-all`.

@@ -8,7 +8,7 @@ Rota responsável por buscar os detalhes ou o status de aceitação dos termos d
 
 ## Fluxo
 1.  Recebe o `id` do usuário na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, retorna um erro 401.
 4.  Se autenticado, envia uma requisição `GET` para a API do Strapi no endpoint `/user/termos/{id}`.
 5.  Retorna a resposta da API do Strapi, que deve conter os dados do termo para o usuário solicitado.

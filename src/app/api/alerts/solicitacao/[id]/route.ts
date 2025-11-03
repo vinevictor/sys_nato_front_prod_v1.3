@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 

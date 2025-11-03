@@ -1,10 +1,10 @@
 import TagsClientComponent from "@/components/tagsClient/RenderComponent";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { Session } from "@/types/session";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
+// Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServerApi)
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -54,7 +54,7 @@ type TagType = {
  * @component
  */
 export default async function Tags() {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
 
   if (!session) {
     redirect("/home");

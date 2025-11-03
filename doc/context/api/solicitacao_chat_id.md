@@ -8,7 +8,7 @@ Rota responsável por adicionar uma nova mensagem ao chat de uma `solicitacao` e
 
 ## Fluxo
 1.  Recebe o `id` da solicitação na URL e os dados da mensagem no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PATCH` para a API do Strapi no endpoint `/solicitacao/chat/{id}` com os dados da mensagem.
 4.  Retorna um status 200 em caso de sucesso, sem reenviar os dados da resposta do backend.
 5.  Em caso de falha, retorna uma mensagem e o status de erro apropriado.

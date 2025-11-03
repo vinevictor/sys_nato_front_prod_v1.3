@@ -8,7 +8,7 @@ Rota responsável por buscar a lista completa de todas as tags disponíveis no s
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/tag-list`.
 4.  Retorna a lista de tags encontradas.
 5.  Em caso de falha, retorna uma mensagem de erro.

@@ -8,7 +8,7 @@ Rota responsável por atualizar completamente (PUT) um registro `financeiro` esp
 
 ## Fluxo
 1.  Recebe o `id` do registro financeiro na URL e os dados completos para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PUT` para a API do Strapi no endpoint `/financeiro/{id}` com os novos dados.
 4.  Se a atualização for bem-sucedida, invalida o cache de dados associado à tag `financeira-all`.
 5.  Retorna uma mensagem de sucesso junto com os dados do registro atualizado.

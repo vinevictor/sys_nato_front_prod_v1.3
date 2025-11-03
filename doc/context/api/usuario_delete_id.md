@@ -8,7 +8,7 @@ Rota responsável por excluir um usuário específico do sistema.
 
 ## Fluxo
 1.  Recebe o `id` do usuário a ser excluído na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/user/delete/{id}`.
 4.  Após a exclusão bem-sucedida, invalida as tags de cache `usuarios_list` e `Usuarios-list-page` para garantir que as listas de usuários na interface sejam atualizadas.
 5.  Retorna a resposta da API do Strapi.

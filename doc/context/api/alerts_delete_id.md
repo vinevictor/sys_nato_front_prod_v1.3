@@ -8,7 +8,7 @@ Rota responsável por excluir um alerta específico, identificado pelo seu ID.
 
 ## Fluxo
 1.  Recebe o `id` do alerta na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Verifica se o usuário possui a permissão específica para excluir alertas (`session.user?.role?.alert`).
 4.  Se autenticado e autorizado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/alert/delete/{id}`.
 5.  Após a exclusão bem-sucedida, invalida o cache do Next.js para a tag `alert-geral-all` para garantir que a lista geral de alertas seja atualizada.

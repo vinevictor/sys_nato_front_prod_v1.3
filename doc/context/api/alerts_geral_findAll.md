@@ -8,7 +8,7 @@ Rota responsável por buscar todos os alertas gerais cadastrados no sistema.
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Verifica se o usuário possui a permissão específica para ver alertas (`session.user?.role?.alert`). Se não tiver, retorna um array vazio (status 200).
 4.  Se autenticado e autorizado, envia uma requisição GET para a API do Strapi no endpoint `/alert`.
 5.  A requisição utiliza caching com revalidação a cada 30 minutos e a tag `alert-geral-all`.

@@ -8,7 +8,7 @@ Rota responsável por registrar um novo empreendimento no sistema.
 
 ## Fluxo
 1.  Recebe os dados do novo empreendimento no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, modifica o corpo da requisição, garantindo que o campo `vendedores` seja uma lista vazia (`vendedores: []`).
 4.  Envia uma requisição `POST` para a API do Strapi no endpoint `/empreendimento` com os dados tratados.
 5.  Se a criação for bem-sucedida, invalida o cache de dados associado à tag `empreendimento-all` usando `revalidateTag`.

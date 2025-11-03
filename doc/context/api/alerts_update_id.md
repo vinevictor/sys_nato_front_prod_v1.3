@@ -8,7 +8,7 @@ Rota responsável por atualizar um alerta específico, identificado pelo seu ID.
 
 ## Fluxo
 1.  Recebe o `id` do alerta na URL e os dados para atualização no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `PUT` para a API do Strapi no endpoint `/alert/update/{id}` com os novos dados.
 4.  Retorna a resposta da API do Strapi, que contém o alerta atualizado.
 5.  Em caso de falha na autenticação ou erro na API, retorna uma mensagem e o status de erro apropriado.

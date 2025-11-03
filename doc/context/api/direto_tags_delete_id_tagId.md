@@ -10,7 +10,7 @@ Rota responsável por excluir uma associação entre um registro "direto" e uma 
 1.  Recebe dois parâmetros na URL: `id` e `tagId`.
 2.  **O parâmetro `id` é ignorado pela lógica da rota.**
 3.  O parâmetro `tagId` é usado como o ID da associação `direto-tag` a ser excluída.
-4.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+4.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 5.  Se autenticado, envia uma requisição `DELETE` para a API do Strapi no endpoint `/direto-tag/{tagId}`.
 6.  Retorna a resposta da API do Strapi.
 7.  Em caso de falha, retorna uma mensagem de erro.

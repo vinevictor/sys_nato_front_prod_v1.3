@@ -1,9 +1,7 @@
-import { GetSessionServerApi } from "@/lib/auth_confg";
-
-// Esta rota depende de autenticação baseada em sessão (cookies/token),
-// por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
-export const dynamic = "force-dynamic";
+import { GetSessionServerApi, updateAndCreateRoleCache } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
@@ -23,19 +21,22 @@ export async function GET(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.token}`,
-        },
-        next: {
-          // revalida a cada 1 minuto
-          revalidate: 1200,
+          Authorization: `Bearer ${session.token}`,
         },
       }
     );
 
-    if (!reqest.ok) {
-      return new NextResponse("Invalid credentials", { status: 401 });
-    }
     const data = await reqest.json();
+    if (!reqest.ok) {
+      return new NextResponse(data.message || "Invalid credentials", { status: 401 });
+    }
+
+    try {
+      await updateAndCreateRoleCache(session.token, Number(id));
+    } catch (error) {
+      console.log("🚀 ~ error:", error);
+    }
+
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     console.log("🚀 ~ error:", error);

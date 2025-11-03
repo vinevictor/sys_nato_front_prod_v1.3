@@ -8,7 +8,7 @@ Rota responsável por excluir um chamado de suporte específico, identificado pe
 
 ## Fluxo
 1. Recebe o parâmetro `id` na URL.
-2. Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2. Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3. Envia requisição DELETE para a API do Strapi `/chamado/{id}` com token de autenticação.
 4. Retorna o resultado da exclusão.
 5. Em caso de erro, retorna mensagem e status apropriados.

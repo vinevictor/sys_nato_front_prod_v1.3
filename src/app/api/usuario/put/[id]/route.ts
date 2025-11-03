@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 
 // Esta rota depende de autenticação baseada em sessão (cookies/token),
 // por isso precisa ser marcada como dinâmica para evitar erro DYNAMIC_SERVER_USAGE no build.
@@ -15,7 +15,7 @@ export async function PUT(
     const body = await request.json();
     console.log("🚀 ~ body:", body)
 
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
 
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });

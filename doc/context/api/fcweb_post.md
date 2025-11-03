@@ -8,7 +8,7 @@ Rota responsável por criar um novo registro de "ficha" no sistema interno (Stra
 
 ## Fluxo
 1.  Recebe os dados da nova ficha no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/ficha` com os dados recebidos.
 4.  Retorna uma mensagem de sucesso junto com os dados da ficha criada.
 5.  Em caso de falha, retorna uma mensagem e o status de erro apropriado.

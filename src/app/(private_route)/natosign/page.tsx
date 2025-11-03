@@ -1,5 +1,5 @@
 import NatosignHome from "@/components/natosign";
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Natosign() {
-  const session = await GetSessionServer();
+  const session = await GetSessionServerApi();
   if (session?.user?.hierarquia !== "ADM" && !session?.user?.role?.natosign) {
     redirect("/home");
   }

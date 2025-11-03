@@ -8,7 +8,7 @@ Rota responsável por obter a contagem total de solicitações classificadas com
 
 ## Fluxo
 1.  Recebe a requisição GET.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/solicitacao/list/now/cont`.
 4.  A requisição inclui caching com revalidação a cada 30 minutos (`revalidate: 60 * 30`) e a tag `alertanow-list-cont`.
 5.  Retorna a contagem de solicitações fornecida pelo backend.

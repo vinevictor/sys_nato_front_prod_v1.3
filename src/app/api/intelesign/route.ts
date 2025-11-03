@@ -1,11 +1,11 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     if (!session?.token) {
       return new Response("Unauthorized", { status: 401 });
     }

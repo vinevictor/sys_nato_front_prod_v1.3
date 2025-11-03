@@ -8,7 +8,7 @@ Rota responsável por buscar uma lista de registros "diretos", repassando quaisq
 
 ## Fluxo
 1.  Recebe a requisição GET, incluindo quaisquer parâmetros de consulta na URL (ex: `?pagina=1&status=pendente`).
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, constrói uma nova URL para a API do Strapi no endpoint `/direto`, preservando todos os parâmetros de consulta da requisição original.
 4.  Envia uma requisição GET para a URL construída do Strapi.
 5.  Recebe a resposta do Strapi (que se espera ser um array de registros).

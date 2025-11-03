@@ -8,7 +8,7 @@ Rota responsável por pesquisar ou filtrar registros de `relatorio` com base em 
 
 ## Fluxo
 1.  Recebe os critérios de pesquisa no corpo (body) da requisição.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se não houver sessão, a sessão atual é explicitamente deletada (`DeleteSession`) e um erro 401 é retornado.
 4.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/relatorio/pesquisa` com os critérios de pesquisa no corpo.
 5.  Retorna a lista de relatórios que correspondem aos critérios de pesquisa.

@@ -6,22 +6,11 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { username, password, ip, geolocation } = body ?? {};
+    const { username, password } = body ?? {};
 
     if (!username || !password) {
       return NextResponse.json({ message: "Credenciais inválidas." }, { status: 400 });
     }
-
-    const metadataHeaders: Record<string, string> = {};
-
-    if (typeof ip === "string" && ip.length > 0) {
-      metadataHeaders["x-client-ip"] = ip;
-    }
-
-    if (geolocation && typeof geolocation === "object") {
-      metadataHeaders["x-client-geo"] = JSON.stringify(geolocation);
-    }
-
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/auth`;
     const res = await fetch(
       url,
@@ -41,14 +30,17 @@ export async function POST(request: Request) {
     const { token, user } = data;
 
     // Cria sessão principal
-    await CreateSessionServer({ token, user });
+    const sessionResult = await CreateSessionServer({ token, user });
+    if (!sessionResult.success) {
+      console.error("Erro ao criar sessão:", sessionResult.error);
+      return NextResponse.json({ message: "Erro ao criar sessão do usuário" }, { status: 500 });
+    }
 
     // Cria cache de role (cookie session-role) - Route Handler pode modificar cookies
-    try {
-      await updateAndCreateRoleCache(token, user.id);
-    } catch (error) {
-      console.error("Erro ao criar cache de role:", error);
-      // Continua mesmo se falhar, pois será criado na próxima requisição
+    const roleResult = await updateAndCreateRoleCache(token, user.id);
+    if (!roleResult.success) {
+      console.warn("Aviso ao criar cache de role:", roleResult.error);
+      // Continua mesmo se falhar, não é crítico
     }
 
     return NextResponse.json({ message: "Login realizado com sucesso" }, { status: 200 });

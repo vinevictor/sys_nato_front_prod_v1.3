@@ -1,4 +1,4 @@
-import { GetSessionServer } from "@/lib/auth_confg";
+import { GetSessionServerApi } from "@/lib/auth_confg";
 import { NextRequest, NextResponse } from "next/server";
 
 // Esta rota depende de autenticação baseada em sessão (cookies/token),
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await GetSessionServer();
+    const session = await GetSessionServerApi();
     const { searchParams } = new URL(request.url);
     const FinanceiroId = searchParams.get("financeiro");
     const ConstrutoraId = searchParams.get("construtora");

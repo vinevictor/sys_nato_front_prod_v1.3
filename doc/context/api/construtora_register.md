@@ -8,7 +8,7 @@ Rota responsável por registrar uma nova construtora (ou empresa) no sistema.
 
 ## Fluxo
 1.  Recebe os dados da nova construtora no corpo (body) da requisição em formato JSON.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/empresa` com os dados recebidos.
 4.  Após o registro bem-sucedido, invalida o cache do Next.js para a tag `construtora-all` para garantir que a lista de construtoras seja atualizada.
 5.  Retorna uma mensagem de sucesso e os dados do registro criado.

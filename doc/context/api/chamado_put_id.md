@@ -8,7 +8,7 @@ Rota responsável por atualizar um chamado de suporte específico, identificado 
 
 ## Fluxo
 1. Recebe o parâmetro `id` na URL e os dados atualizados no body da requisição (JSON).
-2. Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2. Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3. Envia requisição PATCH para a API do Strapi `/chamado/atualizar/{id}` com token de autenticação.
 4. Retorna o resultado da atualização.
 5. Em caso de erro, retorna mensagem e status apropriados.

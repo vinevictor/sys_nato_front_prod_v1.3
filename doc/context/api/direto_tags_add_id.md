@@ -9,7 +9,7 @@ Rota responsável por associar uma tag a um registro "direto".
 ## Fluxo
 1.  Recebe o `id` da tag na URL (`params.id`).
 2.  Recebe o `id` do registro "direto" como um parâmetro de consulta (`query param`) na URL (ex: `?diretoId=15`).
-3.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+3.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 4.  Se autenticado, envia uma requisição `POST` para a API do Strapi no endpoint `/direto-tag`.
 5.  O corpo da requisição para o Strapi contém o `diretoId` e o `tagId` (que é o `id` da URL).
 6.  Retorna a resposta da API do Strapi, que representa a nova associação criada.

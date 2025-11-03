@@ -8,7 +8,7 @@ Rota responsável por buscar os dados de uma financeira específica, identificad
 
 ## Fluxo
 1.  Recebe o `id` da financeira na URL.
-2.  Verifica a sessão do usuário autenticado (`GetSessionServer`).
+2.  Verifica a sessão do usuário autenticado (`GetSessionServerApi`).
 3.  Se autenticado, envia uma requisição GET para a API do Strapi no endpoint `/direto/financeiras/{id}`.
 4.  A requisição utiliza caching (`force-cache`) com revalidação a cada 30 minutos (`revalidate: 60 * 30`).
 5.  Retorna os dados da financeira.
