@@ -34,30 +34,80 @@ function isRoleCache(value: unknown): value is RoleCache {
 }
 
 export async function OpenSessionToken(token: string) {
-  const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
-  const { payload } = await jose.jwtVerify(token, secret);
-  return payload;
+  if (!token || typeof token !== "string" || token.trim() === "") {
+    throw new Error("Token inválido ou vazio");
+  }
+
+  const jwtKey = process.env.JWT_SIGNING_PRIVATE_KEY;
+  if (!jwtKey) {
+    throw new Error("JWT_SIGNING_PRIVATE_KEY não configurada no ambiente");
+  }
+
+  try {
+    const secret = new TextEncoder().encode(jwtKey);
+    const { payload } = await jose.jwtVerify(token, secret);
+    return payload;
+  } catch (error) {
+    console.error("Erro ao verificar token JWT:", error);
+    throw new Error(`Falha na verificação do token: ${error instanceof Error ? error.message : "Erro desconhecido"}`);
+  }
 }
 
-export async function CreateSessionServer(payload = {}) {
+export async function CreateSessionServer(payload: Record<string, any> = {}): Promise<{ success: boolean; error?: string }> {
   try {
-    
-    const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
+    // Validação do ambiente
+    const jwtKey = process.env.JWT_SIGNING_PRIVATE_KEY;
+    if (!jwtKey) {
+      const errorMsg = "JWT_SIGNING_PRIVATE_KEY não configurada no ambiente";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Validação do payload
+    if (!payload || typeof payload !== "object") {
+      const errorMsg = "Payload inválido para criação de sessão";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Criação do JWT
+    const secret = new TextEncoder().encode(jwtKey);
     const jwt = await new jose.SignJWT(payload)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
-      .setExpirationTime("10h")
+      .setExpirationTime("12h")
       .sign(secret);
-  
+
+    if (!jwt) {
+      const errorMsg = "Falha ao gerar token JWT";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Verificação do token gerado
     const { exp } = await OpenSessionToken(jwt);
-  
-    (await cookies()).set("session-token", jwt, {
-      expires: (exp as number) * 1000,
+
+    if (!exp || typeof exp !== "number") {
+      const errorMsg = "Token gerado sem data de expiração válida";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Definição do cookie
+    const cookieStore = cookies();
+    cookieStore.set("session-token", jwt, {
+      expires: new Date((exp as number) * 1000),
       path: "/",
       httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     });
+
+    return { success: true };
   } catch (error) {
-    console.error("Erro ao criar token de sessão:", error);
+    const errorMsg = `Erro ao criar token de sessão: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
+    console.error(errorMsg, error);
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -172,11 +222,32 @@ async function fetchAndCacheUserData(
   user: ExtendedAuthUser,
 ) {
   try {
+    // Validação dos parâmetros
+    if (!token || typeof token !== "string" || token.trim() === "") {
+      console.warn("Token inválido ao buscar dados do usuário");
+      applyDefaultUserValues(user);
+      return;
+    }
+
+    if (!userId || typeof userId !== "number" || userId <= 0) {
+      console.warn("ID de usuário inválido ao buscar dados");
+      applyDefaultUserValues(user);
+      return;
+    }
+
     const apiData = await fetchUserData(token, userId);
+
+    if (!apiData) {
+      console.warn("Dados da API não retornados");
+      applyDefaultUserValues(user);
+      return;
+    }
+
     updateUserDataFromApi(user, apiData);
-    
+
     // Tenta criar cache em background sem bloquear
-    CreateRole(createRolePayload(apiData)).catch((err) => 
+    const rolePayload = createRolePayload(apiData);
+    CreateRole(rolePayload).catch((err) =>
       console.warn("Aviso: Não foi possível criar session-role:", err)
     );
   } catch (error) {
@@ -192,12 +263,28 @@ async function fetchAndCacheUserData(
 export async function GetSessionServer(): Promise<SessionServer | null> {
   try {
     // Validação do token principal
-    const token = cookies().get("session-token");
-    if (!token) return null;
+    const cookieStore = cookies();
+    const token = cookieStore.get("session-token");
 
-    const payload = await OpenSessionToken(token.value);
+    if (!token || !token.value || token.value.trim() === "") {
+      console.warn("Token de sessão não encontrado ou vazio");
+      return null;
+    }
+
+    // Validação do payload do token
+    let payload;
+    try {
+      payload = await OpenSessionToken(token.value);
+    } catch (error) {
+      console.error("Erro ao abrir token de sessão:", error);
+      // Token inválido ou expirado - limpa cookies
+      await DeleteSession().catch(() => {});
+      return null;
+    }
+
     if (!isValidSessionPayload(payload)) {
       console.warn("Aviso: Payload de sessão inválido recebido.");
+      await DeleteSession().catch(() => {});
       return null;
     }
 
@@ -206,7 +293,14 @@ export async function GetSessionServer(): Promise<SessionServer | null> {
       user: { ...payload.user } as ExtendedAuthUser,
     };
 
-    const roleData = parseRoleCookie(cookies().get("session-role")?.value);
+    // Validação adicional do usuário
+    if (!session.user.id || typeof session.user.id !== "number") {
+      console.error("ID do usuário inválido na sessão");
+      await DeleteSession().catch(() => {});
+      return null;
+    }
+
+    const roleData = parseRoleCookie(cookieStore.get("session-role")?.value);
     const userId = session.user.id;
 
     if (roleData) {
@@ -214,10 +308,13 @@ export async function GetSessionServer(): Promise<SessionServer | null> {
       return session;
     }
 
+    // Busca dados da API apenas se não houver cache
     await fetchAndCacheUserData(session.token, userId, session.user);
     return session;
   } catch (error) {
     console.error("Erro crítico na sessão:", error);
+    // Em caso de erro crítico, limpa a sessão
+    await DeleteSession().catch((e) => console.error("Erro ao limpar sessão:", e));
     return null;
   }
 }
@@ -244,61 +341,149 @@ export async function GetSessionServerApi() {
 
 // Função auxiliar para buscar dados do usuário (sem modificar cookies)
 async function fetchUserData(token: string, id: number) {
+  // Validação da URL da API
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL;
+  if (!apiUrl) {
+    throw new Error("NEXT_PUBLIC_STRAPI_API_URL não configurada no ambiente");
+  }
+
+  // Validação dos parâmetros
+  if (!token || typeof token !== "string" || token.trim() === "") {
+    throw new Error("Token inválido para buscar dados do usuário");
+  }
+
+  if (!id || typeof id !== "number" || id <= 0) {
+    throw new Error("ID de usuário inválido para buscar dados");
+  }
+
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        next: {
-          tags: ["user-get"],
-        },
-      }
-    );
-    const retorno = await response.json();
+    const url = `${apiUrl}/user/get/${id}`;
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      next: {
+        tags: ["user-get"],
+      },
+      cache: "no-store", // Evita cache de dados sensíveis
+    });
+
     if (!response.ok) {
-      throw new Error(retorno.message || "Erro ao buscar dados do usuário");
+      const errorData = await response.json().catch(() => ({ message: "Erro desconhecido" }));
+      throw new Error(
+        errorData.message ||
+        `Erro ${response.status}: ${response.statusText}`
+      );
     }
+
+    const retorno = await response.json();
+
+    if (!retorno || typeof retorno !== "object") {
+      throw new Error("Resposta da API inválida");
+    }
+
     return retorno;
   } catch (error) {
-    console.error("Erro ao buscar dados do usuário:", error);
+    const errorMsg = error instanceof Error ? error.message : "Erro desconhecido";
+    console.error(`Erro ao buscar dados do usuário (ID: ${id}):`, errorMsg);
     throw error;
   }
 }
 
 // Função para criar cookie de role (apenas em Server Actions/Route Handlers)
-export async function updateAndCreateRoleCache(token: string, id: number) {
+export async function updateAndCreateRoleCache(token: string, id: number): Promise<{ success: boolean; data?: any; error?: string }> {
   try {
-    if (token && id) {
-      const dataRole = await fetchUserData(token, id);
-      await CreateRole({
-        role: dataRole.role || null,
-        reset_password: dataRole.reset_password || false,
-        termos: dataRole.termos || false,
-        status: dataRole.status || false,
-        hierarquia: dataRole.hierarquia || "USER",
-        construtora: dataRole.construtoras || [],
-        empreendimento: dataRole.empreendimentos || [],
-        Financeira: dataRole.financeiros || [],
-      });
-      return dataRole;
+    // Validação dos parâmetros
+    if (!token || typeof token !== "string" || token.trim() === "") {
+      const errorMsg = "Token inválido ou vazio";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
     }
+
+    if (!id || typeof id !== "number" || id <= 0) {
+      const errorMsg = "ID do usuário inválido";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Busca dados do usuário
+    const dataRole = await fetchUserData(token, id);
+
+    if (!dataRole) {
+      const errorMsg = "Dados do usuário não encontrados";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Cria o cache de role
+    const rolePayload = createRolePayload(dataRole);
+    const roleResult = await CreateRole(rolePayload);
+
+    if (!roleResult.success) {
+      console.error("Falha ao criar cache de role:", roleResult.error);
+      return { success: false, error: roleResult.error };
+    }
+
+    return { success: true, data: dataRole };
   } catch (error) {
-    console.error("Erro ao atualizar cache de role:", error);
-    throw error;
+    const errorMsg = `Erro ao atualizar cache de role: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
+    console.error(errorMsg, error);
+    return { success: false, error: errorMsg };
   }
 }
 
-export async function CreateRole(role: any) {
-  // Simplificado: usa JSON.stringify em vez de JWT
-  const roleJson = JSON.stringify(role);
+export async function CreateRole(role: any): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Validação do role
+    if (!role || typeof role !== "object") {
+      const errorMsg = "Dados de role inválidos";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
 
-  cookies().set("session-role", roleJson, {
-    expires: new Date(Date.now() + 20 * 60 * 1000), // 20 minutos
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-  });
+    // Validação dos campos obrigatórios
+    if (!("reset_password" in role) || typeof role.reset_password !== "boolean") {
+      const errorMsg = "Campo reset_password obrigatório e deve ser boolean";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    if (!("termos" in role) || typeof role.termos !== "boolean") {
+      const errorMsg = "Campo termos obrigatório e deve ser boolean";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    if (!("status" in role) || typeof role.status !== "boolean") {
+      const errorMsg = "Campo status obrigatório e deve ser boolean";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Serialização do role
+    const roleJson = JSON.stringify(role);
+
+    if (!roleJson || roleJson === "null" || roleJson === "undefined") {
+      const errorMsg = "Falha ao serializar dados de role";
+      console.error(errorMsg);
+      return { success: false, error: errorMsg };
+    }
+
+    // Definição do cookie
+    const cookieStore = cookies();
+    cookieStore.set("session-role", roleJson, {
+      expires: new Date(Date.now() + 20 * 60 * 1000), // 20 minutos
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return { success: true };
+  } catch (error) {
+    const errorMsg = `Erro ao criar cookie de role: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
+    console.error(errorMsg, error);
+    return { success: false, error: errorMsg };
+  }
 }
