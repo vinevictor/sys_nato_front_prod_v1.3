@@ -40,6 +40,7 @@ export async function OpenSessionToken(token: string) {
 }
 
 export async function CreateSessionServer(payload = {}) {
+  const cookiesStorage = await cookies();
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
   const jwt = await new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
@@ -49,7 +50,7 @@ export async function CreateSessionServer(payload = {}) {
 
   const { exp } = await OpenSessionToken(jwt);
 
-  cookies().set("session-token", jwt, {
+  cookiesStorage.set("session-token", jwt, {
     expires: (exp as number) * 1000,
     path: "/",
     httpOnly: true,
@@ -187,7 +188,7 @@ async function fetchAndCacheUserData(
 export async function GetSessionServer(): Promise<SessionServer | null> {
   try {
     // Validação do token principal
-    const token = cookies().get("session-token");
+    const token = await cookies().get("session-token");
     if (!token) return null;
 
     const payload = await OpenSessionToken(token.value);
@@ -225,7 +226,7 @@ export async function DeleteSession() {
 
 export async function GetSessionServerApi() {
   try {
-    const token = cookies().get("session-token");
+    const token = await cookies().get("session-token");
     if (!token) {
       return null;
     }
@@ -288,7 +289,13 @@ export async function CreateRole(role: any) {
   // Simplificado: usa JSON.stringify em vez de JWT
   const roleJson = JSON.stringify(role);
 
-  cookies().set("session-role", roleJson, {
+  const CookieStorage = cookies();
+  const Old = CookieStorage.get("session-role");
+  if (Old) {
+    CookieStorage.delete("session-role");
+  }
+
+   CookieStorage.set("session-role", roleJson, {
     expires: new Date(Date.now() + 20 * 60 * 1000), // 20 minutos
     path: "/",
     httpOnly: true,
