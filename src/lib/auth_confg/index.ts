@@ -266,18 +266,20 @@ async function fetchUserData(token: string, id: number) {
 // Função para criar cookie de role (apenas em Server Actions/Route Handlers)
 export async function updateAndCreateRoleCache(token: string, id: number) {
   try {
-    const dataRole = await fetchUserData(token, id);
-    await CreateRole({
-      role: dataRole.role || null,
-      reset_password: dataRole.reset_password || false,
-      termos: dataRole.termos || false,
-      status: dataRole.status || false,
-      hierarquia: dataRole.hierarquia || "USER",
-      construtora: dataRole.construtoras || [],
-      empreendimento: dataRole.empreendimentos || [],
-      Financeira: dataRole.financeiros || [],
-    });
-    return dataRole;
+    if (token && id) {
+      const dataRole = await fetchUserData(token, id);
+      await CreateRole({
+        role: dataRole.role || null,
+        reset_password: dataRole.reset_password || false,
+        termos: dataRole.termos || false,
+        status: dataRole.status || false,
+        hierarquia: dataRole.hierarquia || "USER",
+        construtora: dataRole.construtoras || [],
+        empreendimento: dataRole.empreendimentos || [],
+        Financeira: dataRole.financeiros || [],
+      });
+      return dataRole;
+    }
   } catch (error) {
     console.error("Erro ao atualizar cache de role:", error);
     throw error;
