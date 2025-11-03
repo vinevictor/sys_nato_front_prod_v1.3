@@ -1,7 +1,7 @@
 "use client";
 import Loading from "@/app/loading";
 import { SelectPgComponent } from "@/components/home/imputs/selectPg";
-import { SessionServer } from "@/types/session";
+import { Session, SessionServer } from "@/types/session";
 import {
   Box,
   Button,
@@ -28,12 +28,12 @@ import { TableComponentNatosign } from "./lista";
 
 interface DadoCompomentListProps {
   dados: natosign.NatosignGetType | null;
-  session: SessionNext.Server | null;
+  session: Session.SessionServer | null;
 }
 
 const FirlterData = async (
   { nome, status, cca_id, id, pagina, data_inicio, data_fim }: any,
-  session: SessionServer | SessionNext.Server | null
+  session: Session.SessionServer | null
 ) => {
   const params = new URLSearchParams();
   if (nome) params.append("nome", nome);

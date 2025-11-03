@@ -19,28 +19,22 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconType } from "react-icons";
 import {
   FiChevronLeft,
   FiChevronRight,
-  FiCompass,
-  FiHome,
   FiMenu,
-  FiSettings,
-  FiStar,
-  FiTrendingUp,
   FiX,
 } from "react-icons/fi";
 import NotificationMenu from "./NotificationMenu";
 import UserProfilePopover from "./UserProfilePopover";
 import { defaultNavItems } from "@/data/nav";
 import { NavItem } from "@/types/navitem";
-import { useSession } from "@/hook/useSession";
 import AdministrativoMenu from "./Administrativo";
 import FinanceiroButton from "./financeiro";
 import MetricsButton from "./metricas";
 import ChamadosButton from "./chamados";
 import NowButton from "./Now";
+import { Session } from "@/types/session";
 
 /**
  * Props do componente SidebarNavigation
@@ -49,7 +43,7 @@ import NowButton from "./Now";
  * @param onCollapse - Callback quando sidebar é colapsada (opcional)
  */
 interface SidebarNavigationProps {
-  session: SessionNext.Client | null;
+  session: Session.AuthUser | null;
   navItems?: NavItem[];
   onCollapse?: (collapsed: boolean) => void;
 }
@@ -169,7 +163,7 @@ export default function SidebarNavigation({
  * Compartilhado entre versão desktop e mobile
  */
 interface SidebarContentProps {
-  session: SessionNext.Client | null;
+  session: Session.AuthUser | null;
   navItems: NavItem[];
   onClose: () => void;
   isMobile?: boolean;
@@ -276,7 +270,7 @@ interface NavItemComponentProps {
   item: NavItem;
   isActive: boolean;
   onClose?: () => void;
-  session: SessionNext.Client | null;
+  session: Session.AuthUser | null;
 }
 
 function NavItemComponent({

@@ -1,6 +1,8 @@
 import TagsClientComponent from "@/components/tagsClient/RenderComponent";
 import { GetSessionServer } from "@/lib/auth_confg";
+import { Session } from "@/types/session";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 // Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
 export const dynamic = "force-dynamic";
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
   title: "Tags",
 };
 
-const getTags = async (session: SessionNext.Server) => {
+const getTags = async (session: Session.SessionServer) => {
   try {
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/tag-list`;
     const req = await fetch(url, {
@@ -52,8 +54,13 @@ type TagType = {
  * @component
  */
 export default async function Tags() {
-  const session = (await GetSessionServer()) as SessionNext.Server;
-  const tags = (await getTags(session)) as TagType[];
+  const session = await GetSessionServer();
+
+  if (!session) {
+    redirect("/home");
+  }
+
+  const tags = await getTags(session);
 
   return (
     <>

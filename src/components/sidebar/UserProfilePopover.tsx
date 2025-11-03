@@ -27,8 +27,10 @@ import Link from "next/link";
  * Props do componente UserProfilePopover
  * @param session - Dados da sessão do usuário
  */
+import { Session } from "@/types/session";
+
 interface UserProfilePopoverProps {
-  session: SessionNext.Client | null;
+  session: Session.AuthUser | null;
 }
 
 /**

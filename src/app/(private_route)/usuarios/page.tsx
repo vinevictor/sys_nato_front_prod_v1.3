@@ -7,15 +7,16 @@ export const dynamic = "force-dynamic";
 export default async function Usuarios() {
   const session = await GetSessionServer();
 
+
   if (!session) {
-    redirect("/login");
+    redirect("/home");
   }
 
   const reqest = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.token}`,
+      Authorization: `Bearer ${session.token}`,
     },
     next: {
       tags: ["usuarios-list-page"],
@@ -23,6 +24,8 @@ export default async function Usuarios() {
   });
 
   const data = await reqest.json();
+
+  
   return (
     <>
       <UsuariosPage dados={data} />

@@ -11,7 +11,7 @@ async function ConstrutorasData() {
   const session = await GetSessionServer();
 
   if (!session) {
-    redirect("/login");
+    return redirect("/home");
   }
 
   try {

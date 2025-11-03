@@ -23,10 +23,11 @@ import MensagensChat from "../mensagensChat";
 import { DetalhesChamadoComponent } from "./detalhes";
 import { ImageComponent } from "./image";
 import { ImageGallery } from "./image/ImageGallery";
+import { Session } from "@/types/session";
 
 interface ChamadoProps {
   data: TypeChamado | null;
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 type TypeChamado = {

@@ -4,6 +4,7 @@ import { Box, Flex, Link, Text, chakra } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import SidebarNavigation from "./SidebarNavigation";
 import { PhoneIcon } from "@chakra-ui/icons";
+import { Session } from "@/types/session";
 
 /**
  * Props do SidebarLayout
@@ -11,7 +12,7 @@ import { PhoneIcon } from "@chakra-ui/icons";
  * @param children - Conteúdo da página
  */
 interface SidebarLayoutProps {
-  session: SessionNext.Client | null;
+  session: Session.AuthUser | null;
   children: React.ReactNode;
 }
 

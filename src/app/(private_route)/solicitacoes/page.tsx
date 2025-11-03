@@ -23,6 +23,7 @@ export const metadata: Metadata = {
  */
 export default async function Solicitacao() {
   const session = await GetSessionServer(); 
+  if (!session) return null;
   
   return (
     <Box

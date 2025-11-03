@@ -21,12 +21,13 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiAlertCircle, FiClock, FiUser } from "react-icons/fi";
+import { Session } from "@/types/session";
 
 /**
  * Interface para props do componente
  */
 interface NowButtonProps {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 /**

@@ -3,11 +3,12 @@ import { Box, Button, Flex, Heading, Text, Textarea } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { FiSend, FiMessageSquare } from "react-icons/fi";
 import React from "react";
+import { Session } from "@/types/session";
 
 interface MensagensProps {
   id: number;
   data: MensagemObj[];
-  session: SessionNext.Client;
+  session: Session.AuthUser;
   onSend: (message: MensagemObj[]) => void;
   disabled?: boolean;
 }

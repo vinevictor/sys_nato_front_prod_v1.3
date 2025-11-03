@@ -6,9 +6,10 @@ import { GetSessionServer } from "@/lib/auth_confg";
 import { DadoCompomentList } from "./lista";
 import { UserCompomentInfo } from "./user";
 import { solictacao } from "@/types/solicitacao";
+import { Session } from "@/types/session";
 
 const GetListaDados = async (
-  session: SessionNext.Server | null
+  session: Session.SessionServer | null
 ): Promise<solictacao.SolicitacaoGetType | null> => {
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao`;
   const user = await fetch(url, {

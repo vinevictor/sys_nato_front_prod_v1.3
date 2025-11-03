@@ -3,6 +3,7 @@ import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
+import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
 import {
   Box,
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const GetListaDados = async (
-  session: SessionNext.Server | null
+  session: Session.SessionServer | null
 ): Promise<solictacao.SolicitacaoGetType | null> => {
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao`;
   const user = await fetch(url, {
@@ -55,6 +56,7 @@ const GetListaDados = async (
  */
 export default async function HomePage() {
   const session = await GetSessionServer();
+
   const ListDados = await GetListaDados(session);
 
   return (

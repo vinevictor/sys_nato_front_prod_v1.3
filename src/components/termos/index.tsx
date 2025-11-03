@@ -16,9 +16,10 @@ import {
 import { useEffect, useState } from "react";
 import { FiFileText } from "react-icons/fi";
 import { useToast } from "@chakra-ui/react";
+import { Session } from "@/types/session";
 
 interface Props {
-  session: SessionNext.Client;
+  session: Session.AuthUser;
 }
 
 export default function ModalTermos({ session }: Props) {
