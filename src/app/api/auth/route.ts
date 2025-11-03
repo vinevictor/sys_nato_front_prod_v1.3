@@ -6,13 +6,13 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { username, password } = body;
+    
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/auth`;
     const res = await fetch(
       url,
       {
         method: "POST",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(body),
         headers: {
           "Content-Type": "application/json"
         }
