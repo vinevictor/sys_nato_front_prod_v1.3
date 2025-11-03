@@ -62,7 +62,7 @@ export async function UpdateUser(_: any, data: FormData) {
     username: usuario,
     telefone: telefone,
     email: email,
-    empreendimento: ListEmpreendimento,
+    empreendimento: ListEmpreendimento ,
     Financeira: ListFinanceiro,
     cargo: cargo,
     hierarquia: hierarquia,

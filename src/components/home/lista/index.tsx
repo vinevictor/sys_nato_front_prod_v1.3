@@ -267,6 +267,13 @@ export const DadoCompomentList = ({
     if (!session?.user) return;
 
     const loadData = async () => {
+      if (
+        session.user.hierarquia === "CCA" &&
+        session.user.empreendimento.length < 1
+      ) {
+        const [empreendimentos] = await Promise.all([fetchEmpreendimentoAll()]);
+        setDataEmpreendimento(empreendimentos);
+      }
       if (session.user.hierarquia === "ADM") {
         const [construtoras, empreendimentos, financeiros] = await Promise.all([
           fetchConstrutoraAll(),
