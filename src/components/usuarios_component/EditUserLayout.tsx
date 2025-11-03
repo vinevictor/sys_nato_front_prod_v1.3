@@ -18,6 +18,7 @@ import { MdEdit, MdPerson } from "react-icons/md";
 import { UpdateUser } from "@/actions/user/service";
 import Permissoes from "@/components/usuarios_component/permissoes";
 import { SaveBtm } from "@/implementes/cardCreateUpdate/butons/saveBtm";
+import { useRouter } from "next/navigation";
 
 interface EditUserLayoutProps {
   id: number;
@@ -38,6 +39,7 @@ interface EditUserLayoutProps {
  * @returns Layout completo de edição
  */
 export default function EditUserLayout({ id, data }: EditUserLayoutProps) {
+  const router = useRouter();
   return (
     <Container maxW="95%" py={{ base: 4, md: 6 }} px={{ base: 4, md: 6 }}>
       <VStack spacing={0} align="stretch" w="full">
@@ -215,6 +217,7 @@ export default function EditUserLayout({ id, data }: EditUserLayoutProps) {
                 size="md"
                 className="btn"
                 w={{ base: "full", sm: "auto" }}
+                onClick={() => router.back()}
               />
               <SaveBtm
                 type="submit"
