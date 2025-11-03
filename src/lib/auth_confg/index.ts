@@ -1,20 +1,6 @@
-// servidor: biblioteca de auth (removido 'use server')
 import type { Session, SessionServer } from "@/types/session";
 import * as jose from "jose";
 import { cookies } from "next/headers";
-
-/**
- * Tenta parsear um valor de cookie que pode ser uma string JSON.
- * Retorna o valor padrão se o valor for inválido ou o parse falhar.
- */
-function parseCookieValue<T>(value: string | undefined, defaultValue: T): T {
-  if (!value) return defaultValue;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return defaultValue;
-  }
-}
 
 export async function OpenSessionToken(token: string): Promise<Session.SessionServer | null> {
   if (!token || typeof token !== "string" || token.trim() === "") {
@@ -122,7 +108,6 @@ export async function GetSessionServerApi(): Promise<SessionServer | null> {
     console.warn("Token de sessão não encontrado ou vazio");
     return null;
   }
-
   const payload = await OpenSessionToken(session.value);
 
   if (!payload || typeof payload !== "object") {
@@ -130,20 +115,19 @@ export async function GetSessionServerApi(): Promise<SessionServer | null> {
     await DeleteSession().catch(() => { });
     return null;
   }
-  const role = cookieStore.get("session-role");
-  const empreendimentos = cookieStore.get("session-empreendimentos");
-  const construtoras = cookieStore.get("session-construtoras");
-  const financeiras = cookieStore.get("session-financeiras");
+  const usercahe = await updateAndCreateRoleCache(payload?.token, payload?.user.id);
 
+ 
 
   const sessionRetorno: SessionServer = {
     ...payload,
+    
     user: {
-      ...payload.user,
-      empreendimentos: parseCookieValue(empreendimentos?.value, []),
-      construtoras: parseCookieValue(construtoras?.value, []),
-      financeiras: parseCookieValue(financeiras?.value, []),
-      role: parseCookieValue(role?.value, {}),
+      ...payload.user, // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      empreendimento: usercahe?.empreendimento, 
+      construtora: usercahe?.construtora, 
+      Financeira: usercahe?.Financeira,
+      role: usercahe?.role,
     } as Session.AuthUser,
   };
 
@@ -161,9 +145,10 @@ export async function DeleteSession() {
  * e os armazena em cookies separados para evitar sobrecarregar o JWT principal.
  * Isso funciona como um cache de dados no lado do cliente.
  */
-export async function updateAndCreateRoleCache(token: string, userId: number): Promise<{ success: boolean; error?: string }> {
+export async function updateAndCreateRoleCache(token: string, userId: number): Promise<Session.AuthUser | null> {
   try {
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/get/${userId}`;
+    console.log("🚀 ~ updateAndCreateRoleCache ~ url:", url)
     const res = await fetch(url, {
       method: "GET",
       headers: {
@@ -176,25 +161,16 @@ export async function updateAndCreateRoleCache(token: string, userId: number): P
       const errorData = await res.json();
       const errorMsg = `Erro ao buscar dados do usuário para cache: ${errorData.message || res.statusText}`;
       console.error(errorMsg);
-      return { success: false, error: errorMsg };
+      return null;
     }
 
-    const data = await res.json();
-    const { role, empreendimentos, construtoras, financeiras } = data;
+    const data = await res.json()
 
-    const cookieStore = cookies();
-
-    // Armazena cada parte como uma string JSON no seu respectivo cookie
-    cookieStore.set("session-role", JSON.stringify(role || {}));
-    cookieStore.set("session-empreendimentos", JSON.stringify(empreendimentos || []));
-    cookieStore.set("session-construtoras", JSON.stringify(construtoras || []));
-    cookieStore.set("session-financeiras", JSON.stringify(financeiras || []));
-
-    return { success: true };
+    return data;
   } catch (error) {
     const errorMsg = `Falha ao atualizar cache de role: ${error instanceof Error ? error.message : "Erro desconhecido"}`;
     console.error(errorMsg, error);
-    return { success: false, error: errorMsg };
+    return null;
   }
 }
 

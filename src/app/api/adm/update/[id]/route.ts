@@ -3,8 +3,8 @@
 // Veja: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering
 export const dynamic = "force-dynamic";
 
-import { NextResponse } from "next/server";
 import { GetSessionServerApi } from "@/lib/auth_confg";
+import { NextResponse } from "next/server";
 
 // Rota para atualizar um registro de solicitação usando apenas o Strapi (sem Prisma)
 // Essa rota utiliza o Strapi como fonte de dados, realizando a atualização de registros via fetch.
@@ -18,7 +18,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    
+
     // Envia os dados para o Strapi
     const retorno = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/solicitacao/update/${id}`, {
       method: "PUT",
