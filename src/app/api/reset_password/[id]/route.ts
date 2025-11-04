@@ -1,4 +1,4 @@
-import { GetSessionServer, updateAndCreateRoleCache } from "@/lib/auth_confg";
+import { GetSessionServer } from "@/lib/auth_confg";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -28,7 +28,6 @@ export async function PUT(
       }
     );
     const retorno = await response.json();
-    await updateAndCreateRoleCache(session.token, session.user.id)
     revalidateTag("user-get");
     return NextResponse.json(retorno, { status: 200 });
   } catch (error) {

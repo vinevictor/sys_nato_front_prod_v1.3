@@ -16,7 +16,6 @@ import Link from "next/link";
 
 export default function NavigationHeader() {
   const { colorMode, toggleColorMode } = useColorMode();
-  console.log("🚀 ~ NavigationHeader ~ colorMode:", colorMode);
 
   return (
     <Box
