@@ -13,128 +13,22 @@ import {
   Heading,
   Text,
   Icon,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdAutorenew, MdLogin } from "react-icons/md";
 import { SenhaComponent } from "../Senha";
 
 type GeolocationData = {
-  city: string | null;
-  region: string | null;
-  country: string | null;
-  latitude: number | null;
-  longitude: number | null;
-};
-
-type IpAndGeolocationData = {
-  ip: string | null;
-  geolocation: GeolocationData | null;
-};
-
-type FetchWithTimeoutOptions = RequestInit & {
-  timeoutMs?: number;
-};
-
-/**
- * Função utilitária que encapsula o fetch com suporte a timeout usando AbortController.
- */
-const fetchWithTimeout = async (
-  url: string,
-  options: FetchWithTimeoutOptions = {}
-): Promise<Response> => {
-  const { timeoutMs = 3000, ...fetchOptions } = options;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    return await fetch(url, { ...fetchOptions, signal: controller.signal });
-  } finally {
-    clearTimeout(timeoutId);
-  }
-};
-
-/**
- * Função responsável por buscar o IP público e os principais dados de geolocalização do usuário através do serviço ipapi.co.
- */
-const getIpAndGeoLocation = async (): Promise<IpAndGeolocationData> => {
-  try {
-    const ipv4Response = await fetchWithTimeout("https://api.ipify.org?format=json", {
-      timeoutMs: 3000,
-    });
-
-    if (ipv4Response.ok) {
-      const { ip: ipv4 } = await ipv4Response.json();
-
-      if (typeof ipv4 === "string" && ipv4.includes(".")) {
-        const geoResponse = await fetchWithTimeout(`https://ipapi.co/${ipv4}/json/`, {
-          cache: "no-store",
-          timeoutMs: 3000,
-        });
-
-        if (geoResponse.ok) {
-          const geoData = await geoResponse.json();
-
-          return {
-            ip: ipv4,
-            geolocation: {
-              city: geoData?.city ?? null,
-              region: geoData?.region ?? null,
-              country: geoData?.country_name ?? null,
-              latitude:
-                typeof geoData?.latitude === "number"
-                  ? geoData.latitude
-                  : geoData?.latitude
-                  ? Number(geoData.latitude)
-                  : null,
-              longitude:
-                typeof geoData?.longitude === "number"
-                  ? geoData.longitude
-                  : geoData?.longitude
-                  ? Number(geoData.longitude)
-                  : null,
-            },
-          };
-        }
-      }
-    }
-
-    const fallbackResponse = await fetchWithTimeout("https://ipapi.co/json/", {
-      cache: "no-store",
-      timeoutMs: 3000,
-    });
-
-    if (!fallbackResponse.ok) {
-      return { ip: null, geolocation: null };
-    }
-
-    const fallbackData = await fallbackResponse.json();
-
-    return {
-      ip: fallbackData?.ip ?? null,
-      geolocation: {
-        city: fallbackData?.city ?? null,
-        region: fallbackData?.region ?? null,
-        country: fallbackData?.country_name ?? null,
-        latitude:
-          typeof fallbackData?.latitude === "number"
-            ? fallbackData.latitude
-            : fallbackData?.latitude
-            ? Number(fallbackData.latitude)
-            : null,
-        longitude:
-          typeof fallbackData?.longitude === "number"
-            ? fallbackData.longitude
-            : fallbackData?.longitude
-            ? Number(fallbackData.longitude)
-            : null,
-      },
-    };
-  } catch (error) {
-    console.error("Erro ao buscar IP e geolocalização:", error);
-    return { ip: null, geolocation: null };
-  }
+  city: string;
+  region: string;
+  country: string;
+  timezone: string;
+  Utc: string;
+  operadora: string;
+  lat: number;
+  lng: number;
 };
 
 /**
@@ -144,6 +38,17 @@ export const FormLogin = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ip, setIp] = useState("indisponível");
+  const [geolocation, setGeolocation] = useState<GeolocationData>({
+    city: "",
+    region: "",
+    country: "",
+    timezone: "",
+    Utc: "",
+    operadora: "",
+    lat: 0,
+    lng: 0,
+  });
   const toast = useToast();
   const router = useRouter();
 
@@ -159,6 +64,20 @@ export const FormLogin = () => {
   const bgColor = useColorModeValue("green.50", "green.900");
   const bgOpacity = useColorModeValue(0.3, 0.1);
 
+  useEffect(() => {
+    (async () => {
+      const ApiExternal = await fetch("/api/utils/geolocation", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const dataExternal = await ApiExternal.json();
+      setGeolocation(dataExternal.geolocation);
+      setIp(dataExternal.ip);
+    })();
+  }, []);
+
   /**
    * Função responsável por executar o fluxo de autenticação, incluindo a coleta de IP e geolocalização e o envio seguro dos dados ao backend.
    */
@@ -166,7 +85,6 @@ export const FormLogin = () => {
     setLoading(true);
 
     try {
-      const { ip, geolocation } = await getIpAndGeoLocation();
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
@@ -198,7 +116,8 @@ export const FormLogin = () => {
       console.error("Erro durante a autenticação:", error);
       toast({
         title: "Erro inesperado!",
-        description: "Não foi possível concluir o login. Tente novamente em instantes.",
+        description:
+          "Não foi possível concluir o login. Tente novamente em instantes.",
         status: "error",
         duration: 5000,
       });
