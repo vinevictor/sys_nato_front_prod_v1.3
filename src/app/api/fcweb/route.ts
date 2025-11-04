@@ -6,9 +6,13 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const data = await request.json();
+    console.log("🚀 ~ POST ~ data:", data);
     const pass = process.env.PASS_API_FCWEB;
     const session = await GetSessionServer();
-    const { id, ...res } = data;
+    const { id, dtnascimento, ...res } = data;
+    if (dtnascimento) {
+      res.dtnascimento = dtnascimento.split("T")[0];
+    }
 
     const credentials = Buffer.from(`${pass}`).toString("base64");
     if (!session) {
