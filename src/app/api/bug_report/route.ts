@@ -23,7 +23,7 @@ export async function GET() {
         },
         next: {
           tags: ["bug-report-all"],
-          revalidate: 60 * 3,
+          revalidate: 60 * 2,
         },
       }
     );
