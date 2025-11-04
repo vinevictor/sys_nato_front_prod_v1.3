@@ -117,7 +117,7 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
       body: JSON.stringify({
         financeiroId: modalFinanceiro,
         empreendimentoId: modalEmpreendimento,
-        baseUrl: "https://sisnato.redebrasilrp.com.br/direto/cadastro",
+        baseUrl: "https://sisnato.com.br/direto/cadastro",
       }),
     })
       .then(async (res) => {
