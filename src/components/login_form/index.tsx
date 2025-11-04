@@ -49,6 +49,7 @@ export const FormLogin = () => {
     lat: 0,
     lng: 0,
   });
+  console.log("🚀 ~ FormLogin ~ geolocation:", geolocation)
   const toast = useToast();
   const router = useRouter();
 
@@ -85,6 +86,8 @@ export const FormLogin = () => {
     setLoading(true);
 
     try {
+      //esperar 2 segundos
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
