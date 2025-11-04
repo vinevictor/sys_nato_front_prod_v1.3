@@ -115,7 +115,7 @@ export default function SelectEmpreendimento({
         Disable={!constId || loading || constId === 0 || disabled}
         required
         options={useMemo(() => {
-          if (!isAdmin) {
+          if (!isAdmin && session.hierarquia !== "CCA") {
             return session.empreendimento.map((e: any) => ({
               id: e.id,
               fantasia: e.nome,
@@ -126,7 +126,6 @@ export default function SelectEmpreendimento({
             fantasia: e.nome,
           }));
         }, [ListEmp, session, isAdmin])}
-        // boxWidth="15%"
       />
     </>
   );
