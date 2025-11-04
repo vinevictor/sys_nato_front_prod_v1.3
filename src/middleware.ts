@@ -12,6 +12,7 @@ const publicRoutes = [
   "/api/faq",
   "/api/video-thumbnail",
   "/api/video-proxy",
+  "/api/utils/geolocation",
   "/faq/videos-tutoriais",
   "/teste-video",
   "/faq/autenticacao-gov",
