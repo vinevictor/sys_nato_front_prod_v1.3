@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/file/sisnato/videos/faq`;
-    console.log(url);
     const reqest = await fetch(
       url,
       {

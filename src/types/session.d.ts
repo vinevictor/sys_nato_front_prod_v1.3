@@ -169,6 +169,7 @@ interface AuthUser {
   role: UserRoler;
   reset_password: boolean;
   termos: boolean;
+  status?: boolean
 }
 
 // Tipagem retornada ao cliente (useSession)

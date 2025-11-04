@@ -8,30 +8,6 @@ type ExtendedAuthUser = SessionServer["user"] & {
   status?: boolean;
 };
 
-type RoleCache = {
-  role: ExtendedAuthUser["role"] | null;
-  reset_password: boolean;
-  termos: boolean;
-  status: boolean;
-  hierarquia: ExtendedAuthUser["hierarquia"];
-  construtora: ExtendedAuthUser["construtora"];
-  empreendimento: ExtendedAuthUser["empreendimento"];
-  Financeira: ExtendedAuthUser["Financeira"];
-};
-
-function isRoleCache(value: unknown): value is RoleCache {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const data = value as Record<string, unknown>;
-
-  return (
-    ("reset_password" in data && typeof data.reset_password === "boolean") &&
-    ("termos" in data && typeof data.termos === "boolean") &&
-    ("status" in data && typeof data.status === "boolean")
-  );
-}
 
 export async function OpenSessionToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SIGNING_PRIVATE_KEY);
@@ -73,75 +49,6 @@ function applyDefaultUserValues(user: ExtendedAuthUser) {
 }
 
 /**
- * Atualiza dados do usuário com dados da API
- * Centraliza a lógica de mapeamento para evitar duplicação
- */
-function updateUserDataFromApi(user: ExtendedAuthUser, apiData: any) {
-  user.role = (apiData.role as SessionServer["user"]["role"]) || ({} as SessionServer["user"]["role"]);
-  user.reset_password = apiData.reset_password || false;
-  user.termos = apiData.termos || false;
-  user.status = apiData.status || false;
-  user.hierarquia = apiData.hierarquia || "USER";
-  user.construtora = apiData.construtoras || [];
-  user.empreendimento = apiData.empreendimentos || [];
-  user.Financeira = apiData.financeiros || [];
-}
-
-/**
- * Atualiza dados do usuário com dados do cookie
- * Centraliza a lógica de mapeamento do cache
- */
-function updateUserDataFromCache(user: ExtendedAuthUser, cacheData: RoleCache) {
-  user.role = cacheData.role || ({} as SessionServer["user"]["role"]);
-  user.reset_password = cacheData.reset_password || false;
-  user.termos = cacheData.termos || false;
-  user.status = cacheData.status || false;
-  user.hierarquia = cacheData.hierarquia || "USER";
-  user.construtora = cacheData.construtora || [];
-  user.empreendimento = cacheData.empreendimento || [];
-  user.Financeira = cacheData.Financeira || [];
-}
-
-/**
- * Cria objeto de role normalizado para o cookie
- */
-function createRolePayload(data: any): RoleCache {
-  return {
-    role: (data.role as SessionServer["user"]["role"]) || null,
-    reset_password: data.reset_password || false,
-    termos: data.termos || false,
-    status: data.status || false,
-    hierarquia: data.hierarquia || "USER",
-    construtora: data.construtoras || data.construtora || [],
-    empreendimento: data.empreendimentos || data.empreendimento || [],
-    Financeira: data.financeiros || data.Financeira || [],
-  };
-}
-
-/**
- * Realiza o parse seguro dos dados de role armazenados no cookie
- * Retorna null quando o conteúdo não é um JSON válido.
- */
-function parseRoleCookie(value?: string | null): RoleCache | null {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(value);
-
-    if (!isRoleCache(parsed)) {
-      return null;
-    }
-
-    return parsed;
-  } catch (error) {
-    console.warn("Aviso: Cookie session-role corrompido, recriando...", error);
-    return null;
-  }
-}
-
-/**
  * Valida o payload retornado pelo JWT garantindo a estrutura mínima esperada.
  */
 function isValidSessionPayload(payload: unknown): payload is SessionServer {
@@ -169,12 +76,7 @@ async function fetchAndCacheUserData(
 ) {
   try {
     const apiData = await fetchUserData(token, userId);
-    updateUserDataFromApi(user, apiData);
-    
-    // Tenta criar cache em background sem bloquear
-    CreateRole(createRolePayload(apiData)).catch((err) => 
-      console.warn("Aviso: Não foi possível criar session-role:", err)
-    );
+   return apiData
   } catch (error) {
     console.warn("Aviso: Erro ao buscar dados do usuário:", error);
     applyDefaultUserValues(user);
@@ -202,16 +104,23 @@ export async function GetSessionServer(): Promise<SessionServer | null> {
       user: { ...payload.user } as ExtendedAuthUser,
     };
 
-    const roleData = parseRoleCookie(cookies().get("session-role")?.value);
     const userId = session.user.id;
 
-    if (roleData) {
-      updateUserDataFromCache(session.user, roleData);
-      return session;
-    }
-
-    await fetchAndCacheUserData(session.token, userId, session.user);
-    return session;
+    const dadosUser = await fetchAndCacheUserData(session.token, userId, session.user);
+    return {
+      ...session,
+      user: {
+        ...session.user,
+        role: dadosUser.role,
+        reset_password: dadosUser.reset_password,
+        termos: dadosUser.termos,
+        status: dadosUser.status,
+        hierarquia: dadosUser.hierarquia,
+        construtora: dadosUser.construtoras || [],
+        empreendimento: dadosUser.empreendimentos || [],
+        Financeira: dadosUser.financeiros || [],
+      }
+    };
   } catch (error) {
     console.error("Erro crítico na sessão:", error);
     return null;
@@ -221,17 +130,24 @@ export async function GetSessionServer(): Promise<SessionServer | null> {
 export async function DeleteSession() {
   const session= await cookies();
    session.delete("session-token");
-   session.delete("session-role"); // Limpa cache auxiliar
 }
 
 export async function GetSessionServerApi() {
   try {
-    const token = await cookies().get("session-token");
+    const CookiesStorage = await cookies()
+    const token = CookiesStorage.get("session-token");
     if (!token) {
       return null;
     }
     const data: any = await OpenSessionToken(token.value);
-    return await Promise.resolve(data);
+
+    const retorno = {
+      ...data,
+      user: {
+        ...data.user,
+       } as SessionServer,
+    };
+    return await Promise.resolve(retorno);
   } catch (error) {
     console.log(error);
     return null;
@@ -249,7 +165,8 @@ async function fetchUserData(token: string, id: number) {
           Authorization: `Bearer ${token}`,
         },
         next: {
-          tags: ["user-get"],
+          tags: ['UseSession-tag'],
+          revalidate: 300
         },
       }
     );
@@ -262,43 +179,4 @@ async function fetchUserData(token: string, id: number) {
     console.error("Erro ao buscar dados do usuário:", error);
     throw error;
   }
-}
-
-// Função para criar cookie de role (apenas em Server Actions/Route Handlers)
-export async function updateAndCreateRoleCache(token: string, id: number) {
-  try {
-    const dataRole = await fetchUserData(token, id);
-    await CreateRole({
-      role: dataRole.role || null,
-      reset_password: dataRole.reset_password || false,
-      termos: dataRole.termos || false,
-      status: dataRole.status || false,
-      hierarquia: dataRole.hierarquia || "USER",
-      construtora: dataRole.construtoras || [],
-      empreendimento: dataRole.empreendimentos || [],
-      Financeira: dataRole.financeiros || [],
-    });
-    return dataRole;
-  } catch (error) {
-    console.error("Erro ao atualizar cache de role:", error);
-    throw error;
-  }
-}
-
-export async function CreateRole(role: any) {
-  // Simplificado: usa JSON.stringify em vez de JWT
-  const roleJson = JSON.stringify(role);
-
-  const CookieStorage = cookies();
-  const Old = CookieStorage.get("session-role");
-  if (Old) {
-    CookieStorage.delete("session-role");
-  }
-
-   CookieStorage.set("session-role", roleJson, {
-    expires: new Date(Date.now() + 20 * 60 * 1000), // 20 minutos
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-  });
 }
