@@ -40,7 +40,6 @@ export default function SelectEmpreendimento({
   const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(
     FormEmp && FormEmp.length > 0 ? FormEmp : []
   );
-  console.log("🚀 ~ SelectEmpreendimento ~ ListEmp:", ListEmp);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState<boolean>(true);
