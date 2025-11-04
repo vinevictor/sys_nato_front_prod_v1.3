@@ -166,7 +166,7 @@ async function fetchUserData(token: string, id: number) {
         },
         next: {
           tags: ['UseSession-tag'],
-          revalidate: 300
+          revalidate: 3600
         },
       }
     );
