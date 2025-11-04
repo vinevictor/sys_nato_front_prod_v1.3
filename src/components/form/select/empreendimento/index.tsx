@@ -40,6 +40,7 @@ export default function SelectEmpreendimento({
   const [ListEmp, setListEmp] = useState<EmpreendimentoType[]>(
     FormEmp && FormEmp.length > 0 ? FormEmp : []
   );
+  console.log("🚀 ~ SelectEmpreendimento ~ ListEmp:", ListEmp);
   const [empreendimento, setEmpreendimento] = useState<number>(FormEmpId ?? 0);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState<boolean>(true);
@@ -115,7 +116,7 @@ export default function SelectEmpreendimento({
         Disable={!constId || loading || constId === 0 || disabled}
         required
         options={useMemo(() => {
-          if (!isAdmin) {
+          if (!isAdmin && session.hierarquia !== "CCA") {
             return session.empreendimento.map((e: any) => ({
               id: e.id,
               fantasia: e.nome,
@@ -126,7 +127,6 @@ export default function SelectEmpreendimento({
             fantasia: e.nome,
           }));
         }, [ListEmp, session, isAdmin])}
-        // boxWidth="15%"
       />
     </>
   );
