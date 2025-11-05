@@ -47,7 +47,6 @@ export const FormLogin = () => {
     lat: 0,
     lng: 0,
   });
-  console.log("🚀 ~ FormLogin ~ geolocation:", geolocation);
   const toast = useToast();
   const router = useRouter();
 
