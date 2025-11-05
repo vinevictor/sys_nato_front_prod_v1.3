@@ -4,7 +4,7 @@ import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function UpdateUser(_: any, data: FormData) {
-  console.log("🚀 ~ UpdateUser ~ data:", data)
+  console.log("🚀 ~ UpdateUser ~ data:", data);
   const session = await GetSessionServer();
   if (!session) {
     return {
@@ -24,7 +24,7 @@ export async function UpdateUser(_: any, data: FormData) {
   const construtora = data.get("cad_construtora") ? true : false;
   const empreendimento = data.get("cad_empreendimento") ? true : false;
   const now = data.get("now") ? true : false;
-  const alerta = data.get("alerta") ? true : false;
+  const alert = data.get("alerta") ? true : false;
   const chamado = data.get("chamado") ? true : false;
   const solicitacao = data.get("solicitacao") ? true : false;
   const id = data.get("id") ?? "";
@@ -51,7 +51,7 @@ export async function UpdateUser(_: any, data: FormData) {
     construtora,
     empreendimento,
     now,
-    alerta,
+    alert,
     chamado,
     solicitacao,
     natosign,
@@ -62,14 +62,13 @@ export async function UpdateUser(_: any, data: FormData) {
     username: usuario,
     telefone: telefone,
     email: email,
-    empreendimento: ListEmpreendimento ,
+    empreendimento: ListEmpreendimento,
     Financeira: ListFinanceiro,
     cargo: cargo,
     hierarquia: hierarquia,
     construtora: ListConstrutora,
     role: roleEdit,
   };
-  console.log("🚀 ~ UpdateUser ~ body:", body)
 
   const req = await fetch(
     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/user/update/${id}`,

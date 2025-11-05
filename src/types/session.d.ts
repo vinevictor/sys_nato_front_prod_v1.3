@@ -1,5 +1,4 @@
 declare namespace Session {
-
   /**
    * AuthUser
    * @param {Financeira[]} Financeira
@@ -112,9 +111,6 @@ declare namespace Session {
   }
 }
 
-
-
-
 interface Construtora {
   id: number;
   fantasia: string;
@@ -126,10 +122,10 @@ interface Empreendimento {
 }
 
 /**
-   * Financeira
-   * @param {number} id
-   * @param {string} fantasia
-   */
+ * Financeira
+ * @param {number} id
+ * @param {string} fantasia
+ */
 interface Financeira {
   id: number;
   fantasia: string;
@@ -169,7 +165,7 @@ interface AuthUser {
   role: UserRoler;
   reset_password: boolean;
   termos: boolean;
-  status?: boolean
+  status?: boolean;
 }
 
 // Tipagem retornada ao cliente (useSession)
@@ -182,4 +178,3 @@ export interface SessionServer {
   iat: number;
   exp: number;
 }
-

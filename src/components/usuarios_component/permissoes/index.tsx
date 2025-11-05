@@ -1,11 +1,5 @@
 import { UserRoler } from "@/types/session";
-import {
-  Checkbox,
-  Divider,
-  Flex,
-  FormLabel,
-  Heading,
-} from "@chakra-ui/react";
+import { Checkbox, Divider, Flex, FormLabel, Heading } from "@chakra-ui/react";
 const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
   [
     { name: "adm", label: "Acesso ao painel administrativo", tag: "adm" },
@@ -24,7 +18,7 @@ const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
       tag: "empreendimento",
     },
     { name: "now", label: "Pode criar Now", tag: "now" },
-    { name: "alerta", label: "Pode criar e responder Alerta", tag: "alerta" },
+    { name: "alerta", label: "Pode criar e responder Alerta", tag: "alert" },
     { name: "chamado", label: "Pode ver e responder Chamado", tag: "chamado" },
     {
       name: "solicitacao",
@@ -41,12 +35,12 @@ interface Props {
 export default function Permissoes({ data }: Props) {
   return (
     <>
-      <Divider 
-        my={4} 
-        borderColor="gray.300" 
-        _dark={{ borderColor: "gray.600" }} 
+      <Divider
+        my={4}
+        borderColor="gray.300"
+        _dark={{ borderColor: "gray.600" }}
       />
-      <Heading 
+      <Heading
         fontSize={{ base: "md", md: "lg" }}
         color="gray.800"
         _dark={{ color: "gray.100" }}
@@ -70,9 +64,9 @@ export default function Permissoes({ data }: Props) {
                 defaultChecked={isChecked}
                 _dark={{ borderColor: "gray.400" }}
               />
-              <FormLabel 
-                fontSize="sm" 
-                fontWeight="md" 
+              <FormLabel
+                fontSize="sm"
+                fontWeight="md"
                 m={0}
                 color="gray.700"
                 _dark={{ color: "gray.300" }}
