@@ -133,6 +133,14 @@ export default async function PageSolicitacoes({ params }: Props) {
     });
   };
 
+  const DtCreateTxt = (date: string) => {
+    if (!date) return ""
+    const newDate = new Date(date)
+    return newDate.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    })
+  }
+
   return (
     <Container
       maxW="95%"
@@ -179,15 +187,7 @@ export default async function PageSolicitacoes({ params }: Props) {
                   _dark={{ color: "gray.300" }}
                 >
                   Criado Em:{" "}
-                  {data?.data?.createdAt
-                    ? `${data.data.createdAt
-                        .split("T")[0]
-                        .split("-")
-                        .reverse()
-                        .join("/")}, ${
-                        data.data.createdAt.split("T")[1].split(".")[0]
-                      }`
-                    : "-"}
+                  {DtCreateTxt(data?.data?.createdAt || "")}
                 </Text>
                 {data?.data?.andamento !== "EMITIDO" &&
                   data.data?.andamento !== "APROVADO" && (

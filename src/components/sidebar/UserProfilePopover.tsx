@@ -71,6 +71,8 @@ export default function UserProfilePopover({
   // Nome e cargo do usuário
   const userName = session?.nome || "Usuário";
   const userCargo = session?.cargo || "Cargo não definido";
+  const userHierarquia = session?.hierarquia || "Hierarquia não definida";
+  const userId = session?.id || "0";
 
   return (
     <Menu placement="right-end" isLazy>
@@ -149,9 +151,14 @@ export default function UserProfilePopover({
             <Text fontSize="sm" fontWeight="bold" color={textColor}>
               {userName}
             </Text>
+            <Flex align="center" gap={4} w="full">
             <Text fontSize="xs" color={subtextColor}>
-              {userCargo}
+              {userId}
             </Text>
+              <Text fontSize="xs" color={subtextColor}>
+                {userHierarquia}
+              </Text>
+            </Flex>
           </Box>
 
           <MenuDivider />

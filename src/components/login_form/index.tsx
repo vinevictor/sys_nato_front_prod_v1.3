@@ -1,19 +1,19 @@
 "use client";
 
 import {
-  Input,
+  Box,
+  Button,
+  Flex,
   FormControl,
   FormLabel,
-  Button,
-  useToast,
-  Flex,
-  VStack,
-  Box,
-  Portal,
   Heading,
-  Text,
   Icon,
+  Input,
+  Portal,
+  Text,
   useColorModeValue,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,7 +25,6 @@ type GeolocationData = {
   region: string;
   country: string;
   timezone: string;
-  Utc: string;
   operadora: string;
   lat: number;
   lng: number;
@@ -44,12 +43,10 @@ export const FormLogin = () => {
     region: "",
     country: "",
     timezone: "",
-    Utc: "",
     operadora: "",
     lat: 0,
     lng: 0,
   });
-  console.log("🚀 ~ FormLogin ~ geolocation:", geolocation)
   const toast = useToast();
   const router = useRouter();
 
@@ -67,15 +64,19 @@ export const FormLogin = () => {
 
   useEffect(() => {
     (async () => {
-      const ApiExternal = await fetch("/api/utils/geolocation", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const req = await fetch("http://ip-api.com/json/");
+      const data = await req.json();
+      console.log("🚀 ~ FormLogin ~ data:", data)
+      setGeolocation({
+        city: (data.city as string) || "indisponível",
+        region: (data.region as string) || "indisponível",
+        country: (data.country as string) || "indisponível",
+        timezone: (data.timezone as string) || "indisponível",
+        operadora: (data.isp as string) || "indisponível",
+        lat: (data.lat as number) || 0,
+        lng: (data.lon as number) || 0,
       });
-      const dataExternal = await ApiExternal.json();
-      setGeolocation(dataExternal.geolocation);
-      setIp(dataExternal.ip);
+      setIp(data.query || "indisponível");
     })();
   }, []);
 
