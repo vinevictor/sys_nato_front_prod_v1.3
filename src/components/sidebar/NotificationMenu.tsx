@@ -65,7 +65,7 @@ interface NotificationMenuProps {
 
 /**
  * Componente de Menu de Notificações/Alertas
- * 
+ *
  * Funcionalidades:
  * - Busca alertas gerais da API
  * - Exibe badge com contador de alertas
@@ -73,7 +73,7 @@ interface NotificationMenuProps {
  * - Navegação ao clicar no alerta
  * - Auto-refresh a cada 30 segundos
  * - Loading state durante requisições
- * 
+ *
  * @component
  */
 export default function NotificationMenu({ session }: NotificationMenuProps) {
@@ -98,6 +98,15 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
   const allNotifications = [...bugReports, ...notifications];
   const unreadCount = allNotifications.length;
 
+  // Debug: log das notificações
+  useEffect(() => {
+    console.log("=== Estado das Notificações ===");
+    console.log("Bug Reports:", bugReports);
+    console.log("Notifications:", notifications);
+    console.log("All Notifications:", allNotifications);
+    console.log("Unread Count:", unreadCount);
+    console.log("Loading:", loading);
+  }, [bugReports, notifications, loading]);
 
   /**
    * Busca a lista de alertas
@@ -110,15 +119,19 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
       const res = await req.json();
       if (req.ok) {
         // Mapeia os alertas para o formato esperado
-        const alertasMapeados = Array.isArray(res) ? res.map((item: any) => ({
-          id: item.id,
-          titulo: item.titulo,
-          descricao: item.descricao,
-          solicitacao_id: item.solicitacao_id,
-          type: "warning" as const,
-          read: false,
-        })) : [];
-        const filteredAlertas = alertasMapeados.filter((item) => item.solicitacao_id !== null);
+        const alertasMapeados = Array.isArray(res)
+          ? res.map((item: any) => ({
+              id: item.id,
+              titulo: 'Alerta Geral',
+              descricao: item.descricao,
+              solicitacao_id: item.solicitacao_id,
+              type: "warning" as const,
+              read: false,
+            }))
+          : [];
+        const filteredAlertas = alertasMapeados.filter(
+          (item) => item.solicitacao_id !== null
+        );
         setNotifications(filteredAlertas);
       }
     } catch (error) {
@@ -136,28 +149,22 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
     try {
       const response = await fetch(`/api/bug_report`);
       if (response.ok) {
-        const text = await response.text();
-        if (text) {
-          const data = JSON.parse(text);
-          if (Array.isArray(data) && data.length > 0) {
-            // Mapeia bug reports para o formato de notificação
-            const bugsMapeados = data.map((item: BugReport) => ({
+        const data = await response.json();
+        console.log("Bug reports recebidos:", data);
+        const bugsMapeados = Array.isArray(data)
+          ? data.map((item: BugReport) => ({
               id: item.id,
               titulo: item.titulo,
               descricao: item.descricao,
               solicitacao_id: null,
               type: "info" as const,
               read: false,
-            }));
-            setBugReports(bugsMapeados);
-          } else {
-            setBugReports([]);
-          }
-        } else {
-          setBugReports([]);
-        }
+            }))
+          : [];
+        console.log("Bug reports mapeados:", bugsMapeados);
+        setBugReports(bugsMapeados);
       } else {
-        console.error("Erro na resposta da API:", response.status);
+        console.warn("Resposta não OK ao buscar bug reports:", response.status);
         setBugReports([]);
       }
     } catch (error) {
@@ -197,262 +204,311 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
 
   return (
     <>
-    <Menu placement="right-start" isLazy onOpen={handleOpenMenu}>
-      <MenuButton
-        as={Button}
-        w="full"
-        h="auto"
-        p={2}
-        bg={bgButton}
-        border="1px"
-        borderColor={borderColor}
-        borderRadius="lg"
-        _hover={{
-          bg: hoverBg,
-          borderColor: "#FB8501",
-        }}
-        transition="all 0.2s ease"
-        position="relative"
-      >
-        <HStack spacing={3} w="full">
-          {/* Ícone de notificação com badge */}
-          <Box position="relative">
-            <Icon
-              as={FiBell}
-              fontSize="20"
-              color={unreadCount > 0 ? "#FB8501" : textColor}
-              transition="all 0.2s"
-            />
-            {unreadCount > 0 && (
-              <Badge
-                position="absolute"
-                top="-6px"
-                right="-6px"
-                colorScheme="orange"
-                borderRadius="full"
-                fontSize="10px"
-                minW="18px"
-                h="18px"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </Badge>
-            )}
-          </Box>
-
-          {/* Texto */}
-          <VStack align="start" spacing={0} flex={1}>
-            <Text fontSize="sm" fontWeight="medium" color={textColor}>
-              Notificações
-            </Text>
-          </VStack>
-        </HStack>
-      </MenuButton>
-
-      <Portal>
-        <MenuList
-          bg={menuBg}
+      <Menu placement="right-start" isLazy onOpen={handleOpenMenu}>
+        <MenuButton
+          as={Button}
+          w="full"
+          h="auto"
+          p={2}
+          bg={bgButton}
+          border="1px"
           borderColor={borderColor}
-          borderRadius="xl"
-          boxShadow="2xl"
-          w="380px"
-          maxH="calc(68px + (5 * 90px))"
-          overflowY="auto"
-          zIndex={9999}
-          p={0}
-          sx={{
-            "&::-webkit-scrollbar": {
-              width: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "transparent",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: borderColor,
-              borderRadius: "4px",
-            },
-            "&::-webkit-scrollbar-thumb:hover": {
-              background: "#FB8501",
-            },
+          borderRadius="lg"
+          _hover={{
+            bg: hoverBg,
+            borderColor: "#FB8501",
           }}
+          transition="all 0.2s ease"
+          position="relative"
         >
-        {/* Header */}
-        <Flex
-          p={4}
-          borderBottom="1px"
-          borderColor={borderColor}
-          justify="space-between"
-          align="center"
-        >
-          <HStack>
-            <Icon as={FiBell} color="#FB8501" fontSize="20" />
-            <Text fontSize="md" fontWeight="bold" color={textColor}>
-              Alertas
-            </Text>
-          </HStack>
-          {unreadCount > 0 && (
-            <Badge colorScheme="orange" fontSize="xs" px={2} py={1}>
-              {unreadCount} {unreadCount === 1 ? "notificação" : "notificações"}
-            </Badge>
-          )}
-        </Flex>
-
-        {/* Loading state */}
-        {loading ? (
-          <Flex
-            direction="column"
-            align="center"
-            justify="center"
-            py={12}
-            px={4}
-          >
-            <Spinner size="lg" color="#FB8501" mb={3} />
-            <Text fontSize="sm" color={textColor} fontWeight="medium">
-              Carregando alertas...
-            </Text>
-          </Flex>
-        ) : notifications.length === 0 ? (
-          // Estado vazio
-          <Flex
-            direction="column"
-            align="center"
-            justify="center"
-            py={12}
-            px={4}
-          >
-            <Icon as={FiBell} fontSize="48" color={subtextColor} mb={3} />
-            <Text fontSize="sm" color={textColor} fontWeight="medium">
-              Nenhuma notificação
-            </Text>
-            <Text fontSize="xs" color={subtextColor} textAlign="center">
-              Tudo tranquilo por aqui!
-            </Text>
-          </Flex>
-        ) : (
-          // Lista de notificações (Bug Reports + Alertas)
-          <Box>
-            {allNotifications.map((notification, index) => (
-              <Box key={`${notification.type}-${notification.id}`}>
-                <MenuItem
-                  bg={notification.type === "info" ? "blue.50" : "yellow.50"}
-                  _hover={{ 
-                    bg: notification.type === "info" ? "blue.100" : "yellow.100" 
-                  }}
-                  _dark={{
-                    bg: notification.type === "info" ? "blue.900" : "whiteAlpha.100",
-                    _hover: { 
-                      bg: notification.type === "info" ? "blue.800" : "whiteAlpha.200" 
-                    },
-                  }}
-                  onClick={() => handleNotificationClick(notification)}
-                  py={3}
-                  px={4}
-                  cursor="pointer"
+          <HStack spacing={3} w="full">
+            {/* Ícone de notificação com badge */}
+            <Box position="relative">
+              <Icon
+                as={FiBell}
+                fontSize="20"
+                color={unreadCount > 0 ? "#FB8501" : textColor}
+                transition="all 0.2s"
+              />
+              {unreadCount > 0 && (
+                <Badge
+                  position="absolute"
+                  top="-6px"
+                  right="-6px"
+                  colorScheme="orange"
+                  borderRadius="full"
+                  fontSize="10px"
+                  minW="18px"
+                  h="18px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
                 >
-                  <HStack spacing={3} align="start" w="full">
-                    {/* Ícone baseado no tipo */}
-                    <Avatar
-                      size="sm"
-                      icon={
-                        <Icon
-                          as={notification.type === "info" ? FiInfo : FaExclamationTriangle}
-                          fontSize="16"
-                        />
-                      }
-                      bg={notification.type === "info" ? "#3182CE" : "#daa300"}
-                      color="white"
-                    />
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </Badge>
+              )}
+            </Box>
 
-                    {/* Conteúdo */}
-                    <VStack align="start" spacing={1} flex={1}>
-                      <HStack justify="space-between" w="full">
-                        <Text
-                          fontSize="sm"
-                          fontWeight="bold"
-                          color={textColor}
-                          noOfLines={1}
-                        >
-                          {notification.titulo}
-                        </Text>
-                        <Badge
-                          colorScheme={notification.type === "info" ? "blue" : "yellow"}
-                          fontSize="xs"
-                        >
-                          {notification.type === "info" ? "Geral" : "Alerta"}
-                        </Badge>
-                      </HStack>
-                      <Text fontSize="xs" color={subtextColor} noOfLines={2}>
-                        {notification.descricao}
-                      </Text>
-                    </VStack>
-                  </HStack>
-                </MenuItem>
-                {index < allNotifications.length - 1 && <MenuDivider m={0} />}
-              </Box>
-            ))}
-          </Box>
-        )}
-        </MenuList>
-      </Portal>
-    </Menu>
-
-    {/* Modal para exibir detalhes do Bug Report */}
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          <HStack spacing={3}>
-            <Avatar
-              size="sm"
-              icon={<Icon as={FiInfo} fontSize="16" />}
-              bg="#3182CE"
-              color="white"
-            />
-            <VStack align="start" spacing={0}>
-              <Text fontSize="lg" fontWeight="bold" color={textColor}>
-                Mensagem Geral
+            {/* Texto */}
+            <VStack align="start" spacing={0} flex={1}>
+              <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                Notificações
               </Text>
-              <Badge colorScheme="blue" fontSize="xs">
-                Informação
-              </Badge>
             </VStack>
           </HStack>
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {selectedBug && (
-            <VStack align="start" spacing={4} w="full">
-              {/* Descrição */}
-              <Box w="full">
-                <Text fontSize="xs" color={subtextColor} fontWeight="medium" mb={1}>
-                  DESCRIÇÃO
+        </MenuButton>
+
+        <Portal>
+          <MenuList
+            bg={menuBg}
+            borderColor={borderColor}
+            borderRadius="xl"
+            boxShadow="2xl"
+            w="380px"
+            maxH="calc(68px + (5 * 90px))"
+            overflowY="auto"
+            zIndex={9999}
+            p={0}
+            sx={{
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "transparent",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: borderColor,
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#FB8501",
+              },
+            }}
+          >
+            {/* Header */}
+            <Flex
+              p={4}
+              borderBottom="1px"
+              borderColor={borderColor}
+              justify="space-between"
+              align="center"
+            >
+              <HStack>
+                <Icon as={FiBell} color="#FB8501" fontSize="20" />
+                <Text fontSize="md" fontWeight="bold" color={textColor}>
+                  Alertas
                 </Text>
-                <Text
-                  fontSize="sm"
-                  color={textColor}
-                  whiteSpace="pre-wrap"
-                  lineHeight="1.6"
-                  p={3}
-                  bg={modalDescBg}
-                  borderRadius="md"
-                  border="1px"
-                  borderColor={borderColor}
-                >
-                  {selectedBug.descricao}
-                </Text>
+              </HStack>
+              {unreadCount > 0 && (
+                <Badge colorScheme="orange" fontSize="xs" px={2} py={1}>
+                  {unreadCount}{" "}
+                  {unreadCount === 1 ? "notificação" : "notificações"}
+                </Badge>
+              )}
+            </Flex>
+
+            {/* Loading state */}
+            {(() => {
+              console.log("=== Renderização do Menu ===");
+              console.log("loading:", loading);
+              console.log("allNotifications.length:", allNotifications.length);
+              console.log("allNotifications:", allNotifications);
+
+              if (loading) {
+                console.log("-> Mostrando LOADING");
+                return (
+                  <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    py={12}
+                    px={4}
+                  >
+                    <Spinner size="lg" color="#FB8501" mb={3} />
+                    <Text fontSize="sm" color={textColor} fontWeight="medium">
+                      Carregando alertas...
+                    </Text>
+                  </Flex>
+                );
+              }
+
+              if (allNotifications.length === 0) {
+                console.log("-> Mostrando VAZIO");
+                return (
+                  <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    py={12}
+                    px={4}
+                  >
+                    <Icon as={FiBell} fontSize="48" color={subtextColor} mb={3} />
+                    <Text fontSize="sm" color={textColor} fontWeight="medium">
+                      Nenhuma notificação
+                    </Text>
+                    <Text fontSize="xs" color={subtextColor} textAlign="center">
+                      Tudo tranquilo por aqui!
+                    </Text>
+                  </Flex>
+                );
+              }
+
+              console.log("-> Mostrando LISTA com", allNotifications.length, "notificações");
+              return (
+                <Box>
+                {allNotifications.map((notification, index) => (
+                  <Box key={`${notification.type}-${notification.id}`}>
+                    <MenuItem
+                      bg={
+                        notification.type === "info" ? "blue.50" : "yellow.50"
+                      }
+                      _hover={{
+                        bg:
+                          notification.type === "info"
+                            ? "blue.100"
+                            : "yellow.100",
+                      }}
+                      _dark={{
+                        bg:
+                          notification.type === "info"
+                            ? "blue.900"
+                            : "whiteAlpha.100",
+                        _hover: {
+                          bg:
+                            notification.type === "info"
+                              ? "blue.800"
+                              : "whiteAlpha.200",
+                        },
+                      }}
+                      onClick={() => handleNotificationClick(notification)}
+                      py={3}
+                      px={4}
+                      cursor="pointer"
+                    >
+                      <HStack spacing={3} align="start" w="full">
+                        {/* Ícone baseado no tipo */}
+                        <Avatar
+                          size="sm"
+                          icon={
+                            <Icon
+                              as={
+                                notification.type === "info"
+                                  ? FiInfo
+                                  : FaExclamationTriangle
+                              }
+                              fontSize="16"
+                            />
+                          }
+                          bg={
+                            notification.type === "info" ? "#3182CE" : "#daa300"
+                          }
+                          color="white"
+                        />
+
+                        {/* Conteúdo */}
+                        <VStack align="start" spacing={1} flex={1}>
+                          <HStack justify="space-between" w="full">
+                            <Text
+                              fontSize="sm"
+                              fontWeight="bold"
+                              color={textColor}
+                              noOfLines={1}
+                            >
+                              {notification.titulo}
+                            </Text>
+                            <Badge
+                              colorScheme={
+                                notification.type === "info" ? "blue" : "yellow"
+                              }
+                              fontSize="xs"
+                            >
+                              {notification.type === "info"
+                                ? "Geral"
+                                : "Alerta"}
+                            </Badge>
+                          </HStack>
+                          <Text
+                            fontSize="xs"
+                            color={subtextColor}
+                            noOfLines={2}
+                          >
+                            {notification.descricao}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                    </MenuItem>
+                    {index < allNotifications.length - 1 && (
+                      <MenuDivider m={0} />
+                    )}
+                  </Box>
+                ))}
               </Box>
-            </VStack>
-          )}
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" onClick={onClose}>
-            Fechar
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+              );
+            })()}
+          </MenuList>
+        </Portal>
+      </Menu>
+
+      {/* Modal para exibir detalhes do Bug Report */}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack spacing={3}>
+              <Avatar
+                size="sm"
+                icon={<Icon as={FiInfo} fontSize="16" />}
+                bg="#3182CE"
+                color="white"
+              />
+              <VStack align="start" spacing={0}>
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                  Mensagem Geral
+                </Text>
+                <Badge colorScheme="blue" fontSize="xs">
+                  Informação
+                </Badge>
+              </VStack>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedBug && (
+              <VStack align="start" spacing={4} w="full">
+                {/* Descrição */}
+                <Box w="full">
+                  <Text
+                    fontSize="xs"
+                    color={subtextColor}
+                    fontWeight="medium"
+                    mb={1}
+                  >
+                    DESCRIÇÃO
+                  </Text>
+                  <Text
+                    fontSize="sm"
+                    color={textColor}
+                    whiteSpace="pre-wrap"
+                    lineHeight="1.6"
+                    p={3}
+                    bg={modalDescBg}
+                    borderRadius="md"
+                    border="1px"
+                    borderColor={borderColor}
+                  >
+                    {selectedBug.descricao}
+                  </Text>
+                </Box>
+              </VStack>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onClose}>
+              Fechar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
