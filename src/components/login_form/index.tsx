@@ -30,6 +30,22 @@ type GeolocationData = {
   lng: number;
 };
 
+const GetIp = async () => {
+  const req = await fetch("http://ip-api.com/json/");
+  const data = await req.json();
+  const geo = {
+    city: data.city,
+    region: data.region,
+    country: data.country,
+    timezone: data.timezone,
+    operadora: data.isp,
+    lat: data.lat,
+    lng: data.lon,
+  }
+  const ipext = data.query;
+  return {geo, ipext};
+};
+
 /**
  * Componente responsável por renderizar o formulário de login e orquestrar a autenticação do usuário.
  */
@@ -38,6 +54,7 @@ export const FormLogin = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [ip, setIp] = useState("indisponível");
+  console.log("🚀 ~ FormLogin ~ ip:", ip)
   const [geolocation, setGeolocation] = useState<GeolocationData>({
     city: "",
     region: "",
@@ -47,6 +64,7 @@ export const FormLogin = () => {
     lat: 0,
     lng: 0,
   });
+  console.log("🚀 ~ FormLogin ~ geolocation:", geolocation)
   const toast = useToast();
   const router = useRouter();
 
@@ -64,19 +82,9 @@ export const FormLogin = () => {
 
   useEffect(() => {
     (async () => {
-      const req = await fetch("http://ip-api.com/json/");
-      const data = await req.json();
-      console.log("🚀 ~ FormLogin ~ data:", data)
-      setGeolocation({
-        city: (data.city as string) || "indisponível",
-        region: (data.region as string) || "indisponível",
-        country: (data.country as string) || "indisponível",
-        timezone: (data.timezone as string) || "indisponível",
-        operadora: (data.isp as string) || "indisponível",
-        lat: (data.lat as number) || 0,
-        lng: (data.lon as number) || 0,
-      });
-      setIp(data.query || "indisponível");
+      const data = await GetIp();
+      setGeolocation(data.geo);
+      setIp(data.ipext || "indisponível");
     })();
   }, []);
 
