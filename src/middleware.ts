@@ -27,6 +27,7 @@ const publicRoutes = [
   "/faq/recuperacao-senhas",
   "/faq/recuperacao-senhas",
   "/api/contact",
+  "http://ip-api.com/json/"
 ];
 
 export async function middleware(req: NextRequest) {
