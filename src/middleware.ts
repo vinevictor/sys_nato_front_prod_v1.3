@@ -27,7 +27,8 @@ const publicRoutes = [
   "/faq/recuperacao-senhas",
   "/faq/recuperacao-senhas",
   "/api/contact",
-  "http://ip-api.com/json/"
+  "http://ip-api.com/json/",
+  "https://api.ipify.org?format=json"
 ];
 
 export async function middleware(req: NextRequest) {
@@ -45,6 +46,9 @@ export async function middleware(req: NextRequest) {
 
   if (!session) {
     if (isPublicRoute) {
+      return NextResponse.next();
+    }
+    if (pathname.startsWith("https://ipapi.co/")) {
       return NextResponse.next();
     }
     return NextResponse.redirect(new URL("/login", req.url));

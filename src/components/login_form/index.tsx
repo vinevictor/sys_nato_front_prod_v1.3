@@ -64,23 +64,56 @@ export const FormLogin = () => {
 
   useEffect(() => {
     (async () => {
-      const req = await fetch("http://ip-api.com/json/");
-      if (!req.ok) {
-        console.error("Erro ao buscar geolocalização:", req.statusText);
-        return;
+      try {
+        // Chamada direta no cliente para API HTTPS (pega IP real do usuário)
+        const req = await fetch("https://api.ipify.org?format=json");
+        
+        if (!req.ok) {
+          console.error("Erro ao buscar IP:", req.statusText);
+          return;
+        }
+
+        const ipData = await req.json();
+        
+        if (!ipData.ip) {
+          console.error("IP não encontrado na resposta");
+          return;
+        }
+
+        // Agora busca geolocalização usando o IP obtido
+        const geoReq = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+        
+        if (!geoReq.ok) {
+          console.error("Erro ao buscar geolocalização:", geoReq.statusText);
+          // Se falhar, pelo menos salva o IP
+          setIp(ipData.ip);
+          return;
+        }
+
+        const geoData = await geoReq.json();
+        
+        if (geoData.error) {
+          console.error("Erro na API de geolocalização:", geoData.reason);
+          // Se falhar, pelo menos salva o IP
+          setIp(ipData.ip);
+          return;
+        }
+
+        console.log("🚀 ~ FormLogin ~ geolocation data:", geoData);
+        
+        setGeolocation({
+          city: geoData.city || "indisponível",
+          region: geoData.region || "indisponível",
+          country: geoData.country_name || "indisponível",
+          timezone: geoData.timezone || "indisponível",
+          operadora: geoData.org || "indisponível",
+          lat: geoData.latitude || 0,
+          lng: geoData.longitude || 0,
+        });
+        setIp(geoData.ip || ipData.ip);
+      } catch (error) {
+        console.error("Erro ao buscar geolocalização:", error);
       }
-      const data = await req.json();
-      console.log("🚀 ~ FormLogin ~ data:", data)
-      setGeolocation({
-        city: (data.city as string) || "indisponível",
-        region: (data.region as string) || "indisponível",
-        country: (data.country as string) || "indisponível",
-        timezone: (data.timezone as string) || "indisponível",
-        operadora: (data.isp as string) || "indisponível",
-        lat: (data.lat as number) || 0,
-        lng: (data.lon as number) || 0,
-      });
-      setIp(data.query || "indisponível");
     })();
   }, []);
 
