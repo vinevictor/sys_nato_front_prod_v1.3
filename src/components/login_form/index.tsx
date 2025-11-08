@@ -30,22 +30,6 @@ type GeolocationData = {
   lng: number;
 };
 
-const GetIp = async () => {
-  const req = await fetch("http://ip-api.com/json/");
-  const data = await req.json();
-  const geo = {
-    city: data.city,
-    region: data.region,
-    country: data.country,
-    timezone: data.timezone,
-    operadora: data.isp,
-    lat: data.lat,
-    lng: data.lon,
-  }
-  const ipext = data.query;
-  return {geo, ipext};
-};
-
 /**
  * Componente responsável por renderizar o formulário de login e orquestrar a autenticação do usuário.
  */
@@ -54,7 +38,6 @@ export const FormLogin = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [ip, setIp] = useState("indisponível");
-  console.log("🚀 ~ FormLogin ~ ip:", ip)
   const [geolocation, setGeolocation] = useState<GeolocationData>({
     city: "",
     region: "",
@@ -64,7 +47,6 @@ export const FormLogin = () => {
     lat: 0,
     lng: 0,
   });
-  console.log("🚀 ~ FormLogin ~ geolocation:", geolocation)
   const toast = useToast();
   const router = useRouter();
 
@@ -82,9 +64,56 @@ export const FormLogin = () => {
 
   useEffect(() => {
     (async () => {
-      const data = await GetIp();
-      setGeolocation(data.geo);
-      setIp(data.ipext || "indisponível");
+      try {
+        // Chamada direta no cliente para API HTTPS (pega IP real do usuário)
+        const req = await fetch("https://api.ipify.org?format=json");
+        
+        if (!req.ok) {
+          console.error("Erro ao buscar IP:", req.statusText);
+          return;
+        }
+
+        const ipData = await req.json();
+        
+        if (!ipData.ip) {
+          console.error("IP não encontrado na resposta");
+          return;
+        }
+
+        // Agora busca geolocalização usando o IP obtido
+        const geoReq = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+        
+        if (!geoReq.ok) {
+          console.error("Erro ao buscar geolocalização:", geoReq.statusText);
+          // Se falhar, pelo menos salva o IP
+          setIp(ipData.ip);
+          return;
+        }
+
+        const geoData = await geoReq.json();
+        
+        if (geoData.error) {
+          console.error("Erro na API de geolocalização:", geoData.reason);
+          // Se falhar, pelo menos salva o IP
+          setIp(ipData.ip);
+          return;
+        }
+
+        console.log("🚀 ~ FormLogin ~ geolocation data:", geoData);
+        
+        setGeolocation({
+          city: geoData.city || "indisponível",
+          region: geoData.region || "indisponível",
+          country: geoData.country_name || "indisponível",
+          timezone: geoData.timezone || "indisponível",
+          operadora: geoData.org || "indisponível",
+          lat: geoData.latitude || 0,
+          lng: geoData.longitude || 0,
+        });
+        setIp(geoData.ip || ipData.ip);
+      } catch (error) {
+        console.error("Erro ao buscar geolocalização:", error);
+      }
     })();
   }, []);
 

@@ -12,6 +12,11 @@ const nextConfig = {
     return `build-${Date.now()}`;
   },
 
+  // Domínios externos permitidos para imagens e requisições
+  images: {
+    domains: ['api.ipify.org', 'ipapi.co'],
+  },
+
   // Headers para controlar cache
   async headers() {
     return [
