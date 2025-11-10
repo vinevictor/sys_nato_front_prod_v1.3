@@ -249,6 +249,26 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             isReadOnly={!isAdmin}
             Disable={!isAdmin}
           />
+          <HStack align={"end"}>
+            <IconButton
+              icon={<Icon as={FaCopy} />}
+              aria-label="Copiar CPF"
+              size="sm"
+              colorScheme="green"
+              // variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  form?.cpf?.replace(/\D/g, "") || ""
+                );
+                toast({
+                  title: "CPF copiado!",
+                  status: "success",
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }}
+            />
+          </HStack>
           <InputBasic
             boxWidth="45%"
             id="nome"
@@ -302,7 +322,9 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
               colorScheme="green"
               // variant="outline"
               onClick={() => {
-                navigator.clipboard.writeText(form?.telefone?.replace(/\D/g, "") || "");
+                navigator.clipboard.writeText(
+                  form?.telefone?.replace(/\D/g, "") || ""
+                );
                 toast({
                   title: "Número copiado!",
                   status: "success",
@@ -312,7 +334,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
               }}
             />
           </HStack>
-          
+
           <MaskedInput
             boxWidth="25%"
             id="telefone2"
