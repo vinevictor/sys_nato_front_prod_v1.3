@@ -30,6 +30,7 @@ interface EmpreendimentoCard {
     id: number;
     fantasia: string;
   };
+  direto: boolean;
   financeiros: [
     {
       id: number;

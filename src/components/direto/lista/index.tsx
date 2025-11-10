@@ -120,9 +120,9 @@ export const DadoCompomentList = ({
   const [Financeiro, setFinanceiro] = useState<number | null>(null);
   const [DataFinanceiro, setDataFinanceiro] = useState<any>([]);
   const [Id, setId] = useState<number | null>(null);
-  const [Pagina, setPagina] = useState<number | null>(null);
+  const [Pagina, setPagina] = useState<number>(1);
   const [Total, setTotal] = useState<number>(0);
-  const [PagAtual, setPagAtual] = useState<number>(0);
+  const [PagAtual, setPagAtual] = useState<number>(1);
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const [ShowSkeleton, setShowSkeleton] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -183,7 +183,8 @@ export const DadoCompomentList = ({
   useEffect(() => {
     setListaDados(dados?.data || []);
     setTotal(dados?.total || 0);
-    setPagAtual(dados?.pagina || 0);
+    setPagAtual(dados?.pagina || 1);
+    setPagina(dados?.pagina || 1); // Sincroniza Pagina com PagAtual
     // Carregar dados auxiliares
     if (session?.user) {
       (async () => {
@@ -230,6 +231,7 @@ export const DadoCompomentList = ({
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
+      setPagina(data.pagina); // Sincroniza com a página retornada
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     } finally {
@@ -245,11 +247,12 @@ export const DadoCompomentList = ({
       setEmpreendimento(null);
       setFinanceiro(null);
       setId(null);
-      setPagina(null);
+      setPagina(1); // Reset para página 1
       const data = await RequestDataBlank();
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
+      setPagina(data.pagina); // Sincroniza com a página retornada
     } catch (error) {
       console.error("Erro ao limpar filtros:", error);
     } finally {
@@ -258,7 +261,6 @@ export const DadoCompomentList = ({
   };
 
   const NextPage = async () => {
-    if (Pagina === null) return;
     try {
       setIsLoading(true);
       const data = await RequestDataFilter({
@@ -267,6 +269,7 @@ export const DadoCompomentList = ({
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
+      setPagina(data.pagina); // Sincroniza com a página retornada
     } catch (error) {
       console.error("Erro ao navegar para próxima página:", error);
     } finally {
@@ -783,7 +786,7 @@ export const DadoCompomentList = ({
               <SelectPgComponent
                 total={Total || 0}
                 ClientQtd={ListaDados?.length || 0}
-                SelectPage={PagAtual}
+                SelectPage={Pagina}
                 setSelectPage={setPagina}
                 SetVewPage={NextPage}
               />

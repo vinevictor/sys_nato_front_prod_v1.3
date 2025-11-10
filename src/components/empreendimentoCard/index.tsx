@@ -194,6 +194,7 @@ export default function Empreendimentos({ data, listConstrutora, listEstado, fec
                       {empreendimento.cidade || "N/A"}
                     </Text>
                   </Flex>
+                  
                   <Flex gap={2}>
                     <Text
                       fontSize="sm"
@@ -209,6 +210,24 @@ export default function Empreendimentos({ data, listConstrutora, listEstado, fec
                       _dark={{ color: "gray.100" }}
                     >
                       {empreendimento.estado || "N/A"}
+                    </Text>
+                  </Flex>
+                  
+                  <Flex gap={2}>
+                    <Text
+                      fontSize="sm"
+                      color="gray.600"
+                      _dark={{ color: "gray.400" }}
+                    >
+                      Acesso ao Direto:
+                    </Text>
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="gray.800"
+                      _dark={{ color: "gray.100" }}
+                    >
+                      {empreendimento.direto ? 'Ativo': 'Inativo'}
                     </Text>
                   </Flex>
                 </VStack>

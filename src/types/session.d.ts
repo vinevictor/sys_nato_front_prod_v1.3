@@ -59,6 +59,7 @@ declare namespace Session {
   interface Empreendimento {
     id: number;
     nome: string;
+    direto: boolean;
   }
 
   /**
@@ -119,6 +120,7 @@ interface Construtora {
 interface Empreendimento {
   id: number;
   nome: string;
+  direto: boolean;
 }
 
 /**

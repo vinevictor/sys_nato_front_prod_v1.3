@@ -38,15 +38,7 @@ export const FormLogin = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [ip, setIp] = useState("indisponível");
-  const [geolocation, setGeolocation] = useState<GeolocationData>({
-    city: "",
-    region: "",
-    country: "",
-    timezone: "",
-    operadora: "",
-    lat: 0,
-    lng: 0,
-  });
+  console.log("🚀 ~ FormLogin ~ ip:", ip)
   const toast = useToast();
   const router = useRouter();
 
@@ -75,42 +67,8 @@ export const FormLogin = () => {
 
         const ipData = await req.json();
         
-        if (!ipData.ip) {
-          console.error("IP não encontrado na resposta");
-          return;
-        }
+        setIp(ipData.ip);
 
-        // Agora busca geolocalização usando o IP obtido
-        const geoReq = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-        
-        if (!geoReq.ok) {
-          console.error("Erro ao buscar geolocalização:", geoReq.statusText);
-          // Se falhar, pelo menos salva o IP
-          setIp(ipData.ip);
-          return;
-        }
-
-        const geoData = await geoReq.json();
-        
-        if (geoData.error) {
-          console.error("Erro na API de geolocalização:", geoData.reason);
-          // Se falhar, pelo menos salva o IP
-          setIp(ipData.ip);
-          return;
-        }
-
-        console.log("🚀 ~ FormLogin ~ geolocation data:", geoData);
-        
-        setGeolocation({
-          city: geoData.city || "indisponível",
-          region: geoData.region || "indisponível",
-          country: geoData.country_name || "indisponível",
-          timezone: geoData.timezone || "indisponível",
-          operadora: geoData.org || "indisponível",
-          lat: geoData.latitude || 0,
-          lng: geoData.longitude || 0,
-        });
-        setIp(geoData.ip || ipData.ip);
       } catch (error) {
         console.error("Erro ao buscar geolocalização:", error);
       }
@@ -134,8 +92,7 @@ export const FormLogin = () => {
         body: JSON.stringify({
           username,
           password,
-          ip,
-          geolocation,
+          ip
         }),
       });
 

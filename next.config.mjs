@@ -14,7 +14,20 @@ const nextConfig = {
 
   // Domínios externos permitidos para imagens e requisições
   images: {
-    domains: ['api.ipify.org', 'ipapi.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.ipify.org',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ipapi.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 
   // Headers para controlar cache

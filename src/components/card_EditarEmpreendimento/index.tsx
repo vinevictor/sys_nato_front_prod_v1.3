@@ -9,6 +9,7 @@ import {
   useToast,
   FormLabel,
   Button,
+  Switch,
 } from "@chakra-ui/react";
 import React, { useState, useEffect, useCallback } from "react";
 import EmpreendimentoProvider from "@/provider/EmpreendimentoProvider";
@@ -33,6 +34,7 @@ interface EmpreendimentoCard {
   nome: string;
   estado: string;
   cidade: string;
+  direto: boolean;
   construtora: {
     id: number;
     fantasia: string;
@@ -50,6 +52,7 @@ interface EmpreendimentoForm {
   construtoraId: number;
   cidade: string;
   estado: string;
+  direto: boolean;
   financeiro: number[];
 }
 
@@ -78,8 +81,8 @@ export function CardUpdateEmpreendimento({
   const isCreateMode = !id;
 
   // Desestrutura dados do empreendimento (valores padrão para modo criação)
-  const { construtora, nome, estado, cidade, financeiros } =
-    setEmpreendimentoCard || { construtora: null, nome: "", estado: "", cidade: "", financeiros: [] };
+  const { construtora, nome, estado, cidade, financeiros, direto} =
+    setEmpreendimentoCard || { construtora: null, nome: "", estado: "", cidade: "", financeiros: [], direto: false };
 
   const [ConstrutoraName, setConstrutoraName] = useState<string>(
     construtora?.fantasia ?? ""
@@ -116,6 +119,7 @@ export function CardUpdateEmpreendimento({
     construtoraId: construtora?.id ?? 0,
     cidade: cidade ?? "",
     estado: estado ?? "",
+    direto: direto ?? false,
     financeiro: Array.isArray(financeiros)
       ? financeiros.filter((item) => item && item.id).map((item) => item.id)
       : [],
@@ -440,6 +444,27 @@ export function CardUpdateEmpreendimento({
                 setValue={financeiros || []}
                 financeirasList={ListFinanceira}
                 OutValue={handleFinanceiraChange}
+              />
+            </Box>
+            {/* Direto */}
+            <Box flexBasis="100%" flexGrow={0} flexShrink={0}>
+              <FormLabel
+                fontSize="sm"
+                fontWeight="md"
+                mb={2}
+                color="gray.700"
+                _dark={{
+                  color: "gray.200",
+                }}
+              >
+                Direto
+              </FormLabel>
+              <Switch
+                id="direto"
+                size="sm"
+                colorScheme="green"
+                isChecked={form.direto}
+                onChange={(e) => setForm((prev) => ({ ...prev, direto: e.target.checked }))}
               />
             </Box>
           </Flex>
