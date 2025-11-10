@@ -539,6 +539,8 @@ export default function FormSolicitacaoDireto({
             >
               {isAdmin && dados.id_fcw && <BtnLimparFcw id={dados.id || 0} />}
             </Box>
+
+          {/* TODO: incluir botão de atualizar status de pagamento */}
             
             <Box
               w={{ base: "full", md: "auto" }}
