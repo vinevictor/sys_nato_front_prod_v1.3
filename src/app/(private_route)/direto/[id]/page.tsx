@@ -81,7 +81,7 @@ export default async function PageDireto({ params }: Props) {
   const logs = await requestLogs(+id, session?.token ); // Provide a default empty string if session?.token is undefined
   const alertas = await requestAlertas(+id, session?.token ); // Provide a default empty string if session?.token is undefined
 
-  if (data.status === 404) {
+  if (data.status === 404 || !data.data) {
     return <Error404 />;
   }
 
@@ -271,11 +271,13 @@ export default async function PageDireto({ params }: Props) {
                 display="flex"
                 flexDir="column"
               >
-                <FormSolicitacaoDireto
-                  dados={data.data}
-                  Id={+id}
-                  session={user}
-                />
+                <Suspense fallback={<Box>Carregando formulário...</Box>}>
+                  <FormSolicitacaoDireto
+                    dados={data.data}
+                    Id={+id}
+                    session={user}
+                  />
+                </Suspense>
               </Box>
             )}
 

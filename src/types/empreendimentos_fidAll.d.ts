@@ -6,6 +6,7 @@ export type EmpreedimentoType = {
   status: boolean;
   createdAt: string;
   updatedAt: string;
+  direto: boolean;
   construtora: {
     id: number;
     fantasia: string;

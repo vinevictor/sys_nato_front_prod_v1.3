@@ -100,7 +100,6 @@ export default function MaskedInput({
     try {
       const bugCheck = await fetch(`/api/bug_report`);
       const Dados = await bugCheck.json();
-      console.log("🚀 ~ checkWhatsapp ~ Dados:", Dados);
       if (Dados.length > 0) {
         return true;
       }

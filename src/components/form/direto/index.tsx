@@ -3,6 +3,7 @@ import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_client
 import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
 import BotaoSisapp from "@/components/botoes/bt_sisapp";
 import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
+import BtnLimparFcw from "@/components/botoes/btn_lipar_fcw";
 import BotaoPausar from "@/components/botoes/btn_pausar";
 import { CriarFcweb } from "@/components/botoes/criarFcweb";
 import BoxBasic from "@/components/box/link";
@@ -22,14 +23,17 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Icon,
+  IconButton,
   Text,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AiOutlineWarning } from "react-icons/ai";
+import { FaCopy } from "react-icons/fa";
+
 import { BeatLoader } from "react-spinners";
 
 interface GetSolicitacao {
@@ -115,52 +119,67 @@ export default function FormSolicitacaoDireto({
   session,
 }: FormSolicitacaoProps) {
   const [form, setForm] = useState({
-    cpf: dados.cpf,
-    nome: dados.nome,
-    datanascimento: dados.dt_nascimento,
-    telefone: dados.telefone,
-    telefone2: dados.telefone2,
-    email: dados.email,
-    empreendimento: dados.empreendimentoId,
-    financeira: dados.financeiroId,
-    corretor: dados.corretorId,
-    relacionamento: dados.relacionamentos,
-    dt_nascimento: dados.dt_nascimento,
-    tags: dados.tags,
+    cpf: dados.cpf || "",
+    nome: dados.nome || "",
+    datanascimento: dados.dt_nascimento || "",
+    telefone: dados.telefone || "",
+    telefone2: dados.telefone2 || "",
+    email: dados.email || "",
+    empreendimento: dados.empreendimentoId || 0,
+    financeira: dados.financeiroId || 0,
+    corretor: dados.corretorId || 0,
+    relacionamento: dados.relacionamentos || [],
+    dt_nascimento: dados.dt_nascimento || "",
+    tags: dados.tags || [],
   });
 
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
   const router = useRouter();
-  const [Empreendimentos, setEmpreendimentos] = useState<GetEmpreendimentos[]>([
-    dados.empreendimento,
-  ]);
-  const [Financeiras, setFinanceiras] = useState<GetFinanceiras[]>([
-    dados.financeiro,
-  ]);
-  const [Corretores, setCorretores] = useState<GetCorretor[]>([dados.corretor]);
+  const [Empreendimentos, setEmpreendimentos] = useState<GetEmpreendimentos[]>(
+    dados.empreendimento ? [dados.empreendimento] : []
+  );
+  const [Financeiras, setFinanceiras] = useState<GetFinanceiras[]>(
+    dados.financeiro ? [dados.financeiro] : []
+  );
+  const [Corretores, setCorretores] = useState<GetCorretor[]>(
+    dados.corretor ? [dados.corretor] : []
+  );
 
   const isAdmin = session?.hierarquia === "ADM";
 
   useEffect(() => {
-    if (isAdmin) {
-      (async () => {
-        const req = await fetch("/api/empreendimento/getall");
-        const res = await req.json();
-        setEmpreendimentos(res);
+    const carregarDados = async () => {
+      try {
+        // Carrega empreendimentos
+        if (isAdmin) {
+          const req = await fetch("/api/empreendimento/getall");
+          const res = await req.json();
+          setEmpreendimentos(res || []);
+        } else {
+          setEmpreendimentos(session?.empreendimento || []);
+        }
 
-        const req2 = await fetch("/api/financeira/getall");
-        const res2 = await req2.json();
-        setFinanceiras(res2);
+        // Carrega financeiras
+        if (isAdmin) {
+          const req2 = await fetch("/api/financeira/getall");
+          const res2 = await req2.json();
+          setFinanceiras(res2 || []);
+        } else {
+          setFinanceiras(session?.Financeira || []);
+        }
 
+        // Carrega corretores (todos os usuários para ambos os casos)
         const req3 = await fetch("/api/usuario/getAll");
         const res3 = await req3.json();
-        setCorretores(res3);
-      })();
-    }
-    setEmpreendimentos(session?.empreendimento || []);
-    setFinanceiras(session?.Financeira || []);
-  }, [isAdmin]);
+        setCorretores(res3 || []);
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      }
+    };
+
+    carregarDados();
+  }, [isAdmin, session]);
 
   /**
    * A função handleChange é responsável por atualizar o estado do formulário
@@ -203,7 +222,11 @@ export default function FormSolicitacaoDireto({
       setIsLoading(true);
       const req = await fetch(`/api/solicitacao/update/${Id}`, {
         method: "PUT",
-        body: JSON.stringify({ form }),
+        body: JSON.stringify({
+          ...form,
+          financeiroId: form.financeira,
+          empreendimentoId: form.empreendimento,
+        }),
       });
       const res = await req.json();
       if (!req.ok) {
@@ -238,9 +261,9 @@ export default function FormSolicitacaoDireto({
   };
 
   return (
-    <VStack 
-      spacing={0} 
-      align="stretch" 
+    <VStack
+      spacing={0}
+      align="stretch"
       w="full"
       bg="white"
       borderWidth="1px"
@@ -260,7 +283,7 @@ export default function FormSolicitacaoDireto({
         align="center"
         justify="space-between"
       >
-        <Heading 
+        <Heading
           size={{ base: "sm", md: "md" }}
           color="#023147"
           _dark={{ color: "gray.100" }}
@@ -268,165 +291,276 @@ export default function FormSolicitacaoDireto({
           Dados da Solicitação Direto
         </Heading>
       </Flex>
-      
+
       {/* Conteúdo do Formulário */}
       <VStack
         spacing={4}
-        p={{ base: 3, md: 4, lg: 6 }}
         align="stretch"
-        bg="white"
-        _dark={{ bg: "gray.800" }}
         flex={1}
         overflowY="auto"
+        p={{ base: 2, md: 3 }}
       >
-      <Flex
-        w={"100%"}
-        justifyContent={"center"}
-        flexDir={"column"}
-        gap={4}
-      >
-        <Flex gap={2}>
-          <MaskedInput
-            boxWidth="40%"
-            id="cpf"
-            label="CPF"
-            type="text"
-            mask="999.999.999-99"
-            value={form?.cpf || ""}
-            onvalue={(value) => handleChange("cpf", value)}
-            required
-            Disable={!isAdmin}
-          />
-          <InputBasic
-            id="nome"
-            type="text"
-            label="Nome"
-            value={form?.nome || ""}
-            onvalue={(value) => handleChange("nome", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-          <InputBasic
-            boxWidth="40%"
-            id="dt_nascimento"
-            type="date"
-            label="Data de Nascimento"
-            value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
-            onvalue={(value) => handleChange("dt_nascimento", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-        </Flex>
-        <Flex gap={2}>
-          <InputBasic
-            id="email"
-            type="email"
-            label="Email"
-            value={form?.email || ""}
-            onvalue={(value) => handleChange("email", value)}
-            required
-            isReadOnly={!isAdmin}
-          />
-          <MaskedInput
-            id="telefone"
-            label="Whatsapp Com DDD"
-            type="text"
-            mask="(99) 99999-9999"
-            value={form?.telefone || ""}
-            onvalue={(value) => handleChange("telefone", value)}
-            required
-            isWhatsapp
-            isReadOnly={!isAdmin}
-          />
-          <MaskedInput
-            id="telefone2"
-            label="Whatsapp Com DDD 2"
-            type="text"
-            mask="(99) 99999-9999"
-            value={form?.telefone2 || ""}
-            onvalue={(value) => handleChange("telefone2", value)}
-            isWhatsapp
-          />
-        </Flex>
-        <Flex gap={2}>
-          <SelectBasic
-            id="empreendimento"
-            label="Empreendimento"
-            onvalue={(value) => handleChange("empreendimento", Number(value))}
-            value={form?.empreendimento || ""}
-            required
-            options={Empreendimentos.map((e) => ({
-              id: e.id,
-              fantasia: e.nome,
-            }))}
-            Disable={!isAdmin}
-          />
+        {/* Seção 1: Dados Pessoais */}
+        <VStack spacing={3} align="stretch">
+          <Heading
+            size="sm"
+            color="#023147"
+            _dark={{ color: "gray.100" }}
+            fontWeight="semibold"
+          >
+            Dados Pessoais
+          </Heading>
+          
+          {/* Linha 1: CPF, Nome, Data Nascimento */}
+          <Flex gap={3} flexDir={{ base: "column", md: "row" }} flexWrap="wrap">
+            <Box w={{ base: "full", md: "18%" }}>
+              <MaskedInput
+                id="cpf"
+                label="CPF"
+                type="text"
+                mask="999.999.999-99"
+                value={form?.cpf || ""}
+                onvalue={(value) => handleChange("cpf", value)}
+                required
+                Disable={!isAdmin}
+              />
+            </Box>
+            <Box w={{ base: "auto", md: "auto" }} display="flex" alignItems="flex-end">
+              <IconButton
+                icon={<Icon as={FaCopy} />}
+                aria-label="Copiar CPF"
+                size="sm"
+                colorScheme="green"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    form?.cpf?.replace(/\D/g, "") || ""
+                  );
+                  toast({
+                    title: "CPF copiado!",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                  });
+                }}
+              />
+            </Box>
+            <Box w={{ base: "full", md: "38%" }}>
+              <InputBasic
+                id="nome"
+                type="text"
+                label="Nome"
+                value={form?.nome || ""}
+                onvalue={(value) => handleChange("nome", value)}
+                required
+                isReadOnly={!isAdmin}
+              />
+            </Box>
+            <Box w={{ base: "full", md: "20%" }}>
+              <InputBasic
+                id="dt_nascimento"
+                type="date"
+                label="Data de Nascimento"
+                value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
+                onvalue={(value) => handleChange("dt_nascimento", value)}
+                required
+                isReadOnly={!isAdmin}
+              />
+            </Box>
+          </Flex>
 
-          <SelectBasic
-            id="financeira"
-            label="Financeira"
-            onvalue={(value) => {
-              const id = Number(value);
-              handleChange("financeira", id);
-            }}
-            value={form?.financeira || ""}
-            required
-            Disable={!form?.empreendimento || !isAdmin}
-            options={Financeiras.map((f) => ({
-              id: f.id,
-              fantasia: f.fantasia,
-            }))}
-          />
+          {/* Linha 2: Email, Telefones */}
+          <Flex gap={3} flexDir={{ base: "column", md: "row" }} flexWrap="wrap">
+            <Box w={{ base: "full", md: "35%" }}>
+              <InputBasic
+                id="email"
+                type="email"
+                label="Email"
+                value={form?.email || ""}
+                onvalue={(value) => handleChange("email", value)}
+                required
+                isReadOnly={!isAdmin}
+              />
+            </Box>
+            <Box w={{ base: "full", md: "20%" }}>
+              <MaskedInput
+                id="telefone"
+                label="Whatsapp Com DDD"
+                type="text"
+                mask="(99) 99999-9999"
+                value={form?.telefone || ""}
+                onvalue={(value) => handleChange("telefone", value)}
+                required
+                isWhatsapp
+                isReadOnly={!isAdmin}
+              />
+            </Box>
+            <Box w={{ base: "auto", md: "auto" }} display="flex" alignItems="flex-end">
+              <IconButton
+                icon={<Icon as={FaCopy} />}
+                aria-label="Copiar número telefone"
+                size="sm"
+                colorScheme="green"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    form?.telefone?.replace(/\D/g, "") || ""
+                  );
+                  toast({
+                    title: "Número copiado!",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                  });
+                }}
+              />
+            </Box>
+            <Box w={{ base: "full", md: "20%" }}>
+              <MaskedInput
+                id="telefone2"
+                label="Whatsapp Com DDD 2"
+                type="text"
+                mask="(99) 99999-9999"
+                value={form?.telefone2 || ""}
+                onvalue={(value) => handleChange("telefone2", value)}
+                isWhatsapp
+              />
+            </Box>
+          </Flex>
+        </VStack>
 
-          <SelectBasic
-            id="corretor"
-            label="Corretor"
-            onvalue={(value) => handleChange("corretor", Number(value))}
-            value={form?.corretor || ""}
-            required
-            Disable={!form?.empreendimento || !form?.financeira || !isAdmin}
-            options={Corretores.map((c) => ({
-              id: c.id,
-              fantasia: c.nome,
-            }))}
-          />
-        </Flex>
+        <Divider borderColor="gray.300" _dark={{ borderColor: "gray.600" }} />
 
-        <Flex gap={2}>
-          <BoxBasic
-            id="idfcweb"
-            label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
-            value={dados.id_fcw || ""}
-            isLink={isAdmin}
-            href={
-              isAdmin
-                ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${dados.id_fcw}`
-                : undefined
-            }
-          />
-          <BoxBasic
-            id="andamento"
-            label="Andamento"
-            value={dados.andamento || ""}
-          />
+        {/* Seção 2: Dados da Solicitação */}
+        <VStack spacing={3} align="stretch">
+          <Heading
+            size="sm"
+            color="#023147"
+            _dark={{ color: "gray.100" }}
+            fontWeight="semibold"
+          >
+            Dados da Solicitação
+          </Heading>
+          
+          <Flex gap={3} flexDir={{ base: "column", md: "row" }} flexWrap="wrap">
+            <Box w={{ base: "full", md: "30%" }}>
+              <SelectBasic
+                id="empreendimento"
+                label="Empreendimento"
+                onvalue={(value) => handleChange("empreendimento", Number(value))}
+                value={form?.empreendimento || ""}
+                required
+                options={Empreendimentos.map((e) => ({
+                  id: e.id,
+                  fantasia: e.nome,
+                }))}
+                Disable={!isAdmin}
+              />
+            </Box>
 
-          <SelectMultiItem
-            Id={Id}
-            label="Tags"
-            isAdmin={isAdmin}
-            Tags={dados.tags}
-            required
-            OnRetorno={(tags) => handleChange("tags", tags)}
-          />
-        </Flex>
-      </Flex>
+            <Box w={{ base: "full", md: "30%" }}>
+              <SelectBasic
+                id="financeira"
+                label="Financeira"
+                onvalue={(value) => {
+                  const id = Number(value);
+                  handleChange("financeira", id);
+                }}
+                value={form?.financeira || ""}
+                required
+                Disable={!form?.empreendimento || !isAdmin}
+                options={Financeiras.map((f) => ({
+                  id: f.id,
+                  fantasia: f.fantasia,
+                }))}
+              />
+            </Box>
 
+            <Box w={{ base: "full", md: "30%" }}>
+              <SelectBasic
+                id="corretor"
+                label="Corretor"
+                onvalue={(value) => handleChange("corretor", Number(value))}
+                value={form?.corretor || ""}
+                required
+                Disable={!form?.empreendimento || !form?.financeira || !isAdmin}
+                options={Corretores.map((c) => ({
+                  id: c.id,
+                  fantasia: c.nome,
+                }))}
+              />
+            </Box>
+          </Flex>
+        </VStack>
+
+        <Divider borderColor="gray.300" _dark={{ borderColor: "gray.600" }} />
+
+        {/* Seção 3: Informações do Protocolo */}
+        <VStack spacing={3} align="stretch">
+          <Heading
+            size="sm"
+            color="#023147"
+            _dark={{ color: "gray.100" }}
+            fontWeight="semibold"
+          >
+            Informações do Protocolo
+          </Heading>
+          
+          <Flex
+            gap={3}
+            flexWrap="wrap"
+            flexDir={{ base: "column", md: "row" }}
+            align={{ base: "stretch", md: "flex-start" }}
+          >
+            <Box w={{ base: "full", md: "14rem" }}>
+              <BoxBasic
+                id="idfcweb"
+                label={isAdmin ? "Protocolo/IDFcweb" : "Protocolo"}
+                value={dados.id_fcw || ""}
+                isLink={isAdmin}
+                href={
+                  isAdmin
+                    ? `https://redebrasilrp.com.br/fcw2/abrir_ficha.php?fc=${dados.id_fcw}`
+                    : undefined
+                }
+              />
+            </Box>
+            
+            <Box w={{ base: "full", md: "12rem" }}>
+              <BoxBasic
+                id="andamento"
+                label="Andamento"
+                value={dados.andamento || ""}
+              />
+            </Box>
+            
+            <Box
+              w={{ base: "full", md: "auto" }}
+              display="flex"
+              alignItems="flex-end"
+            >
+              {isAdmin && dados.id_fcw && <BtnLimparFcw id={dados.id || 0} />}
+            </Box>
+            
+            <Box
+              w={{ base: "full", md: "auto" }}
+              flex={{ base: "initial", md: 1 }}
+            >
+              <SelectMultiItem
+                Id={Id}
+                label="Tags"
+                isAdmin={isAdmin}
+                Tags={dados.tags}
+                required
+                OnRetorno={(tags) => handleChange("tags", tags)}
+              />
+            </Box>
+          </Flex>
+        </VStack>
       </VStack>
-      
+
       {/* Botões de Ação - Fixo no rodapé */}
-      <Flex 
-        gap={2} 
-        w={"full"} 
+      <Flex
+        gap={2}
+        w={"full"}
         justifyContent={"flex-end"}
         flexWrap="wrap"
         p={{ base: 3, md: 4 }}
