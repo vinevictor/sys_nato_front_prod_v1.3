@@ -1,4 +1,4 @@
-import { BugReport } from "@/components/bug";
+
 import { Flex, FormLabel, Link, Text } from "@chakra-ui/react";
 import { mask } from "remask";
 
@@ -119,8 +119,6 @@ export const UserComponentInfoNatosign = ({
               </Flex>
             </Flex>
           </Flex>
-
-          <BugReport />
 
           <Flex flexDir="column" gap={3}>
             <Text

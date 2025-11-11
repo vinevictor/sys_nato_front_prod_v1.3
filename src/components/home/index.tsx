@@ -4,7 +4,6 @@ import ModalPrimeAsses from "../prime_asses";
 import ModalTermos from "../termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import { DadoCompomentList } from "./lista";
-import { UserCompomentInfo } from "./user";
 import { solictacao } from "@/types/solicitacao";
 import { Session } from "@/types/session";
 
@@ -42,8 +41,6 @@ export default async function HomeSwitch() {
         >
           {session && <ModalPrimeAsses session={session.user} />}
           {session && <ModalTermos session={session.user} />}
-
-          {session && <UserCompomentInfo session={session.user} />}
           {session && <DadoCompomentList dados={ListDados} session={session} />}
         </Flex>
       </HomeProvider>
