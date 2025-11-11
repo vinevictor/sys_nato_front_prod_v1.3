@@ -10,6 +10,7 @@ import {
   FormLabel,
   Button,
   Switch,
+  Input,
 } from "@chakra-ui/react";
 import React, { useState, useEffect, useCallback } from "react";
 import EmpreendimentoProvider from "@/provider/EmpreendimentoProvider";
@@ -21,7 +22,6 @@ import InputEmpreendimentoCidade from "@/implementes/cardCreateUpdate/imputs/inp
 import { FinanceiraEmpreendimento } from "./financeira";
 import { useRouter } from "next/navigation";
 import { LoadingOverlay } from "../LoadingOverlay";
-
 
 // ===== TYPES =====
 interface Construtora {
@@ -35,6 +35,7 @@ interface EmpreendimentoCard {
   estado: string;
   cidade: string;
   direto: boolean;
+  valor_cert?: number;
   construtora: {
     id: number;
     fantasia: string;
@@ -53,6 +54,7 @@ interface EmpreendimentoForm {
   cidade: string;
   estado: string;
   direto: boolean;
+  valor_cert: string;
   financeiro: number[];
 }
 
@@ -71,7 +73,7 @@ export function CardUpdateEmpreendimento({
   lista,
   listEstado,
   onSuccess,
-  onClose
+  onClose,
 }: CardUpdateEmpreendimentoProps) {
   const toast = useToast();
   const router = useRouter();
@@ -81,8 +83,16 @@ export function CardUpdateEmpreendimento({
   const isCreateMode = !id;
 
   // Desestrutura dados do empreendimento (valores padrão para modo criação)
-  const { construtora, nome, estado, cidade, financeiros, direto} =
-    setEmpreendimentoCard || { construtora: null, nome: "", estado: "", cidade: "", financeiros: [], direto: false };
+  const { construtora, nome, estado, cidade, financeiros, direto, valor_cert } =
+    setEmpreendimentoCard || {
+      construtora: null,
+      nome: "",
+      estado: "",
+      cidade: "",
+      financeiros: [],
+      direto: false,
+      valor_cert: 0,
+    };
 
   const [ConstrutoraName, setConstrutoraName] = useState<string>(
     construtora?.fantasia ?? ""
@@ -120,6 +130,7 @@ export function CardUpdateEmpreendimento({
     cidade: cidade ?? "",
     estado: estado ?? "",
     direto: direto ?? false,
+    valor_cert: valor_cert?.toString() ?? "",
     financeiro: Array.isArray(financeiros)
       ? financeiros.filter((item) => item && item.id).map((item) => item.id)
       : [],
@@ -144,10 +155,10 @@ export function CardUpdateEmpreendimento({
 
   /**
    * Atualiza o nome do empreendimento quando a construtora muda
-   * 
+   *
    * MODO CRIAÇÃO (nome vazio):
    * - Preenche automaticamente com o nome da construtora
-   * 
+   *
    * MODO EDIÇÃO ou nome já preenchido:
    * - Mantém a parte após o " - " e substitui a parte antes com o novo nome da construtora
    * - Exemplo: "ALEA - Residencial" → ao trocar para "NOVA" → "NOVA - Residencial"
@@ -228,28 +239,36 @@ export function CardUpdateEmpreendimento({
 
   const handleClick = async () => {
     setIsLoading(true);
-    
+
     try {
       // Define URL e método baseado no modo
-      const url = isCreateMode 
-        ? "/api/empreendimento/post" 
+      const url = isCreateMode
+        ? "/api/empreendimento/post"
         : `/api/empreendimento/update/${id}`;
-      
+
       const method = isCreateMode ? "POST" : "PUT";
 
+      const bodyParaEnvio = {
+        ...form,
+        valor_cert: form.direto
+          ? form.valor_cert
+            ? parseFloat(form.valor_cert)
+            : null
+          : null,
+      };
       const req = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(bodyParaEnvio),
       });
 
       if (!req.ok) {
         toast({
           title: "Erro",
-          description: isCreateMode 
-            ? "Erro ao criar empreendimento" 
+          description: isCreateMode
+            ? "Erro ao criar empreendimento"
             : "Erro ao atualizar empreendimento",
           status: "error",
           duration: 5000,
@@ -257,29 +276,29 @@ export function CardUpdateEmpreendimento({
         });
         return;
       }
-      
+
       toast({
         title: "Sucesso",
-        description: isCreateMode 
-          ? "Empreendimento criado com sucesso" 
+        description: isCreateMode
+          ? "Empreendimento criado com sucesso"
           : "Empreendimento atualizado com sucesso",
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      
+
       // Chama callback de sucesso (fecha modal se existir)
       if (onSuccess) {
         onSuccess();
       }
-      
+
       // Revalida os dados da página sem reload completo
       router.refresh();
     } catch (error) {
       toast({
         title: "Erro",
-        description: isCreateMode 
-          ? "Erro ao criar empreendimento" 
+        description: isCreateMode
+          ? "Erro ao criar empreendimento"
           : "Erro ao salvar edição do empreendimento",
         status: "error",
         duration: 5000,
@@ -304,8 +323,8 @@ export function CardUpdateEmpreendimento({
             _dark={{ color: "gray.300" }}
             mb={2}
           >
-            {isCreateMode 
-              ? "Preencha as informações do novo empreendimento. Todos os campos são obrigatórios." 
+            {isCreateMode
+              ? "Preencha as informações do novo empreendimento. Todos os campos são obrigatórios."
               : "Edite as informações do empreendimento. Todos os campos são obrigatórios."}
           </Text>
         </Box>
@@ -464,9 +483,51 @@ export function CardUpdateEmpreendimento({
                 size="sm"
                 colorScheme="green"
                 isChecked={form.direto}
-                onChange={(e) => setForm((prev) => ({ ...prev, direto: e.target.checked }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, direto: e.target.checked }))
+                }
               />
             </Box>
+            {form.direto && (
+              <Box
+                flexBasis={{ base: "100%", md: "calc(50% - 10px)" }}
+                flexGrow={0}
+                flexShrink={0}
+              >
+                <FormLabel
+                  fontSize="sm"
+                  fontWeight="md"
+                  mb={2}
+                  color="gray.700"
+                  _dark={{
+                    color: "gray.200",
+                  }}
+                >
+                  Valor do Certificado (R$)
+                </FormLabel>
+                <Input
+                  name="valor_cert"
+                  type="number" // Define o tipo como número
+                  placeholder="Ex: 150.00"
+                  bg="gray.50"
+                  _dark={{
+                    bg: "gray.800",
+                    borderColor: "gray.600",
+                    color: "gray.100",
+                  }}
+                  borderColor="gray.300"
+                  _hover={{
+                    borderColor: "gray.400",
+                  }}
+                  _focus={{
+                    borderColor: "green.500",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-green-500)",
+                  }}
+                  value={form.valor_cert}
+                  onChange={(e) => handleChange(e, "valor_cert")} // Reutiliza o handleChange
+                />
+              </Box>
+            )}
           </Flex>
         </EmpreendimentoProvider>
 
@@ -532,10 +593,14 @@ export function CardUpdateEmpreendimento({
       {/* Loading Overlay de Tela Cheia */}
       <LoadingOverlay
         isOpen={isLoading}
-        message={isCreateMode ? "Criando Empreendimento" : "Salvando Alterações"}
-        submessage={isCreateMode 
-          ? "Aguarde enquanto criamos o novo empreendimento" 
-          : "Aguarde enquanto salvamos as alterações"}
+        message={
+          isCreateMode ? "Criando Empreendimento" : "Salvando Alterações"
+        }
+        submessage={
+          isCreateMode
+            ? "Aguarde enquanto criamos o novo empreendimento"
+            : "Aguarde enquanto salvamos as alterações"
+        }
       />
     </Box>
   );
