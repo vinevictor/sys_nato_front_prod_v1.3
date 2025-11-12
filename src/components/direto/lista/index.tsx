@@ -63,7 +63,6 @@ const fetchFinanceiroAll = async () => {
   }
 };
 
-
 const RequestDataBlank = async () => {
   try {
     const req = await fetch(`/api/direto/findAll`);
@@ -85,6 +84,7 @@ const RequestDataFilter = async (filter: {
 }) => {
   try {
     const params: Record<string, string> = {};
+    console.log("🚀 ~ RequestDataFilter ~ params:", params);
     if (filter.id !== undefined && filter.id !== null)
       params.id = String(filter.id);
     if (filter.nome) params.nome = String(filter.nome);
@@ -210,7 +210,13 @@ export const DadoCompomentList = ({
   const filtroPrimario = async () => {
     try {
       setIsLoading(true);
-      if (!Id && !Nome && !Andamento && !Empreendimento && !Financeiro) {
+      if (
+        !Id &&
+        !Nome &&
+        Andamento === null &&
+        !Empreendimento &&
+        !Financeiro
+      ) {
         toast({
           title: "Nenhum filtro selecionado.",
           description:
@@ -221,10 +227,12 @@ export const DadoCompomentList = ({
         });
         return;
       }
+
+      const andamentoParaApi = Andamento === "TODOS" ? null : Andamento;
       const data = await RequestDataFilter({
         ...(Id && { id: Id }),
         ...(Nome && { nome: Nome }),
-        ...(Andamento && { andamento: Andamento }),
+        ...(andamentoParaApi && { andamento: andamentoParaApi }),
         ...(Empreendimento && { empreendimento: Empreendimento }),
         ...(Financeiro && { financeiro: Financeiro }),
       });
@@ -276,7 +284,6 @@ export const DadoCompomentList = ({
       setIsLoading(false);
     }
   };
-
 
   return (
     <>
@@ -461,7 +468,7 @@ export const DadoCompomentList = ({
                       },
                   }}
                 >
-                  <option value="">Todos</option>
+                  <option value="TODOS">Todos</option>
                   <option value="VAZIO">VAZIO</option>
                   <option value="INICIADO">INICIADO</option>
                   <option value="APROVADO">APROVADO</option>
