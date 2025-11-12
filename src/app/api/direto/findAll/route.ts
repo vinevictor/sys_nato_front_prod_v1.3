@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const nome = searchParams.get("nome");
     const andamento = searchParams.get("andamento");
+    console.log("🚀 ~ GET ~ andamento:", andamento)
     const empreendimento = searchParams.get("empreendimento");
     const financeiro = searchParams.get("financeiro");
     const id = searchParams.get("id");
