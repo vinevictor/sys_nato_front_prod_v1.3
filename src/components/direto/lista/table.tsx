@@ -7,6 +7,7 @@ import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { solictacao } from "@/types/solicitacao";
 import { Session } from "@/types/session";
+import { AndamentoIconComponent } from "@/components/home/imputs/andamentoIcon";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType;
@@ -30,28 +31,27 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
 
   const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
 
-   const formatarDataAgendamento = (
-     date: string | null,
-     time: string | null
-   ) => {
-     if (!date || !time) return null;
-     const dataConcat = `${date.toString().split("T")[0]}T${
-       time.toString().split("T")[1]
-     }`;
-     const dataFormatada = new Date(dataConcat);
-     // dataFormatada.setHours(dataFormatada.getHours() - 3);
-     return (
-       dataFormatada.toLocaleDateString("pt-BR") +
-       " " +
-       dataFormatada.toLocaleTimeString("pt-BR")
-     );
-   };
+  const formatarDataAgendamento = (
+    date: string | null,
+    time: string | null
+  ) => {
+    if (!date || !time) return null;
+    const dataConcat = `${date.toString().split("T")[0]}T${
+      time.toString().split("T")[1]
+    }`;
+    const dataFormatada = new Date(dataConcat);
+    // dataFormatada.setHours(dataFormatada.getHours() - 3);
+    return (
+      dataFormatada.toLocaleDateString("pt-BR") +
+      " " +
+      dataFormatada.toLocaleTimeString("pt-BR")
+    );
+  };
 
-   const agendamento = formatarDataAgendamento(
-     dados?.dt_agendamento?.toString() || null,
-     dados?.hr_agendamento?.toString() || null
-   );
-     
+  const agendamento = formatarDataAgendamento(
+    dados?.dt_agendamento?.toString() || null,
+    dados?.hr_agendamento?.toString() || null
+  );
 
   const timeOut = calcTimeOut(
     dados.createdAt.toString(),
@@ -65,6 +65,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         <Td p={"0.2rem"} borderBottomColor={"gray.300"}>
           <Flex gap={2}>
             <AlertIcomCompoment tag={dados.tags} />
+            <AndamentoIconComponent andamento={dados.statusAtendimento} />
             <EditarIconComponent
               aria-label="Editar solicitação"
               onClick={() => router.push(`/direto/${dados.id}`)}
@@ -111,14 +112,29 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           {dados.nome}
         </Td>
-        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
           {agendamento}
         </Td>
 
-        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
           {dados.pg_andamento}
         </Td>
-        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
           {dados.pg_date && new Date(dados.pg_date).toLocaleDateString("pt-BR")}
         </Td>
         <Td
@@ -137,7 +153,12 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
         >
           {dados.andamento}
         </Td>
-        <Td p={"0.2rem"} textAlign={"center"} borderBottomColor={"gray.300"} color={Textcolor}>
+        <Td
+          p={"0.2rem"}
+          textAlign={"center"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+        >
           {timeOut}
         </Td>
       </Tr>
