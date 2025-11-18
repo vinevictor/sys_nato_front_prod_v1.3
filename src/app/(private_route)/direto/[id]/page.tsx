@@ -5,6 +5,7 @@ import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
 import LogsComponent from "@/components/logsComponent";
 import ListAlertas from "@/components/solicitacao/alert";
+import Select_gov from "@/components/solicitacao/select_gov";
 import { GetSessionServer } from "@/lib/auth_confg";
 import RegisterProvider from "@/provider/RegisterProvider";
 import { Box, Container, Divider, Flex, Heading, Text } from "@chakra-ui/react";
@@ -77,9 +78,9 @@ export default async function PageDireto({ params }: Props) {
     return redirect("/home");
   }
   const user = session?.user; // user can be null if session is null
-  const data = await requestData(+id, session?.token ); // Provide a default empty string if session?.token is undefined
-  const logs = await requestLogs(+id, session?.token ); // Provide a default empty string if session?.token is undefined
-  const alertas = await requestAlertas(+id, session?.token ); // Provide a default empty string if session?.token is undefined
+  const data = await requestData(+id, session?.token); // Provide a default empty string if session?.token is undefined
+  const logs = await requestLogs(+id, session?.token); // Provide a default empty string if session?.token is undefined
+  const alertas = await requestAlertas(+id, session?.token); // Provide a default empty string if session?.token is undefined
 
   if (data.status === 404 || !data.data) {
     return <Error404 />;
@@ -246,6 +247,10 @@ export default async function PageDireto({ params }: Props) {
                 >
                   Andamento: {AndamentoTxt() || ""}
                 </Text>
+                {session?.user?.hierarquia === "ADM" &&
+                  data?.data?.andamento !== "EMITIDO" && (
+                    <Select_gov isState={data?.data?.gov || false} />
+                  )}
               </Box>
             </Flex>
           </Flex>

@@ -15,6 +15,7 @@ import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
 import SelectBasic from "@/components/input/select-basic";
 import SelectMultiItem from "@/components/input/select-multi-itens";
+import { RegisterContext } from "@/context/RegisterContex";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
 import {
@@ -31,7 +32,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaCopy } from "react-icons/fa";
 
 import { BeatLoader } from "react-spinners";
@@ -84,6 +85,7 @@ interface GetSolicitacao {
   uploadCnh: string | null;
   uploadRg: string | null;
   obs: any[];
+  gov: boolean | null;
   corretor: GetCorretor;
   construtora: null;
   empreendimento: GetEmpreendimentos;
@@ -118,6 +120,7 @@ export default function FormSolicitacaoDireto({
   Id,
   session,
 }: FormSolicitacaoProps) {
+  const { Gov } = useContext(RegisterContext);
   const [form, setForm] = useState({
     cpf: dados.cpf || "",
     nome: dados.nome || "",
@@ -131,6 +134,7 @@ export default function FormSolicitacaoDireto({
     relacionamento: dados.relacionamentos || [],
     dt_nascimento: dados.dt_nascimento || "",
     tags: dados.tags || [],
+    gov: dados.gov || false,
   });
 
   const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -147,6 +151,10 @@ export default function FormSolicitacaoDireto({
   );
 
   const isAdmin = session?.hierarquia === "ADM";
+
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, gov: Gov }));
+  }, [Gov]);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -310,7 +318,7 @@ export default function FormSolicitacaoDireto({
           >
             Dados Pessoais
           </Heading>
-          
+
           {/* Linha 1: CPF, Nome, Data Nascimento */}
           <Flex gap={3} flexDir={{ base: "column", md: "row" }} flexWrap="wrap">
             <Box w={{ base: "full", md: "18%" }}>
@@ -325,7 +333,11 @@ export default function FormSolicitacaoDireto({
                 Disable={!isAdmin}
               />
             </Box>
-            <Box w={{ base: "auto", md: "auto" }} display="flex" alignItems="flex-end">
+            <Box
+              w={{ base: "auto", md: "auto" }}
+              display="flex"
+              alignItems="flex-end"
+            >
               <IconButton
                 icon={<Icon as={FaCopy} />}
                 aria-label="Copiar CPF"
@@ -360,7 +372,9 @@ export default function FormSolicitacaoDireto({
                 id="dt_nascimento"
                 type="date"
                 label="Data de Nascimento"
-                value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
+                value={
+                  form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""
+                }
                 onvalue={(value) => handleChange("dt_nascimento", value)}
                 required
                 isReadOnly={!isAdmin}
@@ -394,7 +408,11 @@ export default function FormSolicitacaoDireto({
                 isReadOnly={!isAdmin}
               />
             </Box>
-            <Box w={{ base: "auto", md: "auto" }} display="flex" alignItems="flex-end">
+            <Box
+              w={{ base: "auto", md: "auto" }}
+              display="flex"
+              alignItems="flex-end"
+            >
               <IconButton
                 icon={<Icon as={FaCopy} />}
                 aria-label="Copiar número telefone"
@@ -439,13 +457,15 @@ export default function FormSolicitacaoDireto({
           >
             Dados da Solicitação
           </Heading>
-          
+
           <Flex gap={3} flexDir={{ base: "column", md: "row" }} flexWrap="wrap">
             <Box w={{ base: "full", md: "30%" }}>
               <SelectBasic
                 id="empreendimento"
                 label="Empreendimento"
-                onvalue={(value) => handleChange("empreendimento", Number(value))}
+                onvalue={(value) =>
+                  handleChange("empreendimento", Number(value))
+                }
                 value={form?.empreendimento || ""}
                 required
                 options={Empreendimentos.map((e) => ({
@@ -503,7 +523,7 @@ export default function FormSolicitacaoDireto({
           >
             Informações do Protocolo
           </Heading>
-          
+
           <Flex
             gap={3}
             flexWrap="wrap"
@@ -523,7 +543,7 @@ export default function FormSolicitacaoDireto({
                 }
               />
             </Box>
-            
+
             <Box w={{ base: "full", md: "12rem" }}>
               <BoxBasic
                 id="andamento"
@@ -531,7 +551,7 @@ export default function FormSolicitacaoDireto({
                 value={dados.andamento || ""}
               />
             </Box>
-            
+
             <Box
               w={{ base: "full", md: "auto" }}
               display="flex"
@@ -540,8 +560,8 @@ export default function FormSolicitacaoDireto({
               {isAdmin && dados.id_fcw && <BtnLimparFcw id={dados.id || 0} />}
             </Box>
 
-          {/* TODO: incluir botão de atualizar status de pagamento */}
-            
+            {/* TODO: incluir botão de atualizar status de pagamento */}
+
             <Box
               w={{ base: "full", md: "auto" }}
               flex={{ base: "initial", md: 1 }}
