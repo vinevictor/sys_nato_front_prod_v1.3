@@ -13,12 +13,16 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import NextLink from "next/link";
 
 export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [logoLoaded, setLogoLoaded] = useState(false);
-  const showSideImage = useBreakpointValue({ base: false, lg: true }, { ssr: true });
+  const showSideImage = useBreakpointValue(
+    { base: false, lg: true },
+    { ssr: true }
+  );
   const { colorMode } = useColorMode();
 
   useEffect(() => {
@@ -123,7 +127,10 @@ export default function LoginPage() {
               <Box
                 position="relative"
                 width={{ base: "120px", md: "150px" }}
-                height={{ base: isDark ? "160px" : "120px", md: isDark ? "180px" : "150px" }}
+                height={{
+                  base: isDark ? "160px" : "120px",
+                  md: isDark ? "180px" : "150px",
+                }}
                 mx="auto"
                 mb="8"
                 opacity={logoLoaded ? 1 : 0}
@@ -140,7 +147,9 @@ export default function LoginPage() {
                   />
                 )}
                 <Image
-                  src={isDark ? "/sisnatologo_light.png" : "/sisnatologo_dark.png"}
+                  src={
+                    isDark ? "/sisnatologo_light.png" : "/sisnatologo_dark.png"
+                  }
                   alt="Logo SISNATO"
                   fill
                   style={{ objectFit: "contain" }}
@@ -171,6 +180,19 @@ export default function LoginPage() {
           {/* Formulário de Login */}
           <Box width="100%">
             <FormLogin />
+            <Flex justify="flex-end" mt={3}>
+              <Link
+                as={NextLink}
+                href="/recuperar"
+                fontSize="sm"
+                color={linkColor}
+                fontWeight="medium"
+                _hover={{ color: linkHoverColor, textDecoration: "underline" }}
+                transition="all 0.2s"
+              >
+                Esqueceu a senha?
+              </Link>
+            </Flex>
           </Box>
 
           {/* Termos e Política */}

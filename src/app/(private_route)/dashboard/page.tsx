@@ -34,6 +34,7 @@ interface DashboardData {
   mediaHoras: string;
   mes: number;
   ano: number;
+  solicitacoes: object;
 }
 
 interface ApiResponse {
@@ -105,6 +106,7 @@ async function DashboardContent({
 
   try {
     const req = await fetchData();
+    console.log("🚀 ~ DashboardContent ~ req:", req.contagem[1].solicitacoes);
     const data = req.contagem;
     const tags = req.tags;
 

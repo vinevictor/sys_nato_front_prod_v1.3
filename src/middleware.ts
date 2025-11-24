@@ -4,6 +4,8 @@ import { GetSessionServer } from "./lib/auth_confg";
 const publicRoutes = [
   "/",
   "/login",
+  "/recuperar",
+  "/reset-password",
   "/faq",
   "/termos/privacidade",
   "/termos/uso",
@@ -28,7 +30,7 @@ const publicRoutes = [
   "/faq/recuperacao-senhas",
   "/api/contact",
   "http://ip-api.com/json/",
-  "https://api.ipify.org?format=json"
+  "https://api.ipify.org?format=json",
 ];
 
 export async function middleware(req: NextRequest) {
