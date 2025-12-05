@@ -135,7 +135,7 @@ export const UserComponentInfoNatosign = ({
                 session.Financeira.length + " Financeira"}
             </Text>
           </Flex>
-          {/* //TAVEZ MANTER PARA FUTURO UTILIZAÇÃO PARA Hierarquia ADM  acesso rapido sem necessida de voltar a tela home*/}
+          {/* //TALVEZ MANTER PARA FUTURO UTILIZAÇÃO PARA Hierarquia ADM  acesso rápido sem necessida de voltar a tela home*/}
           <Flex gap={3} w={"100%"} flexDir={"column"} mt={2}>
             <Link
               w={"100%"}
