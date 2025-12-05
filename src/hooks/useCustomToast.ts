@@ -16,6 +16,7 @@ export const useCustomToast = () => {
       ...options, // Permite sobrescrever as configurações padrão
     })
   }
+  
 
   // Métodos de conveniência para diferentes tipos de toast
   const success = (title: string, description?: string) => {
