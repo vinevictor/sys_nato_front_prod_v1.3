@@ -60,6 +60,8 @@ function ResetPasswordContent() {
   const buttonBg = useColorModeValue("#00713D", "#00d672");
   const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
   const buttonColor = useColorModeValue("white", "gray.900");
+  const successHeadingColor = useColorModeValue("gray.800", "white");
+  const successTextColor = useColorModeValue("gray.600", "gray.300");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,10 +131,10 @@ function ResetPasswordContent() {
     return (
       <VStack spacing={4} textAlign="center">
         <Icon as={MdCheckCircle} w={20} h={20} color="green.500" />
-        <Heading fontSize="2xl" color={useColorModeValue("gray.800", "white")}>
+        <Heading fontSize="2xl" color={successHeadingColor}>
           Senha Alterada!
         </Heading>
-        <Text color={useColorModeValue("gray.600", "gray.300")}>
+        <Text color={successTextColor}>
           Você será redirecionado para o login em instantes...
         </Text>
         <Button
