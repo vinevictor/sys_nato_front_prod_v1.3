@@ -73,6 +73,7 @@ function ResetPasswordContent() {
       return;
     }
 
+    
     if (password.length < 6) {
       toast({
         title: "Senha muito curta",
