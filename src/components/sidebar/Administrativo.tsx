@@ -20,6 +20,7 @@ import {
   FiDollarSign,
   FiTag,
   FiSettings,
+  FiMapPin,
 } from "react-icons/fi";
 
 /**
@@ -59,6 +60,12 @@ const adminMenuItems: AdminMenuItem[] = [
     icon: FiDollarSign,
     href: "/financeiras",
     description: "Gerenciar CCas/Financeiras",
+  },
+  {
+    name: "AR Parceiras",
+    icon: FiMapPin,
+    href: "/arparceiras",
+    description: "Gerenciar pontos de atendimento",
   },
   {
     name: "Tags",
@@ -141,7 +148,7 @@ export default function AdministrativoMenu() {
               style={{ textDecoration: "none" }}
             >
               <MenuItem
-                bg={'transparent'}
+                bg={"transparent"}
                 _hover={{ bg: hoverBg }}
                 borderRadius="md"
                 py={3}
@@ -149,19 +156,11 @@ export default function AdministrativoMenu() {
               >
                 <HStack spacing={3} w="full">
                   {/* Ícone do item */}
-                  <Icon
-                    as={item.icon}
-                    fontSize="18"
-                    color="#FB8501"
-                  />
+                  <Icon as={item.icon} fontSize="18" color="#FB8501" />
 
                   {/* Conteúdo */}
                   <VStack align="start" spacing={0} flex={1}>
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color={textColor}
-                    >
+                    <Text fontSize="sm" fontWeight="medium" color={textColor}>
                       {item.name}
                     </Text>
                     <Text fontSize="xs" color={subtextColor}>

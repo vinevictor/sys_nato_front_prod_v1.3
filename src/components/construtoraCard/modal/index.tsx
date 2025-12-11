@@ -28,7 +28,7 @@ interface ModalEditarConstrutoraProps {
 
 /**
  * Modal para criar ou editar construtora
- * 
+ *
  * @param isOpen - Controla se o modal está aberto
  * @param onClose - Função para fechar o modal
  * @param construtoraId - ID da construtora (opcional, se vazio = modo criação)
@@ -84,11 +84,13 @@ export default function ModalEditarConstrutora({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size="6xl" scrollBehavior="inside">
-        <ModalOverlay
-          bg="blackAlpha.600"
-          backdropFilter="blur(10px)"
-        />
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="6xl"
+        scrollBehavior="inside"
+      >
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
         <ModalContent>
           <ModalHeader
             fontSize="2xl"
@@ -213,7 +215,9 @@ export default function ModalEditarConstrutora({
                 color="gray.800"
                 _dark={{ color: "gray.100" }}
               >
-                {construtoraId ? "Atualizando Construtora" : "Criando Construtora"}
+                {construtoraId
+                  ? "Atualizando Construtora"
+                  : "Criando Construtora"}
               </Heading>
 
               {/* Descrição */}

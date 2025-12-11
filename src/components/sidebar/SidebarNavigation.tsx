@@ -19,12 +19,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  FiChevronLeft,
-  FiChevronRight,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiMenu, FiX } from "react-icons/fi";
 import NotificationMenu from "./NotificationMenu";
 import UserProfilePopover from "./UserProfilePopover";
 import { defaultNavItems } from "@/data/nav";
@@ -239,20 +234,19 @@ function SidebarContent({
 
       {/* Seção inferior: Notificações + Perfil do Usuário */}
       <Box borderTop="1px" borderColor={borderColor} p={3}>
-        <Flex w="full" direction="column"
-        gap={2}>
-        {/* Menu de Notificações/Alertas */}
+        <Flex w="full" direction="column" gap={2}>
+          {/* Menu de Notificações/Alertas */}
           {session && <NotificationMenu session={session} />}
           {/* Menu de Chamados */}
           <ChamadosButton />
           {/* Menu de Now */}
           {session && <NowButton session={session} />}
-        {/* Menu de Administração */}
+          {/* Menu de Administração */}
           {session?.role?.adm && <AdministrativoMenu />}
           {/* Menu de Financeiro */}
-          {session?.hierarquia === 'ADM' && <FinanceiroButton />}
+          {session?.hierarquia === "ADM" && <FinanceiroButton />}
           {/* Menu de Métricas */}
-          {session?.hierarquia === 'ADM' && <MetricsButton />}
+          {session?.hierarquia === "ADM" && <MetricsButton />}
         </Flex>
 
         {/* Botão do Usuário com Popover */}
@@ -285,7 +279,7 @@ function NavItemComponent({
   const textColor = useColorModeValue("#023147", "gray.200");
   const adm = session?.role?.adm;
   const direto = session?.role?.direto;
-  const sign = session?.role?.natosign || session?.hierarquia === 'ADM';
+  const sign = session?.role?.natosign || session?.hierarquia === "ADM";
 
   const redirectNatoFit = () => {
     window.open("https://redebrasilrp.com.br/natofit/login.php", "_blank");
@@ -537,6 +531,54 @@ function NavItemComponent({
                   {item.badge > 99 ? "99+" : item.badge}
                 </Badge>
               )}
+            </Flex>
+          </Link>
+        </>
+      )}
+      {adm && item.role === "HUB" && (
+        <>
+          <Link
+            href={item.href}
+            onClick={onClose}
+            style={{ textDecoration: "none" }}
+          >
+            <Flex
+              align="center"
+              p={2}
+              mx={2}
+              borderRadius="lg"
+              role="group"
+              cursor="pointer"
+              bg={isActive ? activeBg : "transparent"}
+              color={isActive ? activeColor : textColor}
+              _hover={{
+                bg: isActive ? activeBg : hoverBg,
+                transform: "translateX(4px)",
+              }}
+              transition="all 0.2s ease"
+              position="relative"
+            >
+              {isActive && (
+                <Box
+                  position="absolute"
+                  left={-3}
+                  w="3px"
+                  h="60%"
+                  bg="#FB8501"
+                  borderRadius="full"
+                />
+              )}
+
+              <Icon
+                as={item.icon}
+                fontSize="20"
+                mr={3}
+                transition="all 0.2s"
+                _groupHover={{ transform: "scale(1.1)", color: "#FB8501" }} // Efeito laranja no hover do ícone
+              />
+              <Text fontSize="sm" fontWeight={isActive ? "semibold" : "medium"}>
+                {item.name}
+              </Text>
             </Flex>
           </Link>
         </>
