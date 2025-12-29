@@ -100,7 +100,7 @@ function PricingCard({
             color="gray.500"
             _dark={{ color: "gray.400" }}
           >
-            / processo
+            / processo mês
           </chakra.span>
         </HStack>
       </VStack>
