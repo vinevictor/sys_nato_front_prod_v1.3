@@ -86,7 +86,7 @@ export default function VoucherPage() {
     disponivel: 0,
     vinculado: 0,
     utilizado: 0,
-    reciclavel: 0, // Se quiser mostrar azul
+    reciclavel: 0,
   });
 
   const [filters, setFilters] = useState({
@@ -106,6 +106,9 @@ export default function VoucherPage() {
   // --- ESTILOS ---
   const bgCard = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.100", "gray.600");
+  const theadBg = useColorModeValue("gray.50", "gray.800");
+
+  const hoverTrBg = useColorModeValue("gray.50", "gray.700");
 
   // --- FUNÇÃO DE CARREGAMENTO ---
 
@@ -161,7 +164,7 @@ export default function VoucherPage() {
 
   // --- HANDLERS ---
   const handleFilterSubmit = () => {
-    loadData(1); // Sempre volta para página 1 ao filtrar
+    loadData(1);
   };
 
   const handlePageChange = (novaPagina: number) => {
@@ -362,7 +365,7 @@ export default function VoucherPage() {
         overflowX="auto"
       >
         <Table variant="simple" size="sm">
-          <Thead bg={useColorModeValue("gray.50", "gray.800")}>
+          <Thead bg={theadBg}>
             <Tr>
               <Th py={3}>ID</Th>
               <Th>Código</Th>
@@ -375,10 +378,7 @@ export default function VoucherPage() {
           </Thead>
           <Tbody>
             {vouchers.map((voucher) => (
-              <Tr
-                key={voucher.id}
-                _hover={{ bg: useColorModeValue("gray.50", "gray.700") }}
-              >
+              <Tr key={voucher.id} _hover={{ bg: hoverTrBg }}>
                 <Td py={3}>#{voucher.id}</Td>
                 <Td fontWeight="bold" fontFamily="monospace">
                   {voucher.codigo}
@@ -458,13 +458,14 @@ export default function VoucherPage() {
 // Subcomponente de Card
 const StatsCard = ({ title, number, icon, color }: any) => {
   const bg = useColorModeValue("white", "gray.700");
+  const border = useColorModeValue("gray.100", "gray.600");
   return (
     <Stat
       px={{ base: 4, md: 6 }}
       py={4}
       shadow="sm"
       border="1px solid"
-      borderColor={useColorModeValue("gray.100", "gray.600")}
+      borderColor={border}
       rounded="lg"
       bg={bg}
     >
