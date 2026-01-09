@@ -12,10 +12,11 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { FaMapMarkedAlt } from "react-icons/fa";
+// Adicionamos FaTicketAlt para o ícone do voucher
+import { FaMapMarkedAlt, FaTicketAlt } from "react-icons/fa";
 
 /**
- * Componente de Card (Movido para cá)
+ * Componente de Card
  */
 interface MenuCardProps {
   title: string;
@@ -58,9 +59,9 @@ const MenuCard = ({
           align="center"
           justify="center"
           borderRadius="lg"
-          // Modo Claro: Usa a cor passada com transparência manual (se for Hex)
+          // Modo Claro: Usa a cor passada com transparência
           bg={`${colorScheme}20`}
-          // Modo Escuro: Usa um fundo branco transparente para destacar o ícone
+          // Modo Escuro: Usa fundo transparente
           _dark={{ bg: "whiteAlpha.200" }}
           _groupHover={{ bg: colorScheme }}
           transition="all 0.3s"
@@ -92,19 +93,24 @@ const MenuCard = ({
 
 export default function MenuGrid() {
   return (
-    // Box Wrapper para dar as margens que você pediu
-    <Box
-      w="100%"
-      py={{ base: 6, md: 10 }} // Margem Topo e Baixo (Padding Vertical)
-      px={{ base: 4, md: 8 }} // Margem Laterais (Padding Horizontal)
-    >
+    <Box w="100%" py={{ base: 6, md: 10 }} px={{ base: 4, md: 8 }}>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} spacing={6}>
+        {/* Card 1: Geolocalização */}
         <MenuCard
           title="Geolocalização"
           description="Busque a unidade ou empreendimento mais próximo do endereço do cliente."
           icon={FaMapMarkedAlt}
           href="/geo"
           colorScheme="#00713D"
+        />
+
+        {/* Card 2: Gestão de Vouchers */}
+        <MenuCard
+          title="Gestão de Vouchers"
+          description="Controle de estoque, vínculo de clientes e status de emissão de certificados."
+          icon={FaTicketAlt}
+          href="/voucher"
+          colorScheme="#D69E2E"
         />
       </SimpleGrid>
     </Box>
