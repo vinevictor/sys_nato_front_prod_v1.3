@@ -178,7 +178,6 @@ export async function getVoucherStats() {
     const headers = await getAuthHeaders();
     if (!headers) return null;
 
-    // Vamos criar essa rota no backend jájá
     const res = await fetch(`${API_URL}/voucher/stats`, {
       method: "GET",
       headers: headers,
