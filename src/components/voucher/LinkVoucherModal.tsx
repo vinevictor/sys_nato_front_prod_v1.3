@@ -79,8 +79,10 @@ export function LinkVoucherModal({
   const hoverBorderColor = useColorModeValue("blue.400", "blue.300");
   const hoverBgColor = useColorModeValue("blue.50", "gray.600");
 
-  // Card de Sucesso
-  const successBg = useColorModeValue("green.50", "rgba(72, 187, 120, 0.1)"); // Verde suave
+  const iconBgColor = useColorModeValue("gray.200", "gray.600");
+
+  // Card de Sucesso (Verde)
+  const successBg = useColorModeValue("green.50", "rgba(72, 187, 120, 0.1)");
   const successBorder = useColorModeValue("green.400", "green.500");
   const successText = useColorModeValue("green.700", "green.200");
 
@@ -236,7 +238,7 @@ export function LinkVoucherModal({
                       <Flex align="center" gap={3}>
                         <Box
                           p={2}
-                          bg={useColorModeValue("gray.200", "gray.600")}
+                          bg={iconBgColor}
                           borderRadius="full"
                           color="gray.500"
                         >
