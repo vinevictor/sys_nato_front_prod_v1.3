@@ -29,10 +29,14 @@ import {
   IconButton,
   Flex,
   Divider,
+  SimpleGrid,
+  Heading,
+  useClipboard,
+  useColorModeValue,
   Icon,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { FaSearch, FaUser } from "react-icons/fa";
+import { FaSearch, FaUser, FaCheckCircle, FaCopy } from "react-icons/fa";
 
 interface LinkVoucherModalProps {
   isOpen: boolean;
@@ -40,8 +44,13 @@ interface LinkVoucherModalProps {
   onSuccess: () => void;
 }
 
-// Adicionamos um passo "LIST" para quando vierem múltiplos resultados
-type ModalStep = "SEARCH" | "LIST" | "CONFIRM";
+type ModalStep = "SEARCH" | "LIST" | "CONFIRM" | "SUCCESS";
+
+interface LinkedResult {
+  voucher: string;
+  cliente: string;
+  origem: string;
+}
 
 export function LinkVoucherModal({
   isOpen,
@@ -53,12 +62,37 @@ export function LinkVoucherModal({
   const [isSearching, setIsSearching] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
 
-  const [searchResults, setSearchResults] = useState<any[]>([]); // Lista de encontrados
-  const [selectedSolicitacao, setSelectedSolicitacao] = useState<any>(null); // O escolhido
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedSolicitacao, setSelectedSolicitacao] = useState<any>(null);
+
+  const [linkedData, setLinkedData] = useState<LinkedResult | null>(null);
+
+  const { onCopy, hasCopied } = useClipboard(linkedData?.voucher || "");
 
   const toast = useToast();
 
-  // 1. Função de Busca
+  // --- CORES ADAPTÁVEIS (LIGHT / DARK) ---
+  const bgCard = useColorModeValue("gray.50", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.800", "white");
+  const labelColor = useColorModeValue("gray.500", "gray.400");
+  const hoverBorderColor = useColorModeValue("blue.400", "blue.300");
+  const hoverBgColor = useColorModeValue("blue.50", "gray.600");
+
+  // Card de Sucesso
+  const successBg = useColorModeValue("green.50", "rgba(72, 187, 120, 0.1)"); // Verde suave
+  const successBorder = useColorModeValue("green.400", "green.500");
+  const successText = useColorModeValue("green.700", "green.200");
+
+  const handleClose = () => {
+    setStep("SEARCH");
+    setSearchTerm("");
+    setSelectedSolicitacao(null);
+    setSearchResults([]);
+    setLinkedData(null);
+    onClose();
+  };
+
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
     setIsSearching(true);
@@ -69,13 +103,10 @@ export function LinkVoucherModal({
       const resultados = await buscarSolicitacaoPreview(searchTerm);
 
       if (resultados && resultados.length > 0) {
-        // Lógica Inteligente:
         if (resultados.length === 1) {
-          // Se só achou 1, vai direto pra confirmação (comportamento rápido)
           setSelectedSolicitacao(resultados[0]);
           setStep("CONFIRM");
         } else {
-          // Se achou vários (ex: buscou por "Silva"), mostra lista para escolher
           setSearchResults(resultados);
           setStep("LIST");
         }
@@ -93,34 +124,39 @@ export function LinkVoucherModal({
     }
   };
 
-  // Selecionar item da lista
   const handleSelectFromList = (item: any) => {
     setSelectedSolicitacao(item);
     setStep("CONFIRM");
   };
 
-  // 2. Função de Vínculo
   const handleConfirmLink = async () => {
     if (!selectedSolicitacao) return;
 
+    if (!selectedSolicitacao.id_fcw) {
+      toast({
+        title: "Atenção",
+        description:
+          "Este cliente não possui ID FCWEB. Gere a ficha antes de vincular.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     setIsLinking(true);
     try {
-      await vincularVoucher({
+      const result = await vincularVoucher({
         solicitacaoId: selectedSolicitacao.id,
-        fcw2Id: 0,
-        nome: "", // Backend preenche
-        cpf: "", // Backend preenche
-        usuarioId: 1, // Idealmente pegar do contexto de auth
+        fcw2Id: selectedSolicitacao.id_fcw || 0,
+        nome: "",
+        cpf: "",
+        usuarioId: 1,
       });
 
-      toast({
-        title: "Sucesso!",
-        description: "Voucher vinculado à solicitação.",
-        status: "success",
-      });
-
-      handleClose();
+      setLinkedData(result);
       onSuccess();
+      setStep("SUCCESS");
     } catch (error: any) {
       toast({
         title: "Erro ao vincular",
@@ -132,28 +168,26 @@ export function LinkVoucherModal({
     }
   };
 
-  const handleClose = () => {
-    setStep("SEARCH");
-    setSearchTerm("");
-    setSelectedSolicitacao(null);
-    setSearchResults([]);
-    onClose();
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      size={step === "SUCCESS" ? "md" : "lg"}
+      closeOnOverlayClick={step !== "SUCCESS"}
+    >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Vincular Voucher</ModalHeader>
+        <ModalHeader>
+          {step === "SUCCESS" ? "Voucher Vinculado!" : "Vincular Voucher"}
+        </ModalHeader>
         <ModalCloseButton />
 
         <ModalBody pb={6}>
           {/* PASSO 1: BUSCA */}
           {step === "SEARCH" && (
             <VStack spacing={4}>
-              <Text fontSize="sm" color="gray.500">
-                Busque pelo <b>ID da venda</b> ou pelo <b>Nome do cliente</b>{" "}
-                para localizar a solicitação.
+              <Text fontSize="sm" color={labelColor}>
+                Busque pelo <b>ID da venda</b> ou pelo <b>Nome do cliente</b>.
               </Text>
               <FormControl>
                 <FormLabel>ID ou Nome do Cliente</FormLabel>
@@ -180,14 +214,12 @@ export function LinkVoucherModal({
             </VStack>
           )}
 
-          {/* PASSO 2: LISTA (Se houver múltiplos resultados) */}
+          {/* PASSO 2: LISTA */}
           {step === "LIST" && (
             <VStack spacing={3} align="stretch">
-              <Text fontSize="sm" fontWeight="bold" color="gray.600">
-                Encontramos {searchResults.length} resultados. Selecione o
-                correto:
+              <Text fontSize="sm" fontWeight="bold" color={labelColor}>
+                Selecione o cliente correto:
               </Text>
-
               <Box maxH="300px" overflowY="auto" pr={1}>
                 {searchResults.map((item) => (
                   <Card
@@ -195,35 +227,41 @@ export function LinkVoucherModal({
                     variant="outline"
                     mb={2}
                     cursor="pointer"
-                    _hover={{ borderColor: "blue.400", bg: "blue.50" }}
+                    bg={bgCard}
+                    borderColor={borderColor}
+                    _hover={{ borderColor: hoverBorderColor, bg: hoverBgColor }}
                     onClick={() => handleSelectFromList(item)}
                   >
                     <CardBody py={3} px={4}>
                       <Flex align="center" gap={3}>
                         <Box
                           p={2}
-                          bg="gray.100"
+                          bg={useColorModeValue("gray.200", "gray.600")}
                           borderRadius="full"
                           color="gray.500"
                         >
                           <FaUser />
                         </Box>
                         <Box flex="1">
-                          <Text fontWeight="bold" fontSize="sm" noOfLines={1}>
+                          <Text
+                            fontWeight="bold"
+                            fontSize="sm"
+                            noOfLines={1}
+                            color={textColor}
+                          >
                             {item.nome}
                           </Text>
                           <Flex gap={2} mt={1}>
                             <Badge colorScheme="blue" fontSize="xs">
                               ID: {item.id}
                             </Badge>
-                            <Badge colorScheme="gray" fontSize="xs">
-                              {item.cpf || "CPF N/A"}
-                            </Badge>
+                            {item.id_fcw && (
+                              <Badge colorScheme="purple" fontSize="xs">
+                                FCW: {item.id_fcw}
+                              </Badge>
+                            )}
                           </Flex>
                         </Box>
-                        <Button size="xs" colorScheme="blue" variant="ghost">
-                          Selecionar
-                        </Button>
                       </Flex>
                     </CardBody>
                   </Card>
@@ -237,52 +275,73 @@ export function LinkVoucherModal({
             <VStack spacing={4} align="stretch">
               <Text
                 fontSize="md"
-                color="green.600"
+                color="green.500"
                 fontWeight="bold"
                 textAlign="center"
               >
-                <Icon as={FaSearch} mr={2} />
-                Solicitação Encontrada
+                Cliente Encontrado
               </Text>
 
               <Card
                 variant="filled"
-                bg="green.50"
-                borderColor="green.200"
+                bg={bgCard}
+                borderColor={borderColor}
                 borderWidth="1px"
               >
                 <CardBody py={4}>
-                  <Box mb={3}>
+                  <Box mb={4}>
                     <Text
                       fontSize="xs"
-                      color="gray.500"
+                      color={labelColor}
                       textTransform="uppercase"
                       fontWeight="bold"
                     >
-                      Cliente
+                      Nome do Cliente
                     </Text>
-                    <Text fontWeight="bold" fontSize="lg">
+                    <Text fontWeight="bold" fontSize="lg" color={textColor}>
                       {selectedSolicitacao.nome || "Nome não identificado"}
                     </Text>
                   </Box>
-                  <Flex justify="space-between" align="center">
+
+                  <SimpleGrid columns={2} spacing={4}>
                     <Box>
                       <Text
                         fontSize="xs"
-                        color="gray.500"
+                        color={labelColor}
                         textTransform="uppercase"
                         fontWeight="bold"
                       >
                         CPF/CNPJ
                       </Text>
-                      <Text fontFamily="monospace">
+                      <Text fontFamily="monospace" color={textColor}>
                         {selectedSolicitacao.cpf || "---"}
                       </Text>
                     </Box>
-                    <Box textAlign="right">
+
+                    <Box>
                       <Text
                         fontSize="xs"
-                        color="gray.500"
+                        color={labelColor}
+                        textTransform="uppercase"
+                        fontWeight="bold"
+                      >
+                        ID FCWEB
+                      </Text>
+                      {selectedSolicitacao.id_fcw ? (
+                        <Badge colorScheme="purple" fontSize="md">
+                          #{selectedSolicitacao.id_fcw}
+                        </Badge>
+                      ) : (
+                        <Text color="red.500" fontSize="sm" fontWeight="bold">
+                          Não vinculado
+                        </Text>
+                      )}
+                    </Box>
+
+                    <Box>
+                      <Text
+                        fontSize="xs"
+                        color={labelColor}
                         textTransform="uppercase"
                         fontWeight="bold"
                       >
@@ -292,22 +351,96 @@ export function LinkVoucherModal({
                         #{selectedSolicitacao.id}
                       </Badge>
                     </Box>
-                  </Flex>
+                  </SimpleGrid>
                 </CardBody>
               </Card>
 
               <Divider />
 
-              <Text fontSize="sm" color="gray.600" textAlign="center">
-                Tem certeza que deseja vincular um voucher disponível a este
-                cliente?
+              {!selectedSolicitacao.id_fcw && (
+                <Text
+                  fontSize="sm"
+                  color="red.500"
+                  textAlign="center"
+                  fontWeight="bold"
+                >
+                  ⚠️ Este cliente não possui Ficha FCWEB. <br />
+                  Não será possível vincular o voucher.
+                </Text>
+              )}
+
+              {selectedSolicitacao.id_fcw && (
+                <Text fontSize="sm" color={labelColor} textAlign="center">
+                  Confirmar vínculo de voucher para este cliente?
+                </Text>
+              )}
+            </VStack>
+          )}
+
+          {/* PASSO 4: SUCESSO */}
+          {step === "SUCCESS" && linkedData && (
+            <VStack spacing={6} py={4} align="center">
+              <Icon as={FaCheckCircle} w={16} h={16} color="green.500" />
+
+              <Box textAlign="center">
+                <Heading size="md" color={textColor}>
+                  Vínculo Realizado!
+                </Heading>
+                <Text color={labelColor} fontSize="sm" mt={1}>
+                  O voucher foi reservado para <b>{linkedData.cliente}</b>.
+                </Text>
+              </Box>
+
+              <Card
+                variant="outline"
+                w="100%"
+                borderColor={successBorder}
+                bg={successBg}
+                borderWidth={2}
+              >
+                <CardBody textAlign="center" py={6}>
+                  <Text
+                    fontSize="xs"
+                    textTransform="uppercase"
+                    color={labelColor}
+                    fontWeight="bold"
+                    mb={1}
+                  >
+                    Código do Voucher
+                  </Text>
+                  <Heading
+                    size="xl"
+                    fontFamily="monospace"
+                    color={successText}
+                    mb={4}
+                  >
+                    {linkedData.voucher}
+                  </Heading>
+
+                  <Button
+                    leftIcon={hasCopied ? <FaCheckCircle /> : <FaCopy />}
+                    onClick={onCopy}
+                    size="sm"
+                    colorScheme="green"
+                    variant="solid"
+                  >
+                    {hasCopied ? "Copiado!" : "Copiar Código"}
+                  </Button>
+                </CardBody>
+              </Card>
+
+              <Text fontSize="xs" color={labelColor}>
+                Origem:{" "}
+                {linkedData.origem === "REPASSE_LOCAL"
+                  ? "Estoque Reciclável"
+                  : "Estoque Novo"}
               </Text>
             </VStack>
           )}
         </ModalBody>
 
         <ModalFooter>
-          {step === "SEARCH" ? (
+          {step === "SEARCH" && (
             <Button
               onClick={handleSearch}
               colorScheme="blue"
@@ -316,22 +449,35 @@ export function LinkVoucherModal({
             >
               Buscar Cliente
             </Button>
-          ) : (
+          )}
+
+          {step === "LIST" && (
+            <Button variant="ghost" onClick={() => setStep("SEARCH")}>
+              Voltar
+            </Button>
+          )}
+
+          {step === "CONFIRM" && (
             <Flex w="100%" justify="space-between">
               <Button variant="ghost" onClick={() => setStep("SEARCH")}>
                 Nova Busca
               </Button>
-              {step === "CONFIRM" && (
-                <Button
-                  colorScheme="green"
-                  onClick={handleConfirmLink}
-                  isLoading={isLinking}
-                  loadingText="Vinculando..."
-                >
-                  Confirmar Vínculo
-                </Button>
-              )}
+              <Button
+                colorScheme="green"
+                onClick={handleConfirmLink}
+                isLoading={isLinking}
+                loadingText="Vinculando..."
+                isDisabled={!selectedSolicitacao?.id_fcw}
+              >
+                Confirmar Vínculo
+              </Button>
             </Flex>
+          )}
+
+          {step === "SUCCESS" && (
+            <Button colorScheme="gray" onClick={handleClose} w="100%">
+              Fechar
+            </Button>
           )}
         </ModalFooter>
       </ModalContent>
