@@ -141,7 +141,7 @@ function PricingCard({
 const pricingData = [
   {
     range: "1-100 Certificações",
-    price: "R$ 75,90",
+    price: "R$ 79,70",
     signer: "Assinador: R$ 5 / envelope",
     support: "Suporte via WhatsApp",
     benefits: "Gestor de conta exclusivo",
@@ -150,7 +150,7 @@ const pricingData = [
   },
   {
     range: "101-400 Certificações",
-    price: "R$ 55,00",
+    price: "R$ 57,75",
     signer: "Assinador: R$ 3 / envelope",
     support: "Suporte via WhatsApp",
     benefits: "Gestor de conta exclusivo",
@@ -159,7 +159,7 @@ const pricingData = [
   },
   {
     range: "401-1000 Certificações",
-    price: "R$ 45,00",
+    price: "R$ 47,25",
     signer: "Assinador: GRÁTIS",
     support: "Suporte via WhatsApp",
     benefits: "Personalização e Gestor",
@@ -168,7 +168,7 @@ const pricingData = [
   },
   {
     range: "1001-2000 Certificações",
-    price: "R$ 34,90",
+    price: "R$ 36,65",
     signer: "Assinador: GRÁTIS",
     support: "Suporte via WhatsApp",
     benefits: "Personalização e Gestor",
