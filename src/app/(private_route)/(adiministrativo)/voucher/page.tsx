@@ -39,6 +39,7 @@ import {
   useToast,
   Tooltip,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   FaBoxOpen,
@@ -62,6 +63,8 @@ interface Voucher {
   clienteNome?: string;
   clienteCpf?: string;
   dataVinculo?: string;
+  solicitacaoId?: number | null;
+  fcw2Id?: number | null;
 }
 
 interface MetaData {
@@ -368,8 +371,11 @@ export default function VoucherPage() {
           <Thead bg={theadBg}>
             <Tr>
               <Th py={3}>ID</Th>
-              <Th>Código</Th>
+              <Th>Vouncher</Th>
               <Th>Status</Th>
+              {/* NOVAS COLUNAS */}
+              <Th>Solicitação ID</Th>
+              <Th>FCWEB ID</Th>
               <Th>Cliente</Th>
               <Th>CPF</Th>
               <Th>Data Vínculo</Th>
@@ -384,6 +390,47 @@ export default function VoucherPage() {
                   {voucher.codigo}
                 </Td>
                 <Td>{getStatusBadge(voucher.status)}</Td>
+
+                {/* COLUNA ID SOLICITAÇÃO (VENDA) */}
+                <Td>
+                  {voucher.solicitacaoId ? (
+                    <Link
+                      href={`/solicitacoes/${voucher.solicitacaoId}`}
+                      target="_blank"
+                      passHref
+                    >
+                      <Badge
+                        colorScheme="purple"
+                        variant="subtle"
+                        cursor="pointer" // Mostra a mãozinha ao passar o mouse
+                        _hover={{
+                          // Efeito visual ao passar o mouse
+                          bg: "purple.200",
+                          transform: "scale(1.05)",
+                          textDecoration: "underline",
+                        }}
+                        transition="all 0.2s"
+                        title="Clique para abrir a solicitação em nova aba"
+                      >
+                        #{voucher.solicitacaoId}
+                      </Badge>
+                    </Link>
+                  ) : (
+                    "-"
+                  )}
+                </Td>
+
+                {/* COLUNA ID FCWEB */}
+                <Td>
+                  {voucher.fcw2Id ? (
+                    <Badge colorScheme="orange" variant="subtle">
+                      #{voucher.fcw2Id}
+                    </Badge>
+                  ) : (
+                    "-"
+                  )}
+                </Td>
+
                 <Td maxW="200px" isTruncated title={voucher.clienteNome || ""}>
                   {voucher.clienteNome || "-"}
                 </Td>
