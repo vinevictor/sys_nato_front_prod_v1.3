@@ -281,10 +281,6 @@ function NavItemComponent({
   const direto = session?.role?.direto;
   const sign = session?.role?.natosign || session?.hierarquia === "ADM";
 
-  const redirectNatoFit = () => {
-    window.open("https://redebrasilrp.com.br/natofit/login.php", "_blank");
-  };
-
   return (
     <>
       {adm && item.role === "ADM" && (
@@ -354,68 +350,6 @@ function NavItemComponent({
           <Link
             href={item.href}
             onClick={onClose}
-            style={{ textDecoration: "none" }}
-          >
-            <Flex
-              align="center"
-              p={2}
-              mx={2}
-              borderRadius="lg"
-              role="group"
-              cursor="pointer"
-              bg={isActive ? activeBg : "transparent"}
-              color={isActive ? activeColor : textColor}
-              _hover={{
-                bg: isActive ? activeBg : hoverBg,
-                transform: "translateX(4px)",
-              }}
-              transition="all 0.2s ease"
-              position="relative"
-            >
-              {/* Indicador de rota ativa */}
-              {isActive && (
-                <Box
-                  position="absolute"
-                  left={-3}
-                  w="3px"
-                  h="60%"
-                  bg="#FB8501"
-                  borderRadius="full"
-                />
-              )}
-
-              <Icon
-                as={item.icon}
-                fontSize="20"
-                mr={3}
-                transition="all 0.2s"
-                _groupHover={{ transform: "scale(1.1)" }}
-              />
-              <Text fontSize="sm" fontWeight={isActive ? "semibold" : "medium"}>
-                {item.name}
-              </Text>
-
-              {/* Badge de notificações */}
-              {item.badge && item.badge > 0 && (
-                <Badge
-                  ml="auto"
-                  colorScheme="orange"
-                  borderRadius="full"
-                  fontSize="xs"
-                  px={2}
-                >
-                  {item.badge > 99 ? "99+" : item.badge}
-                </Badge>
-              )}
-            </Flex>
-          </Link>
-        </>
-      )}
-      {item.role === "FIT" && (
-        <>
-          <Link
-            href={item.href}
-            onClick={redirectNatoFit}
             style={{ textDecoration: "none" }}
           >
             <Flex
