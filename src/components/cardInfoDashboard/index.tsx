@@ -1,4 +1,5 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+"use client";
+import { Box, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 type CardInfoDashboardProps = {
@@ -12,15 +13,22 @@ export default function CardInfoDashboard({
   value,
   icon,
 }: CardInfoDashboardProps) {
+  // Forçamos a definição de cores baseada no tema para evitar que o cache do Server Component trave o estilo
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColorValue = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("#023147", "gray.100");
+  const labelColor = useColorModeValue("gray.600", "gray.400");
+  const iconBg = useColorModeValue("green.50", "green.900");
+  const iconColor = useColorModeValue("#00713D", "#00d672");
+
   return (
     <Box
-      bg="white"
-      _dark={{ bg: "gray.800", borderColor: "gray.700" }}
+      bg={bgColor}
       p={{ base: 3, sm: 3.5, md: 4 }}
       borderRadius={{ base: "lg", md: "xl" }}
       shadow={{ base: "sm", md: "md" }}
       borderWidth="1px"
-      borderColor="gray.200"
+      borderColor={borderColorValue}
       transition="all 0.3s"
       _hover={{
         transform: "translateY(-4px)",
@@ -32,6 +40,7 @@ export default function CardInfoDashboard({
       minH={{ base: "130px", sm: "140px", md: "160px" }}
       w="100%"
     >
+      {/* Barra de destaque superior */}
       <Box
         position="absolute"
         top={0}
@@ -44,20 +53,21 @@ export default function CardInfoDashboard({
       <Flex direction="column" gap={3} align="flex-start" w="full">
         <Box
           p={{ base: 1.5, md: 2 }}
-          bg="green.50"
-          _dark={{ bg: "green.900", color: "#00d672" }}
+          bg={iconBg}
           borderRadius="lg"
-          color="#00713D"
+          color={iconColor}
           fontSize="1.4rem"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
         >
           {icon}
         </Box>
 
         <Text
-          fontSize={{ base: "xs", md: "xs" }}
+          fontSize="xs"
           fontWeight="medium"
-          color="gray.600"
-          _dark={{ color: "gray.400" }}
+          color={labelColor}
           lineHeight="1.2"
           noOfLines={2}
         >
@@ -66,8 +76,7 @@ export default function CardInfoDashboard({
 
         <Heading
           fontSize={{ base: "2xl", md: "3xl" }}
-          color="#023147"
-          _dark={{ color: "gray.100" }}
+          color={textColor}
           fontWeight="extrabold"
           lineHeight={1}
         >

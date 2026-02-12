@@ -1,313 +1,165 @@
+// app/dashboard/page.tsx
 export const dynamic = "force-dynamic";
 
-import Loading from "@/app/loading";
-import BarChart from "@/components/barChart";
-import CardInfoDashboard from "@/components/cardInfoDashboard";
-import CidadesProximasTable from "@/components/dashboard/cidades-proximas";
-import LineChart from "@/components/lineChart.tsx";
-import PieChart from "@/components/pieChart";
 import { GetSessionServer } from "@/lib/auth_confg";
 import {
-  Box,
-  Container,
-  Flex,
   Grid,
-  GridItem,
-  Heading,
-  Text,
+  Container,
   VStack,
+  Flex,
+  Heading,
+  Box,
+  Text,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { Suspense } from "react";
-import { FaRegClock } from "react-icons/fa6";
-import { LuLayoutDashboard } from "react-icons/lu";
+import CardInfoDashboard from "@/components/cardInfoDashboard";
+import nextDynamic from "next/dynamic";
+import { FaRegClock, FaVideo, FaUserFriends } from "react-icons/fa";
+import DashboardClientWrapper from "@/components/dashboard/DashboardClientWrapper";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import ChartContainer from "@/components/dashboard/ChartContainer";
+import AvailableLocationsTable from "@/components/dashboard/AvailableLocationsTable";
 
-// Definir tipos
-interface SessionServer {
-  token: string;
-  // adicione outras propriedades conforme necessário
-}
+// Carregamento dinâmico dos gráficos
+const LineChart = nextDynamic(() => import("@/components/lineChart"), {
+  ssr: false,
+  loading: () => (
+    <Box
+      h="350px"
+      bg="gray.100"
+      _dark={{ bg: "gray.700" }}
+      borderRadius="xl"
+      opacity={0.5}
+    />
+  ),
+});
 
-interface DashboardData {
-  total: number;
-  videoConferencia: number;
-  interna: number;
-  mediaHoras: string;
-  mes: number;
-  ano: number;
-  solicitacoes: object;
-}
+const PieChart = nextDynamic(() => import("@/components/pieChart"), {
+  ssr: false,
+  loading: () => (
+    <Box
+      h="350px"
+      bg="gray.100"
+      _dark={{ bg: "gray.700" }}
+      borderRadius="xl"
+      opacity={0.5}
+    />
+  ),
+});
 
-interface ApiResponse {
-  contagem: DashboardData[];
-  tags: {
-    lista_tags: any[];
-    total_tags: number;
-  };
-}
+const BarChart = nextDynamic(() => import("@/components/barChart"), {
+  ssr: false,
+  loading: () => (
+    <Box
+      h="350px"
+      bg="gray.100"
+      _dark={{ bg: "gray.700" }}
+      borderRadius="xl"
+      opacity={0.5}
+    />
+  ),
+});
 
 export default async function DashboardPage() {
   const session = await GetSessionServer();
 
-  return (
-    <Suspense fallback={<Loading />}>
-      <DashboardContent session={session} />
-    </Suspense>
-  );
-}
-
-async function DashboardContent({
-  session,
-}: {
-  session: SessionServer | null;
-}) {
-  // Função para buscar dados da API com tratamento de erro
-  const fetchData = async (): Promise<ApiResponse> => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.token}`,
-          },
-          cache: "force-cache",
-          next: {
-            revalidate: 60 * 60 * 2, // 2 horas
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Erro ao buscar dados do dashboard:", error);
-      // Retornar dados padrão ou relançar o erro
-      throw error;
-    }
-  };
-
-  // Função unificada para converter tempo em segundos
-  const timeToSeconds = (time: string): number => {
-    const [hours, minutes, seconds] = time.split(":").map(Number);
-    return hours * 3600 + minutes * 60 + seconds;
-  };
-
-  // Função para converter segundos em formato HH:mm:ss
-  const secondsToTime = (seconds: number): string => {
-    if (isNaN(seconds)) {
-      return "00:00:00";
-    }
-    return new Date(seconds * 1000).toISOString().slice(11, 19);
-  };
+  if (!session) return <Text>Não autorizado</Text>;
 
   try {
-    const req = await fetchData();
-    console.log("🚀 ~ DashboardContent ~ req:", req.contagem[1].solicitacoes);
-    const data = req.contagem;
-    const tags = req.tags;
-
-    // Dados tags
-    const lista_tags = tags.lista_tags;
-    const quantidadeTags = tags.total_tags;
-
-    // Quantidade Total Solicitações
-    const totalSolicitacoes = data.map((item) => item.total);
-    const totalSolicitacoesGlobal = totalSolicitacoes.reduce(
-      (acc, item) => acc + item,
-      0
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/dashboard`,
+      {
+        headers: { Authorization: `Bearer ${session?.token}` },
+        cache: "no-store",
+      }
     );
 
-    // Extrair dados para cálculos
-    const arrayVideoConferencia = data.map((item) => item.videoConferencia);
-    const arrayInterna = data.map((item) => item.interna);
-
-    const totalVideoConferencia = arrayVideoConferencia.reduce(
-      (acc, item) => acc + item,
-      0
-    );
-    const totalInterna = arrayInterna.reduce((acc, item) => acc + item, 0);
-
-    // Removi a lógica de manipulação artificial dos dados
-    // Se precisar de lógica de negócio específica, documente o motivo
-
-    // Dados de mês/ano para os labels
-    const mesAnoLabels = data.map((item) => `${item.mes}/${item.ano}`);
-
-    // Dados para o LineChart - convertendo para segundos
-    const MediaHorasConvertida = data.map((item) =>
-      timeToSeconds(item.mediaHoras)
-    );
-
-    // Cálculo da média global
-    const mediasSegundos = data.map((item) => timeToSeconds(item.mediaHoras));
-    const mediaGlobalSeg = Math.round(
-      mediasSegundos.reduce((a, b) => a + b, 0) / mediasSegundos.length
-    );
-    const mediaGlobalHHMMSS = secondsToTime(mediaGlobalSeg);
-
-    // Delay para manter consistência com outras páginas
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    if (!response.ok) throw new Error(`Erro API: ${response.status}`);
+    const data = await response.json();
 
     return (
-      <Container
-        maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
-        py={{ base: 4, md: 5, lg: 6 }}
-        px={{ base: 3, sm: 4, md: 5, lg: 6 }}
-      >
-        <VStack spacing={{ base: 5, md: 6, lg: 8 }} align="stretch" w="full">
-          <Flex
-            bg="white"
-            _dark={{ bg: "gray.800", borderBottomColor: "#00d672" }}
-            borderBottomWidth="2px"
-            borderBottomColor="#00713D"
-            p={{ base: 4, sm: 5, md: 6 }}
-            align="center"
-            justify="space-between"
-            wrap="wrap"
-            gap={{ base: 3, md: 4 }}
-            borderRadius={{ base: "md", md: "lg", xl: "xl" }}
-            borderBottomRadius={0}
-            shadow={{ base: "sm", md: "md", lg: "lg" }}
-            flexDir={{ base: "column", md: "row" }}
-          >
-            <Flex align="center" gap={{ base: 2, md: 3 }}>
-              <Box
-                p={{ base: 1.5, md: 2 }}
-                bg="green.50"
-                _dark={{ bg: "green.900" }}
-                borderRadius="md"
-                display={{ base: "none", sm: "block" }}
-              >
-                <LuLayoutDashboard size={32} color="#00713D" />
-              </Box>
-              <Box>
-                <Heading
-                  fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
-                  size={{ base: "md", md: "lg" }}
-                  color="#023147"
-                  _dark={{ color: "gray.100" }}
-                >
-                  Painel de Monitoramento
-                </Heading>
-                <Text
-                  fontSize={{ base: "xs", sm: "sm", md: "md" }}
-                  color="gray.600"
-                  _dark={{ color: "gray.400" }}
-                  display={{ base: "none", sm: "block" }}
-                >
-                  Acompanhe as principais métricas de certificações e
-                  solicitações.
-                </Text>
-              </Box>
-            </Flex>
-          </Flex>
+      <DashboardClientWrapper>
+        <Container maxW="full" py={8} px={8} bg="transparent" minH="100vh">
+          {/* Aumentamos o spacing para 8 (32px) para dar mais respiro entre as seções */}
+          <VStack spacing={8} align="stretch">
+            {/* Header Principal */}
+            <DashboardHeader />
 
-          <VStack
-            spacing={{ base: 5, md: 6, lg: 8 }}
-            align="stretch"
-            bg="white"
-            _dark={{ bg: "gray.800" }}
-            p={{ base: 4, md: 6 }}
-            borderRadius="xl"
-            borderTopRadius={0}
-            shadow="lg"
-            minH="400px"
-          >
-            <Grid
-              templateColumns={{ base: "1fr", xl: "2fr 1fr" }}
-              gap={{ base: 5, md: 6, lg: 8 }}
-              w="full"
-            >
-              <GridItem>
-                <VStack spacing={{ base: 5, md: 6 }} align="stretch">
-                  <Box
-                    h={{ base: "340px", md: "380px" }}
-                    w="full"
-                    bg="gray.50"
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                    borderRadius="lg"
-                    p={1}
-                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
-                  >
-                    <Box w="full" h="100%">
-                      <LineChart
-                        labels={mesAnoLabels}
-                        dataValues={MediaHorasConvertida}
-                      />
-                    </Box>
-                  </Box>
+            {/* Seção de Cards: Spacing 6 (24px) */}
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
+              <CardInfoDashboard
+                title="Total Solicitações"
+                value={data.summary?.totalGeral || 0}
+                icon={<FaUserFriends size={22} />}
+              />
+              <CardInfoDashboard
+                title="Vídeo Conferência"
+                value={data.summary?.totalVideo || 0}
+                icon={<FaVideo size={22} />}
+              />
+              <CardInfoDashboard
+                title="TMA (Média)"
+                value={
+                  data.contagem?.[data.contagem.length - 1]?.mediaHoras || "0h"
+                }
+                icon={<FaRegClock size={22} />}
+              />
+            </SimpleGrid>
 
-                  <Box
-                    h={{ base: "380px", md: "420px" }}
-                    w="full"
-                    bg="gray.50"
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                    borderRadius="lg"
-                    p={1}
-                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
-                  >
-                    <Box w="full" h="100%">
-                      <BarChart lista_tags={lista_tags} />
-                    </Box>
-                  </Box>
-                </VStack>
-              </GridItem>
+            {/* Seção de Gráficos de Evolução e Mix */}
+            <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={8}>
+              <ChartContainer title="Evolução de Atendimentos">
+                <LineChart
+                  labels={data.contagem?.map((c: any) => c.label) || []}
+                  dataValues={
+                    data.contagem?.map(
+                      (c: any) => c.totalMs / (c.total || 1) / 1000
+                    ) || []
+                  }
+                />
+              </ChartContainer>
 
-              <GridItem>
-                <VStack spacing={{ base: 5, md: 6 }} align="stretch">
-                  <CardInfoDashboard
-                    title="TMA"
-                    value={mediaGlobalHHMMSS}
-                    icon={<FaRegClock size={22} />}
-                  />
-
-                  <Box
-                    h={{ base: "340px", md: "380px" }}
-                    w="full"
-                    bg="gray.50"
-                    borderWidth="1px"
-                    borderColor="gray.200"
-                    borderRadius="lg"
-                    p={1}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    _dark={{ bg: "gray.900", borderColor: "gray.700" }}
-                  >
-                    <Box w="full" maxW="400px">
-                      <PieChart
-                        title="Video Conferência e Presencial"
-                        colors={["#00713C", "#1D1D1B"]}
-                        labels={["Video Conf.", "Presencial"]}
-                        dataValues={[totalVideoConferencia, totalInterna]}
-                      />
-                    </Box>
-                  </Box>
-                </VStack>
-              </GridItem>
-
-              <GridItem colSpan={{ base: 1, xl: 2 }}>
-                <CidadesProximasTable />
-              </GridItem>
+              <ChartContainer title="Mix de Validação">
+                <PieChart
+                  labels={["Vídeo", "Presencial"]}
+                  dataValues={[
+                    data.summary?.totalVideo || 0,
+                    data.summary?.totalPresencial || 0,
+                  ]}
+                  colors={["#00713C", "#1D1D1B"]}
+                />
+              </ChartContainer>
             </Grid>
+
+            {/* Ranking de Suporte */}
+            <Grid templateColumns="1fr" gap={8}>
+              <ChartContainer title="Ranking de Suporte (Top 5)">
+                <BarChart lista_tags={data.tags?.lista_tags || []} />
+              </ChartContainer>
+            </Grid>
+
+            {/* Tabela de Localizações: Agora integrada ao fluxo do VStack com margem extra no topo */}
+            <Box pt={4}>
+              <AvailableLocationsTable token={session.token} />
+            </Box>
           </VStack>
-        </VStack>
-      </Container>
+        </Container>
+      </DashboardClientWrapper>
     );
   } catch (error) {
-    // Componente de erro ou fallback
     return (
-      <Flex justify="center" align="center" h="50vh">
-        <Box textAlign="center">
-          <h2>Erro ao carregar dashboard</h2>
-          <p>Tente novamente mais tarde</p>
-        </Box>
+      <Flex
+        h="80vh"
+        align="center"
+        justify="center"
+        direction="column"
+        bg="gray.50"
+        _dark={{ bg: "gray.900", color: "white" }}
+      >
+        <Heading size="lg" color="red.400" mb={2}>
+          Erro ao carregar Dashboard
+        </Heading>
+        <Text>Verifique se o backend está rodando corretamente.</Text>
       </Flex>
     );
   }
