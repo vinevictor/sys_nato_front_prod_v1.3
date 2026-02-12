@@ -1,55 +1,69 @@
 "use client";
 
-import { Box, Flex, Link, Text, chakra } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  Text,
+  chakra,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import SidebarNavigation from "./SidebarNavigation";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { Session } from "@/types/session";
 
-/**
- * Props do SidebarLayout
- * @param session - Dados da sessão do usuário
- * @param children - Conteúdo da página
- */
 interface SidebarLayoutProps {
   session: Session.AuthUser | null;
   children: React.ReactNode;
 }
 
-/**
- * Layout wrapper para gerenciar sidebar e conteúdo
- * 
- * Funcionalidades:
- * - Gerencia estado de collapse da sidebar
- * - Ajusta margem do conteúdo baseado no estado
- * - Responsivo para mobile/tablet/desktop
- * 
- * @component
- */
-export default function SidebarLayout({ session, children }: SidebarLayoutProps) {
+export default function SidebarLayout({
+  session,
+  children,
+}: SidebarLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Cores dinâmicas para evitar conflito de hidratação
+  const mainBg = useColorModeValue("gray.50", "gray.900");
+  const footerBg = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("gray.600", "gray.400");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Se não estiver montado, renderizamos um container neutro para evitar o flash de cor errada
+  if (!mounted) {
+    return (
+      <Flex w="100vw" h="100dvh" bg="gray.50" _dark={{ bg: "gray.900" }} />
+    );
+  }
 
   return (
-    <Flex w="100vw" h="100dvh" overflow="hidden" position="relative">
-      {/* Sidebar de navegação */}
+    <Flex
+      w="100vw"
+      h="100dvh"
+      overflow="hidden"
+      position="relative"
+      bg={mainBg}
+    >
       <SidebarNavigation session={session} onCollapse={setIsCollapsed} />
 
-      {/* Área de conteúdo principal */}
       <Flex
         flex={1}
         direction="column"
         ml={{ base: 0, md: isCollapsed ? "0" : "280px" }}
         h="100dvh"
-        bg="gray.50"
-        _dark={{ bg: "gray.900" }}
+        bg={mainBg} // Usando a cor reativa aqui
         transition="margin-left 0.3s ease"
       >
-        {/* Conteúdo principal com scroll */}
         <Box px={4} flex={1} overflowY="auto">
           {children}
         </Box>
 
-        {/* Footer fixo na parte inferior */}
         <chakra.footer
           display="flex"
           flexDirection={{ base: "column", lg: "row" }}
@@ -59,40 +73,33 @@ export default function SidebarLayout({ session, children }: SidebarLayoutProps)
           py={4}
           px={6}
           borderTop="1px"
-          borderColor="gray.200"
-          bg="white"
-          _dark={{
-            bg: "gray.800",
-            borderColor: "gray.700",
-          }}
+          borderColor={borderColor} // Cor reativa
+          bg={footerBg} // Cor reativa
         >
-          {/* Copyright */}
-          <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
+          <Text fontSize="sm" color={textColor}>
             © 2024 SISNATO. Todos os direitos reservados.
           </Text>
 
-          {/* Links de termos */}
           <Flex gap={4} fontSize="sm">
             <Link
               href="/termos/uso"
               color="blue.600"
-              _hover={{ textDecoration: "underline" }}
               _dark={{ color: "blue.400" }}
+              _hover={{ textDecoration: "underline" }}
             >
               Termos de Uso
             </Link>
             <Link
               href="/termos/privacidade"
               color="blue.600"
-              _hover={{ textDecoration: "underline" }}
               _dark={{ color: "blue.400" }}
+              _hover={{ textDecoration: "underline" }}
             >
               Política de Privacidade
             </Link>
           </Flex>
 
-          {/* Suporte */}
-          <Flex alignItems="center" gap={2} fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
+          <Flex alignItems="center" gap={2} fontSize="sm" color={textColor}>
             <Text>Precisa de Ajuda?</Text>
             <PhoneIcon />
             <Link
@@ -101,15 +108,14 @@ export default function SidebarLayout({ session, children }: SidebarLayoutProps)
               rel="noopener noreferrer"
               color="blue.600"
               fontWeight="medium"
-              _hover={{ textDecoration: "underline" }}
               _dark={{ color: "blue.400" }}
+              _hover={{ textDecoration: "underline" }}
             >
               (16) 9 9280-0713
             </Link>
           </Flex>
 
-          {/* Versão */}
-          <Text fontSize="xs" color="gray.500" _dark={{ color: "gray.500" }}>
+          <Text fontSize="xs" color="gray.500">
             Versão: {process.env.NEXT_PUBLIC_DEPLOY_VERSION || "1.0.0"}
           </Text>
         </chakra.footer>
