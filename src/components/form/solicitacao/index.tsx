@@ -84,7 +84,10 @@ export default function FormSolicitacao({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlesubmit = async (forceNoSms: boolean = false) => {
+  const handlesubmit = async (
+    forceNoSms: boolean = false,
+    forceSend: boolean = false
+  ) => {
     if (
       !form.nome ||
       !form.cpf ||
@@ -124,11 +127,14 @@ export default function FormSolicitacao({
 
     try {
       setLoad(true);
-      const response = await fetch(`/api/solicitacao?sms=${sendSms}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `/api/solicitacao?sms=${sendSms}&forceSend=${forceSend}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       const retorno = await response.json();
 
@@ -139,9 +145,11 @@ export default function FormSolicitacao({
         const msgErro = Array.isArray(retorno.message)
           ? retorno.message.join(", ")
           : retorno.message || "";
+        const isChatOpenError = msgErro.includes("Chat already openned");
         if (
           msgErro.toUpperCase().includes("WHATSAPP") ||
-          msgErro.toUpperCase().includes("INVALID")
+          msgErro.toUpperCase().includes("INVALID") ||
+          isChatOpenError
         ) {
           setErrorMessage(msgErro);
           onOpen();
@@ -288,12 +296,20 @@ export default function FormSolicitacao({
         leastDestructiveRef={cancelRef}
         onClose={onClose}
         isCentered
-        size="lg"
+        size="xl"
       >
         <AlertDialogOverlay>
-          <AlertDialogContent bg={bgColor} color={textColor}>
+          <AlertDialogContent
+            bg={bgColor}
+            color={textColor}
+            mx={4}
+            maxH="90vh"
+            overflowY="auto"
+          >
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              ⚠️ Erro ao Verificar WhatsApp
+              {errorMessage.includes("Chat already openned")
+                ? "💬 Chat já em Aberto"
+                : "⚠️ Erro ao Verificar WhatsApp"}
             </AlertDialogHeader>
 
             <AlertDialogBody>
@@ -335,7 +351,9 @@ export default function FormSolicitacao({
               </Flex>
 
               <Text mt={4} fontWeight="medium" textAlign="center">
-                Deseja criar a solicitação sem WhatsApp?
+                {errorMessage.includes("Chat already openned")
+                  ? "Deseja tentar enviar a mensagem novamente mesmo com o chat aberto?"
+                  : "Deseja criar a solicitação sem enviar uma mensagem WhatsApp?"}
               </Text>
             </AlertDialogBody>
 
@@ -343,15 +361,30 @@ export default function FormSolicitacao({
               <Button ref={cancelRef} onClick={onClose} variant="outline">
                 Corrigir Telefone
               </Button>
+              {errorMessage.includes("Chat already openned") && (
+                <Button
+                  colorScheme="green"
+                  onClick={() => {
+                    onClose();
+                    handlesubmit(false, true);
+                  }}
+                  isLoading={load}
+                  w={{ base: "full", md: "auto" }}
+                  whiteSpace="normal"
+                >
+                  Salvar e enviar Whatsapp novamente
+                </Button>
+              )}
               <Button
                 colorScheme="orange"
                 onClick={() => {
                   onClose();
-                  handlesubmit(true);
+                  handlesubmit(true, false);
                 }}
                 isLoading={load}
+                w={{ base: "full", md: "auto" }}
               >
-                Confirmar sem WhatsApp
+                Salvar sem Envio WhatsApp
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
