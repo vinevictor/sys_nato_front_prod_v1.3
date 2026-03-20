@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import BtnDevolucao from "@/components/botoes/bt_devolucao";
 import MensagensChatDireto from "@/components/direto/mesage";
 import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
@@ -247,6 +248,7 @@ export default async function PageDireto({ params }: Props) {
                 >
                   Andamento: {AndamentoTxt() || ""}
                 </Text>
+
                 {session?.user?.hierarquia === "ADM" &&
                   data?.data?.andamento !== "EMITIDO" && (
                     <Select_gov isState={data?.data?.gov || false} />
@@ -281,6 +283,7 @@ export default async function PageDireto({ params }: Props) {
                     dados={data.data}
                     Id={+id}
                     session={user}
+                    token={session.token}
                   />
                 </Suspense>
               </Box>
