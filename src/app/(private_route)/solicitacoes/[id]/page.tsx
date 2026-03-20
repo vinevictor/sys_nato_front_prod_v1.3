@@ -121,6 +121,23 @@ export default async function PageSolicitacoes({ params }: Props) {
     });
   };
 
+  const ValidadeCertificadoTxt = () => {
+    const hora = data.data?.hr_aprovacao || "";
+    const date = data.data?.dt_aprovacao || "";
+    if (!hora || !date) return "";
+
+    const aprovacaoDate = new Date(
+      `${date.split("T")[0]}T${hora.split("T")[1]}`
+    );
+
+    const validadeDate = new Date(aprovacaoDate);
+    validadeDate.setFullYear(aprovacaoDate.getFullYear() + 1);
+
+    return validadeDate.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+  };
+
   const AgendamentoTxt = () => {
     const hora = data.data?.hr_agendamento || "";
     const date = data.data?.dt_agendamento || "";
@@ -198,24 +215,34 @@ export default async function PageSolicitacoes({ params }: Props) {
                       Agendado Em: {`${AgendamentoTxt()}`}
                     </Text>
                   )}
-                {data?.data?.andamento === "EMITIDO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
+                {(data?.data?.andamento === "EMITIDO" ||
+                  data?.data?.andamento === "APROVADO") && (
+                  <>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      color="gray.600"
+                      _dark={{ color: "gray.300" }}
+                    >
+                      Aprovado Em: {`${AprovacaoTxt()}`}
+                    </Text>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      fontWeight="bold"
+                      color="green.600"
+                      _dark={{ color: "green.300" }}
+                    >
+                      Válido Até: {`${ValidadeCertificadoTxt()}`}
+                    </Text>
+                  </>
                 )}
-                {data?.data?.andamento === "APROVADO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
-                )}
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  fontWeight="bold" // Destaque para a validade
+                  color="green.600"
+                  _dark={{ color: "green.300" }}
+                >
+                  Válido Até: {`${ValidadeCertificadoTxt()}`}
+                </Text>
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   color="gray.600"
