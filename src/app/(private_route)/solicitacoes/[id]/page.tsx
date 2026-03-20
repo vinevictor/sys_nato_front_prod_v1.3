@@ -237,14 +237,6 @@ export default async function PageSolicitacoes({ params }: Props) {
                 )}
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
-                  fontWeight="bold" // Destaque para a validade
-                  color="green.600"
-                  _dark={{ color: "green.300" }}
-                >
-                  Válido Até: {`${ValidadeCertificadoTxt()}`}
-                </Text>
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
                   color="gray.600"
                   _dark={{ color: "gray.300" }}
                 >
