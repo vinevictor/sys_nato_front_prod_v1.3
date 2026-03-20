@@ -467,4 +467,6 @@ type SolicitacaoIdTypeData = {
     descricao: string;
     createdAt: string;
   }[];
+  conf_devolucao: boolean;
+  dt_conf_devolucao: string | null;
 };

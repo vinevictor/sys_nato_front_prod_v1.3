@@ -121,6 +121,23 @@ export default async function PageSolicitacoes({ params }: Props) {
     });
   };
 
+  const ValidadeCertificadoTxt = () => {
+    const hora = data.data?.hr_aprovacao || "";
+    const date = data.data?.dt_aprovacao || "";
+    if (!hora || !date) return "";
+
+    const aprovacaoDate = new Date(
+      `${date.split("T")[0]}T${hora.split("T")[1]}`
+    );
+
+    const validadeDate = new Date(aprovacaoDate);
+    validadeDate.setFullYear(aprovacaoDate.getFullYear() + 1);
+
+    return validadeDate.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+  };
+
   const AgendamentoTxt = () => {
     const hora = data.data?.hr_agendamento || "";
     const date = data.data?.dt_agendamento || "";
@@ -134,12 +151,12 @@ export default async function PageSolicitacoes({ params }: Props) {
   };
 
   const DtCreateTxt = (date: string) => {
-    if (!date) return ""
-    const newDate = new Date(date)
+    if (!date) return "";
+    const newDate = new Date(date);
     return newDate.toLocaleString("pt-BR", {
       timeZone: "America/Sao_Paulo",
-    })
-  }
+    });
+  };
 
   return (
     <Container
@@ -186,8 +203,7 @@ export default async function PageSolicitacoes({ params }: Props) {
                   color="gray.600"
                   _dark={{ color: "gray.300" }}
                 >
-                  Criado Em:{" "}
-                  {DtCreateTxt(data?.data?.createdAt || "")}
+                  Criado Em: {DtCreateTxt(data?.data?.createdAt || "")}
                 </Text>
                 {data?.data?.andamento !== "EMITIDO" &&
                   data.data?.andamento !== "APROVADO" && (
@@ -199,24 +215,34 @@ export default async function PageSolicitacoes({ params }: Props) {
                       Agendado Em: {`${AgendamentoTxt()}`}
                     </Text>
                   )}
-                {data?.data?.andamento === "EMITIDO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
+                {(data?.data?.andamento === "EMITIDO" ||
+                  data?.data?.andamento === "APROVADO") && (
+                  <>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      color="gray.600"
+                      _dark={{ color: "gray.300" }}
+                    >
+                      Aprovado Em: {`${AprovacaoTxt()}`}
+                    </Text>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      fontWeight="bold"
+                      color="green.600"
+                      _dark={{ color: "green.300" }}
+                    >
+                      Válido Até: {`${ValidadeCertificadoTxt()}`}
+                    </Text>
+                  </>
                 )}
-                {data?.data?.andamento === "APROVADO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
-                )}
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  fontWeight="bold" // Destaque para a validade
+                  color="green.600"
+                  _dark={{ color: "green.300" }}
+                >
+                  Válido Até: {`${ValidadeCertificadoTxt()}`}
+                </Text>
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   color="gray.600"
@@ -261,11 +287,7 @@ export default async function PageSolicitacoes({ params }: Props) {
         <Divider mb={{ base: 4, md: 6 }} />
 
         {/* Layout principal - Stack vertical em mobile, horizontal em desktop */}
-        <Flex
-          direction="column"
-          gap={{ base: 4, md: 6 }}
-          maxW="full"
-        >
+        <Flex direction="column" gap={{ base: 4, md: 6 }} maxW="full">
           {/* Linha 1 - Formulário (65%) e Chat (35%) */}
           <Flex
             direction={{ base: "column", lg: "row" }}
@@ -294,15 +316,15 @@ export default async function PageSolicitacoes({ params }: Props) {
               flexDir="column"
               _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
             >
-                <MensagensChatDireto
-                  Id={+id}
-                  messages={data.data?.obs ?? []}
-                  session={user}
-                  disabled={
-                    data.data?.andamento === "EMITIDO" ||
-                    data.data?.andamento === "APROVADO"
-                  }
-                />
+              <MensagensChatDireto
+                Id={+id}
+                messages={data.data?.obs ?? []}
+                session={user}
+                disabled={
+                  data.data?.andamento === "EMITIDO" ||
+                  data.data?.andamento === "APROVADO"
+                }
+              />
             </Box>
           </Flex>
 
@@ -324,7 +346,11 @@ export default async function PageSolicitacoes({ params }: Props) {
                 borderRadius="xl"
                 shadow="lg"
                 overflowY="auto"
-                _dark={{ bg: "gray.800", borderColor: "gray.700", shadow: "md" }}
+                _dark={{
+                  bg: "gray.800",
+                  borderColor: "gray.700",
+                  shadow: "md",
+                }}
               >
                 <Suspense fallback={<LogsComponent logs={logs.data} />}>
                   <LogsComponent logs={logs.data} />

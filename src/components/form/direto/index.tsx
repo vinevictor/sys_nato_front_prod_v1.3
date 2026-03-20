@@ -1,5 +1,6 @@
 "use client";
 import { BtCreateAlertCliente } from "@/components/botoes/bt_create_alert_cliente";
+import BtnDevolucao from "@/components/botoes/bt_devolucao";
 import BtRemoverDistrato from "@/components/botoes/bt_Remover_Distrato";
 import BotaoSisapp from "@/components/botoes/bt_sisapp";
 import BtnIniciarAtendimento from "@/components/botoes/btn_iniciar_atendimento";
@@ -90,6 +91,8 @@ interface GetSolicitacao {
   construtora: null;
   empreendimento: GetEmpreendimentos;
   financeiro: GetFinanceiras;
+  conf_devolucao: boolean;
+  dt_conf_devolucao: string | null;
   alerts: [];
   tags: [];
 }
@@ -113,12 +116,14 @@ interface FormSolicitacaoProps {
   dados: GetSolicitacao;
   Id: number;
   session: Session.AuthUser;
+  token: string;
 }
 
 export default function FormSolicitacaoDireto({
   dados,
   Id,
   session,
+  token,
 }: FormSolicitacaoProps) {
   const { Gov } = useContext(RegisterContext);
   const [form, setForm] = useState({
@@ -575,6 +580,23 @@ export default function FormSolicitacaoDireto({
                 OnRetorno={(tags) => handleChange("tags", tags)}
               />
             </Box>
+          </Flex>
+
+          <Flex
+            gap={3}
+            flexWrap="wrap"
+            flexDir={{ base: "column", md: "row" }}
+            align={{ base: "stretch", md: "flex-start" }}
+          >
+            {isAdmin && (
+              <Box mr={2}>
+                <BtnDevolucao
+                  id={Id}
+                  token={token}
+                  data={dados as any} // Passamos os dados da ficha
+                />
+              </Box>
+            )}
           </Flex>
         </VStack>
       </VStack>

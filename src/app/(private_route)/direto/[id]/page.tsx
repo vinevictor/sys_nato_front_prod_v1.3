@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import BtnDevolucao from "@/components/botoes/bt_devolucao";
 import MensagensChatDireto from "@/components/direto/mesage";
 import Error404 from "@/components/Error404";
 import FormSolicitacaoDireto from "@/components/form/direto";
@@ -118,6 +119,23 @@ export default async function PageDireto({ params }: Props) {
     });
   };
 
+  const ValidadeCertificadoTxt = () => {
+    const hora = data.data?.hr_aprovacao || "";
+    const date = data.data?.dt_aprovacao || "";
+    if (!hora || !date) return "";
+
+    const aprovacaoDate = new Date(
+      `${date.split("T")[0]}T${hora.split("T")[1]}`
+    );
+
+    const validadeDate = new Date(aprovacaoDate);
+    validadeDate.setFullYear(aprovacaoDate.getFullYear() + 1);
+
+    return validadeDate.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+  };
+
   const AgendamentoTxt = () => {
     const hora = data.data?.hr_agendamento || "";
     const date = data.data?.dt_agendamento || "";
@@ -196,23 +214,25 @@ export default async function PageDireto({ params }: Props) {
                       Agendado Em: {`${AgendamentoTxt()}`}
                     </Text>
                   )}
-                {data?.data?.andamento === "EMITIDO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
-                )}
-                {data?.data?.andamento === "APROVADO" && (
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.600"
-                    _dark={{ color: "gray.300" }}
-                  >
-                    Aprovado Em: {`${AprovacaoTxt()}`}
-                  </Text>
+                {(data?.data?.andamento === "EMITIDO" ||
+                  data?.data?.andamento === "APROVADO") && (
+                  <>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      color="gray.600"
+                      _dark={{ color: "gray.300" }}
+                    >
+                      Aprovado Em: {`${AprovacaoTxt()}`}
+                    </Text>
+                    <Text
+                      fontSize={{ base: "xs", md: "sm" }}
+                      fontWeight="bold"
+                      color="green.600"
+                      _dark={{ color: "green.300" }}
+                    >
+                      Válido Até: {`${ValidadeCertificadoTxt()}`}
+                    </Text>
+                  </>
                 )}
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
@@ -247,6 +267,7 @@ export default async function PageDireto({ params }: Props) {
                 >
                   Andamento: {AndamentoTxt() || ""}
                 </Text>
+
                 {session?.user?.hierarquia === "ADM" &&
                   data?.data?.andamento !== "EMITIDO" && (
                     <Select_gov isState={data?.data?.gov || false} />
@@ -281,6 +302,7 @@ export default async function PageDireto({ params }: Props) {
                     dados={data.data}
                     Id={+id}
                     session={user}
+                    token={session.token}
                   />
                 </Suspense>
               </Box>
