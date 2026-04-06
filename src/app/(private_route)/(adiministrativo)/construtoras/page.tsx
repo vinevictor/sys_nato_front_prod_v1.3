@@ -38,12 +38,17 @@ async function ConstrutorasData() {
     }
 
     const data = await req.json();
-    return <ConstrutoraPage data={data} session={session.user} />;
+    const sessionForClient = {
+      ...session.user,
+      token: session.token,
+    };
+    return <ConstrutoraPage data={data} session={sessionForClient} />;
   } catch (error) {
     return (
       <Box textAlign="center" p={5}>
         <Text color="red.500" fontWeight="bold">
-          Ocorreu um erro ao carregar as construtoras. Por favor, tente novamente mais tarde.
+          Ocorreu um erro ao carregar as construtoras. Por favor, tente
+          novamente mais tarde.
         </Text>
       </Box>
     );
