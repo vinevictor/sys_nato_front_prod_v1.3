@@ -7,6 +7,9 @@ export const dynamic = "force-dynamic";
 export default async function EmpreendimentoPage() {
   const session = await GetSessionServer();
 
+  if (!session) {
+    return redirect("/home");
+  }
   const req = await fetch(
     `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/empreendimento/query?page=1&limit=12`,
     {
@@ -21,10 +24,15 @@ export default async function EmpreendimentoPage() {
       },
     }
   );
+  const sessionForClient = {
+    ...session.user,
+    token: session.token,
+  };
 
   if (!req.ok) {
     return (
       <EmpreendimentoPageClient
+        session={sessionForClient}
         dados={{
           data: [],
           meta: { total: 0, page: 1, limit: 12, totalPages: 0 },
@@ -37,7 +45,7 @@ export default async function EmpreendimentoPage() {
 
   return (
     <>
-      <EmpreendimentoPageClient dados={data} />
+      <EmpreendimentoPageClient dados={data} session={sessionForClient} />
     </>
   );
 }

@@ -177,32 +177,66 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
    */
   const handlesubmit = useCallback(async () => {
     setIsLoading(true);
-    const req = await fetch(`/api/solicitacao/update/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({ form }),
-    });
-    const res = await req.json();
-    if (!req.ok) {
-      toast({
-        title: "Erro ao editar solicitação",
-        description: res.message,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
+
+    try {
+      const req = await fetch(`/api/solicitacao/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
       });
-      setIsLoading(false);
-      return;
-    }
-    toast({
-      title: "Solicitação editada com sucesso",
-      status: "success",
-      duration: 9000,
-      isClosable: true,
-    });
-    setTimeout(() => {
-      setIsLoading(false);
+
+      // Se o status for 403, 404, etc, ainda tentamos ler o JSON
+      let res: any;
+      try {
+        res = await req.json();
+      } catch (jsonErr) {
+        // Se o servidor retornar algo que não é JSON (erro bruto do node/nginx)
+        throw new Error("Resposta inválida do servidor");
+      }
+
+      if (!req.ok) {
+        // Procure a mensagem em todas as propriedades possíveis do NestJS
+        const errorMsg =
+          res.message ||
+          res.response?.message ||
+          res.error ||
+          "Erro de permissão ou dados inválidos.";
+
+        toast({
+          title: `Aviso do Sistema`,
+          description: Array.isArray(errorMsg)
+            ? errorMsg.join(", ")
+            : String(errorMsg),
+          status: "warning",
+          duration: 9000,
+          isClosable: true,
+          position: "top", // Mude para TOP para garantir visibilidade
+        });
+
+        return; // Para o fluxo aqui
+      }
+
+      // Sucesso
+      toast({
+        title: "Solicitação editada com sucesso",
+        status: "success",
+        duration: 3000,
+      });
+
       router.refresh();
-    }, 2000);
+    } catch (error: any) {
+      console.error("❌ Erro fatal no handlesubmit:", error);
+      toast({
+        title: "Erro de Comunicação",
+        description: "Não foi possível processar a resposta do servidor.",
+        status: "error",
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }, [id, form, toast, router]);
 
   return (

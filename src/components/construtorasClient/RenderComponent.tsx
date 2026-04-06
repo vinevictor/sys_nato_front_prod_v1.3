@@ -15,21 +15,30 @@ import {
   Text,
   VStack,
   useDisclosure,
+  useToast,
+  HStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { MdAdd, MdBusiness, MdFilterAlt, MdSearch } from "react-icons/md";
+import { useState, useCallback } from "react";
+import {
+  MdAdd,
+  MdBusiness,
+  MdFilterAlt,
+  MdSearch,
+  MdClear,
+} from "react-icons/md";
 import ModalEditarConstrutora from "@/components/construtoraCard/modal";
 
 export interface ConstrutoraProps {
   data: ConstrutoraTypeAllData[];
-  session: Session.AuthUser
+  session: Session.AuthUser & { token?: string }; // Garantindo acesso ao token
 }
 
 export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
-  const [construtoras, setConstrutoras] = useState<ConstrutoraTypeAllData[]>([]);
-  const [dadosFiltrados, setDadosFiltrados] = useState<ConstrutoraTypeAllData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dadosFiltrados, setDadosFiltrados] =
+    useState<ConstrutoraTypeAllData[]>(data);
+  const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   // Estados dos filtros
   const [filtros, setFiltros] = useState({
@@ -40,49 +49,50 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
     status: "todos",
   });
 
-  // Carrega dados iniciais
-  useEffect(() => {
-    setConstrutoras(data);
-    setDadosFiltrados(data);
-    setLoading(false);
-  }, [data]);
+  // Função disparada apenas pelo botão Filtrar ou ao Limpar
+  const handleFiltrar = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
 
-  // Aplica filtros
-  useEffect(() => {
-    let resultado = [...construtoras];
+      if (filtros.id) params.append("id", filtros.id);
+      if (filtros.razaosocial)
+        params.append("razaosocial", filtros.razaosocial);
+      if (filtros.fantasia) params.append("fantasia", filtros.fantasia);
+      if (filtros.cnpj) params.append("cnpj", filtros.cnpj.replace(/\D/g, ""));
+      if (filtros.status !== "todos") params.append("status", filtros.status);
 
-    if (filtros.id) {
-      resultado = resultado.filter((c) => c.id.toString() === filtros.id);
-    }
-
-    if (filtros.razaosocial) {
-      resultado = resultado.filter((c) =>
-        c.razaosocial.toLowerCase().includes(filtros.razaosocial.toLowerCase())
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_STRAPI_API_URL
+        }/construtora/search?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.token}`,
+          },
+        }
       );
+
+      if (!response.ok) throw new Error("Erro ao buscar dados");
+
+      const result = await response.json();
+      setDadosFiltrados(result);
+    } catch (error) {
+      toast({
+        title: "Erro na busca",
+        description: "Não foi possível realizar o filtro no servidor.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
+  }, [filtros, session.token, toast]);
 
-    if (filtros.fantasia) {
-      resultado = resultado.filter((c) =>
-        c.fantasia.toLowerCase().includes(filtros.fantasia.toLowerCase())
-      );
-    }
-
-    if (filtros.cnpj) {
-      const cnpjFiltro = filtros.cnpj.replace(/\D/g, "");
-      resultado = resultado.filter((c) =>
-        c.cnpj.replace(/\D/g, "").includes(cnpjFiltro)
-      );
-    }
-
-    if (filtros.status !== "todos") {
-      const statusBool = filtros.status === "ativo";
-      resultado = resultado.filter((c) => c.status === statusBool);
-    }
-
-    setDadosFiltrados(resultado);
-  }, [filtros, construtoras]);
-
-  // Limpa todos os filtros
+  // Limpa todos os filtros e restaura os dados originais
   const limparFiltros = () => {
     setFiltros({
       id: "",
@@ -91,6 +101,7 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
       cnpj: "",
       status: "todos",
     });
+    setDadosFiltrados(data);
   };
 
   return (
@@ -150,8 +161,13 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
       >
         <Flex align="center" gap={2} mb={4}>
           <Icon as={MdFilterAlt} boxSize={5} color="#00713D" />
-          <Text fontWeight="600" fontSize="lg" color="gray.700" _dark={{ color: "gray.200" }}>
-            Filtros
+          <Text
+            fontWeight="600"
+            fontSize="lg"
+            color="gray.700"
+            _dark={{ color: "gray.200" }}
+          >
+            Filtros Avançados
           </Text>
         </Flex>
 
@@ -193,7 +209,25 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
             value={filtros.status}
             onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
             bg="gray.50"
-            _dark={{ bg: "gray.700" }}
+            color="gray.700" // Cor do texto no modo claro
+            _dark={{
+              bg: "gray.700",
+              color: "white", // Cor do texto no modo escuro
+              borderColor: "gray.600",
+            }}
+            sx={{
+              // Isso força os itens da lista (options) a terem cores visíveis
+              "> option": {
+                background: "white",
+                color: "gray.700",
+              },
+              _dark: {
+                "> option": {
+                  background: "#2D3748", // gray.700 do Chakra
+                  color: "white",
+                },
+              },
+            }}
           >
             <option value="todos">Todos Status</option>
             <option value="ativo">Ativo</option>
@@ -201,18 +235,35 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
           </Select>
         </SimpleGrid>
 
-        <Flex mt={4} justify="space-between" align="center">
+        <Flex mt={6} justify="space-between" align="center">
           <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
-            <strong>{dadosFiltrados.length}</strong> construtora(s) encontrada(s)
+            <strong>{dadosFiltrados.length}</strong> construtora(s)
+            encontrada(s)
           </Text>
-          <Button
-            size="sm"
-            variant="outline"
-            colorScheme="gray"
-            onClick={limparFiltros}
-          >
-            Limpar Filtros
-          </Button>
+
+          <HStack spacing={3}>
+            <Button
+              leftIcon={<MdClear />}
+              size="md"
+              variant="outline"
+              colorScheme="gray"
+              onClick={limparFiltros}
+              isDisabled={loading}
+            >
+              Limpar
+            </Button>
+            <Button
+              leftIcon={<MdSearch />}
+              size="md"
+              colorScheme="green"
+              bg="#00713D"
+              _hover={{ bg: "#005a31" }}
+              isLoading={loading}
+              onClick={handleFiltrar}
+            >
+              Filtrar
+            </Button>
+          </HStack>
         </Flex>
       </Box>
 
@@ -226,7 +277,7 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
           </SimpleGrid>
         ) : dadosFiltrados.length > 0 ? (
           <Construtora data={dadosFiltrados} session={session} />
-        ) : construtoras.length > 0 ? (
+        ) : (
           <Flex
             w="full"
             minH="300px"
@@ -241,45 +292,19 @@ export default function ConstrutoraPage({ data, session }: ConstrutoraProps) {
           >
             <Icon as={MdSearch} boxSize={16} color="gray.400" />
             <Text fontSize="lg" color="gray.600" _dark={{ color: "gray.400" }}>
-              Nenhuma construtora encontrada com os filtros aplicados
+              Nenhuma construtora encontrada
             </Text>
             <Button
               variant="outline"
               colorScheme="green"
               onClick={limparFiltros}
             >
-              Limpar Filtros
-            </Button>
-          </Flex>
-        ) : (
-          <Flex
-            w="full"
-            minH="300px"
-            direction="column"
-            align="center"
-            justify="center"
-            bg="gray.50"
-            _dark={{ bg: "gray.800" }}
-            borderRadius="lg"
-            p={8}
-            gap={4}
-          >
-            <Icon as={MdBusiness} boxSize={16} color="gray.400" />
-            <Text fontSize="lg" color="gray.600" _dark={{ color: "gray.400" }}>
-              Nenhuma construtora cadastrada
-            </Text>
-            <Button
-              leftIcon={<MdAdd />}
-              colorScheme="green"
-              onClick={onOpen}
-            >
-              Criar Primeira Construtora
+              Ver Todas
             </Button>
           </Flex>
         )}
       </Box>
 
-      {/* Modal de Criação/Edição */}
       <ModalEditarConstrutora isOpen={isOpen} onClose={onClose} />
     </VStack>
   );

@@ -19,19 +19,49 @@ import {
   Flex,
   useToast,
   HStack,
-  Tooltip,
 } from "@chakra-ui/react";
 import {
   MdMap,
   MdLocationOn,
   MdPlace,
   MdPhone,
-  MdPerson,
   MdInfoOutline,
   MdStorefront,
-  MdNearMe, // Ícone novo para distância
 } from "react-icons/md";
 import { buscarProximas, getCidades } from "@/actions/geo/geoActions";
+
+// --- ESTILO GLOBAL ---
+const GlobalSelectStyles = () => (
+  <style jsx global>{`
+    .chakra-ui-dark option {
+      background-color: #2d3748 !important; /* gray.700 */
+      color: white !important;
+    }
+    .chakra-ui-light option {
+      background-color: white !important;
+      color: #2d3748 !important;
+    }
+  `}</style>
+);
+
+// --- ESTILO PARA O COMPONENTE SELECT ---
+const selectStyles = {
+  color: "gray.800",
+  bg: "gray.50",
+  _dark: {
+    color: "white",
+    bg: "gray.700",
+    borderColor: "gray.600",
+    _hover: {
+      borderColor: "gray.500",
+    },
+  },
+  // Estilização das options via SX (para navegadores que aceitam)
+  option: {
+    color: "gray.800",
+    bg: "white",
+  },
+};
 
 // --- TIPAGEM ---
 interface Partner {
@@ -90,9 +120,7 @@ const CityCard = ({
       transition="all 0.2s"
     >
       <CardHeader pb={2}>
-        {/* --- CABEÇALHO DO CARD COM DESTAQUE NA DISTÂNCIA --- */}
         <Flex justify="space-between" align="start" mb={3}>
-          {/* Lado Esquerdo: Nome da Cidade e Badge de Proximidade */}
           <Box flex="1" pr={2}>
             {isClosest && (
               <Badge
@@ -130,12 +158,12 @@ const CityCard = ({
 
           <Box
             bg={isClosest ? "green.50" : "gray.50"}
-            _dark={{ bg: isClosest ? "rgba(0, 113, 61, 0.2)" : "gray.700" }}
+            _dark={{ bg: "gray.700" }}
             px={3}
             py={2}
             borderRadius="lg"
             border="1px solid"
-            borderColor={isClosest ? "green.200" : "gray.200"}
+            borderColor={isClosest ? "green.200" : "gray.600"}
             textAlign="center"
             minW="80px"
           >
@@ -152,8 +180,7 @@ const CityCard = ({
               <Text
                 fontSize="2xl"
                 fontWeight="800"
-                color={isClosest ? "green.600" : "gray.700"}
-                _dark={{ color: isClosest ? "green.300" : "white" }}
+                color={isClosest ? "green.600" : "white"}
               >
                 {city.distancia_km}
               </Text>
@@ -164,21 +191,17 @@ const CityCard = ({
           </Box>
         </Flex>
 
-        {/* --- SELETOR DE PARCEIROS --- */}
         {city.parceiros.length > 1 ? (
           <Box mt={3}>
             <Text fontSize="xs" mb={1} color="gray.500" fontWeight="medium">
               <Icon as={MdStorefront} mr={1} mb="-2px" />
-              {city.parceiros.length} locais disponíveis nesta cidade:
+              {city.parceiros.length} locais disponíveis:
             </Text>
             <Select
               size="sm"
               value={selectedPartnerId}
               onChange={(e) => setSelectedPartnerId(e.target.value)}
-              bg="gray.50"
-              borderColor="green.200"
-              _focus={{ borderColor: "green.500" }}
-              _dark={{ bg: "gray.700", borderColor: "gray.600" }}
+              sx={selectStyles}
               fontWeight="bold"
             >
               {city.parceiros.map((p) => (
@@ -189,7 +212,6 @@ const CityCard = ({
             </Select>
           </Box>
         ) : (
-          // Nome do parceiro único
           <Box mt={2} borderTop="1px dashed" borderColor="gray.200" pt={2}>
             <Text fontSize="xs" color="gray.400" mb={1}>
               Local:
@@ -198,22 +220,6 @@ const CityCard = ({
               {currentPartner.nome}
             </Heading>
           </Box>
-        )}
-
-        {/* Badge de Valor */}
-        {currentPartner.valor && (
-          <Flex mt={3}>
-            <Badge
-              colorScheme={isVoucher ? "purple" : "blue"}
-              variant="subtle"
-              fontSize="0.8em"
-              px={2}
-              py={1}
-              borderRadius="md"
-            >
-              {isVoucher ? "Voucher" : `Valor: ${currentPartner.valor}`}
-            </Badge>
-          </Flex>
         )}
       </CardHeader>
 
@@ -227,7 +233,6 @@ const CityCard = ({
           }
           spacing={3}
         >
-          {/* --- ENDEREÇO --- */}
           <Box>
             <HStack mb={1}>
               <Icon as={MdLocationOn} color="gray.400" />
@@ -246,11 +251,10 @@ const CityCard = ({
               color="gray.600"
               _dark={{ color: "gray.300" }}
             >
-              {currentPartner.endereco || "Endereço não informado"}
+              {currentPartner.endereco || "Não informado"}
             </Text>
           </Box>
 
-          {/* --- CONTATO --- */}
           <Box>
             <HStack mb={1}>
               <Icon as={MdPhone} color="gray.400" />
@@ -269,19 +273,10 @@ const CityCard = ({
               fontWeight="bold"
               _dark={{ color: "white" }}
             >
-              {currentPartner.telefone || "Telefone não disponível"}
+              {currentPartner.telefone || "Não disponível"}
             </Text>
-            {currentPartner.responsavel && (
-              <HStack mt={1} spacing={1}>
-                <Icon as={MdPerson} color="gray.400" boxSize={3} />
-                <Text fontSize="xs" color="gray.500">
-                  Resp: {currentPartner.responsavel}
-                </Text>
-              </HStack>
-            )}
           </Box>
 
-          {/* --- OBSERVAÇÕES --- */}
           {currentPartner.obs && (
             <Box
               bg="yellow.50"
@@ -292,17 +287,11 @@ const CityCard = ({
               borderColor="yellow.400"
             >
               <HStack align="start">
-                <Icon
-                  as={MdInfoOutline}
-                  color="yellow.600"
-                  _dark={{ color: "yellow.300" }}
-                  mt="3px"
-                />
+                <Icon as={MdInfoOutline} color="yellow.600" mt="3px" />
                 <Text
                   fontSize="sm"
                   color="yellow.800"
                   _dark={{ color: "yellow.100" }}
-                  lineHeight="tall"
                 >
                   <Text as="span" fontWeight="bold">
                     Obs:{" "}
@@ -349,44 +338,25 @@ export default function GeoClient({ estados = [] }: GeoClientProps) {
   const handleBuscar = async () => {
     if (!selectedCidade) return;
     setLoadingBusca(true);
-
     const data = await buscarProximas(Number(selectedCidade));
-
     if (!data) {
-      toast({
-        title: "Erro na busca",
-        description: "Não foi possível conectar ao servidor.",
-        status: "error",
-      });
+      toast({ title: "Erro na busca", status: "error" });
     } else {
       setResultados(data);
     }
     setLoadingBusca(false);
   };
 
-  const selectStyles = {
-    "> option": {
-      background: "var(--chakra-colors-white)",
-      color: "var(--chakra-colors-gray-800)",
-    },
-    _dark: {
-      "> option": {
-        background: "var(--chakra-colors-gray-700)",
-        color: "var(--chakra-colors-white)",
-      },
-    },
-  };
-
   return (
     <VStack spacing={8} align="stretch">
-      {/* --- FILTROS --- */}
+      <GlobalSelectStyles />
+
       <Box
         bg="white"
         p={6}
         borderRadius="xl"
         shadow="md"
         borderWidth="1px"
-        borderColor="gray.100"
         _dark={{ borderColor: "gray.700", bg: "gray.800" }}
       >
         <SimpleGrid
@@ -408,8 +378,6 @@ export default function GeoClient({ estados = [] }: GeoClientProps) {
               onChange={handleEstadoChange}
               value={selectedEstado}
               size="lg"
-              bg="white"
-              _dark={{ bg: "gray.700", borderColor: "gray.600" }}
               sx={selectStyles}
             >
               {estados.map((uf) => (
@@ -437,8 +405,6 @@ export default function GeoClient({ estados = [] }: GeoClientProps) {
               value={selectedCidade}
               isDisabled={!selectedEstado || loadingCidades}
               size="lg"
-              bg="white"
-              _dark={{ bg: "gray.700", borderColor: "gray.600" }}
               sx={selectStyles}
             >
               {cidades.map((cid) => (
@@ -455,7 +421,6 @@ export default function GeoClient({ estados = [] }: GeoClientProps) {
             bg="#00713D"
             _hover={{ bg: "#005f33" }}
             isLoading={loadingBusca}
-            loadingText="Localizando..."
             onClick={handleBuscar}
             isDisabled={!selectedCidade}
             leftIcon={<MdMap />}
@@ -466,52 +431,24 @@ export default function GeoClient({ estados = [] }: GeoClientProps) {
         </SimpleGrid>
       </Box>
 
-      {/* --- RESULTADOS --- */}
+      {/* Resultados (Mapeamento dos Cards) */}
       {resultados && (
-        <Box animation="fadeIn 0.5s">
+        <Box>
           <Flex align="center" mb={6} gap={2}>
             <Icon as={MdPlace} color="#00713D" boxSize={6} />
-            <Heading size="md" color="#023147" _dark={{ color: "white" }}>
+            <Heading size="md" _dark={{ color: "white" }}>
               Unidades próximas a{" "}
               <Text as="span" color="#00713D">
-                {resultados.cidade_cliente.nome} -{" "}
-                {resultados.cidade_cliente.uf}
+                {resultados.cidade_cliente.nome}
               </Text>
             </Heading>
           </Flex>
 
-          {!resultados.unidades || resultados.unidades.length === 0 ? (
-            <Flex
-              bg="orange.50"
-              _dark={{ bg: "orange.900" }}
-              p={6}
-              borderRadius="lg"
-              align="center"
-              justify="center"
-              border="1px dashed"
-              borderColor="orange.300"
-            >
-              <Text
-                color="orange.700"
-                _dark={{ color: "orange.200" }}
-                fontWeight="medium"
-              >
-                Nenhuma unidade parceira encontrada nesta região.
-              </Text>
-            </Flex>
-          ) : (
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {resultados.unidades.map(
-                (cityGroup: CityGroup, index: number) => (
-                  <CityCard
-                    key={`${cityGroup.cidade}-${index}`}
-                    city={cityGroup}
-                    isClosest={index === 0}
-                  />
-                )
-              )}
-            </SimpleGrid>
-          )}
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {resultados.unidades?.map((cityGroup: CityGroup, index: number) => (
+              <CityCard key={index} city={cityGroup} isClosest={index === 0} />
+            ))}
+          </SimpleGrid>
         </Box>
       )}
     </VStack>
