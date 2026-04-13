@@ -19,127 +19,108 @@ import {
   VStack,
   useDisclosure,
   useToast,
+  HStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   MdAccountBalance,
   MdAdd,
   MdBadge,
   MdBusiness,
-  MdCheckCircle,
   MdSearch,
+  MdClear,
 } from "react-icons/md";
 
 interface FinanceirasClientProps {
-  session: Session.SessionServer;
+  session: Session.SessionServer & { token?: string };
 }
 
-/**
- * Componente de página de financeiras (CCAs)
- *
- * Exibe lista de financeiras com filtros e opção de criar nova.
- * Possui layout responsivo e suporte completo a dark mode.
- *
- * @param data - Lista de financeiras
- * @returns Componente de página de financeiras
- */
 export default function FinanceirasClient({ session }: FinanceirasClientProps) {
   const [financeiras, setFinanceiras] = useState<any[]>([]);
   const [dadosFiltrados, setDadosFiltrados] = useState<any[]>([]);
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [loadingBusca, setLoadingBusca] = useState(false);
+
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Estados dos filtros
-  const [filtroId, setFiltroId] = useState("");
-  const [filtroRazaoSocial, setFiltroRazaoSocial] = useState("");
-  const [filtroFantasia, setFiltroFantasia] = useState("");
-  const [filtroCNPJ, setFiltroCNPJ] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState("");
+  const [filtros, setFiltros] = useState({
+    id: "",
+    razaosocial: "",
+    fantasia: "",
+    cnpj: "",
+    status: "",
+  });
+
+  const selectStyles = {
+    bg: "white",
+    color: "gray.800",
+    _dark: { bg: "gray.800", color: "white", borderColor: "gray.600" },
+    sx: {
+      option: { bg: "white", color: "gray.800" },
+      _dark: {
+        option: { bg: "#2D3748", color: "white" },
+      },
+    },
+  };
+
+  const handleFiltrar = useCallback(async () => {
+    setLoadingBusca(true);
+    try {
+      const params = new URLSearchParams();
+      if (filtros.id) params.append("id", filtros.id);
+      if (filtros.razaosocial)
+        params.append("razaosocial", filtros.razaosocial);
+      if (filtros.fantasia) params.append("fantasia", filtros.fantasia);
+      if (filtros.cnpj) params.append("cnpj", filtros.cnpj.replace(/\D/g, ""));
+      if (filtros.status) params.append("status", filtros.status);
+
+      const response = await fetch(
+        `/api/financeira/search?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error();
+      const result = await response.json();
+      setDadosFiltrados(result);
+    } catch (error) {
+      toast({ title: "Erro ao buscar", status: "error" });
+    } finally {
+      setLoadingBusca(false);
+    }
+  }, [filtros, session?.token, toast]);
+
+  const GetFinanceiras = async () => {
+    setLoading(true);
+    try {
+      const req = await fetch("/api/financeira/getall");
+      const res = await req.json();
+      setFinanceiras(res);
+      setDadosFiltrados(res);
+    } catch (error) {
+      toast({ title: "Erro ao carregar dados", status: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     GetFinanceiras();
   }, []);
 
-  const GetFinanceiras = async () => { 
-    try {
-      const req = await fetch("/api/financeira/getall");
-      const res = await req.json();
-      if (!req.ok) {
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar os dados",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-      setFinanceiras(res);
-      setDadosFiltrados(res);
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível carregar os dados",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }
-
-  // Função de filtro
-  useEffect(() => {
-    let resultados = [...financeiras];
-
-    // Filtro por ID
-    if (filtroId) {
-      resultados = resultados.filter((fin: any) =>
-        fin.id.toString().includes(filtroId)
-      );
-    }
-
-    // Filtro por Razão Social
-    if (filtroRazaoSocial) {
-      resultados = resultados.filter((fin: any) =>
-        fin.razaosocial?.toLowerCase().includes(filtroRazaoSocial.toLowerCase())
-      );
-    }
-
-    // Filtro por Fantasia
-    if (filtroFantasia) {
-      resultados = resultados.filter((fin: any) =>
-        fin.fantasia?.toLowerCase().includes(filtroFantasia.toLowerCase())
-      );
-    }
-
-    // Filtro por CNPJ
-    if (filtroCNPJ) {
-      resultados = resultados.filter((fin: any) =>
-        fin.cnpj?.includes(filtroCNPJ.replace(/\D/g, ""))
-      );
-    }
-
-    // Filtro por Status
-    if (filtroStatus) {
-      const statusBooleano = filtroStatus === "true";
-      resultados = resultados.filter((fin: any) => fin.status === statusBooleano);
-    }
-
-    setDadosFiltrados(resultados);
-  }, [
-    filtroId,
-    filtroRazaoSocial,
-    filtroFantasia,
-    filtroCNPJ,
-    filtroStatus,
-    financeiras,
-  ]);
+  const limparFiltros = () => {
+    setFiltros({ id: "", razaosocial: "", fantasia: "", cnpj: "", status: "" });
+    setDadosFiltrados(financeiras);
+  };
 
   return (
     <Container maxW="95%" py={4} px={6}>
       <VStack spacing={0} align="stretch" w="full">
-        {/* Cabeçalho da Página */}
+        {/* Cabeçalho */}
         <Flex
           bg="white"
           borderBottomWidth="2px"
@@ -150,261 +131,151 @@ export default function FinanceirasClient({ session }: FinanceirasClientProps) {
           borderRadius="xl"
           borderBottomRadius={0}
           shadow="lg"
-          flexDir={{ base: "column", md: "row" }}
-          gap={{ base: 4, md: 0 }}
           _dark={{ bg: "gray.800", borderBottomColor: "#00d672" }}
         >
-          {/* Título com ícone */}
           <Flex align="center" gap={3}>
             <Icon
               as={MdAccountBalance}
-              w={{ base: 8, md: 10 }}
-              h={{ base: 8, md: 10 }}
+              w={10}
+              h={10}
               color="#00713D"
               _dark={{ color: "#00d672" }}
             />
             <Box>
-              <Heading
-                size={{ base: "md", md: "lg" }}
-                color="#023147"
-                _dark={{ color: "gray.100" }}
-              >
+              <Heading size="lg" color="#023147" _dark={{ color: "gray.100" }}>
                 Gerenciar CCAs
               </Heading>
-              <Text
-                fontSize={{ base: "sm", md: "md" }}
-                color="gray.600"
-                _dark={{ color: "gray.400" }}
-              >
-                Visualize e gerencie as financeiras do sistema
+              <Text color="gray.600" _dark={{ color: "gray.400" }}>
+                Controle as financeiras do sistema
               </Text>
             </Box>
           </Flex>
-
-          {/* Botão Criar Financeira */}
           <Button
             leftIcon={<MdAdd />}
             colorScheme="green"
             bg="#00713D"
-            size={{ base: "md", md: "lg" }}
             onClick={onOpen}
-            transition="all 0.2s"
-            w={{ base: "full", md: "auto" }}
-            _hover={{
-              bg: "#005a31",
-              transform: "translateY(-2px)",
-              shadow: "lg",
-            }}
-            _active={{ transform: "translateY(0)" }}
-            _dark={{
-              bg: "#00d672",
-              color: "gray.900",
-              _hover: { bg: "#00c060" },
-            }}
+            _dark={{ bg: "#00d672", color: "gray.900" }}
           >
             Criar Nova Financeira
           </Button>
         </Flex>
 
-        {/* Conteúdo da Página */}
         <VStack
           spacing={6}
           align="stretch"
           bg="white"
           _dark={{ bg: "gray.800" }}
-          p={{ base: 4, md: 6 }}
+          p={6}
           borderRadius="xl"
           borderTopRadius={0}
           shadow="lg"
-          minH="400px"
         >
           {/* Filtros */}
           <Box
             w="full"
             bg="gray.50"
-            p={{ base: 4, md: 6 }}
+            p={6}
             borderRadius="lg"
             borderWidth="1px"
-            borderColor="gray.200"
             _dark={{ bg: "gray.900", borderColor: "gray.700" }}
           >
-            <Heading
-              size="sm"
-              mb={4}
-              color="#023147"
-              _dark={{ color: "gray.100" }}
-            >
-              Filtrar Financeiras
-            </Heading>
-
             <SimpleGrid
               columns={{ base: 1, md: 2, lg: 3, xl: 5 }}
               spacing={4}
+              alignItems="flex-end"
             >
-              {/* Filtro por ID */}
               <Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="medium"
-                  mb={2}
-                  color="gray.700"
-                  _dark={{ color: "gray.300" }}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500">
                   ID
                 </Text>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none">
+                  <InputLeftElement>
                     <Icon as={MdBadge} color="gray.400" />
                   </InputLeftElement>
                   <Input
-                    placeholder="Buscar por ID"
-                    value={filtroId}
-                    onChange={(e) => setFiltroId(e.target.value)}
+                    placeholder="ID"
+                    value={filtros.id}
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, id: e.target.value })
+                    }
                     bg="white"
-                    _dark={{ bg: "gray.800", borderColor: "gray.600" }}
-                    borderColor="gray.300"
-                    _hover={{ borderColor: "#00713D" }}
-                    _focus={{
-                      borderColor: "#00713D",
-                      boxShadow: "0 0 0 1px #00713D",
-                    }}
+                    _dark={{ bg: "gray.800" }}
                   />
                 </InputGroup>
               </Box>
 
-              {/* Filtro por Razão Social */}
               <Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="medium"
-                  mb={2}
-                  color="gray.700"
-                  _dark={{ color: "gray.300" }}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500">
                   Razão Social
                 </Text>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none">
+                  <InputLeftElement>
                     <Icon as={MdSearch} color="gray.400" />
                   </InputLeftElement>
                   <Input
-                    placeholder="Buscar por razão social"
-                    value={filtroRazaoSocial}
-                    onChange={(e) => setFiltroRazaoSocial(e.target.value)}
+                    placeholder="Razão Social"
+                    value={filtros.razaosocial}
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, razaosocial: e.target.value })
+                    }
                     bg="white"
-                    _dark={{ bg: "gray.800", borderColor: "gray.600" }}
-                    borderColor="gray.300"
-                    _hover={{ borderColor: "#00713D" }}
-                    _focus={{
-                      borderColor: "#00713D",
-                      boxShadow: "0 0 0 1px #00713D",
-                    }}
+                    _dark={{ bg: "gray.800" }}
                   />
                 </InputGroup>
               </Box>
 
-              {/* Filtro por Fantasia */}
               <Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="medium"
-                  mb={2}
-                  color="gray.700"
-                  _dark={{ color: "gray.300" }}
-                >
-                  Nome Fantasia
+                <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500">
+                  Fantasia
                 </Text>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none">
+                  <InputLeftElement>
                     <Icon as={MdBusiness} color="gray.400" />
                   </InputLeftElement>
                   <Input
-                    placeholder="Buscar por fantasia"
-                    value={filtroFantasia}
-                    onChange={(e) => setFiltroFantasia(e.target.value)}
+                    placeholder="Fantasia"
+                    value={filtros.fantasia}
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, fantasia: e.target.value })
+                    }
                     bg="white"
-                    _dark={{ bg: "gray.800", borderColor: "gray.600" }}
-                    borderColor="gray.300"
-                    _hover={{ borderColor: "#00713D" }}
-                    _focus={{
-                      borderColor: "#00713D",
-                      boxShadow: "0 0 0 1px #00713D",
-                    }}
+                    _dark={{ bg: "gray.800" }}
                   />
                 </InputGroup>
               </Box>
 
-              {/* Filtro por CNPJ */}
               <Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="medium"
-                  mb={2}
-                  color="gray.700"
-                  _dark={{ color: "gray.300" }}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500">
                   CNPJ
                 </Text>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none">
+                  <InputLeftElement>
                     <Icon as={MdBadge} color="gray.400" />
                   </InputLeftElement>
                   <Input
-                    placeholder="Buscar por CNPJ"
-                    value={filtroCNPJ}
-                    onChange={(e) => setFiltroCNPJ(e.target.value)}
+                    placeholder="CNPJ"
+                    value={filtros.cnpj}
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, cnpj: e.target.value })
+                    }
                     bg="white"
-                    _dark={{ bg: "gray.800", borderColor: "gray.600" }}
-                    borderColor="gray.300"
-                    _hover={{ borderColor: "#00713D" }}
-                    _focus={{
-                      borderColor: "#00713D",
-                      boxShadow: "0 0 0 1px #00713D",
-                    }}
+                    _dark={{ bg: "gray.800" }}
                   />
                 </InputGroup>
               </Box>
 
-              {/* Filtro por Status */}
               <Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="medium"
-                  mb={2}
-                  color="gray.700"
-                  _dark={{ color: "gray.300" }}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500">
                   Status
                 </Text>
                 <Select
-                  placeholder="Todos os status"
-                  value={filtroStatus}
-                  onChange={(e) => setFiltroStatus(e.target.value)}
-                  bg="white"
-                  color="gray.800"
-                  borderColor="gray.300"
-                  icon={<MdCheckCircle />}
-                  _hover={{ borderColor: "#00713D" }}
-                  _focus={{
-                    borderColor: "#00713D",
-                    boxShadow: "0 0 0 1px #00713D",
-                  }}
-                  _dark={{
-                    bg: "gray.800",
-                    borderColor: "gray.600",
-                    color: "gray.100",
-                  }}
-                  sx={{
-                    "& option": {
-                      bg: "white",
-                      color: "gray.800",
-                    },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark &option":
-                      {
-                        bg: "gray.800",
-                        color: "gray.100",
-                      },
-                  }}
+                  placeholder="Todos"
+                  value={filtros.status}
+                  onChange={(e) =>
+                    setFiltros({ ...filtros, status: e.target.value })
+                  }
+                  {...selectStyles}
                 >
                   <option value="true">Ativo</option>
                   <option value="false">Inativo</option>
@@ -412,103 +283,59 @@ export default function FinanceirasClient({ session }: FinanceirasClientProps) {
               </Box>
             </SimpleGrid>
 
-            {/* Contador de resultados */}
             <Flex mt={4} justify="space-between" align="center">
               <Text
                 fontSize="sm"
                 color="gray.600"
                 _dark={{ color: "gray.400" }}
               >
-                {dadosFiltrados.length}{" "}
-                {dadosFiltrados.length === 1
-                  ? "financeira encontrada"
-                  : "financeiras encontradas"}
+                <strong>{dadosFiltrados.length}</strong> CCA(s) encontrada(s)
               </Text>
-
-              {(filtroId ||
-                filtroRazaoSocial ||
-                filtroFantasia ||
-                filtroCNPJ ||
-                filtroStatus) && (
+              <HStack spacing={3}>
                 <Button
-                  size="sm"
+                  leftIcon={<MdClear />}
                   variant="ghost"
                   colorScheme="red"
-                  onClick={() => {
-                    setFiltroId("");
-                    setFiltroRazaoSocial("");
-                    setFiltroFantasia("");
-                    setFiltroCNPJ("");
-                    setFiltroStatus("");
-                  }}
+                  size="sm"
+                  onClick={limparFiltros}
                 >
-                  Limpar Filtros
+                  Limpar
                 </Button>
-              )}
+                <Button
+                  leftIcon={<MdSearch />}
+                  colorScheme="green"
+                  bg="#00713D"
+                  size="sm"
+                  isLoading={loadingBusca}
+                  onClick={handleFiltrar}
+                >
+                  Filtrar
+                </Button>
+              </HStack>
             </Flex>
           </Box>
 
-          {/* Lista de Financeiras */}
+          {/* Listagem */}
           <Box w="full">
-            {dadosFiltrados.length > 0 ? (
-              <Financeiras data={dadosFiltrados} session={session} />
-            ) : financeiras.length > 0 ? (
-              <Flex
-                w="full"
-                minH="300px"
-                justifyContent="center"
-                alignItems="center"
-                bg="gray.50"
-                _dark={{ bg: "gray.900" }}
-                borderRadius="lg"
-                p={8}
-                flexDir="column"
-                gap={4}
-              >
-                <Icon as={MdSearch} w={16} h={16} color="gray.400" />
-                <Text
-                  fontSize="lg"
-                  color="gray.600"
-                  _dark={{ color: "gray.400" }}
-                >
-                  Nenhuma financeira encontrada com os filtros aplicados
-                </Text>
-                <Button
-                  colorScheme="green"
-                  variant="outline"
-                  onClick={() => {
-                    setFiltroId("");
-                    setFiltroRazaoSocial("");
-                    setFiltroFantasia("");
-                    setFiltroCNPJ("");
-                    setFiltroStatus("");
-                  }}
-                >
-                  Limpar Filtros
-                </Button>
-              </Flex>
-            ) : (
-              <SimpleGrid
-                columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
-                spacing={6}
-                w="full"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
-                  <Skeleton
-                    key={index}
-                    height="350px"
-                    borderRadius="xl"
-                    startColor="gray.200"
-                    endColor="gray.700"
-                  />
+            {loading ? (
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} height="300px" borderRadius="xl" />
                 ))}
               </SimpleGrid>
+            ) : dadosFiltrados.length > 0 ? (
+              <Financeiras data={dadosFiltrados} session={session} />
+            ) : (
+              <Flex flexDir="column" align="center" py={10}>
+                <Icon as={MdSearch} w={12} h={12} color="gray.300" />
+                <Text mt={2} color="gray.500">
+                  Nenhum resultado encontrado.
+                </Text>
+              </Flex>
             )}
           </Box>
         </VStack>
       </VStack>
-
-      {/* Modal de Criação/Edição de Financeira */}
       <ModalEditarFinanceira isOpen={isOpen} onClose={onClose} />
     </Container>
   );
