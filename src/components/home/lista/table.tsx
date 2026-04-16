@@ -30,6 +30,8 @@ export const TableComponent = memo(
           ? "red.300"
           : dados.pause
           ? "yellow.200"
+          : dados.andamento === "REPRESAMENTO"
+          ? "orange.200"
           : dados.andamento === "APROVADO"
           ? "green.200"
           : dados.andamento === "EMITIDO"
@@ -41,8 +43,15 @@ export const TableComponent = memo(
     );
 
     const Textcolor = useMemo(
-      () => (dados.distrato ? "white" : !dados.ativo ? "white" : "black"),
-      [dados.distrato, dados.ativo]
+      () =>
+        dados.distrato
+          ? "white"
+          : !dados.ativo
+          ? "white"
+          : dados.andamento === "REPRESAMENTO"
+          ? "black"
+          : "black",
+      [dados.distrato, dados.ativo, dados.andamento]
     );
 
     const formatarDataAgendamento = useCallback(

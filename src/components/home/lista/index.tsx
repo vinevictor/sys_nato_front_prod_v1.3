@@ -528,6 +528,7 @@ export const DadoCompomentList = ({
                 <option value="APROVADO">APROVADO</option>
                 <option value="EMITIDO">EMITIDO</option>
                 <option value="REVOGADO">REVOGADO</option>
+                <option value="REPRESAMENTO">REPRESAMENTO</option>
               </Select>
             </Box>
 
