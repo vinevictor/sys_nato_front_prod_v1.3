@@ -9,9 +9,7 @@ export async function GET() {
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!session.user?.role?.alert) {
-      return NextResponse.json([], { status: 200 });
-    }
+
     const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/alert/cont`;
     const get = await fetch(url, {
       method: "GET",
