@@ -30,8 +30,12 @@ export async function POST(request: Request) {
       }
     );
 
-    revalidateTag("alert-geral-all");
     const retorno = await response.json();
+    if (!response.ok) {
+      return NextResponse.json(retorno, { status: response.status });
+    }
+
+    revalidateTag("alert-geral-all");
     return NextResponse.json(retorno, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
