@@ -21,11 +21,11 @@ export async function GET(request: Request) {
       },
       next: {
         // tags: ["alert-geral-all"],
-        revalidate: 60 * 30,
+        revalidate: 0,
       },
     });
     const data = await get.json();
-  
+
     if (!get.ok)
       return NextResponse.json(
         { message: data.message },

@@ -1,7 +1,25 @@
 "use client";
-import { Box, Flex, Text, Heading, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Heading,
+  VStack,
+  HStack, // Importado corretamente agora
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  useDisclosure,
+  Icon,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaCheck } from "react-icons/fa";
 
 interface ListAlertasProps {
   id: number;
@@ -9,31 +27,59 @@ interface ListAlertasProps {
   ContainerAlertas?: string;
 }
 
-function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
-  const [dataAlert, setDataAlert] = useState(data || []);
+function ListAlertas({ id, data }: ListAlertasProps) {
+  const [dataAlert, setDataAlert] = useState<any[]>(data || []);
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Cores dinâmicas para melhor visibilidade
+  const modalBg = useColorModeValue("white", "gray.800");
+  const modalHeaderColor = useColorModeValue("#023147", "white");
+  const labelColor = useColorModeValue("gray.600", "gray.400");
+  const messageBoxBg = useColorModeValue("gray.50", "gray.900");
+  const messageBoxBorder = useColorModeValue("gray.200", "whiteAlpha.300");
+  const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
+
+  const fetchAlerts = useCallback(async () => {
+    const req = await fetch(`/api/alerts/solicitacao/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+    if (req.ok) {
+      const res = await req.json();
+      setDataAlert(res || []);
+    }
+  }, [id]);
 
   useEffect(() => {
     if (data && data.length > 0) {
       setDataAlert(data);
-      return;
+    } else {
+      fetchAlerts();
     }
+  }, [id, data, fetchAlerts]);
 
-    const fetchAlerts = async () => {
-      const req = await fetch(`/api/alerts/solicitacao/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      });
-      if (req.ok) {
-        const res = await req.json();
-        setDataAlert(res || []);
+  const handleMarkAsRead = async (e: React.MouseEvent, alertId: number) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/alerts/read/${alertId}`, { method: "PUT" });
+      if (res.ok) {
+        setDataAlert((prev) =>
+          prev.map((item) =>
+            item.id === alertId ? { ...item, lido: true } : item
+          )
+        );
       }
-    };
+    } catch (error) {
+      console.error("Erro ao marcar como lida:", error);
+    }
+  };
 
-    fetchAlerts();
-  }, [id, data]);
+  const handleOpenDetail = (item: any) => {
+    setSelectedAlert(item);
+    onOpen();
+  };
 
   const hasAlerts = useMemo(() => dataAlert.length > 0, [dataAlert.length]);
 
@@ -47,53 +93,25 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
     });
   }, []);
 
-  const truncateText = useCallback((text: string, maxLength: number = 60) => {
-    if (text.length <= maxLength) return text;
-    return `${text.slice(0, maxLength)}...`;
-  }, []);
-  
   return (
-    <VStack spacing={0} align="stretch" h="full">
-      {/* Cabeçalho de Alertas */}
+    <VStack spacing={0} align="stretch" h="full" w="full">
       <Flex
-        bg="white"
-        _dark={{ bg: "gray.800" }}
+        bg={useColorModeValue("white", "gray.800")}
         borderBottomWidth="2px"
         borderBottomColor="#00713D"
-        p={{ base: 3, md: 4 }}
+        p={4}
         align="center"
       >
-        <Heading 
-          size={{ base: "sm", md: "md" }}
-          color="#023147"
-          _dark={{ color: "gray.100" }}
-        >
-          Alertas
+        <Heading size="md" color={modalHeaderColor}>
+          Histórico de Alertas
         </Heading>
       </Flex>
 
-      {/* Conteúdo de Alertas */}
       <Box
         flex={1}
-        overflow="auto"
-        bg="white"
-        _dark={{ bg: "gray.800" }}
-        p={{ base: 3, md: 4 }}
-        css={{
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#48bb78",
-            borderRadius: "3px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#38a169",
-          },
-        }}
+        overflowY="auto"
+        p={4}
+        bg={useColorModeValue("gray.50", "gray.800")}
       >
         {!hasAlerts ? (
           <Flex
@@ -102,76 +120,149 @@ function ListAlertas({ id, data, ContainerAlertas }: ListAlertasProps) {
             justify="center"
             direction="column"
             color="gray.500"
-            _dark={{ color: "gray.400" }}
-            py={8}
+            py={10}
           >
             <FaExclamationTriangle size={32} style={{ marginBottom: "8px" }} />
-            <Text fontSize="sm" textAlign="center">
-              Nenhum alerta encontrado
-            </Text>
+            <Text>Nenhum alerta encontrado</Text>
           </Flex>
         ) : (
-          <Flex gap={2} flexDir="column" pr={1}>
+          <VStack spacing={3} align="stretch">
             {dataAlert.map((item: any) => (
-              <Flex
+              <Box
                 key={item.id}
-                direction={{ base: "column", sm: "row" }}
-                gap={{ base: 2, sm: 4 }}
-                justify={{ base: "flex-start", sm: "space-between" }}
-                align={{ base: "flex-start", sm: "center" }}
-                px={{ base: 3, md: 4 }}
-                py={{ base: 3, md: 2 }}
+                p={4}
                 borderRadius="lg"
-                bg="yellow.50"
+                bg={
+                  item.lido
+                    ? useColorModeValue("white", "whiteAlpha.50")
+                    : useColorModeValue("yellow.50", "yellow.900")
+                }
                 border="1px solid"
-                borderColor="yellow.200"
+                borderColor={item.lido ? "transparent" : "yellow.400"}
                 cursor="pointer"
+                onClick={() => handleOpenDetail(item)}
                 transition="all 0.2s"
-                _hover={{
-                  bg: "yellow.100",
-                  transform: "translateY(-1px)",
-                  shadow: "sm",
-                }}
-                _dark={{
-                  bg: "yellow.900",
-                  borderColor: "yellow.700",
-                  _hover: {
-                    bg: "yellow.800",
-                  }
-                }}
-                minW={0}
+                _hover={{ shadow: "md" }}
               >
-                <Flex gap={3} align="center" flex="1" minW={0}>
-                  <Box flexShrink={0}>
-                    <FaExclamationTriangle size={16} color="#d69e2e" />
-                  </Box>
-                  <Text
-                    fontSize={{ base: "xs", md: "sm" }}
-                    color="gray.700"
-                    _dark={{ color: "gray.200" }}
-                    noOfLines={{ base: 2, sm: 1 }}
-                    wordBreak="break-word"
-                    flex="1"
-                  >
-                    {truncateText(item.descricao)}
-                  </Text>
+                <Flex justify="space-between" align="center" mb={2}>
+                  <HStack spacing={2}>
+                    <Icon
+                      as={item.lido ? FaCheck : FaExclamationTriangle}
+                      color={item.lido ? "green.500" : "yellow.500"}
+                    />
+                    <Text fontSize="xs" fontWeight="bold" color={labelColor}>
+                      {formatDate(item.createdAt)}
+                    </Text>
+                  </HStack>
+                  {!item.lido && (
+                    <Button
+                      size="xs"
+                      colorScheme="green"
+                      variant="solid"
+                      onClick={(e) => handleMarkAsRead(e, item.id)}
+                    >
+                      Marcar lido
+                    </Button>
+                  )}
                 </Flex>
-
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
-                  color="gray.500"
-                  _dark={{ color: "gray.400" }}
-                  flexShrink={0}
-                  mt={{ base: 1, sm: 0 }}
-                  alignSelf={{ base: "flex-end", sm: "center" }}
-                >
-                  {formatDate(item.createdAt)}
+                <Text fontSize="sm" color={textColor} noOfLines={2}>
+                  {item.descricao}
                 </Text>
-              </Flex>
+              </Box>
             ))}
-          </Flex>
+          </VStack>
         )}
       </Box>
+
+      {/* Modal Ajustado para Legibilidade */}
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+        <ModalOverlay backdropFilter="blur(4px)" />
+        <ModalContent
+          bg={modalBg}
+          borderRadius="xl"
+          border="1px solid"
+          borderColor={messageBoxBorder}
+        >
+          <ModalHeader
+            color={modalHeaderColor}
+            borderBottomWidth="1px"
+            borderColor={messageBoxBorder}
+          >
+            Detalhes do Alerta
+          </ModalHeader>
+          <ModalCloseButton />
+
+          <ModalBody py={6}>
+            <VStack align="start" spacing={5}>
+              <Box>
+                <Text
+                  fontWeight="extrabold"
+                  fontSize="xs"
+                  color={labelColor}
+                  letterSpacing="wider"
+                  mb={1}
+                >
+                  DATA E HORA
+                </Text>
+                <Text fontSize="md" color={textColor} fontWeight="medium">
+                  {selectedAlert && formatDate(selectedAlert.createdAt)}
+                </Text>
+              </Box>
+
+              <Box w="full">
+                <Text
+                  fontWeight="extrabold"
+                  fontSize="xs"
+                  color={labelColor}
+                  letterSpacing="wider"
+                  mb={2}
+                >
+                  MENSAGEM COMPLETA
+                </Text>
+                <Box
+                  p={4}
+                  bg={messageBoxBg}
+                  borderRadius="lg"
+                  border="1px solid"
+                  borderColor={messageBoxBorder}
+                  boxShadow="inner"
+                >
+                  <Text
+                    fontSize="md"
+                    color={textColor}
+                    whiteSpace="pre-wrap"
+                    lineHeight="tall"
+                  >
+                    {selectedAlert?.descricao}
+                  </Text>
+                </Box>
+              </Box>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter
+            borderTopWidth="1px"
+            borderColor={messageBoxBorder}
+            gap={3}
+          >
+            {!selectedAlert?.lido && (
+              <Button
+                colorScheme="green"
+                leftIcon={<FaCheck />}
+                onClick={(e) => {
+                  handleMarkAsRead(e, selectedAlert.id);
+                  onClose();
+                }}
+              >
+                Marcar como Lido
+              </Button>
+            )}
+            <Button variant="ghost" color={textColor} onClick={onClose}>
+              Fechar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </VStack>
   );
 }
