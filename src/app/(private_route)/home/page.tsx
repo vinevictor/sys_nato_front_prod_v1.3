@@ -1,18 +1,12 @@
 import { DadoCompomentList } from "@/components/home/lista";
+import ModalAlertasHome from "@/components/home/ModalAlertasHome";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { Metadata } from "next";
 import { MdHome } from "react-icons/md";
 
@@ -64,6 +58,7 @@ export default async function HomePage() {
       {/* Modais */}
       {session && <ModalPrimeAsses session={session.user} />}
       {session && <ModalTermos session={session.user} />}
+      {session && <ModalAlertasHome />}
 
       <Container
         maxW={{ base: "100%", sm: "95%", md: "96%", lg: "98%" }}
@@ -113,7 +108,8 @@ export default async function HomePage() {
                   _dark={{ color: "gray.400" }}
                   display={{ base: "none", sm: "block" }}
                 >
-                  Gerencie todas as solicitações, filtre por status e visualize detalhes.
+                  Gerencie todas as solicitações, filtre por status e visualize
+                  detalhes.
                 </Text>
               </Box>
             </Flex>
@@ -131,7 +127,9 @@ export default async function HomePage() {
             shadow="lg"
             minH="400px"
           >
-            {session && <DadoCompomentList dados={ListDados} session={session} />}
+            {session && (
+              <DadoCompomentList dados={ListDados} session={session} />
+            )}
           </VStack>
         </VStack>
       </Container>
