@@ -40,14 +40,10 @@ export function BtCreateAlertCliente({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
-  const OverlayTwo = () => (
-    <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
-  );
 
   const handleSubmit = async (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
 
-    // Validação básica
     if (!Descricao.trim()) {
       toast({
         title: "Atenção",
@@ -98,12 +94,10 @@ export function BtCreateAlertCliente({
           isClosable: true,
         });
 
-        // Limpa o formulário e fecha o modal
         setDescricao("");
         setAlert(true);
         onClose();
 
-        // Reset do contexto de alerta após um tempo
         setTimeout(() => {
           setAlert(false);
         }, 1000);
@@ -139,7 +133,7 @@ export function BtCreateAlertCliente({
           </Button>
 
           <Modal isOpen={isOpen} onClose={onClose} isCentered size={"3xl"}>
-            <OverlayTwo />
+            <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
             <ModalContent>
               <ModalHeader color="#023147">
                 {solicitacaoNome
