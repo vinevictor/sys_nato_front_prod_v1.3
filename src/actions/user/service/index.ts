@@ -15,6 +15,7 @@ export async function UpdateUser(_: any, data: FormData) {
     };
   }
 
+  const agente_registro = data.get("agente_registro") ? true : false;
   const natosign = data.get("natosign") ? true : false;
   const adm = data.get("adm") ? true : false;
   const direto = data.get("direto") ? true : false;
@@ -55,6 +56,7 @@ export async function UpdateUser(_: any, data: FormData) {
     chamado,
     solicitacao,
     natosign,
+    agente_registro,
   };
 
   const body = {

@@ -58,6 +58,7 @@ interface SolicitacaoType {
   telefone2: string | null;
   dt_nascimento: string;
   id_fcw: number;
+  fcweb_unico: string | null;
   cnh: string | null;
   ativo: boolean;
   rela_quest: boolean;
@@ -551,6 +552,27 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
         borderTopColor="gray.200"
         _dark={{ bg: "gray.900", borderTopColor: "gray.700" }}
       >
+        {session?.role?.agente_registro && form?.fcweb_unico && (
+          <Button
+            size="sm"
+            bg="blue.600"
+            color="white"
+            _hover={{ bg: "blue.700" }}
+            onClick={() => {
+              const baseUrl = process.env.NEXT_PUBLIC_URL_IMPORTACAO_SOLUTI;
+
+              if (baseUrl) {
+                const idLimpo = form.fcweb_unico!.split(".")[0];
+                const finalUrl = baseUrl.replace("[ID]", idLimpo);
+                window.open(finalUrl, "_blank");
+              } else {
+                console.error("URL de importação não configurada no .env");
+              }
+            }}
+          >
+            Coletas Biométrias
+          </Button>
+        )}
         {Hierarquia === "ADM" && (
           <BotaoSisapp body={data} ativo={data.sisapp ? data.sisapp : false} />
         )}
