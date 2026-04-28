@@ -6,9 +6,18 @@ import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
-import { Box, Container, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { Metadata } from "next";
-import { MdHome } from "react-icons/md";
+import { MdAdd, MdHome } from "react-icons/md";
+import Link from "next/link";
 
 // Força a renderização dinâmica desta página, pois ela usa cookies (via GetSessionServer)
 export const dynamic = "force-dynamic";
@@ -113,6 +122,26 @@ export default async function HomePage() {
                 </Text>
               </Box>
             </Flex>
+            <Button
+              as={Link}
+              href="/solicitacoes"
+              leftIcon={<MdAdd size={20} />}
+              bg="#00713D"
+              color="white"
+              size={{ base: "md", md: "lg" }}
+              px={{ base: 4, md: 8 }}
+              _hover={{
+                bg: "#005a31",
+                transform: "scale(1.02)",
+                shadow: "md",
+              }}
+              _active={{ transform: "scale(0.98)" }}
+              transition="all 0.2s"
+              fontWeight="bold"
+              borderRadius="md"
+            >
+              Nova Solicitação
+            </Button>
           </Flex>
 
           {/* Área de Conteúdo */}
