@@ -1277,6 +1277,11 @@ ansi-styles@^6.1.0:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.3.tgz"
   integrity sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==
 
+apexcharts@^5.11.0:
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-5.11.0.tgz#5a7566f17dcf05ff9938b5bf7ddff9567aefabe9"
+  integrity sha512-iIXnZ1DhndVgY4G5fmAbyUtGBTR5j4LlMEb561eAd4+wkJB7wJXXKLMr9u+4V5aQEPXeVYWgkAbuw9Y1z6MIrg==
+
 argparse@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz"
@@ -3319,6 +3324,13 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
+
+react-apexcharts@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-apexcharts/-/react-apexcharts-2.1.0.tgz#74f05b4bf1ad24114ed53c35823b62396c55a51f"
+  integrity sha512-xrmeTKRKHh3cvvLc8SasqFjlOgIqGpyHc81qjnRtcjUM0Fu7qEjgVRWGPokGFjqhwRZVgEym8zmuEyYr5LMYIg==
+  dependencies:
+    prop-types "^15.8.1"
 
 react-chartjs-2@^5.3.0:
   version "5.3.0"
