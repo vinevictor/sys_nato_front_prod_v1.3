@@ -18,6 +18,7 @@ import {
   FaBuilding,
   FaHandshake,
   FaChartLine,
+  FaCheckCircle,
 } from "react-icons/fa";
 import ModernStatCard from "@/components/dashboard/ModernStatCard";
 import ModernChartContainer from "@/components/dashboard/ModernChartContainer";
@@ -88,20 +89,25 @@ export default function AnalyticsView({
         <AnalyticsFilters lists={lists} currentFilters={currentFilters} />
 
         {/* Cards de Stats */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={6}>
           <ModernStatCard
-            title="SLA: Abertura / Agend."
+            title="TMA: Abertura / Agend."
             value={
               overview.medias_nato?.abertura_para_agendamento || "00h 00min"
             }
             icon={FaRegClock}
           />
           <ModernStatCard
-            title="SLA: Agend. / Aprov."
+            title="TMA: Agend. / Aprov."
             value={
               overview.medias_nato?.agendamento_para_aprovacao || "00h 00min"
             }
             icon={FaHandshake}
+          />
+          <ModernStatCard
+            title="TMA: Abertura / Aprov."
+            value={overview.medias_nato?.abertura_para_aprovacao || "00h 00min"}
+            icon={FaCheckCircle}
           />
           <ModernStatCard
             title="Volume de Emissões"
@@ -132,11 +138,13 @@ export default function AnalyticsView({
           <GridItem colSpan={1}>
             <ModernChartContainer title="Mix de Validação">
               <ModernDonutChart
-                labels={["Vídeo", "Presencial"]}
+                labels={["Vídeo", "Presencial (Interna)", "Presencial Externa"]}
                 dataValues={[
                   overview.totals?.video || 0,
                   overview.totals?.presencial || 0,
+                  overview.totals?.presencial_externa || 0,
                 ]}
+                colors={["#00713C", "#2D3748", "#FB8501"]}
               />
             </ModernChartContainer>
           </GridItem>
