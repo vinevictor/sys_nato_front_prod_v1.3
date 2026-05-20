@@ -11,6 +11,7 @@ import {
   GridItem,
   Icon,
   Container,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaRegClock,
@@ -19,12 +20,14 @@ import {
   FaHandshake,
   FaChartLine,
   FaCheckCircle,
+  FaUserAlt,
 } from "react-icons/fa";
 import ModernStatCard from "@/components/dashboard/ModernStatCard";
 import ModernChartContainer from "@/components/dashboard/ModernChartContainer";
 import ModernBarChart from "./ModernBarChart";
 import ModernDonutChart from "./ModernDonutChart";
 import AnalyticsFilters from "./AnalyticsFilters";
+import MiniTopList from "./MiniTopList";
 
 interface AnalyticsViewProps {
   overview: any;
@@ -46,7 +49,7 @@ export default function AnalyticsView({
   return (
     <Container maxW="full" py={10} px={{ base: 4, md: 10 }}>
       <VStack spacing={10} align="stretch">
-        {/* Header agora dentro do Client Component, sem erro de ícone */}
+        {/* Header */}
         <Flex
           direction={{ base: "column", md: "row" }}
           justify="space-between"
@@ -122,31 +125,61 @@ export default function AnalyticsView({
           />
         </SimpleGrid>
 
-        {/* Grid de Gráficos (Bento Box) */}
+        {/* Grid de Gráficos (Bento Box Avançado) */}
         <Grid templateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }} gap={6}>
           <GridItem colSpan={{ base: 1, lg: 2 }}>
-            <ModernChartContainer title="Produção por Construtora (Top 10)">
-              <ModernBarChart
-                lista_tags={ranking?.construtoras?.map((c: any) => ({
-                  tag: c.name,
-                  total: c.total,
-                }))}
-              />
-            </ModernChartContainer>
+            <VStack spacing={6} align="stretch">
+              {/* 1. Ranking de Construtoras */}
+              <ModernChartContainer title="Produção por Construtora (Top 10)">
+                <ModernBarChart
+                  lista_tags={ranking?.construtoras?.map((c: any) => ({
+                    tag: c.name,
+                    total: c.total,
+                  }))}
+                />
+              </ModernChartContainer>
+
+              {/* 2. Ranking de Financeiras */}
+              <ModernChartContainer title="Produção por Financeira / CCA (Top 10)">
+                <ModernBarChart
+                  lista_tags={ranking?.financeiras?.map((f: any) => ({
+                    tag: f.name,
+                    total: f.total,
+                  }))}
+                />
+              </ModernChartContainer>
+            </VStack>
           </GridItem>
 
           <GridItem colSpan={1}>
-            <ModernChartContainer title="Mix de Validação">
-              <ModernDonutChart
-                labels={["Vídeo", "Presencial (Interna)", "Presencial Externa"]}
-                dataValues={[
-                  overview.totals?.video || 0,
-                  overview.totals?.presencial || 0,
-                  overview.totals?.presencial_externa || 0,
-                ]}
-                colors={["#00713C", "#2D3748", "#FB8501"]}
+            <VStack spacing={6} align="stretch">
+              {/* Mix de Validação */}
+              <ModernChartContainer title="Mix de Validação">
+                <ModernDonutChart
+                  labels={[
+                    "Vídeo",
+                    "Presencial (Interna)",
+                    "Presencial Externa",
+                  ]}
+                  dataValues={[
+                    overview.totals?.video || 0,
+                    overview.totals?.presencial || 0,
+                    overview.totals?.presencial_externa || 0,
+                  ]}
+                  colors={["#00713C", "#2D3748", "#FB8501"]}
+                />
+              </ModernChartContainer>
+
+              <MiniTopList
+                title="Acessos Recentes (Usuários Comuns)"
+                items={
+                  ranking?.acessos?.map((a: any) => ({
+                    label: a.name,
+                    value: `${a.total} acessos`,
+                  })) || []
+                }
               />
-            </ModernChartContainer>
+            </VStack>
           </GridItem>
         </Grid>
       </VStack>
