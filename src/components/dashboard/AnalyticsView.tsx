@@ -176,6 +176,8 @@ export default function AnalyticsView({
                   ranking?.acessos?.map((a: any) => ({
                     label: a.name,
                     value: `${a.total} acessos`,
+                    construtoras: a.construtoras || [],
+                    financeiras: a.financeiras || [],
                   })) || []
                 }
               />
