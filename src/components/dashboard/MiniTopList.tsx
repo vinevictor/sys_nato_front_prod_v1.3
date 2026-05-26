@@ -105,7 +105,7 @@ export default function MiniTopList({ title, items }: MiniTopListProps) {
                     textTransform="none"
                     title={constName}
                   >
-                    🏢 {formatBadgeText(constName)}
+                    {formatBadgeText(constName)}
                   </Badge>
                 ))}
 
@@ -121,7 +121,7 @@ export default function MiniTopList({ title, items }: MiniTopListProps) {
                     textTransform="none"
                     title={finName}
                   >
-                    💰 {formatBadgeText(finName)}
+                    {formatBadgeText(finName)}
                   </Badge>
                 ))}
 

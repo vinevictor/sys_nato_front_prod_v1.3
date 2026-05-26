@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { FiAlertCircle, FiClock, FiUser } from "react-icons/fi";
 import { Session } from "@/types/session";
+import Link from "next/link";
 
 /**
  * Interface para props do componente
@@ -39,8 +40,8 @@ interface AlertaNow {
   dt_criacao_now: string;
   alertanow: string;
   corretor: {
-      id: number;
-      nome: string;
+    id: number;
+    nome: string;
   };
 }
 
@@ -99,16 +100,16 @@ export default function NowButton({ session }: NowButtonProps) {
         const url = "/api/alertanow/list";
         const req = await fetch(url);
         const res = await req.json();
-        
+
         // Debug: mostra o formato da resposta
         console.log("Resposta da API NOW:", res);
         console.log("É array?", Array.isArray(res));
-        
+
         if (req.ok) {
           // Garante que sempre seja um array
           if (Array.isArray(res)) {
             setAlertas(res);
-          } else if (res && typeof res === 'object') {
+          } else if (res && typeof res === "object") {
             // Se retornar um objeto com propriedade data ou items
             setAlertas(res.data);
           } else {
@@ -127,9 +128,10 @@ export default function NowButton({ session }: NowButtonProps) {
 
   const formataData = (data: string) => {
     const dataFormatada = new Date(data);
-    return `${dataFormatada.toLocaleDateString("pt-BR")} - ${dataFormatada.toLocaleTimeString('pt-BR', { hour12: false })}`;
+    return `${dataFormatada.toLocaleDateString(
+      "pt-BR"
+    )} - ${dataFormatada.toLocaleTimeString("pt-BR", { hour12: false })}`;
   };
-
 
   // Carrega o contador ao montar o componente
   useEffect(() => {
@@ -291,49 +293,58 @@ export default function NowButton({ session }: NowButtonProps) {
             <Box>
               {alertas.map((alerta, index) => (
                 <Box key={alerta.id}>
-                  <MenuItem
-                    bg={"transparent"}
-                    _hover={{ bg: hoverBg }}
-                    py={3}
-                    px={4}
+                  <Link
+                    href={`/solicitacoes/${alerta.id}`}
+                    style={{ textDecoration: "none", display: "block" }}
                   >
-                    <HStack spacing={3} align="start" w="full">
-                      {/* Avatar com indicador de prioridade */}
-                      <Avatar
-                        size="sm"
-                        icon={<Icon as={FiAlertCircle} fontSize="18" />}
-                        bg={"yellow"}
-                        color="black"
-                      />
+                    <MenuItem
+                      bg={"transparent"}
+                      _hover={{ bg: hoverBg }}
+                      py={3}
+                      px={4}
+                    >
+                      <HStack spacing={3} align="start" w="full">
+                        {/* Avatar com indicador de prioridade */}
+                        <Avatar
+                          size="sm"
+                          icon={<Icon as={FiAlertCircle} fontSize="18" />}
+                          bg={"yellow"}
+                          color="black"
+                        />
 
-                      {/* Conteúdo */}
-                      <VStack align="start" spacing={1} flex={1}>
-                        <HStack justify="space-between" w="full">
-                          <Text
-                            fontSize="sm"
-                            fontWeight="bold"
-                            color={textColor}
-                            noOfLines={1}
+                        {/* Conteúdo */}
+                        <VStack align="start" spacing={1} flex={1}>
+                          <HStack justify="space-between" w="full">
+                            <Text
+                              fontSize="sm"
+                              fontWeight="bold"
+                              color={textColor}
+                              noOfLines={1}
+                            >
+                              {alerta.nome}
+                            </Text>
+                            <Badge colorScheme={"yellow"} fontSize="xs">
+                              alta
+                            </Badge>
+                          </HStack>
+                          <HStack
+                            spacing={3}
+                            fontSize="xs"
+                            color={subtextColor}
                           >
-                            {alerta.nome}
-                          </Text>
-                          <Badge colorScheme={"yellow"} fontSize="xs">
-                            alta
-                          </Badge>
-                        </HStack>
-                        <HStack spacing={3} fontSize="xs" color={subtextColor}>
-                          <HStack spacing={1}>
-                            <Icon as={FiUser} />
-                            <Text>{alerta.corretor.nome}</Text>
+                            <HStack spacing={1}>
+                              <Icon as={FiUser} />
+                              <Text>{alerta.corretor.nome}</Text>
+                            </HStack>
+                            <HStack spacing={1}>
+                              <Icon as={FiClock} />
+                              <Text>{formataData(alerta.dt_criacao_now)}</Text>
+                            </HStack>
                           </HStack>
-                          <HStack spacing={1}>
-                            <Icon as={FiClock} />
-                            <Text>{formataData(alerta.dt_criacao_now)}</Text>
-                          </HStack>
-                        </HStack>
-                      </VStack>
-                    </HStack>
-                  </MenuItem>
+                        </VStack>
+                      </HStack>
+                    </MenuItem>
+                  </Link>
                   {index < alertas.length - 1 && <MenuDivider m={0} />}
                 </Box>
               ))}
