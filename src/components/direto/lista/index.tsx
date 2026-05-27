@@ -80,6 +80,7 @@ const RequestDataFilter = async (filter: {
   empreendimento?: number;
   financeiro?: number;
   pagina?: number;
+  pg_andamento?: string;
 }) => {
   try {
     const params: Record<string, string> = {};
@@ -93,6 +94,7 @@ const RequestDataFilter = async (filter: {
       params.financeiro = String(filter.financeiro);
     if (filter.pagina !== undefined && filter.pagina !== null)
       params.pagina = String(filter.pagina);
+    if (filter.pg_andamento) params.pg_andamento = String(filter.pg_andamento);
     const req = await fetch(
       `/api/direto/findAll?${new URLSearchParams(params).toString()}`
     );
@@ -124,6 +126,7 @@ export const DadoCompomentList = ({
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const [ShowSkeleton, setShowSkeleton] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [PgFilter, setPgFilter] = useState<string | null>(null);
   const toast = useToast();
 
   const bgTable = useColorModeValue("gray.50", "gray.800");
@@ -213,12 +216,15 @@ export const DadoCompomentList = ({
       }
 
       const andamentoParaApi = Andamento === "TODOS" ? null : Andamento;
+      const pgParaApi = PgFilter === "TODOS" ? null : PgFilter;
+
       const data = await RequestDataFilter({
         ...(Id && { id: Id }),
         ...(Nome && { nome: Nome }),
         ...(andamentoParaApi && { andamento: andamentoParaApi }),
         ...(Empreendimento && { empreendimento: Empreendimento }),
         ...(Financeiro && { financeiro: Financeiro }),
+        ...(pgParaApi && { pg_andamento: pgParaApi }),
       });
       setListaDados(data.data);
       setTotal(data.total);
@@ -239,6 +245,7 @@ export const DadoCompomentList = ({
       setEmpreendimento(null);
       setFinanceiro(null);
       setId(null);
+      setPgFilter(null);
       setPagina(1);
       const data = await RequestDataBlank();
       setListaDados(data.data);
@@ -316,7 +323,7 @@ export const DadoCompomentList = ({
 
           <Box mt={{ base: 4, md: 6 }}>
             <SimpleGrid
-              columns={{ base: 1, sm: 2, lg: 3, xl: 5 }}
+              columns={{ base: 1, sm: 2, lg: 3, xl: 6 }}
               spacing={{ base: 3, md: 4 }}
             >
               <Box>
@@ -530,6 +537,44 @@ export const DadoCompomentList = ({
                       {item.fantasia}
                     </option>
                   ))}
+                </Select>
+              </Box>
+              <Box>
+                <Text
+                  fontSize="sm"
+                  fontWeight="medium"
+                  mb={2}
+                  color={filterTitleColor}
+                >
+                  STATUS PAGAMENTO (PG)
+                </Text>
+                <Select
+                  placeholder="Selecione..."
+                  value={PgFilter ?? ""}
+                  onChange={(e) => setPgFilter(e.target.value)}
+                  bg="white"
+                  color="#023147"
+                  borderColor="gray.300"
+                  _hover={{ borderColor: "#00713D" }}
+                  _focus={{
+                    borderColor: "#00713D",
+                    boxShadow: "0 0 0 1px #00713D",
+                  }}
+                  _dark={{
+                    bg: "gray.800",
+                    borderColor: "gray.600",
+                    color: "gray.100",
+                    _hover: { borderColor: "#00d672" },
+                    _focus: {
+                      borderColor: "#00d672",
+                      boxShadow: "0 0 0 1px #00d672",
+                    },
+                  }}
+                >
+                  <option value="TODOS">Todos</option>
+                  <option value="PAGO">PAGO</option>
+                  <option value="PENDENTE">PENDENTE</option>
+                  <option value="DEVOLUCAO">DEVOLUÇÃO</option>
                 </Select>
               </Box>
             </SimpleGrid>
