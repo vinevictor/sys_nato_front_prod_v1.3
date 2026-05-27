@@ -1,13 +1,22 @@
 "use client";
-import { Flex, Td, Tr, useToast, Badge, Tooltip, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Td,
+  Tr,
+  useToast,
+  Badge,
+  Tooltip,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { AlertIcomCompoment } from "../imputs/alertIcom";
+import { AndamentoIconComponent } from "@/components/home/imputs/andamentoIcon";
 import { EditarIconComponent } from "../imputs/editarIcom";
 import { DeletarIconComponent } from "../imputs/removeIcom";
 import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { solictacao } from "@/types/solicitacao";
 import { Session } from "@/types/session";
-import { AndamentoIconComponent } from "@/components/home/imputs/andamentoIcon";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType | any;
@@ -18,17 +27,29 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
   const router = useRouter();
   const toast = useToast();
 
+  const govBgColor = useColorModeValue("blue.100", "blue.200");
+  const govTextColor = useColorModeValue("black", "black");
+
+  // Ordem de precedência de cores corrigida para priorizar estados críticos antes do destaque GOV
   const Gbcolor = dados.distrato
     ? "gray.600"
     : !dados.ativo
     ? "red.500"
+    : dados.gov
+    ? govBgColor
     : dados.alertanow
     ? "yellow.400"
     : dados.andamento === "APROVADO" || dados.andamento === "EMITIDO"
     ? "green.200"
     : "white";
 
-  const Textcolor = dados.distrato ? "white" : !dados.ativo ? "white" : "black";
+  const Textcolor = dados.distrato
+    ? "white"
+    : !dados.ativo
+    ? "white"
+    : dados.gov
+    ? govTextColor
+    : "black";
 
   const formatarDataAgendamento = (
     date: string | null,
@@ -57,7 +78,6 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     dados.hr_aprovacao?.toString() || null
   );
 
-  // Função para cortar o nome do CCA/Financeiro se for muito grande
   const formatCcaText = (text: string) => {
     if (!text) return "NÃO IDENTIFICADO";
     const upperText = text.toUpperCase();
@@ -66,7 +86,6 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
       : upperText;
   };
 
-  // Tratamento do nome fantasia ou razaosocial da financeira vinda do select do back
   const nomeCcaOriginal =
     dados.financeiro?.fantasia || dados.financeiro?.razaosocial || "";
 
@@ -91,9 +110,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
                 (async () => {
                   const res = await fetch(
                     `/api/solicitacao/delete/${dados.id}`,
-                    {
-                      method: "DELETE",
-                    }
+                    { method: "DELETE" }
                   );
                   if (!res.ok) {
                     toast({
@@ -134,7 +151,7 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {dados.nome?.toUpperCase()}
         </Td>
 
-        {/* 4. NOVA COLUNA: CCA (Formatado em Maiúsculo e Truncado com Tooltip) */}
+        {/* 4. CCA */}
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
           <Tooltip
             label={nomeCcaOriginal.toUpperCase()}
@@ -158,28 +175,42 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {agendamento}
         </Td>
 
-        {/* 6. PG (Unificado, em Maiúsculo e estilizado com Badge para melhor leitura) */}
+        {/* 6. PG  */}
         <Td
           p={"0.2rem"}
           textAlign={"center"}
           borderBottomColor={"gray.300"}
           color={Textcolor}
         >
-          <Badge
-            colorScheme={
-              dados.pg_andamento?.toUpperCase() === "PAGO" || dados.pg_status
-                ? "green"
-                : dados.pg_andamento?.toUpperCase() === "PENDENTE"
-                ? "orange"
-                : "red"
-            }
-            variant="solid"
-            fontSize="11px"
-            borderRadius="md"
-            px={2}
-          >
-            {dados.pg_andamento ? dados.pg_andamento.toUpperCase() : "PENDENTE"}
-          </Badge>
+          {dados.conf_devolucao ? (
+            <Badge
+              colorScheme="red"
+              variant="solid"
+              fontSize="11px"
+              borderRadius="md"
+              px={2}
+            >
+              DEVOLUÇÃO
+            </Badge>
+          ) : (
+            <Badge
+              colorScheme={
+                dados.pg_andamento?.toUpperCase() === "PAGO" || dados.pg_status
+                  ? "green"
+                  : dados.pg_andamento?.toUpperCase() === "PENDENTE"
+                  ? "orange"
+                  : "red"
+              }
+              variant="solid"
+              fontSize="11px"
+              borderRadius="md"
+              px={2}
+            >
+              {dados.pg_andamento
+                ? dados.pg_andamento.toUpperCase()
+                : "PENDENTE"}
+            </Badge>
+          )}
         </Td>
 
         {/* 7. ANDAMENTO */}
