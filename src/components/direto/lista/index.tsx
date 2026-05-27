@@ -25,7 +25,6 @@ import { SelectPgComponent } from "../imputs/selectPg";
 import { CardComponentHome } from "./card";
 import { TableComponent } from "./table";
 import { TableRowsSkeleton, CardSkeleton } from "./skeleton";
-import { CompartilharModal } from "./CompartilharModal";
 import { Session } from "@/types/session";
 import { solictacao } from "@/types/solicitacao";
 import {
@@ -84,7 +83,6 @@ const RequestDataFilter = async (filter: {
 }) => {
   try {
     const params: Record<string, string> = {};
-    console.log("🚀 ~ RequestDataFilter ~ params:", params);
     if (filter.id !== undefined && filter.id !== null)
       params.id = String(filter.id);
     if (filter.nome) params.nome = String(filter.nome);
@@ -128,7 +126,6 @@ export const DadoCompomentList = ({
   const [isMobile, setIsMobile] = useState(false);
   const toast = useToast();
 
-  // Cores responsivas ao tema
   const bgTable = useColorModeValue("gray.50", "gray.800");
   const borderTable = useColorModeValue("gray.200", "gray.600");
   const bgTableInner = useColorModeValue("gray.100", "gray.700");
@@ -139,44 +136,32 @@ export const DadoCompomentList = ({
   const filterTitleColor = useColorModeValue("#023147", "gray.100");
   const filterCaptionColor = useColorModeValue("gray.600", "gray.400");
 
-  // Cores para botões e filtros (padrão do sistema)
-  const buttonBg = useColorModeValue("#00713D", "#00d672");
+  const buttonBg = useColorModeValue("#00713C", "#00d672");
   const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
   const buttonColor = useColorModeValue("white", "gray.900");
 
   const { data } = useHomeContex();
 
-  // Detecta o tamanho da tela
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     checkMobile();
     window.addEventListener("resize", checkMobile);
-
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Delay de 2 segundos antes de mostrar skeleton
   useEffect(() => {
     let timer: NodeJS.Timeout;
-
     if (IsLoading) {
-      // Inicia timer de 2 segundos
       timer = setTimeout(() => {
         setShowSkeleton(true);
       }, 2000);
     } else {
-      // Se não está carregando, esconde skeleton imediatamente
       setShowSkeleton(false);
     }
-
-    // Cleanup: limpa o timer se o componente desmontar ou IsLoading mudar
     return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
+      if (timer) clearTimeout(timer);
     };
   }, [IsLoading]);
 
@@ -184,8 +169,7 @@ export const DadoCompomentList = ({
     setListaDados(dados?.data || []);
     setTotal(dados?.total || 0);
     setPagAtual(dados?.pagina || 1);
-    setPagina(dados?.pagina || 1); // Sincroniza Pagina com PagAtual
-    // Carregar dados auxiliares
+    setPagina(dados?.pagina || 1);
     if (session?.user) {
       (async () => {
         try {
@@ -239,7 +223,7 @@ export const DadoCompomentList = ({
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
-      setPagina(data.pagina); // Sincroniza com a página retornada
+      setPagina(data.pagina);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     } finally {
@@ -255,12 +239,12 @@ export const DadoCompomentList = ({
       setEmpreendimento(null);
       setFinanceiro(null);
       setId(null);
-      setPagina(1); // Reset para página 1
+      setPagina(1);
       const data = await RequestDataBlank();
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
-      setPagina(data.pagina); // Sincroniza com a página retornada
+      setPagina(data.pagina);
     } catch (error) {
       console.error("Erro ao limpar filtros:", error);
     } finally {
@@ -277,7 +261,7 @@ export const DadoCompomentList = ({
       setListaDados(data.data);
       setTotal(data.total);
       setPagAtual(data.pagina);
-      setPagina(data.pagina); // Sincroniza com a página retornada
+      setPagina(data.pagina);
     } catch (error) {
       console.error("Erro ao navegar para próxima página:", error);
     } finally {
@@ -296,6 +280,7 @@ export const DadoCompomentList = ({
         px={{ base: 2, md: 3 }}
         py={{ base: 2, md: 3 }}
       >
+        {/* Bloco de Filtros */}
         <Box
           bg={filterBg}
           border="1px solid"
@@ -316,7 +301,7 @@ export const DadoCompomentList = ({
                 fontWeight="semibold"
                 color={filterTitleColor}
               >
-                Filtrar Solicitações Diretas
+                FILTRAR SOLICITAÇÕES DIRETAS
               </Text>
               <Text
                 mt={1}
@@ -341,7 +326,7 @@ export const DadoCompomentList = ({
                   mb={2}
                   color={filterTitleColor}
                 >
-                  ID da Solicitação
+                  ID DA SOLICITAÇÃO
                 </Text>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
@@ -390,7 +375,7 @@ export const DadoCompomentList = ({
                   mb={2}
                   color={filterTitleColor}
                 >
-                  Nome da Solicitação
+                  NOME DA SOLICITAÇÃO
                 </Text>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
@@ -431,7 +416,7 @@ export const DadoCompomentList = ({
                   mb={2}
                   color={filterTitleColor}
                 >
-                  Status (Andamento)
+                  STATUS (ANDAMENTO)
                 </Text>
                 <Select
                   placeholder="Selecione..."
@@ -456,17 +441,6 @@ export const DadoCompomentList = ({
                       boxShadow: "0 0 0 1px #00d672",
                     },
                   }}
-                  sx={{
-                    "& option": {
-                      bg: "white",
-                      color: "gray.800",
-                    },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
-                      {
-                        bg: "gray.800",
-                        color: "gray.100",
-                      },
-                  }}
                 >
                   <option value="TODOS">Todos</option>
                   <option value="VAZIO">VAZIO</option>
@@ -484,7 +458,7 @@ export const DadoCompomentList = ({
                   mb={2}
                   color={filterTitleColor}
                 >
-                  Empreendimento
+                  EMPREENDIMENTO
                 </Text>
                 <Select
                   placeholder="Selecione..."
@@ -509,17 +483,6 @@ export const DadoCompomentList = ({
                       boxShadow: "0 0 0 1px #00d672",
                     },
                   }}
-                  sx={{
-                    "& option": {
-                      bg: "white",
-                      color: "gray.800",
-                    },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
-                      {
-                        bg: "gray.800",
-                        color: "gray.100",
-                      },
-                  }}
                 >
                   {DataEmpreendimento.map((item: any) => (
                     <option key={item.id} value={item.id}>
@@ -536,7 +499,7 @@ export const DadoCompomentList = ({
                   mb={2}
                   color={filterTitleColor}
                 >
-                  Financeiro (CCA)
+                  FINANCEIRO (CCA)
                 </Text>
                 <Select
                   placeholder="Selecione..."
@@ -561,17 +524,6 @@ export const DadoCompomentList = ({
                       boxShadow: "0 0 0 1px #00d672",
                     },
                   }}
-                  sx={{
-                    "& option": {
-                      bg: "white",
-                      color: "gray.800",
-                    },
-                    "&:is([data-theme='dark']) option, .chakra-ui-dark & option":
-                      {
-                        bg: "gray.800",
-                        color: "gray.100",
-                      },
-                  }}
                 >
                   {DataFinanceiro.map((item: any) => (
                     <option key={item.id} value={item.id}>
@@ -593,7 +545,6 @@ export const DadoCompomentList = ({
                 {Total}{" "}
                 {Total === 1 ? "registro encontrado" : "registros encontrados"}
               </Text>
-
               <Flex gap={3} wrap="wrap">
                 <Button
                   variant="outline"
@@ -617,7 +568,6 @@ export const DadoCompomentList = ({
                   minW="140px"
                   borderRadius="md"
                   size="sm"
-                  transition="all 0.2s"
                   _hover={{
                     bg: buttonHoverBg,
                     transform: "translateY(-1px)",
@@ -634,22 +584,18 @@ export const DadoCompomentList = ({
           </Box>
         </Box>
 
-        {/* Estrutura da tabela sempre visível */}
+        {/* Estrutura da Tabela */}
         <Flex
           w="full"
           bg={bgTable}
           shadow="lg"
           borderRadius="15px"
           p={{ base: "10px", md: "15px", xl: "20px" }}
-          alignContent="center"
-          justifyContent="space-evenly"
           flexDir="column"
           border="1px solid"
           borderColor={borderTable}
         >
-          {/* Renderização condicional: Cards para mobile, Tabela para desktop */}
           {isMobile ? (
-            // Cards para mobile
             <Box w="full">
               {ShowSkeleton ? (
                 <CardSkeleton />
@@ -664,7 +610,6 @@ export const DadoCompomentList = ({
               ) : null}
             </Box>
           ) : (
-            // Tabela para desktop
             <Box overflowX="auto" w="full">
               <Table
                 variant="simple"
@@ -698,6 +643,15 @@ export const DadoCompomentList = ({
                     >
                       NOME
                     </Th>
+                    {/* NOVA COLUNA CCA INSERIDA */}
+                    <Th
+                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                      p={{ base: "0.5rem", md: "0.8rem" }}
+                      borderBottomColor={borderBottomColor}
+                      w={{ base: "10rem", md: "12rem" }}
+                    >
+                      CCA
+                    </Th>
                     <Th
                       fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       p={{ base: "0.5rem", md: "0.8rem" }}
@@ -707,11 +661,12 @@ export const DadoCompomentList = ({
                     >
                       AGENDAMENTO
                     </Th>
+                    {/* COLUNA PG MANTERÁ O ALINHAMENTO DO FORMATO UNIFICADO */}
                     <Th
                       fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       p={{ base: "0.5rem", md: "0.8rem" }}
                       borderBottomColor={borderBottomColor}
-                      w={{ base: "7rem", md: "8rem" }}
+                      w={{ base: "8rem", md: "10rem" }}
                       textAlign="center"
                     >
                       PG
@@ -720,28 +675,10 @@ export const DadoCompomentList = ({
                       fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       p={{ base: "0.5rem", md: "0.8rem" }}
                       borderBottomColor={borderBottomColor}
-                      w={{ base: "9rem", md: "10rem" }}
-                      textAlign="center"
-                    >
-                      DATA PG
-                    </Th>
-                    <Th
-                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                      p={{ base: "0.5rem", md: "0.8rem" }}
-                      borderBottomColor={borderBottomColor}
-                      w={{ base: "11rem", md: "13rem" }}
-                      textAlign="center"
-                    >
-                      CONFIRMADO PG
-                    </Th>
-                    <Th
-                      fontSize={{ base: "sm", md: "md", lg: "lg" }}
-                      p={{ base: "0.5rem", md: "0.8rem" }}
-                      borderBottomColor={borderBottomColor}
                       w={{ base: "7rem", md: "8rem" }}
                       textAlign="center"
                     >
-                      Andamento
+                      ANDAMENTO
                     </Th>
                     <Th
                       p={{ base: "0.5rem", md: "0.8rem" }}
@@ -772,7 +709,7 @@ export const DadoCompomentList = ({
             </Box>
           )}
 
-          {/* Footer com paginação */}
+          {/* Footer de Paginação */}
           <Flex
             w="full"
             justifyContent={{ base: "center", md: "space-between" }}

@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Td, Tr, useToast } from "@chakra-ui/react";
+import { Flex, Td, Tr, useToast, Badge, Tooltip, Text } from "@chakra-ui/react";
 import { AlertIcomCompoment } from "../imputs/alertIcom";
 import { EditarIconComponent } from "../imputs/editarIcom";
 import { DeletarIconComponent } from "../imputs/removeIcom";
@@ -10,22 +10,21 @@ import { Session } from "@/types/session";
 import { AndamentoIconComponent } from "@/components/home/imputs/andamentoIcon";
 
 interface TableComponentProps {
-  dados: solictacao.SolicitacaoObjectType;
+  dados: solictacao.SolicitacaoObjectType | any;
   session: Session.SessionServer | any | null;
 }
 
 export const TableComponent = ({ dados, session }: TableComponentProps) => {
   const router = useRouter();
   const toast = useToast();
+
   const Gbcolor = dados.distrato
     ? "gray.600"
     : !dados.ativo
     ? "red.500"
     : dados.alertanow
     ? "yellow.400"
-    : dados.andamento === "APROVADO"
-    ? "green.200"
-    : dados.andamento === "EMITIDO"
+    : dados.andamento === "APROVADO" || dados.andamento === "EMITIDO"
     ? "green.200"
     : "white";
 
@@ -35,12 +34,11 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     date: string | null,
     time: string | null
   ) => {
-    if (!date || !time) return null;
+    if (!date || !time) return "-";
     const dataConcat = `${date.toString().split("T")[0]}T${
       time.toString().split("T")[1]
     }`;
     const dataFormatada = new Date(dataConcat);
-    // dataFormatada.setHours(dataFormatada.getHours() - 3);
     return (
       dataFormatada.toLocaleDateString("pt-BR") +
       " " +
@@ -59,11 +57,25 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
     dados.hr_aprovacao?.toString() || null
   );
 
+  // Função para cortar o nome do CCA/Financeiro se for muito grande
+  const formatCcaText = (text: string) => {
+    if (!text) return "NÃO IDENTIFICADO";
+    const upperText = text.toUpperCase();
+    return upperText.length > 15
+      ? `${upperText.substring(0, 15)}...`
+      : upperText;
+  };
+
+  // Tratamento do nome fantasia ou razaosocial da financeira vinda do select do back
+  const nomeCcaOriginal =
+    dados.financeiro?.fantasia || dados.financeiro?.razaosocial || "";
+
   return (
     <>
       <Tr bg={Gbcolor}>
+        {/* 1. FUNÇÕES */}
         <Td p={"0.2rem"} borderBottomColor={"gray.300"}>
-          <Flex gap={2}>
+          <Flex gap={2} justifyContent="center">
             <AlertIcomCompoment tag={dados.tags} />
             <AndamentoIconComponent andamento={dados.statusAtendimento} />
             <EditarIconComponent
@@ -106,12 +118,37 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
             />
           </Flex>
         </Td>
-        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+
+        {/* 2. ID */}
+        <Td
+          p={"0.2rem"}
+          borderBottomColor={"gray.300"}
+          color={Textcolor}
+          fontWeight="bold"
+        >
           {dados.id}
         </Td>
+
+        {/* 3. NOME */}
         <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
-          {dados.nome}
+          {dados.nome?.toUpperCase()}
         </Td>
+
+        {/* 4. NOVA COLUNA: CCA (Formatado em Maiúsculo e Truncado com Tooltip) */}
+        <Td p={"0.2rem"} borderBottomColor={"gray.300"} color={Textcolor}>
+          <Tooltip
+            label={nomeCcaOriginal.toUpperCase()}
+            hasArrow
+            placement="top"
+            isDisabled={nomeCcaOriginal.length <= 15}
+          >
+            <Text fontSize="xs" fontWeight="semibold">
+              {formatCcaText(nomeCcaOriginal)}
+            </Text>
+          </Tooltip>
+        </Td>
+
+        {/* 5. AGENDAMENTO */}
         <Td
           p={"0.2rem"}
           textAlign={"center"}
@@ -121,38 +158,42 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           {agendamento}
         </Td>
 
+        {/* 6. PG (Unificado, em Maiúsculo e estilizado com Badge para melhor leitura) */}
         <Td
           p={"0.2rem"}
           textAlign={"center"}
           borderBottomColor={"gray.300"}
           color={Textcolor}
         >
-          {dados.pg_andamento}
+          <Badge
+            colorScheme={
+              dados.pg_andamento?.toUpperCase() === "PAGO" || dados.pg_status
+                ? "green"
+                : dados.pg_andamento?.toUpperCase() === "PENDENTE"
+                ? "orange"
+                : "red"
+            }
+            variant="solid"
+            fontSize="11px"
+            borderRadius="md"
+            px={2}
+          >
+            {dados.pg_andamento ? dados.pg_andamento.toUpperCase() : "PENDENTE"}
+          </Badge>
         </Td>
+
+        {/* 7. ANDAMENTO */}
         <Td
           p={"0.2rem"}
           textAlign={"center"}
           borderBottomColor={"gray.300"}
           color={Textcolor}
+          fontWeight="medium"
         >
-          {dados.pg_date && new Date(dados.pg_date).toLocaleDateString("pt-BR")}
+          {dados.andamento ? dados.andamento.toUpperCase() : "-"}
         </Td>
-        <Td
-          p={"0.2rem"}
-          textAlign={"center"}
-          borderBottomColor={"gray.300"}
-          color={Textcolor}
-        >
-          {dados.pg_status ? "✅" : "❌"}
-        </Td>
-        <Td
-          p={"0.2rem"}
-          textAlign={"center"}
-          borderBottomColor={"gray.300"}
-          color={Textcolor}
-        >
-          {dados.andamento}
-        </Td>
+
+        {/* 8. ÍCONE RELÓGIO (SLA) */}
         <Td
           p={"0.2rem"}
           textAlign={"center"}
