@@ -94,7 +94,8 @@ const RequestDataFilter = async (filter: {
       params.financeiro = String(filter.financeiro);
     if (filter.pagina !== undefined && filter.pagina !== null)
       params.pagina = String(filter.pagina);
-    if (filter.pg_andamento) params.pg_andamento = String(filter.pg_andamento);
+    if (filter.pg_andamento) params.pg_andamento = filter.pg_andamento;
+
     const req = await fetch(
       `/api/direto/findAll?${new URLSearchParams(params).toString()}`
     );
@@ -126,7 +127,10 @@ export const DadoCompomentList = ({
   const [IsLoading, setIsLoading] = useState<boolean>(false);
   const [ShowSkeleton, setShowSkeleton] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [PgFilter, setPgFilter] = useState<string | null>(null);
+
+  // AJUSTADO: Inicialização limpa como string vazia para o Select do Chakra responder nativamente
+  const [PgFilter, setPgFilter] = useState<string>("");
+
   const toast = useToast();
 
   const bgTable = useColorModeValue("gray.50", "gray.800");
@@ -139,7 +143,7 @@ export const DadoCompomentList = ({
   const filterTitleColor = useColorModeValue("#023147", "gray.100");
   const filterCaptionColor = useColorModeValue("gray.600", "gray.400");
 
-  const buttonBg = useColorModeValue("#00713C", "#00d672");
+  const buttonBg = useColorModeValue("#00713D", "#00d672");
   const buttonHoverBg = useColorModeValue("#005a31", "#00c060");
   const buttonColor = useColorModeValue("white", "gray.900");
 
@@ -197,12 +201,14 @@ export const DadoCompomentList = ({
   const filtroPrimario = async () => {
     try {
       setIsLoading(true);
+
       if (
         !Id &&
         !Nome &&
         Andamento === null &&
         !Empreendimento &&
-        !Financeiro
+        !Financeiro &&
+        PgFilter === ""
       ) {
         toast({
           title: "Nenhum filtro selecionado.",
@@ -216,7 +222,6 @@ export const DadoCompomentList = ({
       }
 
       const andamentoParaApi = Andamento === "TODOS" ? null : Andamento;
-      const pgParaApi = PgFilter === "TODOS" ? null : PgFilter;
 
       const data = await RequestDataFilter({
         ...(Id && { id: Id }),
@@ -224,7 +229,7 @@ export const DadoCompomentList = ({
         ...(andamentoParaApi && { andamento: andamentoParaApi }),
         ...(Empreendimento && { empreendimento: Empreendimento }),
         ...(Financeiro && { financeiro: Financeiro }),
-        ...(pgParaApi && { pg_andamento: pgParaApi }),
+        ...(PgFilter !== "" && { pg_andamento: PgFilter }),
       });
       setListaDados(data.data);
       setTotal(data.total);
@@ -245,7 +250,7 @@ export const DadoCompomentList = ({
       setEmpreendimento(null);
       setFinanceiro(null);
       setId(null);
-      setPgFilter(null);
+      setPgFilter("");
       setPagina(1);
       const data = await RequestDataBlank();
       setListaDados(data.data);
@@ -539,6 +544,7 @@ export const DadoCompomentList = ({
                   ))}
                 </Select>
               </Box>
+
               <Box>
                 <Text
                   fontSize="sm"
@@ -549,8 +555,8 @@ export const DadoCompomentList = ({
                   STATUS PAGAMENTO (PG)
                 </Text>
                 <Select
-                  placeholder="Selecione..."
-                  value={PgFilter ?? ""}
+                  placeholder="Todos"
+                  value={PgFilter}
                   onChange={(e) => setPgFilter(e.target.value)}
                   bg="white"
                   color="#023147"
@@ -571,7 +577,6 @@ export const DadoCompomentList = ({
                     },
                   }}
                 >
-                  <option value="TODOS">Todos</option>
                   <option value="PAGO">PAGO</option>
                   <option value="PENDENTE">PENDENTE</option>
                   <option value="DEVOLUCAO">DEVOLUÇÃO</option>
@@ -688,7 +693,6 @@ export const DadoCompomentList = ({
                     >
                       NOME
                     </Th>
-                    {/* NOVA COLUNA CCA INSERIDA */}
                     <Th
                       fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       p={{ base: "0.5rem", md: "0.8rem" }}
@@ -706,7 +710,6 @@ export const DadoCompomentList = ({
                     >
                       AGENDAMENTO
                     </Th>
-                    {/* COLUNA PG MANTERÁ O ALINHAMENTO DO FORMATO UNIFICADO */}
                     <Th
                       fontSize={{ base: "sm", md: "md", lg: "lg" }}
                       p={{ base: "0.5rem", md: "0.8rem" }}

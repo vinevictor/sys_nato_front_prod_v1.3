@@ -5,14 +5,7 @@ import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { Metadata } from "next";
 import { MdDescription } from "react-icons/md";
 export const dynamic = "force-dynamic";
@@ -22,17 +15,24 @@ export const metadata: Metadata = {
   description: "sistema de gestão de vendas de imóveis",
 };
 
+// ATUALIZADO: Agora a função recebe os filtros dinâmicos da URL
 const GetListaDados = async (
-  session: Session.SessionServer | null
+  session: Session.SessionServer | null,
+  searchParams: Record<string, string>
 ): Promise<any | null> => {
-  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`;
+  // Converte os objetos de busca em Query Strings (?nome=VINI&pg_andamento=PAGO...)
+  const query = new URLSearchParams(searchParams).toString();
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto?${query}`;
+
   const user = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.token}`,
     },
+    cache: "no-store",
   });
+
   const data = await user.json();
   if (!user.ok) {
     console.error("GetListaDados status:", data.message);
@@ -41,20 +41,15 @@ const GetListaDados = async (
   return data;
 };
 
-/**
- * Página Direto
- *
- * Funcionalidades:
- * - Exibe lista de vendas diretas
- * - Modais de primeiro acesso e termos
- * - Layout padronizado com header e área de conteúdo
- * - Responsivo e com tema adaptativo
- *
- * @component
- */
-export default async function DiretoPage() {
+export default async function DiretoPage({
+  searchParams,
+}: {
+  searchParams: any; // Intercepta os parâmetros enviados pelo Client Component
+}) {
   const session = await GetSessionServer();
-  const ListDados = await GetListaDados(session);
+
+  // Passa as buscas ativas na URL para o nosso integrador com a API NestJS
+  const ListDados = await GetListaDados(session, searchParams);
 
   return (
     <HomeProvider>
@@ -84,7 +79,6 @@ export default async function DiretoPage() {
             shadow={{ base: "sm", md: "md", lg: "lg" }}
             flexDir={{ base: "column", md: "row" }}
           >
-            {/* Título com ícone */}
             <Flex align="center" gap={{ base: 2, md: 3 }}>
               <Box
                 p={{ base: 1.5, md: 2 }}
@@ -98,7 +92,6 @@ export default async function DiretoPage() {
               <Box>
                 <Heading
                   fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
-                  size={{ base: "md", md: "lg" }}
                   color="#023147"
                   _dark={{ color: "gray.100" }}
                 >
@@ -110,7 +103,8 @@ export default async function DiretoPage() {
                   _dark={{ color: "gray.400" }}
                   display={{ base: "none", sm: "block" }}
                 >
-                  Gerencie suas vendas diretas, acompanhe status e visualize histórico de solicitações.
+                  Gerencie suas vendas diretas, acompanhe status e visualize
+                  histórico de solicitações.
                 </Text>
               </Box>
             </Flex>
@@ -129,7 +123,9 @@ export default async function DiretoPage() {
             shadow="lg"
             minH="400px"
           >
-            {session && <DadoCompomentList dados={ListDados} session={session} />}
+            {session && (
+              <DadoCompomentList dados={ListDados} session={session} />
+            )}
           </VStack>
         </VStack>
       </Container>
