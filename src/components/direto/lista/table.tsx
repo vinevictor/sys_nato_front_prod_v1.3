@@ -8,6 +8,7 @@ import {
   Tooltip,
   Text,
   useColorModeValue,
+  IconButton,
 } from "@chakra-ui/react";
 import { AlertIcomCompoment } from "../imputs/alertIcom";
 import { AndamentoIconComponent } from "@/components/home/imputs/andamentoIcon";
@@ -17,6 +18,7 @@ import { calcTimeOut } from "../script/calcTimeOut";
 import { useRouter } from "next/navigation";
 import { solictacao } from "@/types/solicitacao";
 import { Session } from "@/types/session";
+import { MdCreditCard } from "react-icons/md";
 
 interface TableComponentProps {
   dados: solictacao.SolicitacaoObjectType | any;
@@ -89,6 +91,9 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
   const nomeCcaOriginal =
     dados.financeiro?.fantasia || dados.financeiro?.razaosocial || "";
 
+  const jaPago =
+    dados.pg_andamento?.toUpperCase() === "PAGO" || dados.pg_status;
+
   return (
     <>
       <Tr bg={Gbcolor}>
@@ -97,6 +102,36 @@ export const TableComponent = ({ dados, session }: TableComponentProps) => {
           <Flex gap={2} justifyContent="center">
             <AlertIcomCompoment tag={dados.tags} />
             <AndamentoIconComponent andamento={dados.statusAtendimento} />
+            <Tooltip
+              label={
+                jaPago
+                  ? "Esta solicitação já foi paga"
+                  : "Visualizar checkout / Gerar PIX"
+              }
+              hasArrow
+              placement="top"
+            >
+              <IconButton
+                aria-label="Ir para tela de pagamento"
+                icon={<MdCreditCard size={18} />}
+                size="sm"
+                variant="outline"
+                colorScheme={jaPago ? "gray" : "green"}
+                bg={jaPago ? "transparent" : "green.50"}
+                _dark={{
+                  bg: jaPago ? "transparent" : "green.900",
+                  color: jaPago ? "gray.500" : "green.200",
+                }}
+                isDisabled={jaPago}
+                onClick={() => {
+                  router.push(
+                    `/direto/pagamento?idSolicitacao=${
+                      dados.id
+                    }&nome=${encodeURIComponent(dados.nome)}&cpf=${dados.cpf}`
+                  );
+                }}
+              />
+            </Tooltip>
             <EditarIconComponent
               aria-label="Editar solicitação"
               onClick={() => router.push(`/direto/${dados.id}`)}

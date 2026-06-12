@@ -47,7 +47,7 @@ interface Financeiro {
 }
 
 export const CompartilharModal = ({ session }: CompartilharModalProps) => {
-  console.log("🚀 ~ CompartilharModal ~ session:", session)
+  console.log("🚀 ~ CompartilharModal ~ session:", session);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalEmpreendimento, setModalEmpreendimento] = useState<number | null>(
     null
@@ -81,7 +81,6 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
         isClosable: true,
         position: "top-right",
       });
-      // onClose(); // Removed to allow the modal to open even if one list is empty
     }
     if (dataFinanceiro.length === 0) {
       toast({
@@ -93,7 +92,6 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
         isClosable: true,
         position: "top-right",
       });
-      // onClose(); // Removed to allow the modal to open even if one list is empty
     }
     setIsLoading(false);
   };
@@ -143,13 +141,15 @@ export const CompartilharModal = ({ session }: CompartilharModalProps) => {
     if (!session) return;
     const user = session?.user;
     const empreendimentoList = user?.empreendimento;
-    const EmpreendimentoFilter = empreendimentoList.filter((item) => item.direto === true);
+    const EmpreendimentoFilter = empreendimentoList.filter(
+      (item) => item.direto === true
+    );
     const financeiroList = user?.Financeira;
     const filter = financeiroList.filter((item) => item.direto === true);
     setDataEmpreendimento(EmpreendimentoFilter || []);
     setDataFinanceiro(filter || []);
   }, [session]);
-  
+
   const ColorLoader = () => {
     const theme = useColorModeValue("light", "dark");
     if (theme === "light") {
