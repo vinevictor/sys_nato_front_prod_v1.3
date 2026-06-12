@@ -5,9 +5,17 @@ import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
 import HomeProvider from "@/provider/HomeProvider";
 import { Session } from "@/types/session";
-import { Box, Container, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { Metadata } from "next";
-import { MdDescription } from "react-icons/md";
+import { MdAdd, MdDescription } from "react-icons/md";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -108,7 +116,26 @@ export default async function DiretoPage({
                 </Text>
               </Box>
             </Flex>
-            <CompartilharModal session={session} />
+            <Flex
+              gap={3}
+              align="center"
+              width={{ base: "full", md: "auto" }}
+              justify={{ base: "center", md: "flex-end" }}
+            >
+              <Button
+                as="a"
+                href="/direto/novo"
+                bg="#00713D"
+                color="white"
+                _hover={{ bg: "#00542D" }}
+                leftIcon={<MdAdd />}
+                size="md"
+                shadow="md"
+              >
+                Nova Solicitação
+              </Button>
+              <CompartilharModal session={session} />
+            </Flex>
           </Flex>
 
           {/* Área de Conteúdo */}
