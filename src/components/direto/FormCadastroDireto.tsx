@@ -26,7 +26,7 @@ interface FormCadastroDiretoProps {
 
 interface EmpreendimentoRelacionado {
   id: number;
-  name: string;
+  nome: string;
   financeiras: {
     id: number;
     fantasia: string;
@@ -189,7 +189,6 @@ export default function FormCadastroDireto({
         duration: 2000,
       });
 
-      // REDIRECIONAMENTO CORRIGIDO: Redireciona o CCA direto para a nova tela de checkout
       router.push(
         `/direto/pagamento?token=${urlToken}&nome=${encodeURIComponent(
           payload.nome
@@ -328,15 +327,23 @@ export default function FormCadastroDireto({
                   _hover: { borderColor: "#00d672" },
                 }}
                 sx={{
+                  color: useColorModeValue("gray.800", "white"),
                   "& option": {
                     bg: useColorModeValue("white", "gray.800"),
-                    color: useColorModeValue("gray.800", "white"),
+                    color: useColorModeValue("gray.800", "white !important"),
+                  },
+                  "& font": {
+                    color: useColorModeValue("gray.800", "white !important"),
                   },
                 }}
               >
                 {configuracoes.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
+                  <option
+                    key={item.id}
+                    value={item.id}
+                    style={{ color: useColorModeValue("#2D3748", "#FFFFFF") }}
+                  >
+                    {item.nome}{" "}
                   </option>
                 ))}
               </Select>
@@ -373,14 +380,22 @@ export default function FormCadastroDireto({
                   _hover: { borderColor: "#00d672" },
                 }}
                 sx={{
+                  color: useColorModeValue("gray.800", "white"),
                   "& option": {
                     bg: useColorModeValue("white", "gray.800"),
-                    color: useColorModeValue("gray.800", "white"),
+                    color: useColorModeValue("gray.800", "white !important"),
+                  },
+                  "& font": {
+                    color: useColorModeValue("gray.800", "white !important"),
                   },
                 }}
               >
                 {financeirasFiltradas.map((item) => (
-                  <option key={item.id} value={item.id}>
+                  <option
+                    key={item.id}
+                    value={item.id}
+                    style={{ color: useColorModeValue("#2D3748", "#FFFFFF") }}
+                  >
                     {item.fantasia}
                   </option>
                 ))}
