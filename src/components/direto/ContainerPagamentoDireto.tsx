@@ -99,9 +99,23 @@ export default function ContainerPagamentoDireto({
               ""
             : "";
 
-        if (idSolicitacao) {
+        // PASSO EXTRA DE SEGURANÇA: Se o ID não veio na URL, localiza preventivamente pelo CPF
+        if (!targetId && cpf) {
+          const checkCpfRes = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_STRAPI_API_URL
+            }/direto/check/pagamento/cpf/${cpf.replace(/\D/g, "")}`
+          );
+          const checkCpfData = await checkCpfRes.json();
+          if (checkCpfRes.ok && checkCpfData?.id) {
+            targetId = checkCpfData.id;
+          }
+        }
+
+        // CASO 1: A proposta já existe no banco de dados (Vem pelo clique na listagem ou recuperada via CPF)
+        if (targetId) {
           const solRes = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/${idSolicitacao}`,
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/${targetId}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -110,28 +124,41 @@ export default function ContainerPagamentoDireto({
             }
           );
 
-          if (!solRes.ok)
-            throw new Error("Erro na autenticação da rota de solicitação.");
+          if (solRes.ok) {
+            const solData = await solRes.json();
+            valorFinal = Number(solData.valorcd || 0).toFixed(2);
 
-          const solData = await solRes.json();
-          valorFinal = Number(solData.valorcd || 0).toFixed(2);
+            // Se o registro já possui um PIX Efí associado, restaura e ativa o polling imediatamente
+            if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
+              setPixData({
+                pixCopiaECola: solData.pixCopiaECola,
+                imagemQrcode: solData.imagemQrcode,
+                txid: solData.txid,
+              });
+              setValorCert(valorFinal);
 
-          if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
-            setPixData({
-              pixCopiaECola: solData.pixCopiaECola,
-              imagemQrcode: solData.imagemQrcode,
-              txid: solData.txid,
-            });
-            setValorCert(valorFinal);
-            setPaymentStatus("PENDENTE");
-            setLoading(false);
+              // Verifica se o banco já acusa como pago para atualizar o layout na hora
+              if (
+                solData.pg_andamento?.toUpperCase() === "PAGO" ||
+                solData.pg_status
+              ) {
+                setPaymentStatus("CONCLUIDA");
+              } else {
+                setPaymentStatus("PENDENTE");
+              }
 
-            pollingRef.current = setInterval(() => {
-              checarStatusPagamento(solData.txid);
-            }, 5000);
-            return;
+              setLoading(false);
+
+              pollingRef.current = setInterval(() => {
+                checarStatusPagamento(solData.txid);
+              }, 5000);
+              return; // Aborta gerações duplicadas
+            }
           }
-        } else if (token && !token.startsWith("CD")) {
+        }
+
+        // CASO 2: Nova solicitação direta estrutural via Token CNAB pura
+        if (token && !token.startsWith("CD")) {
           const infoRes = await fetch(
             `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/getInfosToken/${token}`
           );
@@ -140,12 +167,13 @@ export default function ContainerPagamentoDireto({
             throw new Error("Erro ao descriptografar token de venda.");
 
           valorFinal = Number(infoData.data.valor_cert).toFixed(2);
-        } else {
+        } else if (!targetId) {
           throw new Error("Parâmetros estruturais de checkout malformados.");
         }
 
         setValorCert(valorFinal);
 
+        // Gera nova ordem no Banco Central caso o cliente realmente não possua cobranças ativas
         const pixRes = await fetch(
           `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix`,
           {
@@ -158,18 +186,6 @@ export default function ContainerPagamentoDireto({
         const pixResult = await pixRes.json();
         if (!pixRes.ok)
           throw new Error("Falha ao emitir PIX no Banco Central.");
-
-        if (!targetId && cpf) {
-          const checkCpfRes = await fetch(
-            `${
-              process.env.NEXT_PUBLIC_STRAPI_API_URL
-            }/direto/check/pagamento/cpf/${cpf.replace(/\D/g, "")}`
-          );
-          const checkCpfData = await checkCpfRes.json();
-          if (checkCpfRes.ok && checkCpfData?.id) {
-            targetId = checkCpfData.id;
-          }
-        }
 
         if (targetId) {
           await fetch(
@@ -187,10 +203,6 @@ export default function ContainerPagamentoDireto({
                 pg_andamento: "PENDENTE",
               }),
             }
-          );
-        } else {
-          console.warn(
-            "⚠️ Não foi possível mapear o ID da solicitação para persistência do txid."
           );
         }
 
