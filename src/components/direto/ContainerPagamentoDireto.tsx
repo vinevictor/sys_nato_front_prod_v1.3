@@ -92,14 +92,7 @@ export default function ContainerPagamentoDireto({
       try {
         let valorFinal = "0.00";
         let targetId = idSolicitacao;
-        const tokenJWTLocalStorage =
-          typeof window !== "undefined"
-            ? localStorage.getItem("token") ||
-              sessionStorage.getItem("token") ||
-              ""
-            : "";
-
-        // PASSO EXTRA DE SEGURANÇA: Se o ID não veio na URL, localiza preventivamente pelo CPF
+        const tokenJWTLocalStorage = tokenJWT;
         if (!targetId && cpf) {
           const checkCpfRes = await fetch(
             `${
