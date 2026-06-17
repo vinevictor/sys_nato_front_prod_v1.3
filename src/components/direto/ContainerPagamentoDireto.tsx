@@ -91,6 +91,13 @@ export default function ContainerPagamentoDireto({
     const iniciarFluxoPagamento = async () => {
       try {
         let valorFinal = "0.00";
+        let targetId = idSolicitacao;
+        const tokenJWTLocalStorage =
+          typeof window !== "undefined"
+            ? localStorage.getItem("token") ||
+              sessionStorage.getItem("token") ||
+              ""
+            : "";
 
         if (idSolicitacao) {
           const solRes = await fetch(
@@ -98,7 +105,7 @@ export default function ContainerPagamentoDireto({
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenJWT}`,
+                Authorization: `Bearer ${tokenJWTLocalStorage}`,
               },
             }
           );
@@ -116,6 +123,7 @@ export default function ContainerPagamentoDireto({
               txid: solData.txid,
             });
             setValorCert(valorFinal);
+            setPaymentStatus("PENDENTE");
             setLoading(false);
 
             pollingRef.current = setInterval(() => {
@@ -130,6 +138,7 @@ export default function ContainerPagamentoDireto({
           const infoData = await infoRes.json();
           if (!infoRes.ok)
             throw new Error("Erro ao descriptografar token de venda.");
+
           valorFinal = Number(infoData.data.valor_cert).toFixed(2);
         } else {
           throw new Error("Parâmetros estruturais de checkout malformados.");
@@ -150,16 +159,26 @@ export default function ContainerPagamentoDireto({
         if (!pixRes.ok)
           throw new Error("Falha ao emitir PIX no Banco Central.");
 
-        const idParaAtualizar = idSolicitacao || pixResult.id;
+        if (!targetId && cpf) {
+          const checkCpfRes = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_STRAPI_API_URL
+            }/direto/check/pagamento/cpf/${cpf.replace(/\D/g, "")}`
+          );
+          const checkCpfData = await checkCpfRes.json();
+          if (checkCpfRes.ok && checkCpfData?.id) {
+            targetId = checkCpfData.id;
+          }
+        }
 
-        if (idParaAtualizar) {
+        if (targetId) {
           await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/update/${idParaAtualizar}`,
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/update/${targetId}`,
             {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenJWT}`,
+                Authorization: `Bearer ${tokenJWTLocalStorage}`,
               },
               body: JSON.stringify({
                 txid: pixResult.txid,
@@ -169,9 +188,14 @@ export default function ContainerPagamentoDireto({
               }),
             }
           );
+        } else {
+          console.warn(
+            "⚠️ Não foi possível mapear o ID da solicitação para persistência do txid."
+          );
         }
 
         setPixData(pixResult);
+        setPaymentStatus("PENDENTE");
         setLoading(false);
 
         pollingRef.current = setInterval(() => {
