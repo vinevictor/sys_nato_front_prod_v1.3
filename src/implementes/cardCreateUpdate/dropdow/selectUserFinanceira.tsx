@@ -9,11 +9,13 @@ import {
   Select,
   SelectProps,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { BeatLoader } from "react-spinners";
+
 interface SelectUserFinanceiraProps extends SelectProps {
   setValue: any;
 }
@@ -22,12 +24,14 @@ export function SelectUserFinanceira({
   setValue,
   ...props
 }: SelectUserFinanceiraProps) {
-  const [Financeira, setFinanceira] = useState<number | undefined>();
+  const [Financeira, setFinanceira] = useState<number>(0);
   const [FinanceiraData, setFinanceiraData] = useState([]);
   const [FinanceiraArray, setFinanceiraArray] = useState<any>([]);
   const [FinanceiraArrayTotal, setFinanceiraArrayTotal] = useState<any>([]);
   const [FinanceiraDisabled, setFinanceiraDisabled] = useState(false);
   const { setFinanceiraCX } = useUserRegisterContext();
+
+  const toast = useToast();
 
   useEffect(() => {
     const getFinanceira = async () => {
@@ -41,21 +45,35 @@ export function SelectUserFinanceira({
       const dataValue = setValue;
       if (dataValue.length > 0) {
         setFinanceiraArrayTotal(dataValue);
-        setFinanceiraArray(dataValue);
+        setFinanceiraArray(dataValue.map((e: any) => e.id));
       }
     }
   }, [setValue]);
 
   const HandleSelectFinanceira = () => {
-    setFinanceiraDisabled(true);
-    const value = Financeira;
+    const targetId = Number(Financeira);
 
-    const Filtro = FinanceiraData.filter((e: any) => e.id === Number(value));
+    if (!targetId || targetId === 0) {
+      toast({
+        title: "Seleção inválida",
+        description: "Por favor, selecione uma financeira antes de adicionar.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      return;
+    }
+
+    setFinanceiraDisabled(true);
+
+    const Filtro = FinanceiraData.filter((e: any) => e.id === targetId);
     const Ids = Filtro.map((e: any) => e.id);
 
     setFinanceiraArray([...FinanceiraArray, ...Ids]);
     setFinanceiraArrayTotal([...FinanceiraArrayTotal, ...Filtro]);
 
+    setFinanceira(0);
     setFinanceiraDisabled(false);
   };
 
@@ -72,10 +90,10 @@ export function SelectUserFinanceira({
         bg="blue.200"
         _dark={{
           bg: "blue.700",
-          borderColor: "blue.500"
+          borderColor: "blue.500",
         }}
       >
-        <Text 
+        <Text
           fontSize={"0.6rem"}
           color="blue.800"
           _dark={{ color: "blue.100" }}
@@ -87,10 +105,10 @@ export function SelectUserFinanceira({
           fontSize={"0.8rem"}
           onClick={() => {
             setFinanceiraArray(
-              FinanceiraArray.filter((item: any) => item !== e.id)
+              FinanceiraArray.filter((itemId: any) => itemId !== e.id)
             );
             setFinanceiraArrayTotal(
-              FinanceiraArrayTotal.filter((item: any) => item !== e)
+              FinanceiraArrayTotal.filter((item: any) => item.id !== e.id)
             );
           }}
           cursor={"pointer"}
@@ -104,6 +122,11 @@ export function SelectUserFinanceira({
       setFinanceiraCX(FinanceiraArray);
     }
   }, [FinanceiraArray, setFinanceiraCX]);
+
+  // Filtra para remover as financeiras já adicionadas
+  const financeirasDisponiveis = FinanceiraData.filter(
+    (f: any) => !FinanceiraArray.includes(f.id)
+  );
 
   return (
     <>
@@ -124,7 +147,7 @@ export function SelectUserFinanceira({
           _dark={{
             bg: "gray.700",
             borderColor: "gray.500",
-            color: "gray.100"
+            color: "gray.100",
           }}
           sx={{
             "& option": {
@@ -134,21 +157,15 @@ export function SelectUserFinanceira({
             "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
               bg: "gray.800",
               color: "gray.100",
-            }
+            },
           }}
         >
-          <option value={0}>
-            Selecione uma financeira
-          </option>
-          {FinanceiraData.length > 0 &&
-            FinanceiraData.map((Financeira: any) => (
-              <option
-                key={Financeira.id}
-                value={Financeira.id}
-              >
-                {Financeira.fantasia}
-              </option>
-            ))}
+          <option value={0}>Selecione uma financeira</option>
+          {financeirasDisponiveis.map((fin: any) => (
+            <option key={fin.id} value={fin.id}>
+              {fin.fantasia}
+            </option>
+          ))}
         </Select>
         <Button
           colorScheme="green"
