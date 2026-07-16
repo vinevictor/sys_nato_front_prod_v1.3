@@ -9,6 +9,7 @@ import {
   Select,
   SelectProps,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
@@ -23,7 +24,7 @@ export function SelectUserEmpreendimento({
   setValue,
   ...props
 }: SelectUserEmpreendimentoProps) {
-  const [Empreendimento, setEmpreendimento] = useState<number | undefined>();
+  const [Empreendimento, setEmpreendimento] = useState<number>(0);
   const [EmpreendimentoData, setEmpreendimentoData] = useState([]);
   const [EmpreendimentoArray, setEmpreendimentoArray] = useState<any>([]);
   const [EmpreendimentoArrayTotal, setEmpreendimentoArrayTotal] = useState<any>(
@@ -31,6 +32,8 @@ export function SelectUserEmpreendimento({
   );
   const [EmpreendimentoDisabled, setEmpreendimentoDisabled] = useState(false);
   const { setEmpreedimentoCX } = useUserRegisterContext();
+
+  const toast = useToast();
 
   useEffect(() => {
     const getEmpreendimento = async () => {
@@ -44,23 +47,36 @@ export function SelectUserEmpreendimento({
       const dataValue = setValue;
       if (dataValue.length > 0) {
         setEmpreendimentoArrayTotal(dataValue);
-        setEmpreendimentoArray(dataValue);
+        setEmpreendimentoArray(dataValue.map((e: any) => e.id));
       }
     }
   }, [setValue]);
 
   const HandleSelectEmpreendimento = () => {
-    setEmpreendimentoDisabled(true);
-    const value = Empreendimento;
+    const targetId = Number(Empreendimento);
 
-    const Filtro = EmpreendimentoData.filter(
-      (e: any) => e.id === Number(value)
-    );
+    if (!targetId || targetId === 0) {
+      toast({
+        title: "Seleção inválida",
+        description:
+          "Por favor, selecione um empreendimento antes de adicionar.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      return;
+    }
+
+    setEmpreendimentoDisabled(true);
+
+    const Filtro = EmpreendimentoData.filter((e: any) => e.id === targetId);
     const Ids = Filtro.map((e: any) => e.id);
 
     setEmpreendimentoArray([...EmpreendimentoArray, ...Ids]);
     setEmpreendimentoArrayTotal([...EmpreendimentoArrayTotal, ...Filtro]);
 
+    setEmpreendimento(0);
     setEmpreendimentoDisabled(false);
   };
 
@@ -77,10 +93,10 @@ export function SelectUserEmpreendimento({
         bg="blue.200"
         _dark={{
           bg: "blue.700",
-          borderColor: "blue.500"
+          borderColor: "blue.500",
         }}
       >
-        <Text 
+        <Text
           fontSize={"0.6rem"}
           color="blue.800"
           _dark={{ color: "blue.100" }}
@@ -92,10 +108,10 @@ export function SelectUserEmpreendimento({
           fontSize={"0.8rem"}
           onClick={() => {
             setEmpreendimentoArray(
-              EmpreendimentoArray.filter((item: any) => item !== e.id)
+              EmpreendimentoArray.filter((itemId: any) => itemId !== e.id)
             );
             setEmpreendimentoArrayTotal(
-              EmpreendimentoArrayTotal.filter((item: any) => item !== e)
+              EmpreendimentoArrayTotal.filter((item: any) => item.id !== e.id)
             );
           }}
           cursor={"pointer"}
@@ -107,6 +123,11 @@ export function SelectUserEmpreendimento({
   useEffect(() => {
     setEmpreedimentoCX(EmpreendimentoArray);
   }, [EmpreendimentoArray, setEmpreedimentoCX]);
+
+  // Filtra para remover os já adicionados das opções do Select
+  const empreendimentosDisponiveis = EmpreendimentoData.filter(
+    (emp: any) => !EmpreendimentoArray.includes(emp.id)
+  );
 
   return (
     <>
@@ -122,12 +143,12 @@ export function SelectUserEmpreendimento({
           bg="gray.100"
           color="gray.800"
           isDisabled={EmpreendimentoDisabled}
-          onChange={(e: any) => setEmpreendimento(e.target.value)}
+          onChange={(e: any) => setEmpreendimento(Number(e.target.value))}
           value={Empreendimento}
           _dark={{
             bg: "gray.700",
             borderColor: "gray.500",
-            color: "gray.100"
+            color: "gray.100",
           }}
           sx={{
             "& option": {
@@ -137,21 +158,15 @@ export function SelectUserEmpreendimento({
             "&:is([data-theme='dark']) option, .chakra-ui-dark &option": {
               bg: "gray.800",
               color: "gray.100",
-            }
+            },
           }}
         >
-          <option value={0}>
-            Selecione um empreendimento
-          </option>
-          {EmpreendimentoData.length > 0 &&
-            EmpreendimentoData.map((empreendimento: any) => (
-              <option
-                key={empreendimento.id}
-                value={empreendimento.id}
-              >
-                {empreendimento.nome}
-              </option>
-            ))}
+          <option value={0}>Selecione um empreendimento</option>
+          {empreendimentosDisponiveis.map((empreendimento: any) => (
+            <option key={empreendimento.id} value={empreendimento.id}>
+              {empreendimento.nome}
+            </option>
+          ))}
         </Select>
         <Button
           colorScheme="green"
