@@ -8,8 +8,10 @@ import {
   Icon,
   Box,
   AspectRatio,
+  Link,
+  Flex,
 } from "@chakra-ui/react";
-import { FiUpload, FiCheckCircle } from "react-icons/fi";
+import { FiUpload, FiCheckCircle, FiExternalLink } from "react-icons/fi";
 
 interface Step2Props {
   formData: any;
@@ -57,24 +59,63 @@ export default function Step2({
       </FormControl>
 
       {formData.document && (
-        <Text color="green.600" display="flex" alignItems="center">
-          <Icon as={FiCheckCircle} mr={2} />
-          Arquivo selecionado: <strong>{formData.document.name}</strong>
-        </Text>
+        <Flex justify="space-between" align="center" wrap="wrap" gap={2}>
+          <Text
+            color="green.600"
+            display="flex"
+            alignItems="center"
+            fontSize="sm"
+          >
+            <Icon as={FiCheckCircle} mr={2} />
+            Arquivo selecionado: <strong>{formData.document.name}</strong>
+          </Text>
+
+          {previewUrl && (
+            <Link
+              href={previewUrl}
+              isExternal
+              color="blue.500"
+              fontSize="sm"
+              fontWeight="semibold"
+              display="flex"
+              alignItems="center"
+              gap={1}
+            >
+              Abrir em tela cheia <Icon as={FiExternalLink} />
+            </Link>
+          )}
+        </Flex>
       )}
+
       {previewUrl && (
         <Box>
-          <FormLabel>Documento</FormLabel>
-          <AspectRatio ratio={4 / 5} maxH="500px">
-            <iframe
-              title="Pré-visualização do PDF"
-              src={previewUrl}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "1px solid #E2E8F0",
-              }}
-            />
+          <FormLabel>Visualização do Documento</FormLabel>
+          <AspectRatio ratio={4 / 5} maxH="600px">
+            {/* Trocado iframe por object/embed que possui melhor suporte a blobs PDF em HTTPS */}
+            <object
+              data={previewUrl}
+              type="application/pdf"
+              width="100%"
+              height="100%"
+              style={{ border: "1px solid #E2E8F0", borderRadius: "6px" }}
+            >
+              <embed src={previewUrl} type="application/pdf" />
+              <Box p={4} textAlign="center" bg="gray.50" borderRadius="md">
+                <Text mb={2}>
+                  O visualizador do navegador não conseguiu carregar o PDF.
+                </Text>
+                <Button
+                  as="a"
+                  href={previewUrl}
+                  target="_blank"
+                  colorScheme="blue"
+                  size="sm"
+                  leftIcon={<Icon as={FiExternalLink} />}
+                >
+                  Visualizar PDF Alternativo
+                </Button>
+              </Box>
+            </object>
           </AspectRatio>
         </Box>
       )}
