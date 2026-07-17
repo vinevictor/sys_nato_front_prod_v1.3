@@ -7,11 +7,11 @@ import {
   Text,
   Icon,
   Box,
-  AspectRatio,
   Link,
   Flex,
 } from "@chakra-ui/react";
 import { FiUpload, FiCheckCircle, FiExternalLink } from "react-icons/fi";
+import PdfPreview from "./PdfPreview"; // Importe o componente que criamos acima
 
 interface Step2Props {
   formData: any;
@@ -81,42 +81,17 @@ export default function Step2({
               alignItems="center"
               gap={1}
             >
-              Abrir em tela cheia <Icon as={FiExternalLink} />
+              Abrir em nova guia <Icon as={FiExternalLink} />
             </Link>
           )}
         </Flex>
       )}
 
-      {previewUrl && (
+      {formData.document && (
         <Box>
           <FormLabel>Visualização do Documento</FormLabel>
-          <AspectRatio ratio={4 / 5} maxH="600px">
-            {/* Trocado iframe por object/embed que possui melhor suporte a blobs PDF em HTTPS */}
-            <object
-              data={previewUrl}
-              type="application/pdf"
-              width="100%"
-              height="100%"
-              style={{ border: "1px solid #E2E8F0", borderRadius: "6px" }}
-            >
-              <embed src={previewUrl} type="application/pdf" />
-              <Box p={4} textAlign="center" bg="gray.50" borderRadius="md">
-                <Text mb={2}>
-                  O visualizador do navegador não conseguiu carregar o PDF.
-                </Text>
-                <Button
-                  as="a"
-                  href={previewUrl}
-                  target="_blank"
-                  colorScheme="blue"
-                  size="sm"
-                  leftIcon={<Icon as={FiExternalLink} />}
-                >
-                  Visualizar PDF Alternativo
-                </Button>
-              </Box>
-            </object>
-          </AspectRatio>
+          {/* Renderiza via Canvas nativo, imune a bloqueios de CSP de produção */}
+          <PdfPreview file={formData.document} />
         </Box>
       )}
     </VStack>
