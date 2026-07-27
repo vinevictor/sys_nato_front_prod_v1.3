@@ -9,8 +9,10 @@ import {
   IconButton,
   Input,
   InputGroup,
+  InputLeftAddon,
   InputRightElement,
   SimpleGrid,
+  Switch,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -27,21 +29,6 @@ interface ConstrutoraFormProps {
   onSaving?: (isSaving: boolean) => void;
 }
 
-/**
- * Formulário para criar ou editar construtora
- * 
- * Campos:
- * - CNPJ (com busca automática)
- * - Razão Social
- * - Nome Fantasia
- * - Telefone
- * - Email (sempre lowercase)
- * - Valor de Certificado (padrão 100)
- * 
- * Sanitização:
- * - Todos strings: .trim()
- * - Email: .toLowerCase().trim()
- */
 export default function ConstrutoraForm({
   construtoraId,
   construtoraData,
@@ -56,6 +43,8 @@ export default function ConstrutoraForm({
     tel: construtoraData?.tel || "",
     email: construtoraData?.email || "",
     valor_cert: construtoraData?.valor_cert || 100,
+    Intelesign_status: construtoraData?.Intelesign_status ?? false,
+    Intelesign_price: construtoraData?.Intelesign_price || 0,
   });
 
   const [isSearchingCNPJ, setIsSearchingCNPJ] = useState(false);
@@ -73,6 +62,8 @@ export default function ConstrutoraForm({
         tel: construtoraData?.tel || "",
         email: construtoraData?.email || "",
         valor_cert: construtoraData?.valor_cert || 100,
+        Intelesign_status: construtoraData?.Intelesign_status ?? false,
+        Intelesign_price: construtoraData?.Intelesign_price || 0,
       });
     }
   }, [construtoraData]);
@@ -137,7 +128,6 @@ export default function ConstrutoraForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Ativa loading global
     if (onSaving) onSaving(true);
     setIsSubmitting(true);
 
@@ -191,7 +181,7 @@ export default function ConstrutoraForm({
 
       const method = construtoraId ? "PUT" : "POST";
 
-      // Sanitização dos dados
+      // Payload sanitizado incluindo Intellisign
       const payload = {
         cnpj: unMask(form.cnpj.trim()),
         razaosocial: form.razaosocial.trim(),
@@ -199,6 +189,8 @@ export default function ConstrutoraForm({
         tel: unMask(form.tel.trim()),
         email: form.email.toLowerCase().trim(),
         valor_cert: Number(form.valor_cert),
+        Intelesign_status: Boolean(form.Intelesign_status),
+        Intelesign_price: Number(form.Intelesign_price),
       };
 
       const response = await fetch(url, {
@@ -216,7 +208,9 @@ export default function ConstrutoraForm({
 
       toast({
         title: "Sucesso!",
-        description: `Construtora ${construtoraId ? "atualizada" : "criada"} com sucesso!`,
+        description: `Construtora ${
+          construtoraId ? "atualizada" : "criada"
+        } com sucesso!`,
         status: "success",
         duration: 3000,
         position: "top-right",
@@ -275,9 +269,14 @@ export default function ConstrutoraForm({
         </Heading>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-          {/* CNPJ com botão de busca */}
+          {/* CNPJ */}
           <FormControl isRequired>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               CNPJ
             </FormLabel>
             <InputGroup>
@@ -290,7 +289,10 @@ export default function ConstrutoraForm({
                 bg="gray.50"
                 _dark={{ bg: "gray.700" }}
                 _hover={{ borderColor: "#00713D" }}
-                _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
               />
               <InputRightElement>
                 <IconButton
@@ -309,23 +311,38 @@ export default function ConstrutoraForm({
 
           {/* Razão Social */}
           <FormControl isRequired>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               Razão Social
             </FormLabel>
             <Input
               value={form.razaosocial}
-              onChange={(e) => setForm({ ...form, razaosocial: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, razaosocial: e.target.value })
+              }
               placeholder="Razão Social da Empresa"
               bg="gray.50"
               _dark={{ bg: "gray.700" }}
               _hover={{ borderColor: "#00713D" }}
-              _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
             />
           </FormControl>
 
           {/* Nome Fantasia */}
           <FormControl isRequired>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               Nome Fantasia
             </FormLabel>
             <Input
@@ -335,70 +352,212 @@ export default function ConstrutoraForm({
               bg="gray.50"
               _dark={{ bg: "gray.700" }}
               _hover={{ borderColor: "#00713D" }}
-              _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
             />
           </FormControl>
 
           {/* Telefone */}
           <FormControl>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               Telefone
             </FormLabel>
             <Input
-              value={mask(form.tel, [
-                "(99) 9999-9999",
-                "(99) 9 9999-9999"
-              ])}
-              onChange={(e) => setForm({ ...form, tel: unMask(e.target.value) })}
+              value={mask(form.tel, ["(99) 9999-9999", "(99) 9 9999-9999"])}
+              onChange={(e) =>
+                setForm({ ...form, tel: unMask(e.target.value) })
+              }
               placeholder="(00) 0 0000-0000"
               bg="gray.50"
               _dark={{ bg: "gray.700" }}
               _hover={{ borderColor: "#00713D" }}
-              _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
             />
           </FormControl>
 
           {/* Email */}
           <FormControl>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               Email
             </FormLabel>
             <Input
               type="email"
               value={form.email}
-              onChange={(e) => {
-                const lowerEmail = e.target.value.toLowerCase();
-                setForm({ ...form, email: lowerEmail });
-              }}
+              onChange={(e) =>
+                setForm({ ...form, email: e.target.value.toLowerCase() })
+              }
               placeholder="email@exemplo.com"
               bg="gray.50"
               _dark={{ bg: "gray.700" }}
               _hover={{ borderColor: "#00713D" }}
-              _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+              _focus={{
+                borderColor: "#00713D",
+                boxShadow: "0 0 0 1px #00713D",
+              }}
             />
           </FormControl>
 
-          {/* Valor de Certificado */}
+          {/* Valor do Certificado */}
           <FormControl>
-            <FormLabel fontSize="sm" fontWeight="md" color="gray.700" _dark={{ color: "gray.200" }}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
               Valor de Certificado
             </FormLabel>
-            <Input
-              type="number"
-              value={form.valor_cert}
-              onChange={(e) => setForm({ ...form, valor_cert: Number(e.target.value) })}
-              placeholder="100"
-              bg="gray.50"
-              _dark={{ bg: "gray.700" }}
-              _hover={{ borderColor: "#00713D" }}
-              _focus={{ borderColor: "#00713D", boxShadow: "0 0 0 1px #00713D" }}
+            <InputGroup>
+              <InputLeftAddon
+                bg="gray.100"
+                _dark={{ bg: "gray.600", color: "gray.200" }}
+              >
+                R$
+              </InputLeftAddon>
+              <Input
+                type="number"
+                step="0.01"
+                value={form.valor_cert}
+                onChange={(e) =>
+                  setForm({ ...form, valor_cert: Number(e.target.value) })
+                }
+                placeholder="100.00"
+                bg="gray.50"
+                _dark={{ bg: "gray.700" }}
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+              />
+            </InputGroup>
+          </FormControl>
+        </SimpleGrid>
+      </Box>
+
+      {/* Módulo Intellisign */}
+      <Box mb={8}>
+        <Heading
+          size="sm"
+          color="#00713D"
+          mb={4}
+          pb={2}
+          borderBottom="2px solid"
+          borderColor="#00713D"
+        >
+          Configurações Intellisign
+        </Heading>
+
+        <SimpleGrid
+          columns={{ base: 1, md: 2 }}
+          spacing={4}
+          alignItems="center"
+        >
+          {/* Status Intellisign */}
+          <FormControl
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            p={3}
+            bg="gray.50"
+            _dark={{ bg: "gray.700" }}
+            borderRadius="md"
+            borderWidth="1px"
+            borderColor="gray.200"
+          >
+            <Box>
+              <FormLabel
+                mb="0"
+                fontSize="sm"
+                fontWeight="md"
+                color="gray.700"
+                _dark={{ color: "gray.200" }}
+              >
+                Intellisign Ativo?
+              </FormLabel>
+              <Text
+                fontSize="xs"
+                color="gray.500"
+                _dark={{ color: "gray.400" }}
+              >
+                Habilita a integração para esta construtora
+              </Text>
+            </Box>
+            <Switch
+              colorScheme="green"
+              size="lg"
+              isChecked={form.Intelesign_status}
+              onChange={(e) =>
+                setForm({ ...form, Intelesign_status: e.target.checked })
+              }
             />
+          </FormControl>
+
+          {/* Preço Intellisign */}
+          <FormControl isDisabled={!form.Intelesign_status}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{ color: "gray.200" }}
+            >
+              Preço Intellisign
+            </FormLabel>
+            <InputGroup>
+              <InputLeftAddon
+                bg="gray.100"
+                _dark={{ bg: "gray.600", color: "gray.200" }}
+              >
+                R$
+              </InputLeftAddon>
+              <Input
+                type="number"
+                step="0.01"
+                value={form.Intelesign_price}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    Intelesign_price: parseFloat(e.target.value) || 0,
+                  })
+                }
+                placeholder="0.00"
+                bg="gray.50"
+                _dark={{ bg: "gray.700" }}
+                _hover={{ borderColor: "#00713D" }}
+                _focus={{
+                  borderColor: "#00713D",
+                  boxShadow: "0 0 0 1px #00713D",
+                }}
+              />
+            </InputGroup>
           </FormControl>
         </SimpleGrid>
       </Box>
 
       {/* Botões */}
-      <Flex gap={3} justify="flex-end" pt={4} borderTop="1px solid" borderColor="gray.200" _dark={{ borderColor: "gray.700" }}>
+      <Flex
+        gap={3}
+        justify="flex-end"
+        pt={4}
+        borderTop="1px solid"
+        borderColor="gray.200"
+        _dark={{ borderColor: "gray.700" }}
+      >
         <Button
           variant="outline"
           colorScheme="gray"

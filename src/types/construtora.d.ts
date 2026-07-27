@@ -1,6 +1,6 @@
 export type ConstrutoraTypeAll = {
-    id: number;
-    fantasia: string;
+  id: number;
+  fantasia: string;
 };
 
 export type ConstrutoraTypeAllData = {
@@ -13,4 +13,6 @@ export type ConstrutoraTypeAllData = {
   fantasia: string;
   atividade: string;
   colaboradores: number;
+  Intelesign_price?: number;
+  Intelesign_status?: boolean;
 };
