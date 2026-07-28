@@ -57,116 +57,15 @@ export default function ContainerPagamentoDireto({
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checarStatusPagamento = useCallback(
-    async (txid: string) => {
+  // Função para gerar uma nova cobrança PIX no Banco Central e atualizar o registro
+  const gerarNovoPix = useCallback(
+    async (targetId?: string | null, valorManual?: string) => {
+      setLoading(true);
+      if (pollingRef.current) clearInterval(pollingRef.current);
+
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix/verifique/${txid}`
-        );
-        const result = await res.json();
+        const valorFinal = valorManual || valorCert;
 
-        if (res.ok && result.status === "CONCLUIDA") {
-          setPaymentStatus("CONCLUIDA");
-          toast({
-            title: "Pagamento confirmado com sucesso!",
-            status: "success",
-            duration: 5000,
-          });
-          if (pollingRef.current) clearInterval(pollingRef.current);
-        }
-      } catch (err) {
-        console.error("Erro no polling do PIX:", err);
-      }
-    },
-    [toast]
-  );
-
-  useEffect(() => {
-    if (!token && !idSolicitacao) {
-      toast({ title: "Dados de checkout inválidos.", status: "error" });
-      router.push("/direto");
-      return;
-    }
-
-    const iniciarFluxoPagamento = async () => {
-      try {
-        let valorFinal = "0.00";
-        let targetId = idSolicitacao;
-        const tokenJWTLocalStorage = tokenJWT;
-        if (!targetId && cpf) {
-          const checkCpfRes = await fetch(
-            `${
-              process.env.NEXT_PUBLIC_STRAPI_API_URL
-            }/direto/check/pagamento/cpf/${cpf.replace(/\D/g, "")}`
-          );
-          const checkCpfData = await checkCpfRes.json();
-          if (checkCpfRes.ok && checkCpfData?.id) {
-            targetId = checkCpfData.id;
-          }
-        }
-
-        // CASO 1: A proposta já existe no banco de dados (Vem pelo clique na listagem ou recuperada via CPF)
-        if (targetId) {
-          const solRes = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/${targetId}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenJWTLocalStorage}`,
-              },
-            }
-          );
-
-          if (solRes.ok) {
-            const solData = await solRes.json();
-            valorFinal = Number(solData.valorcd || 0).toFixed(2);
-
-            // Se o registro já possui um PIX Efí associado, restaura e ativa o polling imediatamente
-            if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
-              setPixData({
-                pixCopiaECola: solData.pixCopiaECola,
-                imagemQrcode: solData.imagemQrcode,
-                txid: solData.txid,
-              });
-              setValorCert(valorFinal);
-
-              // Verifica se o banco já acusa como pago para atualizar o layout na hora
-              if (
-                solData.pg_andamento?.toUpperCase() === "PAGO" ||
-                solData.pg_status
-              ) {
-                setPaymentStatus("CONCLUIDA");
-              } else {
-                setPaymentStatus("PENDENTE");
-              }
-
-              setLoading(false);
-
-              pollingRef.current = setInterval(() => {
-                checarStatusPagamento(solData.txid);
-              }, 5000);
-              return; // Aborta gerações duplicadas
-            }
-          }
-        }
-
-        // CASO 2: Nova solicitação direta estrutural via Token CNAB pura
-        if (token && !token.startsWith("CD")) {
-          const infoRes = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/getInfosToken/${token}`
-          );
-          const infoData = await infoRes.json();
-          if (!infoRes.ok)
-            throw new Error("Erro ao descriptografar token de venda.");
-
-          valorFinal = Number(infoData.data.valor_cert).toFixed(2);
-        } else if (!targetId) {
-          throw new Error("Parâmetros estruturais de checkout malformados.");
-        }
-
-        setValorCert(valorFinal);
-
-        // Gera nova ordem no Banco Central caso o cliente realmente não possua cobranças ativas
         const pixRes = await fetch(
           `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix`,
           {
@@ -187,7 +86,7 @@ export default function ContainerPagamentoDireto({
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenJWTLocalStorage}`,
+                Authorization: `Bearer ${tokenJWT}`,
               },
               body: JSON.stringify({
                 txid: pixResult.txid,
@@ -203,9 +102,169 @@ export default function ContainerPagamentoDireto({
         setPaymentStatus("PENDENTE");
         setLoading(false);
 
+        // Inicia polling para o novo txid
         pollingRef.current = setInterval(() => {
-          checarStatusPagamento(pixResult.txid);
+          checarStatusPagamento(pixResult.txid, targetId);
         }, 5000);
+      } catch (error: any) {
+        toast({
+          title: "Erro no processamento",
+          description: error.message,
+          status: "error",
+        });
+        setPaymentStatus("ERRO");
+        setLoading(false);
+      }
+    },
+    [cpf, nome, tokenJWT, valorCert, toast]
+  );
+
+  // Checa status do PIX e reconhece se expirou
+  const checarStatusPagamento = useCallback(
+    async (txid: string, targetId?: string | null) => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix/verifique/${txid}`
+        );
+        const result = await res.json();
+
+        if (res.ok) {
+          if (result.status === "CONCLUIDA") {
+            setPaymentStatus("CONCLUIDA");
+            toast({
+              title: "Pagamento confirmado com sucesso!",
+              status: "success",
+              duration: 5000,
+            });
+            if (pollingRef.current) clearInterval(pollingRef.current);
+          } else if (
+            result.status === "REMOVIDO_PELO_PSP_RECEBEDOR" ||
+            result.status === "EXPIRADO"
+          ) {
+            // PIX Expirado: Para o polling atual e gera um novo automaticamente
+            if (pollingRef.current) clearInterval(pollingRef.current);
+            toast({
+              title: "PIX Expirado",
+              description:
+                "O QR Code anterior expirou. Gerando uma nova cobrança...",
+              status: "warning",
+              duration: 4000,
+            });
+            await gerarNovoPix(targetId);
+          }
+        }
+      } catch (err) {
+        console.error("Erro no polling do PIX:", err);
+      }
+    },
+    [toast, gerarNovoPix]
+  );
+
+  useEffect(() => {
+    if (!token && !idSolicitacao) {
+      toast({ title: "Dados de checkout inválidos.", status: "error" });
+      router.push("/direto");
+      return;
+    }
+
+    const iniciarFluxoPagamento = async () => {
+      try {
+        let valorFinal = "0.00";
+        let targetId = idSolicitacao;
+
+        if (!targetId && cpf) {
+          const checkCpfRes = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_STRAPI_API_URL
+            }/direto/check/pagamento/cpf/${cpf.replace(/\D/g, "")}`
+          );
+          const checkCpfData = await checkCpfRes.json();
+          if (checkCpfRes.ok && checkCpfData?.id) {
+            targetId = checkCpfData.id;
+          }
+        }
+
+        // CASO 1: Proposta existente
+        if (targetId) {
+          const solRes = await fetch(
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/${targetId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${tokenJWT}`,
+              },
+            }
+          );
+
+          if (solRes.ok) {
+            const solData = await solRes.json();
+            valorFinal = Number(solData.valorcd || 0).toFixed(2);
+            setValorCert(valorFinal);
+
+            if (
+              solData.pg_andamento?.toUpperCase() === "PAGO" ||
+              solData.pg_status
+            ) {
+              setPaymentStatus("CONCLUIDA");
+              setLoading(false);
+              return;
+            }
+
+            // Se já tem PIX associado, verifica primeiro se não está expirado na Efí
+            if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
+              const checkPix = await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix/verifique/${solData.txid}`
+              );
+              const checkResult = await checkPix.json();
+
+              // Se a Efí disser que expirou/foi removido, gera um PIX novo na hora
+              if (
+                checkResult.status === "REMOVIDO_PELO_PSP_RECEBEDOR" ||
+                checkResult.status === "EXPIRADO"
+              ) {
+                toast({
+                  title: "Cobrança expirada",
+                  description: "Gerando um novo QR Code PIX...",
+                  status: "info",
+                  duration: 3000,
+                });
+                await gerarNovoPix(targetId, valorFinal);
+                return;
+              }
+
+              // PIX ainda é válido: restaura e inicia o polling
+              setPixData({
+                pixCopiaECola: solData.pixCopiaECola,
+                imagemQrcode: solData.imagemQrcode,
+                txid: solData.txid,
+              });
+              setPaymentStatus("PENDENTE");
+              setLoading(false);
+
+              pollingRef.current = setInterval(() => {
+                checarStatusPagamento(solData.txid, targetId);
+              }, 5000);
+              return;
+            }
+          }
+        }
+
+        // CASO 2: Nova solicitação via token
+        if (token && !token.startsWith("CD")) {
+          const infoRes = await fetch(
+            `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/getInfosToken/${token}`
+          );
+          const infoData = await infoRes.json();
+          if (!infoRes.ok)
+            throw new Error("Erro ao descriptografar token de venda.");
+
+          valorFinal = Number(infoData.data.valor_cert).toFixed(2);
+        } else if (!targetId) {
+          throw new Error("Parâmetros estruturais de checkout malformados.");
+        }
+
+        setValorCert(valorFinal);
+        await gerarNovoPix(targetId, valorFinal);
       } catch (error: any) {
         toast({
           title: "Erro no processamento",
@@ -226,11 +285,11 @@ export default function ContainerPagamentoDireto({
     token,
     idSolicitacao,
     cpf,
-    nome,
     router,
     toast,
     checarStatusPagamento,
     tokenJWT,
+    gerarNovoPix,
   ]);
 
   const handleCopy = () => {
