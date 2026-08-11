@@ -50,16 +50,6 @@ interface FinanceiraForm {
   construtoras: number[];
 }
 
-/**
- * Formulário para criar ou editar financeira
- * 
- * Segue o padrão visual do formulário de empreendimentos com:
- * - Grid responsivo
- * - Labels e inputs estilizados
- * - Dark mode completo
- * - Validações
- * - Loading states
- */
 export default function FormFinanceira({
   financeira,
   construtoras,
@@ -71,12 +61,11 @@ export default function FormFinanceira({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSearchingCNPJ, setIsSearchingCNPJ] = useState(false);
-  const [selectedConstrutoraId, setSelectedConstrutoraId] = useState<string>("");
+  const [selectedConstrutoraId, setSelectedConstrutoraId] =
+    useState<string>("");
 
-  // Verifica se é modo criação ou edição
   const isCreateMode = !id;
 
-  // Estado do formulário
   const [form, setForm] = useState<FinanceiraForm>({
     cnpj: financeira?.cnpj || "",
     razaosocial: financeira?.razaosocial || "",
@@ -89,11 +78,9 @@ export default function FormFinanceira({
     Intelesign_price: financeira?.Intelesign_price || 0,
     direto: financeira?.direto || false,
     status: financeira?.status ?? true,
-    construtoras:
-      financeira?.construtoras?.map((c) => c.id) || [],
+    construtoras: financeira?.construtoras?.map((c) => c.id) || [],
   });
 
-  // Atualiza formulário quando financeira carrega
   useEffect(() => {
     if (financeira) {
       setForm({
@@ -113,9 +100,6 @@ export default function FormFinanceira({
     }
   }, [financeira]);
 
-  /**
-   * Handler genérico para mudanças nos campos
-   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     field: keyof FinanceiraForm
@@ -127,9 +111,6 @@ export default function FormFinanceira({
     }));
   };
 
-  /**
-   * Handler para switches
-   */
   const handleSwitchChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: keyof FinanceiraForm
@@ -141,9 +122,6 @@ export default function FormFinanceira({
     }));
   };
 
-  /**
-   * Adiciona construtora à lista
-   */
   const handleAddConstrutora = () => {
     if (!selectedConstrutoraId) {
       toast({
@@ -173,9 +151,6 @@ export default function FormFinanceira({
     setSelectedConstrutoraId("");
   };
 
-  /**
-   * Remove construtora da lista
-   */
   const handleRemoveConstrutora = (construtoraId: number) => {
     setForm((prev) => ({
       ...prev,
@@ -183,14 +158,9 @@ export default function FormFinanceira({
     }));
   };
 
-  /**
-   * Busca dados da empresa por CNPJ
-   */
   const handleSearchCNPJ = async () => {
-    // Remove máscara do CNPJ
     const cnpjSemMascara = form.cnpj.replace(/\D/g, "");
 
-    // Validação básica
     if (!cnpjSemMascara || cnpjSemMascara.length !== 14) {
       toast({
         title: "CNPJ inválido",
@@ -212,7 +182,8 @@ export default function FormFinanceira({
       if (!req.ok || data.message) {
         toast({
           title: "CNPJ não encontrado",
-          description: data.message || "Não foi possível encontrar dados para este CNPJ",
+          description:
+            data.message || "Não foi possível encontrar dados para este CNPJ",
           status: "error",
           duration: 4000,
           position: "top-right",
@@ -221,7 +192,6 @@ export default function FormFinanceira({
         return;
       }
 
-      // Preenche os campos com os dados retornados
       setForm((prev) => ({
         ...prev,
         razaosocial: data.razaosocial || prev.razaosocial,
@@ -253,15 +223,11 @@ export default function FormFinanceira({
     }
   };
 
-  /**
-   * Envia formulário
-   */
   const handleSubmit = async () => {
     setIsLoading(true);
-    onSaving?.(true); // Ativa loading global
+    onSaving?.(true);
 
     try {
-      // Validações básicas
       if (!form.cnpj || !form.razaosocial || !form.fantasia) {
         toast({
           title: "Campos obrigatórios",
@@ -281,20 +247,20 @@ export default function FormFinanceira({
 
       const method = isCreateMode ? "POST" : "PUT";
 
-      // Prepara dados para envio
+      // Sanitização rigorosa dos dados para o backend
       const dataToSend = {
         ...form,
-        // Remove espaços extras de todos os campos string
         cnpj: form.cnpj.trim(),
         razaosocial: form.razaosocial.trim(),
         fantasia: form.fantasia.trim(),
         tel: form.tel.trim(),
         email: form.email.toLowerCase().trim(),
         responsavel: form.responsavel.trim(),
-        // Se direto for false, envia null para valor_cert
-        valor_cert: form.direto ? form.valor_cert : null,
-        // Se Intelesign_status for false, envia null para Intelesign_price
-        Intelesign_price: form.Intelesign_status ? form.Intelesign_price : null,
+        valor_cert: form.direto ? Number(form.valor_cert) : 0,
+        Intelesign_status: Boolean(form.Intelesign_status),
+        Intelesign_price: form.Intelesign_status
+          ? Number(form.Intelesign_price)
+          : 0,
       };
 
       const req = await fetch(url, {
@@ -333,12 +299,10 @@ export default function FormFinanceira({
         isClosable: true,
       });
 
-      // Chama callback de sucesso (fecha modal)
       if (onSuccess) {
         onSuccess();
       }
 
-      // Revalida os dados da página
       router.refresh();
     } catch (error) {
       console.error("Erro ao salvar financeira:", error);
@@ -351,14 +315,13 @@ export default function FormFinanceira({
       });
     } finally {
       setIsLoading(false);
-      onSaving?.(false); // Desativa loading global
+      onSaving?.(false);
     }
   };
 
   return (
     <Box width="100%" maxW="1400px" mx="auto">
       <VStack spacing={6} align="stretch">
-        {/* Header informativo */}
         <Box>
           <Text
             fontSize="sm"
@@ -526,7 +489,6 @@ export default function FormFinanceira({
                 placeholder="email@exemplo.com"
                 value={form.email}
                 onChange={(e) => {
-                  // Força lowercase no email durante digitação
                   const lowerEmail = e.target.value.toLowerCase();
                   setForm((prev) => ({ ...prev, email: lowerEmail }));
                 }}
@@ -610,7 +572,9 @@ export default function FormFinanceira({
 
           <Flex gap={2} flexWrap="wrap">
             {form.construtoras.map((construtoraId) => {
-              const construtora = construtoras.find((c) => c.id === construtoraId);
+              const construtora = construtoras.find(
+                (c) => c.id === construtoraId
+              );
               return (
                 <Tag
                   key={construtoraId}
@@ -619,13 +583,21 @@ export default function FormFinanceira({
                   variant="solid"
                   colorScheme="green"
                 >
-                  <TagLabel>{construtora?.fantasia || `ID: ${construtoraId}`}</TagLabel>
-                  <TagCloseButton onClick={() => handleRemoveConstrutora(construtoraId)} />
+                  <TagLabel>
+                    {construtora?.fantasia || `ID: ${construtoraId}`}
+                  </TagLabel>
+                  <TagCloseButton
+                    onClick={() => handleRemoveConstrutora(construtoraId)}
+                  />
                 </Tag>
               );
             })}
             {form.construtoras.length === 0 && (
-              <Text fontSize="sm" color="gray.500" _dark={{ color: "gray.400" }}>
+              <Text
+                fontSize="sm"
+                color="gray.500"
+                _dark={{ color: "gray.400" }}
+              >
                 Nenhuma construtora vinculada
               </Text>
             )}
@@ -649,7 +621,6 @@ export default function FormFinanceira({
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
             {/* Coluna 1: Venda Direta + Valor Cert */}
             <Box>
-              {/* Switch Venda Direta */}
               <Flex align="center" justify="space-between" mb={4}>
                 <FormLabel
                   fontSize="sm"
@@ -667,7 +638,6 @@ export default function FormFinanceira({
                 />
               </Flex>
 
-              {/* Campo Valor Cert */}
               <FormLabel
                 fontSize="sm"
                 fontWeight="md"
@@ -680,15 +650,18 @@ export default function FormFinanceira({
               <Input
                 type="number"
                 placeholder="100"
-                value={form.direto ? form.valor_cert : 100}
+                value={form.direto ? form.valor_cert : 0}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, valor_cert: Number(e.target.value) }))
+                  setForm((prev) => ({
+                    ...prev,
+                    valor_cert: Number(e.target.value),
+                  }))
                 }
                 isDisabled={!form.direto}
                 bg={form.direto ? "gray.50" : "gray.100"}
-                _dark={{ 
-                  bg: form.direto ? "gray.800" : "gray.700", 
-                  borderColor: "gray.600" 
+                _dark={{
+                  bg: form.direto ? "gray.800" : "gray.700",
+                  borderColor: "gray.600",
                 }}
                 borderColor="gray.300"
                 _hover={{ borderColor: form.direto ? "gray.400" : "gray.300" }}
@@ -702,7 +675,6 @@ export default function FormFinanceira({
 
             {/* Coluna 2: Intelesign Ativo + Preço Intelesign */}
             <Box>
-              {/* Switch Intelesign Ativo */}
               <Flex align="center" justify="space-between" mb={4}>
                 <FormLabel
                   fontSize="sm"
@@ -711,7 +683,7 @@ export default function FormFinanceira({
                   color="gray.700"
                   _dark={{ color: "gray.200" }}
                 >
-                  Intelesign Ativo
+                  Intellisign Ativo
                 </FormLabel>
                 <Switch
                   colorScheme="green"
@@ -720,7 +692,6 @@ export default function FormFinanceira({
                 />
               </Flex>
 
-              {/* Campo Preço Intelesign */}
               <FormLabel
                 fontSize="sm"
                 fontWeight="md"
@@ -728,23 +699,28 @@ export default function FormFinanceira({
                 color="gray.700"
                 _dark={{ color: "gray.200" }}
               >
-                Preço Intelesign
+                Preço Intellisign
               </FormLabel>
               <Input
                 type="number"
-                placeholder="10"
-                value={form.Intelesign_status ? form.Intelesign_price : 10}
+                placeholder="0.00"
+                value={form.Intelesign_status ? form.Intelesign_price : 0}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, Intelesign_price: Number(e.target.value) }))
+                  setForm((prev) => ({
+                    ...prev,
+                    Intelesign_price: Number(e.target.value),
+                  }))
                 }
                 isDisabled={!form.Intelesign_status}
                 bg={form.Intelesign_status ? "gray.50" : "gray.100"}
-                _dark={{ 
-                  bg: form.Intelesign_status ? "gray.800" : "gray.700", 
-                  borderColor: "gray.600" 
+                _dark={{
+                  bg: form.Intelesign_status ? "gray.800" : "gray.700",
+                  borderColor: "gray.600",
                 }}
                 borderColor="gray.300"
-                _hover={{ borderColor: form.Intelesign_status ? "gray.400" : "gray.300" }}
+                _hover={{
+                  borderColor: form.Intelesign_status ? "gray.400" : "gray.300",
+                }}
                 _focus={{
                   borderColor: "green.500",
                   boxShadow: "0 0 0 1px var(--chakra-colors-green-500)",
@@ -759,11 +735,7 @@ export default function FormFinanceira({
 
         {/* Botões de Ação */}
         <Flex gap={3} justify="flex-end" pt={4}>
-          <Button
-            variant="outline"
-            onClick={onSuccess}
-            isDisabled={isLoading}
-          >
+          <Button variant="outline" onClick={onSuccess} isDisabled={isLoading}>
             Cancelar
           </Button>
           <Button
