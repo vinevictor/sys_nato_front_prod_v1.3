@@ -11,8 +11,8 @@ export type FinanceiraTypeById = {
   direto: boolean;
   responsavel: string;
   valor_cert: number;
-  Intelesign_status: boolean;
-  Intelesign_price: number;
+  Intelesign_status?: boolean;
+  Intelesign_price?: number;
   status: boolean;
   construtoras: {
     id: number;
