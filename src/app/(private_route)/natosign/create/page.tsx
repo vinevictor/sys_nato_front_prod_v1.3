@@ -37,6 +37,13 @@ interface ConstType {
   fantasia: string;
 }
 
+// Interface para Empreendimento
+interface EmpreendimentoType {
+  id: number;
+  nome: string;
+  Intelesign_status?: boolean;
+}
+
 interface FormData {
   signatureType: "simple" | "qualified";
   document: File | null;
@@ -44,11 +51,13 @@ interface FormData {
   valor: number;
   cca_id: string;
   const_id: string;
+  empreendimento_id: string; // <--- NOVO CAMPO
   title: string;
   subject: string;
   message: string;
   expire_at: number;
 }
+
 const fetchConstrutoras = async () => {
   try {
     const req = await fetch("/api/construtora/intellisign");
@@ -56,6 +65,17 @@ const fetchConstrutoras = async () => {
     return await req.json();
   } catch (error) {
     console.error("Erro ao buscar construtoras:", error);
+    return [];
+  }
+};
+
+const fetchEmpreendimentos = async () => {
+  try {
+    const req = await fetch("/api/empreendimento/intellisign");
+    if (!req.ok) return [];
+    return await req.json();
+  } catch (error) {
+    console.error("Erro ao buscar empreendimentos:", error);
     return [];
   }
 };
@@ -69,6 +89,12 @@ export default function CreateNatosign() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isConstLoading, setIsConstLoading] = useState(true);
   const [availableConst, setAvailableConst] = useState<ConstType[]>([]);
+
+  // Estados para os Empreendimentos
+  const [availableEmpreendimentos, setAvailableEmpreendimentos] = useState<
+    EmpreendimentoType[]
+  >([]);
+  const [isEmpreendimentoLoading, setIsEmpreendimentoLoading] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     signatureType: "simple",
@@ -85,17 +111,19 @@ export default function CreateNatosign() {
     valor: 0,
     cca_id: "",
     const_id: "",
+    empreendimento_id: "", // <--- INICIALIZADO
     title: "SisNato - Assinatura de documento",
     subject: "Contrato de financiamento de imóvel",
     message:
       "Por favor, assine o documento para prosseguir com o processo de financiamento de imóvel.",
     expire_at: 7, // 7 dias
   });
+
   const toast = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
-      // Bloco do CCA (permanece o mesmo)
+      // Bloco do CCA
       setIsCcaLoading(true);
       try {
         const reqCca = await fetch("/api/financeira/intellisign");
@@ -117,12 +145,12 @@ export default function CreateNatosign() {
         setIsCcaLoading(false);
       }
 
+      // Bloco da Construtora
       setIsConstLoading(true);
       try {
         const resConst = await fetchConstrutoras();
         if (resConst && resConst.data) {
           setAvailableConst(resConst.data);
-          // Auto-seleção se houver apenas uma construtora
           if (resConst.data.length === 1) {
             setFormData((prev) => ({
               ...prev,
@@ -134,6 +162,28 @@ export default function CreateNatosign() {
         console.error("Erro ao buscar construtoras:", error);
       } finally {
         setIsConstLoading(false);
+      }
+
+      // Bloco do Empreendimento
+      setIsEmpreendimentoLoading(true);
+      try {
+        const listaEmpreendimentos = await fetchEmpreendimentos();
+        const empreendimentosValidos = Array.isArray(listaEmpreendimentos)
+          ? listaEmpreendimentos
+          : [];
+
+        setAvailableEmpreendimentos(empreendimentosValidos);
+
+        if (empreendimentosValidos.length === 1) {
+          setFormData((prev) => ({
+            ...prev,
+            empreendimento_id: empreendimentosValidos[0].id.toString(),
+          }));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar empreendimentos:", error);
+      } finally {
+        setIsEmpreendimentoLoading(false);
       }
     };
 
@@ -149,6 +199,13 @@ export default function CreateNatosign() {
       ...prev,
       cca_id: ccaId,
       valor: selectedCca ? selectedCca.Intelesign_price : 0,
+    }));
+  };
+
+  const handleEmpreendimentoChange = (empId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      empreendimento_id: empId,
     }));
   };
 
@@ -194,14 +251,6 @@ export default function CreateNatosign() {
   const prevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async () => {
-    // if (!formData.const_id) {
-    //   toast({
-    //     title: "Campo Obrigatório",
-    //     description: "Por favor, selecione uma Construtora.",
-    //     status: "warning",
-    //   });
-    //   return;
-    // }
     if (!formData.cca_id) {
       toast({
         title: "Campo Obrigatório",
@@ -252,6 +301,12 @@ export default function CreateNatosign() {
 
       apiFormData.append("file", formData.document);
       apiFormData.append("const_id", formData.const_id || "1");
+
+      // Anexa o empreendimento_id se houver algum selecionado
+      if (formData.empreendimento_id) {
+        apiFormData.append("empreendimento_id", formData.empreendimento_id);
+      }
+
       apiFormData.append("signatarios", JSON.stringify(signatariosParaApi));
       if (formData.title) apiFormData.append("title", formData.title);
       if (formData.subject) apiFormData.append("subject", formData.subject);
@@ -357,81 +412,83 @@ export default function CreateNatosign() {
           shadow="lg"
         >
           <VStack spacing={{ base: 6, md: 8 }} align="stretch">
-
-          {step === 1 && (
-            <Step1
-              formData={formData}
-              setFormData={setFormData}
-              handleCcaChange={handleCcaChange}
-              availableCcas={availableCcas}
-              isCcaLoading={isCcaLoading}
-              isConstLoading={isConstLoading}
-              availableConst={availableConst}
-            />
-          )}
-          {step === 2 && (
-            <Step2
-              formData={formData}
-              setFormData={setFormData}
-              previewUrl={previewUrl}
-            />
-          )}
-          {step === 3 && (
-            <Step3 formData={formData} setFormData={setFormData} />
-          )}
-
-          <Flex
-            justify={step === 1 ? "flex-end" : "space-between"}
-            pt={{ base: 4, md: 6 }}
-            borderTopWidth="1px"
-            borderTopColor="gray.200"
-            _dark={{ borderTopColor: "gray.700" }}
-            gap={3}
-            wrap="wrap"
-          >
-            {step > 1 && (
-              <Button
-                onClick={prevStep}
-                variant="outline"
-                colorScheme="gray"
-                size={{ base: "md", md: "lg" }}
-                borderColor="gray.300"
-                _dark={{ borderColor: "gray.600" }}
-              >
-                Voltar
-              </Button>
+            {step === 1 && (
+              <Step1
+                formData={formData}
+                setFormData={setFormData}
+                handleCcaChange={handleCcaChange}
+                availableCcas={availableCcas}
+                isCcaLoading={isCcaLoading}
+                isConstLoading={isConstLoading}
+                availableConst={availableConst}
+                availableEmpreendimentos={availableEmpreendimentos}
+                isEmpreendimentoLoading={isEmpreendimentoLoading}
+                handleEmpreendimentoChange={handleEmpreendimentoChange}
+              />
             )}
-
-            {step < 3 && (
-              <Button
-                onClick={nextStep}
-                colorScheme="blue"
-                bg="#3B82F6"
-                _hover={{ bg: "#2563EB" }}
-                size={{ base: "md", md: "lg" }}
-              >
-                Próximo
-              </Button>
+            {step === 2 && (
+              <Step2
+                formData={formData}
+                setFormData={setFormData}
+                previewUrl={previewUrl}
+              />
             )}
-
             {step === 3 && (
-              <Button
-                onClick={handleSubmit}
-                colorScheme="green"
-                bg="#00713D"
-                _hover={{ bg: "#005a31" }}
-                _dark={{
-                  bg: "#00d672",
-                  color: "gray.900",
-                  _hover: { bg: "#00c060" },
-                }}
-                isLoading={isLoading}
-                size={{ base: "md", md: "lg" }}
-              >
-                Enviar Envelope
-              </Button>
+              <Step3 formData={formData} setFormData={setFormData} />
             )}
-          </Flex>
+
+            <Flex
+              justify={step === 1 ? "flex-end" : "space-between"}
+              pt={{ base: 4, md: 6 }}
+              borderTopWidth="1px"
+              borderTopColor="gray.200"
+              _dark={{ borderTopColor: "gray.700" }}
+              gap={3}
+              wrap="wrap"
+            >
+              {step > 1 && (
+                <Button
+                  onClick={prevStep}
+                  variant="outline"
+                  colorScheme="gray"
+                  size={{ base: "md", md: "lg" }}
+                  borderColor="gray.300"
+                  _dark={{ borderColor: "gray.600" }}
+                >
+                  Voltar
+                </Button>
+              )}
+
+              {step < 3 && (
+                <Button
+                  onClick={nextStep}
+                  colorScheme="blue"
+                  bg="#3B82F6"
+                  _hover={{ bg: "#2563EB" }}
+                  size={{ base: "md", md: "lg" }}
+                >
+                  Próximo
+                </Button>
+              )}
+
+              {step === 3 && (
+                <Button
+                  onClick={handleSubmit}
+                  colorScheme="green"
+                  bg="#00713D"
+                  _hover={{ bg: "#005a31" }}
+                  _dark={{
+                    bg: "#00d672",
+                    color: "gray.900",
+                    _hover: { bg: "#00c060" },
+                  }}
+                  isLoading={isLoading}
+                  size={{ base: "md", md: "lg" }}
+                >
+                  Enviar Envelope
+                </Button>
+              )}
+            </Flex>
           </VStack>
         </Box>
       </VStack>

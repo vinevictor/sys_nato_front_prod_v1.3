@@ -89,6 +89,13 @@ type EnvelopeType = {
     fantasia: string;
     tel: string;
   };
+  empreendimento_id?: number;
+  empreendimento?: {
+    id: number;
+    nome: string;
+    cidade?: string;
+    estado?: string;
+  };
   createdAt: string;
   description: string;
   doc_modificado_down: string;
@@ -297,6 +304,18 @@ export default function NatosignViewClient({
           <InfoItem label="ID" value={envelope.id} />
           <InfoItem label="UUID" value={envelope.UUID} />
           <InfoItem label="Nome do Arquivo" value={envelope.original_name} />
+          <InfoItem
+            label="Construtora"
+            value={envelope.construtora?.fantasia || "Não informada"}
+          />
+          <InfoItem
+            label="Financeira (CCA)"
+            value={envelope.cca?.fantasia || "Não informada"}
+          />
+          <InfoItem
+            label="Empreendimento"
+            value={envelope.empreendimento?.nome || "Não informado"}
+          />
           <InfoItem label="Data de Criação" value={createdAtFormatted} />
           <InfoItem label="Última Atualização" value={updatedAtFormatted} />
           <InfoItem label="Status do Pagamento" value={envelope.status_pg} />
@@ -324,7 +343,7 @@ export default function NatosignViewClient({
           </Button>
           <Button
             as={Link}
-           href={envelope.doc_modificado_down}
+            href={envelope.doc_modificado_down}
             leftIcon={<FiDownload />}
             size={{ base: "sm", md: "md" }}
             colorScheme="green"
@@ -342,9 +361,7 @@ export default function NatosignViewClient({
             Baixar Assinado
           </Button>
           <Button
-            onClick={() =>
-              window.open(envelope.background_sheet, "_blank")
-            }
+            onClick={() => window.open(envelope.background_sheet, "_blank")}
             leftIcon={<FiDownload />}
             size={{ base: "sm", md: "md" }}
             colorScheme="green"

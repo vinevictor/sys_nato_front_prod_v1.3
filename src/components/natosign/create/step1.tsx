@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FormControl,
   FormLabel,
@@ -26,6 +28,13 @@ interface ConstType {
   fantasia: string;
 }
 
+// Interface para os Empreendimentos
+interface EmpreendimentoType {
+  id: number;
+  nome: string;
+  Intelesign_status?: boolean;
+}
+
 interface Step1Props {
   formData: any;
   setFormData: (data: any) => void;
@@ -34,6 +43,10 @@ interface Step1Props {
   isCcaLoading: boolean;
   isConstLoading: boolean;
   availableConst: ConstType[];
+  // Novas props do Empreendimento:
+  availableEmpreendimentos?: EmpreendimentoType[];
+  isEmpreendimentoLoading?: boolean;
+  handleEmpreendimentoChange?: (empId: string) => void;
 }
 
 export default function Step1({
@@ -44,6 +57,9 @@ export default function Step1({
   isCcaLoading,
   isConstLoading,
   availableConst,
+  availableEmpreendimentos = [],
+  isEmpreendimentoLoading = false,
+  handleEmpreendimentoChange,
 }: Step1Props) {
   // Cores do tema
   const labelColor = useColorModeValue("gray.700", "gray.300");
@@ -157,8 +173,67 @@ export default function Step1({
     );
   };
 
+  // Renderizador dinâmico para o Empreendimento
+  const renderEmpreendimentoComponent = () => {
+    if (isEmpreendimentoLoading) {
+      return <Skeleton height="40px" borderRadius="md" />;
+    }
+
+    if (availableEmpreendimentos.length > 1) {
+      return (
+        <Select
+          placeholder="Selecione o Empreendimento (Opcional)"
+          value={formData.empreendimento_id || ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (handleEmpreendimentoChange) {
+              handleEmpreendimentoChange(val);
+            } else {
+              handleChange("empreendimento_id", val);
+            }
+          }}
+          bg={inputBg}
+          borderColor={inputBorder}
+          focusBorderColor={inputFocusBorder}
+          _hover={{ borderColor: inputFocusBorder }}
+          size="md"
+        >
+          {availableEmpreendimentos.map((emp) => (
+            <option key={emp.id} value={emp.id.toString()}>
+              {emp.nome}
+            </option>
+          ))}
+        </Select>
+      );
+    }
+
+    if (availableEmpreendimentos.length === 1) {
+      return (
+        <Text
+          fontSize="md"
+          p={3}
+          borderWidth="1px"
+          borderRadius="md"
+          bg={selectedBg}
+          borderColor={selectedBorder}
+          color={selectedTextColor}
+        >
+          <strong>{availableEmpreendimentos[0].nome}</strong> (selecionado
+          automaticamente)
+        </Text>
+      );
+    }
+
+    return (
+      <Text color="gray.500" fontSize="sm" p={2}>
+        Nenhum Empreendimento cadastrado para vincular.
+      </Text>
+    );
+  };
+
   return (
     <VStack spacing={6} align="stretch">
+      {/* Construtora */}
       <FormControl isRequired>
         <FormLabel
           fontSize="sm"
@@ -171,6 +246,7 @@ export default function Step1({
         {renderConstComponent()}
       </FormControl>
 
+      {/* Financeira */}
       <FormControl isRequired>
         <FormLabel
           fontSize="sm"
@@ -183,6 +259,20 @@ export default function Step1({
         {renderCcaComponent()}
       </FormControl>
 
+      {/* Empreendimento (Opcional para vinculação) */}
+      <FormControl>
+        <FormLabel
+          fontSize="sm"
+          fontWeight="semibold"
+          color={labelColor}
+          mb={2}
+        >
+          Empreendimento
+        </FormLabel>
+        {renderEmpreendimentoComponent()}
+      </FormControl>
+
+      {/* Tipo de Assinatura */}
       <FormControl isRequired>
         <FormLabel
           fontSize="sm"
@@ -201,13 +291,14 @@ export default function Step1({
           _hover={{ borderColor: inputFocusBorder }}
           size="md"
         >
-          <option value="simple">Simples - Sem Certificado Digital </option>
+          <option value="simple">Simples - Sem Certificado Digital</option>
           <option value="qualified">
             Qualificada - Com Certificado Digital
           </option>
         </Select>
       </FormControl>
 
+      {/* Título do Envelope */}
       <FormControl>
         <FormLabel
           fontSize="sm"
@@ -229,6 +320,7 @@ export default function Step1({
         />
       </FormControl>
 
+      {/* Assunto do Email */}
       <FormControl>
         <FormLabel
           fontSize="sm"
@@ -250,6 +342,7 @@ export default function Step1({
         />
       </FormControl>
 
+      {/* Mensagem do Email */}
       <FormControl>
         <FormLabel
           fontSize="sm"
@@ -273,6 +366,7 @@ export default function Step1({
         />
       </FormControl>
 
+      {/* Dias para Expiração */}
       <FormControl>
         <FormLabel
           fontSize="sm"
