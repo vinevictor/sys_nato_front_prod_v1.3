@@ -264,14 +264,14 @@ export const DadoCompomentListNatosign = ({
               color="gray.700"
               _dark={{ color: "gray.300" }}
             >
-              Nome do Signatário
+              Título ou Signatário
             </Text>
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Icon as={MdSearch} color="gray.400" />
               </InputLeftElement>
               <Input
-                placeholder="Digite o nome"
+                placeholder="Pesquise por título ou signatário..."
                 value={nome ?? ""}
                 onChange={(e) => setNome(e.target.value)}
                 bg="white"
@@ -507,7 +507,7 @@ export const DadoCompomentListNatosign = ({
                     color="gray.700"
                     _dark={{ color: "gray.300" }}
                   >
-                    Signatários
+                    Título
                   </Th>
                   <Th
                     minW="120px"
