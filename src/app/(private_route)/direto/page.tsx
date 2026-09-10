@@ -1,5 +1,4 @@
 import { DadoCompomentList } from "@/components/direto/lista";
-import { CompartilharModal } from "@/components/direto/lista/CompartilharModal";
 import ModalPrimeAsses from "@/components/prime_asses";
 import ModalTermos from "@/components/termos";
 import { GetSessionServer } from "@/lib/auth_confg";
@@ -134,7 +133,8 @@ export default async function DiretoPage({
               >
                 Nova Solicitação
               </Button>
-              <CompartilharModal session={session} />
+              {/* PAUSADO */}
+              {/* <CompartilharModal session={session} />  */}
             </Flex>
           </Flex>
 
