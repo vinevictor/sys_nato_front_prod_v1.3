@@ -87,16 +87,22 @@ export const TableComponentNatosign = ({
       >
         <Text fontWeight="medium">{dados.id}</Text>
       </Td>
+
+      {/* Título do Envelope substituindo os signatários */}
       <Td
         p={{ base: 2, md: 3 }}
         borderBottomColor="gray.200"
         _dark={{ borderBottomColor: "gray.700", color: "gray.100" }}
         color="gray.800"
+        maxW={{ base: "200px", md: "260px" }}
       >
-        {dados.signatarios && dados.signatarios.length > 0
-          ? dados.signatarios.map((s: { nome: string }) => s.nome).join(", ")
-          : "--"}
+        <Tooltip label={dados.title || "--"} placement="top-start" hasArrow>
+          <Text fontWeight="medium" isTruncated>
+            {dados.title || "--"}
+          </Text>
+        </Tooltip>
       </Td>
+
       <Td
         p={{ base: 2, md: 3 }}
         borderBottomColor="gray.200"
