@@ -195,7 +195,7 @@ export default function FormCadastroDireto({
       router.push(
         `/direto/pagamento?token=${urlToken}&nome=${encodeURIComponent(
           payload.nome
-        )}&cpf=${payload.cpf}`
+        )}&cpf=${payload.cpf}&idSolicitacao=${createData.id}`
       );
     } catch (error: any) {
       toast({

@@ -196,57 +196,69 @@ export default function ContainerPagamentoDireto({
             }
           );
 
-          if (solRes.ok) {
-            const solData = await solRes.json();
-            valorFinal = Number(solData.valorcd || 0).toFixed(2);
-            setValorCert(valorFinal);
-
-            if (
-              solData.pg_andamento?.toUpperCase() === "PAGO" ||
-              solData.pg_status
-            ) {
-              setPaymentStatus("CONCLUIDA");
-              setLoading(false);
-              return;
-            }
-
-            // Se já tem PIX associado, verifica primeiro se não está expirado na Efí
-            if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
-              const checkPix = await fetch(
-                `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix/verifique/${solData.txid}`
-              );
-              const checkResult = await checkPix.json();
-
-              // Se a Efí disser que expirou/foi removido, gera um PIX novo na hora
-              if (
-                checkResult.status === "REMOVIDO_PELO_PSP_RECEBEDOR" ||
-                checkResult.status === "EXPIRADO"
-              ) {
-                toast({
-                  title: "Cobrança expirada",
-                  description: "Gerando um novo QR Code PIX...",
-                  status: "info",
-                  duration: 3000,
-                });
-                await gerarNovoPix(targetId, valorFinal);
-                return;
-              }
-
-              // PIX ainda é válido: restaura e inicia o polling
-              setPixData({
-                pixCopiaECola: solData.pixCopiaECola,
-                imagemQrcode: solData.imagemQrcode,
-                txid: solData.txid,
-              });
-              setPaymentStatus("PENDENTE");
-              setLoading(false);
-
-              pollingRef.current = setInterval(() => {
-                checarStatusPagamento(solData.txid, targetId);
-              }, 5000);
-              return;
-            }
+          if (!solRes.ok) {
+            // Não cai para o CASO 2: se já existe uma solicitação vinculada
+            // a este targetId, gerar um PIX novo aqui poderia sobrescrever
+            // o txid de uma cobrança que o cliente já pagou (ou está prestes
+            // a pagar), órfã-lo do registro. Melhor falhar de forma visível
+            // e deixar o operador tentar de novo do que arriscar isso.
+            throw new Error(
+              "Não foi possível carregar os dados da solicitação. Atualize a página e tente novamente."
+            );
           }
+
+          const solData = await solRes.json();
+          valorFinal = Number(solData.valorcd || 0).toFixed(2);
+          setValorCert(valorFinal);
+
+          if (
+            solData.pg_andamento?.toUpperCase() === "PAGO" ||
+            solData.pg_status
+          ) {
+            setPaymentStatus("CONCLUIDA");
+            setLoading(false);
+            return;
+          }
+
+          // Se já tem PIX associado, verifica primeiro se não está expirado na Efí
+          if (solData.pixCopiaECola && solData.imagemQrcode && solData.txid) {
+            const checkPix = await fetch(
+              `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/pix/verifique/${solData.txid}`
+            );
+            const checkResult = await checkPix.json();
+
+            // Se a Efí disser que expirou/foi removido, gera um PIX novo na hora
+            if (
+              checkResult.status === "REMOVIDO_PELO_PSP_RECEBEDOR" ||
+              checkResult.status === "EXPIRADO"
+            ) {
+              toast({
+                title: "Cobrança expirada",
+                description: "Gerando um novo QR Code PIX...",
+                status: "info",
+                duration: 3000,
+              });
+              await gerarNovoPix(targetId, valorFinal);
+              return;
+            }
+
+            // PIX ainda é válido: restaura e inicia o polling
+            setPixData({
+              pixCopiaECola: solData.pixCopiaECola,
+              imagemQrcode: solData.imagemQrcode,
+              txid: solData.txid,
+            });
+            setPaymentStatus("PENDENTE");
+            setLoading(false);
+
+            pollingRef.current = setInterval(() => {
+              checarStatusPagamento(solData.txid, targetId);
+            }, 5000);
+            return;
+          }
+
+          // Solicitação existe mas ainda não tem PIX gerado (primeira visita
+          // à tela de pagamento): segue para gerar a cobrança inicial.
         }
 
         // CASO 2: Nova solicitação via token
