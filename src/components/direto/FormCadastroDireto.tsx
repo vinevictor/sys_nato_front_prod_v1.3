@@ -173,7 +173,10 @@ export default function FormCadastroDireto({
         `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tokenJWT}`,
+          },
           body: JSON.stringify(payload),
         }
       );
