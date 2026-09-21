@@ -14,8 +14,14 @@ import {
   useColorModeValue,
   SimpleGrid,
   Divider,
+  Input,
 } from "@chakra-ui/react";
-import { MdAccountBalance, MdBusiness } from "react-icons/md";
+import {
+  MdAccountBalance,
+  MdBusiness,
+  MdCopyAll,
+  MdShare,
+} from "react-icons/md";
 import InputBasic from "@/components/input/basic";
 import MaskedInput from "@/components/input/masked";
 
@@ -46,6 +52,9 @@ export default function FormCadastroDireto({
   const textColor = useColorModeValue("gray.800", "white");
   const labelColor = useColorModeValue("gray.700", "gray.300");
   const footerBg = useColorModeValue("gray.50", "gray.900");
+  const selectOptionColor = useColorModeValue("gray.800", "white !important");
+  const selectOptionBg = useColorModeValue("white", "gray.800");
+  const optionInlineColor = useColorModeValue("#2D3748", "#FFFFFF");
 
   const [configuracoes, setConfiguracoes] = useState<
     EmpreendimentoRelacionado[]
@@ -65,6 +74,8 @@ export default function FormCadastroDireto({
   });
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [linkGerado, setLinkGerado] = useState<string>("");
+  const [copiado, setCopiado] = useState(false);
 
   useEffect(() => {
     if (!tokenJWT) return;
@@ -133,70 +144,37 @@ export default function FormCadastroDireto({
     try {
       setLoading(true);
 
-      const linkRes = await fetch(`/api/direto/link`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          financeiroId: Number(form.financeira),
-          empreendimentoId: Number(form.empreendimento),
-          baseUrl: "https://sisnato.com.br/direto/cadastro",
-        }),
-      });
-
-      const linkData = await linkRes.json();
-      if (!linkRes.ok)
-        throw new Error(linkData.message || "Erro ao gerar parâmetros.");
-
-      const urlToken = new URL(linkData.link).searchParams.get("id") || "";
-
-      const infoRes = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/getInfosToken/${urlToken}`
-      );
-      const infoData = await infoRes.json();
-      if (!infoRes.ok)
-        throw new Error(infoData.message || "Erro ao obter valores.");
-
-      const valorFinal = infoData.data.valor_cert;
-
-      const payload = {
-        nome: form.nome.toUpperCase().trim().replace(/\s+/g, " "),
-        cpf: form.cpf.replace(/\D/g, ""),
-        telefone: form.telefone.replace(/\D/g, ""),
-        email: form.email.trim().toLowerCase(),
-        dt_nascimento: new Date(form.datanascimento).toISOString(),
-        token: urlToken,
-        valor: Number(valorFinal),
-        txid: `CD${Date.now()}${Math.floor(Math.random() * 1000)}`,
-      };
-
-      const createRes = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto`,
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/direto/cadastro-cca`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${tokenJWT}`,
           },
-          body: JSON.stringify(payload),
-        }
+          body: JSON.stringify({
+            nome: form.nome.toUpperCase().trim().replace(/\s+/g, " "),
+            cpf: form.cpf.replace(/\D/g, ""),
+            telefone: form.telefone.replace(/\D/g, ""),
+            email: form.email.trim().toLowerCase(),
+            dt_nascimento: new Date(form.datanascimento).toISOString(),
+            financeiroId: Number(form.financeira),
+            empreendimentoId: Number(form.empreendimento),
+            baseUrl: `${window.location.origin}/direto/cliente`,
+          }),
+        },
       );
 
-      const createData = await createRes.json();
-      if (!createRes.ok)
-        throw new Error(createData.message || "Erro ao salvar.");
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.message || "Erro ao cadastrar cliente.");
 
+      setLinkGerado(data.link);
       toast({
-        title:
-          "Solicitação criada com sucesso! Redirecionando para pagamento...",
+        title: "Cliente cadastrado e cobrança gerada!",
         status: "success",
-        duration: 2000,
+        duration: 3000,
       });
-
-      router.push(
-        `/direto/pagamento?token=${urlToken}&nome=${encodeURIComponent(
-          payload.nome
-        )}&cpf=${payload.cpf}&idSolicitacao=${createData.id}`
-      );
     } catch (error: any) {
       toast({
         title: "Falha na criação",
@@ -208,6 +186,92 @@ export default function FormCadastroDireto({
       setLoading(false);
     }
   };
+
+  const copiarLink = () => {
+    navigator.clipboard.writeText(linkGerado);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2000);
+  };
+
+  const novoCadastro = () => {
+    setLinkGerado("");
+    setForm({
+      nome: "",
+      cpf: "",
+      datanascimento: "",
+      telefone: "",
+      email: "",
+      empreendimento: "",
+      financeira: "",
+    });
+    setFinanceirasFiltradas([]);
+  };
+
+  if (linkGerado) {
+    return (
+      <Flex w="full" justify="center" align="start" py={4}>
+        <Flex
+          w="full"
+          maxW="700px"
+          bg={bgColor}
+          rounded="md"
+          border="1px solid"
+          borderColor={borderColor}
+          flexDir="column"
+          gap={4}
+          shadow="lg"
+          p={6}
+        >
+          <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+            Link do cliente gerado
+          </Text>
+          <Text fontSize="sm" color="gray.500">
+            Envie o link abaixo ao cliente. Ele é único e pessoal: o cliente
+            confirma os dados e paga o PIX por ele.
+          </Text>
+          <Input
+            value={linkGerado}
+            isReadOnly
+            size="sm"
+            fontFamily="monospace"
+          />
+          <Flex gap={3} wrap="wrap">
+            <Button
+              leftIcon={<MdCopyAll />}
+              colorScheme="green"
+              bg="#00713D"
+              _hover={{ bg: "#005a31" }}
+              onClick={copiarLink}
+            >
+              {copiado ? "Copiado!" : "Copiar link"}
+            </Button>
+            <Button
+              as="a"
+              href={`https://wa.me/55${form.telefone.replace(
+                /\D/g,
+                "",
+              )}?text=${encodeURIComponent(
+                `Olá! Segue o link para concluir seu cadastro e pagamento do certificado digital: ${linkGerado}`,
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              leftIcon={<MdShare />}
+              variant="outline"
+            >
+              Enviar por WhatsApp
+            </Button>
+          </Flex>
+          <Divider borderColor={borderColor} />
+          <Flex gap={3} justify="flex-end">
+            <Button variant="outline" onClick={() => router.push("/direto")}>
+              Voltar para Vendas Diretas
+            </Button>
+            <Button onClick={novoCadastro}>Novo cadastro</Button>
+          </Flex>
+        </Flex>
+      </Flex>
+    );
+  }
 
   return (
     <Flex w="full" justify="center" align="start" py={4}>
@@ -330,13 +394,13 @@ export default function FormCadastroDireto({
                   _hover: { borderColor: "#00d672" },
                 }}
                 sx={{
-                  color: useColorModeValue("gray.800", "white"),
+                  color: textColor,
                   "& option": {
-                    bg: useColorModeValue("white", "gray.800"),
-                    color: useColorModeValue("gray.800", "white !important"),
+                    bg: selectOptionBg,
+                    color: selectOptionColor,
                   },
                   "& font": {
-                    color: useColorModeValue("gray.800", "white !important"),
+                    color: selectOptionColor,
                   },
                 }}
               >
@@ -344,7 +408,7 @@ export default function FormCadastroDireto({
                   <option
                     key={item.id}
                     value={item.id}
-                    style={{ color: useColorModeValue("#2D3748", "#FFFFFF") }}
+                    style={{ color: optionInlineColor }}
                   >
                     {item.nome}{" "}
                   </option>
@@ -383,13 +447,13 @@ export default function FormCadastroDireto({
                   _hover: { borderColor: "#00d672" },
                 }}
                 sx={{
-                  color: useColorModeValue("gray.800", "white"),
+                  color: textColor,
                   "& option": {
-                    bg: useColorModeValue("white", "gray.800"),
-                    color: useColorModeValue("gray.800", "white !important"),
+                    bg: selectOptionBg,
+                    color: selectOptionColor,
                   },
                   "& font": {
-                    color: useColorModeValue("gray.800", "white !important"),
+                    color: selectOptionColor,
                   },
                 }}
               >
@@ -397,7 +461,7 @@ export default function FormCadastroDireto({
                   <option
                     key={item.id}
                     value={item.id}
-                    style={{ color: useColorModeValue("#2D3748", "#FFFFFF") }}
+                    style={{ color: optionInlineColor }}
                   >
                     {item.fantasia}
                   </option>
@@ -430,9 +494,9 @@ export default function FormCadastroDireto({
               bg="#00713D"
               _hover={{ bg: "#005a31" }}
               isLoading={loading}
-              loadingText="Criando..."
+              loadingText="Gerando link..."
             >
-              Criar Solicitação
+              Cadastrar e gerar link
             </Button>
           </Flex>
         </Box>
