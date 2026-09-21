@@ -37,7 +37,9 @@ export async function middleware(req: NextRequest) {
   const session = await GetSessionServer();
 
   const { pathname } = req.nextUrl;
-  const isPublicRoute = publicRoutes.includes(pathname);
+  // Fluxo público do cliente Nato Direto (protegido por token criptografado + CPF)
+  const isPublicRoute =
+    publicRoutes.includes(pathname) || pathname.startsWith("/direto/cliente/");
 
   if (pathname === "/home" && !session) {
     return NextResponse.redirect(new URL("/login", req.url));
