@@ -145,6 +145,7 @@ export default function CadastrarUsuarioClient() {
                     <CardCreateUpdate.GridUserConstrutora />
                     <CardCreateUpdate.GridUserEmpreendimento />
                     <CardCreateUpdate.GridUserFinanceiro />
+                    <CardCreateUpdate.GridUserImobiliaria />
                   </SimpleGrid>
                 </Box>
 

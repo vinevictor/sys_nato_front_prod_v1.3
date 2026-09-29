@@ -17,6 +17,7 @@ const permissoesDisponiveis = [
   "chamado",
   "solicitacao",
   "natosign",
+  "natodoc",
 ];
 // Função responsável por criar um novo usuário a partir dos dados do formulário
 export default async function UserCreate(_: any, data: FormData) {
@@ -38,6 +39,10 @@ export default async function UserCreate(_: any, data: FormData) {
     ? empreendimento.split(",").map(Number)
     : [];
   const FinanceiraArray = Financeira ? Financeira.split(",").map(Number) : [];
+  const imobiliaria = data.get("imobiliaria") as string | null;
+  const imobiliariaArray = imobiliaria
+    ? imobiliaria.split(",").map(Number).filter((id) => id > 0)
+    : [];
 
   const Cargo = data.get("cargo") as string;
   const hierarquia = data.get("hierarquia") as string;
@@ -77,6 +82,7 @@ export default async function UserCreate(_: any, data: FormData) {
     empreendimento: empreendimentoArray,
     hierarquia: hierarquia,
     Financeira: FinanceiraArray,
+    imobiliaria: imobiliariaArray,
     passwordConfir: passwordConfir,
     role: permissoes,
   };

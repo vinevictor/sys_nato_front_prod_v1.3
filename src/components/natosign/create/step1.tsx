@@ -47,6 +47,14 @@ interface Step1Props {
   availableEmpreendimentos?: EmpreendimentoType[];
   isEmpreendimentoLoading?: boolean;
   handleEmpreendimentoChange?: (empId: string) => void;
+  // Imobiliária que acompanha o processo (NatoDoc)
+  availableImobiliarias?: ImobiliariaType[];
+  isImobiliariaLoading?: boolean;
+}
+
+interface ImobiliariaType {
+  id: number;
+  fantasia: string;
 }
 
 export default function Step1({
@@ -60,6 +68,8 @@ export default function Step1({
   availableEmpreendimentos = [],
   isEmpreendimentoLoading = false,
   handleEmpreendimentoChange,
+  availableImobiliarias = [],
+  isImobiliariaLoading = false,
 }: Step1Props) {
   // Cores do tema
   const labelColor = useColorModeValue("gray.700", "gray.300");
@@ -270,6 +280,46 @@ export default function Step1({
           Empreendimento
         </FormLabel>
         {renderEmpreendimentoComponent()}
+      </FormControl>
+
+      {/* Imobiliária (Opcional - acompanha o processo pelo NatoDoc) */}
+      <FormControl>
+        <FormLabel
+          fontSize="sm"
+          fontWeight="semibold"
+          color={labelColor}
+          mb={2}
+        >
+          Imobiliária
+        </FormLabel>
+        {isImobiliariaLoading ? (
+          <Skeleton height="40px" borderRadius="md" />
+        ) : availableImobiliarias.length > 0 ? (
+          <Select
+            placeholder="Nenhuma (opcional)"
+            value={formData.imobiliaria_id || ""}
+            onChange={(e) => handleChange("imobiliaria_id", e.target.value)}
+            bg={inputBg}
+            borderColor={inputBorder}
+            focusBorderColor={inputFocusBorder}
+            _hover={{ borderColor: inputFocusBorder }}
+            size="md"
+          >
+            {availableImobiliarias.map((imob) => (
+              <option key={imob.id} value={imob.id.toString()}>
+                {imob.fantasia}
+              </option>
+            ))}
+          </Select>
+        ) : (
+          <Text color="gray.500" fontSize="sm" p={2}>
+            Nenhuma imobiliária relacionada ao seu usuário.
+          </Text>
+        )}
+        <Text fontSize="xs" color="gray.500" mt={1}>
+          A imobiliária selecionada poderá acompanhar este envelope pelo
+          NatoDoc.
+        </Text>
       </FormControl>
 
       {/* Tipo de Assinatura */}

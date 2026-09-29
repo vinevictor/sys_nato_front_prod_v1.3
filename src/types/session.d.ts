@@ -7,7 +7,7 @@ declare namespace Session {
    * @param {Construtora[]} construtora
    * @param {string} telefone
    * @param {Empreendimento[]} empreendimento
-   * @param {"ADM" | "CCA" | "GRT" | "CONST" | "USER"} hierarquia
+   * @param {"ADM" | "CCA" | "GRT" | "CONST" | "USER" | "IMOB"} hierarquia
    * @param {string} cargo
    * @param {UserRoler} role
    * @param {boolean} reset_password
@@ -20,11 +20,22 @@ declare namespace Session {
     construtora: Construtora[];
     telefone: string;
     empreendimento: Empreendimento[];
-    hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER";
+    hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER" | "IMOB";
     cargo: string;
     role: UserRoler;
     reset_password: boolean;
     termos: boolean;
+    Imobiliaria?: Imobiliaria[];
+  }
+
+  /**
+   * Imobiliaria
+   * @param {number} id
+   * @param {string} fantasia
+   */
+  interface Imobiliaria {
+    id: number;
+    fantasia: string;
   }
 
   /**
@@ -110,6 +121,7 @@ declare namespace Session {
     relatorio?: boolean;
     natosign?: boolean;
     agente_registro?: boolean;
+    natodoc?: boolean;
   }
 }
 
@@ -155,6 +167,7 @@ interface UserRoler {
   relatorio?: boolean;
   natosign?: boolean;
   agente_registro?: boolean;
+  natodoc?: boolean;
 }
 
 interface AuthUser {
@@ -164,12 +177,13 @@ interface AuthUser {
   construtora: Construtora[];
   telefone: string;
   empreendimento: Empreendimento[];
-  hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER";
+  hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER" | "IMOB";
   cargo: string;
   role: UserRoler;
   reset_password: boolean;
   termos: boolean;
   status?: boolean;
+  Imobiliaria?: { id: number; fantasia: string }[];
 }
 
 // Tipagem retornada ao cliente (useSession)

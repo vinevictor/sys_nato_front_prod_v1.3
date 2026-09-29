@@ -7,7 +7,7 @@ declare namespace SessionNext {
    * @param {Construtora[]} construtora
    * @param {string} telefone
    * @param {Empreendimento[]} empreendimento
-   * @param {"ADM" | "CCA" | "GRT" | "CONST" | "USER"} hierarquia
+   * @param {"ADM" | "CCA" | "GRT" | "CONST" | "USER" | "IMOB"} hierarquia
    * @param {string} cargo
    * @param {UserRoler} role
    * @param {boolean} reset_password
@@ -20,7 +20,7 @@ declare namespace SessionNext {
     construtora: Construtora[];
     telefone: string;
     empreendimento: Empreendimento[];
-    hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER";
+    hierarquia: "ADM" | "CCA" | "GRT" | "CONST" | "USER" | "IMOB";
     cargo: string;
     role: UserRoler | null;
     reset_password: boolean;

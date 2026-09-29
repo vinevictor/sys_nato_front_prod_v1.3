@@ -30,6 +30,7 @@ import MetricsButton from "./metricas";
 import ChamadosButton from "./chamados";
 import NowButton from "./Now";
 import { Session } from "@/types/session";
+import { isAgenteImobiliario } from "@/lib/agenteImobiliario";
 
 /**
  * Props do componente SidebarNavigation
@@ -176,6 +177,13 @@ function SidebarContent({
   const bgColor = useColorModeValue("#F6F3E9", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const theme = useColorModeValue("light", "dark");
+  // Agente Imobiliário só enxerga NatoDoc e FAQ
+  const agenteImobiliario = isAgenteImobiliario(session);
+  const itensVisiveis = agenteImobiliario
+    ? navItems.filter(
+        (item) => item.href === "/natodoc" || item.href === "/faq"
+      )
+    : navItems;
 
   return (
     <Flex
@@ -221,7 +229,7 @@ function SidebarContent({
 
       {/* Itens de navegação */}
       <VStack spacing={1} align="stretch" flex={1} py={4} px={3}>
-        {navItems.map((item) => (
+        {itensVisiveis.map((item) => (
           <NavItemComponent
             key={item.name}
             item={item}
@@ -236,11 +244,13 @@ function SidebarContent({
       <Box borderTop="1px" borderColor={borderColor} p={3}>
         <Flex w="full" direction="column" gap={2}>
           {/* Menu de Notificações/Alertas */}
-          {session && <NotificationMenu session={session} />}
+          {session && !agenteImobiliario && (
+            <NotificationMenu session={session} />
+          )}
           {/* Menu de Chamados */}
-          <ChamadosButton />
+          {!agenteImobiliario && <ChamadosButton />}
           {/* Menu de Now */}
-          {session && <NowButton session={session} />}
+          {session && !agenteImobiliario && <NowButton session={session} />}
           {/* Menu de Administração */}
           {session?.role?.adm && <AdministrativoMenu />}
           {/* Menu de Financeiro */}
@@ -280,6 +290,7 @@ function NavItemComponent({
   const adm = session?.role?.adm;
   const direto = session?.role?.direto;
   const sign = session?.role?.natosign || session?.hierarquia === "ADM";
+  const natodoc = session?.role?.natodoc || session?.hierarquia === "ADM";
 
   return (
     <>
@@ -517,7 +528,7 @@ function NavItemComponent({
           </Link>
         </>
       )}
-      {!item.role && (
+      {(!item.role || (natodoc && item.role === "natodoc")) && (
         <>
           <Link
             href={item.href}

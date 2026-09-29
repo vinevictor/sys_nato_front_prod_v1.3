@@ -27,6 +27,11 @@ const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
     },
     { name: "natosign", label: "Pode criar NatoSign", tag: "natosign" },
     {
+      name: "natodoc",
+      label: "Acesso ao NatoDoc (imobiliária)",
+      tag: "natodoc",
+    },
+    {
       name: "agente_registro",
       label: "Agente de Registro",
       tag: "agente_registro",

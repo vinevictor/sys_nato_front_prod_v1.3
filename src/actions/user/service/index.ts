@@ -17,6 +17,7 @@ export async function UpdateUser(_: any, data: FormData) {
 
   const agente_registro = data.get("agente_registro") ? true : false;
   const natosign = data.get("natosign") ? true : false;
+  const natodoc = data.get("natodoc") ? true : false;
   const adm = data.get("adm") ? true : false;
   const direto = data.get("direto") ? true : false;
   const relatorio = data.get("relatorio") ? true : false;
@@ -40,6 +41,11 @@ export async function UpdateUser(_: any, data: FormData) {
     (data.get("empreendimento") as string)?.split(",").map(Number) ?? [];
   const ListFinanceiro =
     (data.get("financeira") as string)?.split(",").map(Number) ?? [];
+  const ListImobiliaria =
+    (data.get("imobiliaria") as string)
+      ?.split(",")
+      .map(Number)
+      .filter((item) => item > 0) ?? [];
   const cargo = data.get("cargo") ?? "";
   const hierarquia = data.get("hierarquia") ?? "";
 
@@ -56,6 +62,7 @@ export async function UpdateUser(_: any, data: FormData) {
     chamado,
     solicitacao,
     natosign,
+    natodoc,
     agente_registro,
   };
 
@@ -69,6 +76,7 @@ export async function UpdateUser(_: any, data: FormData) {
     cargo: cargo,
     hierarquia: hierarquia,
     construtora: ListConstrutora,
+    imobiliaria: ListImobiliaria,
     role: roleEdit,
   };
 
@@ -98,6 +106,8 @@ export async function UpdateUser(_: any, data: FormData) {
   revalidateTag("user-role");
   revalidateTag("usuarios_list");
   revalidateTag("Usuarios-list-page");
+  // Hierarquia/permissões/imobiliárias alteradas precisam valer no middleware
+  revalidateTag("UseSession-tag");
   await new Promise((resolve) => setTimeout(resolve, 2000));
   redirect("/usuarios");
 }
