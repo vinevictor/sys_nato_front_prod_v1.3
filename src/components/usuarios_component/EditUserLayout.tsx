@@ -164,6 +164,9 @@ export default function EditUserLayout({ id, data }: EditUserLayoutProps) {
                     <CardCreateUpdate.GridUserFinanceiro
                       UserFinanceira={data?.financeiros ?? ""}
                     />
+                    <CardCreateUpdate.GridUserImobiliaria
+                      UserImobiliaria={data?.imobiliarias ?? []}
+                    />
                   </SimpleGrid>
                 </Box>
 

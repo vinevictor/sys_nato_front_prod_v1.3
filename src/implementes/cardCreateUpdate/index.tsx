@@ -24,6 +24,7 @@ import { CardGridUserConstrutora } from "./Grid/CardGridUserConstrutora";
 import { CardGridTagsAlert } from "./Grid/CardGridTagsAlert";
 import { CardGridUserEmpreedimento } from "./Grid/CardGridUserEmpreedimento";
 import { CardGridUserFinanceira } from "./Grid/CardGridUserFinanceira";
+import { CardGridUserImobiliaria } from "./Grid/CardGridUserImobiliaria";
 import { CardGridUserCargo } from "./Grid/CardGridUserCargo";
 import { CardGridUserHierarquia } from "./Grid/CardGridUserHierarquia";
 import { CardGridUserSenha } from "./Grid/CardUserSenha";
@@ -115,6 +116,7 @@ export const CardCreateUpdate = {
   GridTagsAlert: CardGridTagsAlert,
   GridUserEmpreendimento: CardGridUserEmpreedimento,
   GridUserFinanceiro: CardGridUserFinanceira,
+  GridUserImobiliaria: CardGridUserImobiliaria,
   GridUserCargo: CardGridUserCargo,
   GridUserHierarquia: CardGridUserHierarquia,
   GridUserSenha: CardGridUserSenha,

@@ -119,6 +119,7 @@ export async function GetSessionServer(): Promise<SessionServer | null> {
         construtora: dadosUser.construtoras || [],
         empreendimento: dadosUser.empreendimentos || [],
         Financeira: dadosUser.financeiros || [],
+        Imobiliaria: dadosUser.imobiliarias || [],
       }
     };
   } catch (error) {

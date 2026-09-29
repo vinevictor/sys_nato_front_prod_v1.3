@@ -26,4 +26,9 @@ export const CargoOptions: Cargo[] = [
     Label: "Admin",
     param: "admin",
   },
+  {
+    id: 6,
+    Label: "Agente Imobiliário",
+    param: "AgenteImobiliario",
+  },
 ];

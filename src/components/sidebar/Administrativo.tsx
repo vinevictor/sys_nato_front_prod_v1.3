@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
+  FiBriefcase,
   FiUsers,
   FiHome,
   FiDollarSign,
@@ -54,6 +55,12 @@ const adminMenuItems: AdminMenuItem[] = [
     icon: FiSettings,
     href: "/construtoras",
     description: "Gerenciar construtoras",
+  },
+  {
+    name: "Imobiliárias",
+    icon: FiBriefcase,
+    href: "/imobiliarias",
+    description: "Gerenciar imobiliárias (NatoDoc)",
   },
   {
     name: "Financeiras",

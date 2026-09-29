@@ -44,6 +44,11 @@ interface EmpreendimentoType {
   Intelesign_status?: boolean;
 }
 
+interface ImobiliariaType {
+  id: number;
+  fantasia: string;
+}
+
 interface FormData {
   signatureType: "simple" | "qualified";
   document: File | null;
@@ -52,6 +57,7 @@ interface FormData {
   cca_id: string;
   const_id: string;
   empreendimento_id: string; // <--- NOVO CAMPO
+  imobiliaria_id: string;
   title: string;
   subject: string;
   message: string;
@@ -80,6 +86,17 @@ const fetchEmpreendimentos = async () => {
   }
 };
 
+const fetchImobiliarias = async () => {
+  try {
+    const req = await fetch("/api/imobiliaria/select");
+    if (!req.ok) return [];
+    return await req.json();
+  } catch (error) {
+    console.error("Erro ao buscar imobiliárias:", error);
+    return [];
+  }
+};
+
 export default function CreateNatosign() {
   const [step, setStep] = useState(1);
   const router = useRouter();
@@ -95,6 +112,12 @@ export default function CreateNatosign() {
     EmpreendimentoType[]
   >([]);
   const [isEmpreendimentoLoading, setIsEmpreendimentoLoading] = useState(false);
+
+  // Imobiliárias que podem acompanhar o envelope (NatoDoc)
+  const [availableImobiliarias, setAvailableImobiliarias] = useState<
+    ImobiliariaType[]
+  >([]);
+  const [isImobiliariaLoading, setIsImobiliariaLoading] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
     signatureType: "simple",
@@ -112,6 +135,7 @@ export default function CreateNatosign() {
     cca_id: "",
     const_id: "",
     empreendimento_id: "", // <--- INICIALIZADO
+    imobiliaria_id: "",
     title: "SisNato - Assinatura de documento",
     subject: "Contrato de financiamento de imóvel",
     message:
@@ -184,6 +208,19 @@ export default function CreateNatosign() {
         console.error("Erro ao carregar empreendimentos:", error);
       } finally {
         setIsEmpreendimentoLoading(false);
+      }
+
+      // Bloco da Imobiliária
+      setIsImobiliariaLoading(true);
+      try {
+        const listaImobiliarias = await fetchImobiliarias();
+        setAvailableImobiliarias(
+          Array.isArray(listaImobiliarias) ? listaImobiliarias : []
+        );
+      } catch (error) {
+        console.error("Erro ao carregar imobiliárias:", error);
+      } finally {
+        setIsImobiliariaLoading(false);
       }
     };
 
@@ -307,6 +344,11 @@ export default function CreateNatosign() {
         apiFormData.append("empreendimento_id", formData.empreendimento_id);
       }
 
+      // Imobiliária que acompanha o processo pelo NatoDoc (opcional)
+      if (formData.imobiliaria_id) {
+        apiFormData.append("imobiliaria_id", formData.imobiliaria_id);
+      }
+
       apiFormData.append("signatarios", JSON.stringify(signatariosParaApi));
       if (formData.title) apiFormData.append("title", formData.title);
       if (formData.subject) apiFormData.append("subject", formData.subject);
@@ -424,6 +466,8 @@ export default function CreateNatosign() {
                 availableEmpreendimentos={availableEmpreendimentos}
                 isEmpreendimentoLoading={isEmpreendimentoLoading}
                 handleEmpreendimentoChange={handleEmpreendimentoChange}
+                availableImobiliarias={availableImobiliarias}
+                isImobiliariaLoading={isImobiliariaLoading}
               />
             )}
             {step === 2 && (

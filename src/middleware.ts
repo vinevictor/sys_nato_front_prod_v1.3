@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GetSessionServer } from "./lib/auth_confg";
+import {
+  HOME_AGENTE_IMOBILIARIO,
+  isAgenteImobiliario,
+  rotaPermitidaAgenteImobiliario,
+} from "./lib/agenteImobiliario";
 
 const publicRoutes = [
   "/",
@@ -44,8 +49,24 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/home" && !session) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+  const agenteImobiliario = isAgenteImobiliario(session?.user);
+
   if (pathname === "/login" && session) {
-    return NextResponse.redirect(new URL("/home", req.url));
+    return NextResponse.redirect(
+      new URL(agenteImobiliario ? HOME_AGENTE_IMOBILIARIO : "/home", req.url)
+    );
+  }
+
+  // Agente Imobiliário: acesso restrito ao NatoDoc e ao FAQ de suporte
+  if (
+    session &&
+    agenteImobiliario &&
+    !rotaPermitidaAgenteImobiliario(pathname, session.user.id)
+  ) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ message: "Acesso negado" }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL(HOME_AGENTE_IMOBILIARIO, req.url));
   }
 
   if (!session) {
