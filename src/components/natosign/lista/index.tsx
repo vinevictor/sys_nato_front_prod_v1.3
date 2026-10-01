@@ -324,10 +324,11 @@ export const DadoCompomentListNatosign = ({
                 },
               }}
             >
-              <option value="done">Finalizado</option>
+              <option value="done">Concluído</option>
               <option value="waiting">Aguardando</option>
               <option value="signing">Assinando</option>
               <option value="rejected">Rejeitado</option>
+              <option value="expired">Expirado</option>
             </Select>
           </Box>
 
