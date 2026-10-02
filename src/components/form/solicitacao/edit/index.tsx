@@ -159,6 +159,11 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
     () => session?.hierarquia === "ADM",
     [session?.hierarquia]
   );
+  // ADM ou quem tem a permissão "Pode editar Solicitação" (CPF continua só ADM)
+  const canEdit = useMemo(
+    () => isAdmin || !!session?.role?.solicitacao,
+    [isAdmin, session?.role?.solicitacao]
+  );
   const Hierarquia = useMemo(
     () => session?.hierarquia || null,
     [session?.hierarquia]
@@ -318,7 +323,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
               handleChange("nome", normalizedValue);
             }}
             required
-            isReadOnly={!isAdmin}
+            isReadOnly={!canEdit}
           />
           <InputBasic
             boxWidth="25%"
@@ -328,7 +333,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             value={form?.dt_nascimento ? form?.dt_nascimento.split("T")[0] : ""}
             onvalue={(value) => handleChange("dt_nascimento", value)}
             required
-            isReadOnly={!isAdmin}
+            isReadOnly={!canEdit}
           />
         </Flex>
         {/* Linha 2: Email, Whatsapp 1, Whatsapp 2 */}
@@ -341,7 +346,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             value={form?.email || ""}
             onvalue={(value) => handleChange("email", value)}
             required
-            isReadOnly={!isAdmin}
+            isReadOnly={!canEdit}
           />
           <MaskedInput
             boxWidth="25%"
@@ -353,7 +358,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
             onvalue={(value) => handleChange("telefone", value)}
             required
             isWhatsapp
-            isReadOnly={!isAdmin}
+            isReadOnly={!canEdit}
           />
           <HStack align={"end"}>
             <IconButton
@@ -389,7 +394,7 @@ function FormSolicitacaoEdit({ id, data, session }: FormSolicitacaoEditProps) {
         </Flex>
         <SelectConstEmpFinCor
           session={session}
-          isAdmin={isAdmin}
+          isAdmin={canEdit}
           Form={form}
           ValueConstrutora={(value: number) =>
             handleChange("construtoraId", Number(value))
