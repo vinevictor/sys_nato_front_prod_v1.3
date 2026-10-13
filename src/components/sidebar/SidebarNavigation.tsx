@@ -28,6 +28,7 @@ import AdministrativoMenu from "./Administrativo";
 import FinanceiroButton from "./financeiro";
 import MetricsButton from "./metricas";
 import ChamadosButton from "./chamados";
+import ChatButton from "./chat";
 import NowButton from "./Now";
 import { Session } from "@/types/session";
 import { isAgenteImobiliario } from "@/lib/agenteImobiliario";
@@ -249,6 +250,10 @@ function SidebarContent({
           )}
           {/* Menu de Chamados */}
           {!agenteImobiliario && <ChamadosButton />}
+          {/* Webchat de atendimento */}
+          {(session?.hierarquia === "ADM" || session?.role?.chat) && (
+            <ChatButton />
+          )}
           {/* Menu de Now */}
           {session && !agenteImobiliario && <NowButton session={session} />}
           {/* Menu de Administração */}

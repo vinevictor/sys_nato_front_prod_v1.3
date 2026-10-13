@@ -122,6 +122,7 @@ declare namespace Session {
     natosign?: boolean;
     agente_registro?: boolean;
     natodoc?: boolean;
+    chat?: boolean;
   }
 }
 
@@ -168,6 +169,7 @@ interface UserRoler {
   natosign?: boolean;
   agente_registro?: boolean;
   natodoc?: boolean;
+  chat?: boolean;
 }
 
 interface AuthUser {
