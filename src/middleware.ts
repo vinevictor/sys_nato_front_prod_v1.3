@@ -44,7 +44,11 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   // Fluxo público do cliente Nato Direto (protegido por token criptografado + CPF)
   const isPublicRoute =
-    publicRoutes.includes(pathname) || pathname.startsWith("/direto/cliente/");
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/direto/cliente/") ||
+    // Webchat do cliente (protegido pelo token do chat + CPF)
+    pathname === "/chat" ||
+    pathname.startsWith("/chat/");
 
   if (pathname === "/home" && !session) {
     return NextResponse.redirect(new URL("/login", req.url));

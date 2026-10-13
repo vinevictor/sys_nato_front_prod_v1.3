@@ -20,6 +20,7 @@ const lista: { name: keyof UserRoler | string; label: string; tag: string }[] =
     { name: "now", label: "Pode criar Now", tag: "now" },
     { name: "alerta", label: "Pode criar e responder Alerta", tag: "alert" },
     { name: "chamado", label: "Pode ver e responder Chamado", tag: "chamado" },
+    { name: "chat", label: "Pode atender o Chat", tag: "chat" },
     {
       name: "solicitacao",
       label: "Pode editar Solicitação",

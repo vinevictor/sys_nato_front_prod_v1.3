@@ -28,6 +28,7 @@ export async function UpdateUser(_: any, data: FormData) {
   const now = data.get("now") ? true : false;
   const alert = data.get("alerta") ? true : false;
   const chamado = data.get("chamado") ? true : false;
+  const chat = data.get("chat") ? true : false;
   const solicitacao = data.get("solicitacao") ? true : false;
   const id = data.get("id") ?? "";
   const cpf = (data.get("cpf") as string)?.replace(/\D/g, "") ?? "";
@@ -60,6 +61,7 @@ export async function UpdateUser(_: any, data: FormData) {
     now,
     alert,
     chamado,
+    chat,
     solicitacao,
     natosign,
     natodoc,
