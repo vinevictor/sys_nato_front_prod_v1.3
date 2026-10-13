@@ -31,8 +31,10 @@ export function useChatSocket(
     if (!ativo) return;
     let primeiraConexao = true;
 
+    // Começa por polling (HTTPS comum) e sobe para WebSocket se der;
+    // assim um bloqueio de wss:// (CSP, proxy, rede) não derruba o chat
     const socket = io(`${CHAT_API_URL}/chat`, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
       auth: (cb) => {
         const fn = authRef.current;
         if (!fn) return cb({});
@@ -48,10 +50,18 @@ export function useChatSocket(
       if (!primeiraConexao) reconectarRef.current?.();
       primeiraConexao = false;
     });
-    socket.on("disconnect", () => setConectado(false));
+    let timerReconexao: ReturnType<typeof setTimeout> | undefined;
+    socket.on("disconnect", (motivo) => {
+      setConectado(false);
+      // Desconexão pelo servidor não reconecta sozinha (ex.: token recusado)
+      if (motivo === "io server disconnect") {
+        timerReconexao = setTimeout(() => socket.connect(), 5000);
+      }
+    });
     socket.onAny((evento, dados) => handlersRef.current[evento]?.(dados));
 
     return () => {
+      clearTimeout(timerReconexao);
       socket.disconnect();
       socketRef.current = null;
     };
