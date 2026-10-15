@@ -20,9 +20,15 @@ import { FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 interface Step3Props {
   formData: any;
   setFormData: (data: any) => void;
+  /** Notificação por WhatsApp ligada no backend */
+  whatsappAtivo?: boolean;
 }
 
-export default function Step3({ formData, setFormData }: Step3Props) {
+export default function Step3({
+  formData,
+  setFormData,
+  whatsappAtivo,
+}: Step3Props) {
   const [searchingIndex, setSearchingIndex] = useState<number | null>(null);
   const toast = useToast();
   const handleSignerChange = (index: number, field: string, value: string) => {
@@ -169,7 +175,9 @@ export default function Step3({ formData, setFormData }: Step3Props) {
               </InputGroup>
             </FormControl>
             <FormControl>
-              <FormLabel>Celular (WhatsApp)</FormLabel>
+              <FormLabel>
+                {whatsappAtivo ? "Celular (WhatsApp)" : "Celular"}
+              </FormLabel>
               <Input
                 type="tel"
                 placeholder="(00) 90000-0000"
@@ -178,10 +186,12 @@ export default function Step3({ formData, setFormData }: Step3Props) {
                   handleSignerChange(index, "phone", e.target.value)
                 }
               />
-              <FormHelperText>
-                Opcional. Com o celular, o pedido de assinatura também chega por
-                WhatsApp.
-              </FormHelperText>
+              {whatsappAtivo && (
+                <FormHelperText>
+                  Opcional. Com o celular, o pedido de assinatura também chega
+                  por WhatsApp.
+                </FormHelperText>
+              )}
             </FormControl>
           </VStack>
         </Box>
