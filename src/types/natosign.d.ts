@@ -9,6 +9,8 @@ declare namespace natosign {
     cpf: string;
     state: string;
     updatedAt: string;
+    telefone?: string | null;
+    filled_at?: string | null;
   }
 
   /**

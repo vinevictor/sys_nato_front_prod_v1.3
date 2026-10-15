@@ -14,7 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiDownload, FiExternalLink, FiRefreshCw } from "react-icons/fi";
+import {
+  FiDownload,
+  FiExternalLink,
+  FiRefreshCw,
+  FiSend,
+} from "react-icons/fi";
 import { SignatarioCard } from "./SignatarioCard";
 import { PDFViewer } from "./PDFViewer";
 
@@ -129,6 +134,39 @@ export default function NatosignViewClient({
   const toast = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  // "todos" ou o id do signatário que está sendo reenviado
+  const [reenviando, setReenviando] = useState<number | "todos" | null>(null);
+
+  const handleReenviar = async (signatarioId?: number) => {
+    setReenviando(signatarioId ?? "todos");
+    try {
+      const response = await fetch(`/api/intelesign/reenviar/${envelope.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signatarioId ? { signatarioId } : {}),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.message || "Não foi possível reenviar.");
+      }
+      toast({
+        title: "Notificação reenviada!",
+        description: data?.message,
+        status: "success",
+        isClosable: true,
+      });
+      router.refresh();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao reenviar",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setReenviando(null);
+    }
+  };
 
   const handleUpdateStatus = async () => {
     setIsUpdating(true);
@@ -251,6 +289,18 @@ export default function NatosignViewClient({
   );
   const pdfUrl = envelope.doc_modificado_viw || envelope.doc_original_viw;
 
+  // Reenvio só faz sentido com o envelope aguardando assinatura
+  const envelopePendente = ![
+    "done",
+    "completed",
+    "rejected",
+    "failed",
+    "expired",
+  ].includes(envelope.status);
+  const signatarioPendente = (signer: any) =>
+    !["done", "filled", "rejected"].includes(signer.state) && !signer.filled_at;
+  const temPendentes = envelopePendente && signatarios.some(signatarioPendente);
+
   const shouldShowUpdateButton = (): boolean => {
     const statusFinalizado =
       envelope.status === "done" || envelope.status === "completed";
@@ -273,22 +323,38 @@ export default function NatosignViewClient({
         <Heading size="md" color="#023147" _dark={{ color: "gray.100" }}>
           Detalhes do Envelope
         </Heading>
-        <Button
-          leftIcon={<FiRefreshCw />}
-          onClick={handleUpdateStatus}
-          isLoading={isUpdating}
-          size={{ base: "sm", md: "md" }}
-          colorScheme="green"
-          bg="#00713D"
-          _hover={{ bg: "#005a31" }}
-          _dark={{
-            bg: "#00d672",
-            color: "gray.900",
-            _hover: { bg: "#00c060" },
-          }}
-        >
-          Sincronizar Status
-        </Button>
+        <Flex gap={2} wrap="wrap">
+          <Button
+            leftIcon={<FiRefreshCw />}
+            onClick={handleUpdateStatus}
+            isLoading={isUpdating}
+            size={{ base: "sm", md: "md" }}
+            colorScheme="green"
+            bg="#00713D"
+            _hover={{ bg: "#005a31" }}
+            _dark={{
+              bg: "#00d672",
+              color: "gray.900",
+              _hover: { bg: "#00c060" },
+            }}
+          >
+            Sincronizar Status
+          </Button>
+          {temPendentes && (
+            <Button
+              leftIcon={<FiSend />}
+              onClick={() => handleReenviar()}
+              isLoading={reenviando === "todos"}
+              loadingText="Reenviando..."
+              isDisabled={reenviando !== null && reenviando !== "todos"}
+              size={{ base: "sm", md: "md" }}
+              variant="outline"
+              colorScheme="green"
+            >
+              Reenviar para pendentes
+            </Button>
+          )}
+        </Flex>
       </Flex>
 
       {/* Informações principais */}
@@ -407,7 +473,16 @@ export default function NatosignViewClient({
         {signatarios.length > 0 ? (
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
             {signatarios.map((signer: any) => (
-              <SignatarioCard key={signer.id} signer={signer} />
+              <SignatarioCard
+                key={signer.id}
+                signer={signer}
+                reenviando={reenviando === signer.id}
+                onReenviar={
+                  envelopePendente && signatarioPendente(signer)
+                    ? () => handleReenviar(signer.id)
+                    : undefined
+                }
+              />
             ))}
           </SimpleGrid>
         ) : (

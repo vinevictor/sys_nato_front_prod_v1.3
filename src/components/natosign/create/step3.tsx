@@ -1,6 +1,7 @@
 "use client";
 import {
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   VStack,
@@ -168,7 +169,7 @@ export default function Step3({ formData, setFormData }: Step3Props) {
               </InputGroup>
             </FormControl>
             <FormControl>
-              <FormLabel>Telefone</FormLabel>
+              <FormLabel>Celular (WhatsApp)</FormLabel>
               <Input
                 type="tel"
                 placeholder="(00) 90000-0000"
@@ -177,6 +178,10 @@ export default function Step3({ formData, setFormData }: Step3Props) {
                   handleSignerChange(index, "phone", e.target.value)
                 }
               />
+              <FormHelperText>
+                Opcional. Com o celular, o pedido de assinatura também chega por
+                WhatsApp.
+              </FormHelperText>
             </FormControl>
           </VStack>
         </Box>
