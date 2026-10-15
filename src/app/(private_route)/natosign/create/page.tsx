@@ -332,6 +332,10 @@ export default function CreateNatosign() {
         nome: s.name.toUpperCase(),
         email: s.email.toLowerCase(),
         cpf: s.cpf.replace(/\D/g, ""),
+        // Opcional: com telefone a Intellisign também avisa por WhatsApp
+        ...(s.phone?.replace(/\D/g, "") && {
+          telefone: s.phone.replace(/\D/g, ""),
+        }),
       }));
 
       const apiFormData = new FormData();

@@ -5,11 +5,13 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   Flex,
   HStack,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { FiSend } from "react-icons/fi";
 
 // Função para formatar o CPF (12345678901 -> 123.456.789-01)
 const formatCPF = (cpf: string) => {
@@ -19,6 +21,13 @@ const formatCPF = (cpf: string) => {
   // Aplica a máscara
   return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 };
+
+// 5516999999999 -> (16) 99999-9999
+const formatTelefone = (telefone: string) =>
+  telefone
+    .replace(/\D/g, "")
+    .replace(/^55/, "")
+    .replace(/^(\d{2})(\d{4,5})(\d{4})$/, "($1) $2-$3");
 
 // Função para dar cor ao status do signatário
 const getSignerStatusBadge = (state: string) => {
@@ -46,10 +55,19 @@ interface SignatarioCardProps {
     cpf: string;
     state: string;
     updatedAt: string;
+    telefone?: string | null;
+    filled_at?: string | null;
   };
+  /** Quando informado, mostra o botão de reenvio (signatário pendente) */
+  onReenviar?: () => void;
+  reenviando?: boolean;
 }
 
-export const SignatarioCard = ({ signer }: SignatarioCardProps) => {
+export const SignatarioCard = ({
+  signer,
+  onReenviar,
+  reenviando,
+}: SignatarioCardProps) => {
   const lastUpdate = new Date(signer.updatedAt).toLocaleString("pt-BR");
 
   return (
@@ -100,6 +118,16 @@ export const SignatarioCard = ({ signer }: SignatarioCardProps) => {
               >
                 {signer.email}
               </Text>
+              {signer.telefone && (
+                <Text
+                  fontSize="sm"
+                  color="gray.600"
+                  _dark={{ color: "gray.400" }}
+                  noOfLines={1}
+                >
+                  WhatsApp: {formatTelefone(signer.telefone)}
+                </Text>
+              )}
             </Box>
           </HStack>
           {getSignerStatusBadge(signer.state)}
@@ -158,6 +186,20 @@ export const SignatarioCard = ({ signer }: SignatarioCardProps) => {
             </Text>
           </Box>
         </Flex>
+
+        {onReenviar && (
+          <Button
+            leftIcon={<FiSend />}
+            size="sm"
+            variant="outline"
+            colorScheme="green"
+            onClick={onReenviar}
+            isLoading={reenviando}
+            loadingText="Reenviando..."
+          >
+            Reenviar para {signer.telefone ? "email e WhatsApp" : "email"}
+          </Button>
+        )}
       </VStack>
     </Box>
   );
