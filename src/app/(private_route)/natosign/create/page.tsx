@@ -145,6 +145,15 @@ export default function CreateNatosign() {
 
   const toast = useToast();
 
+  // Se a notificação por WhatsApp está ligada no backend
+  const [whatsappAtivo, setWhatsappAtivo] = useState(false);
+  useEffect(() => {
+    fetch("/api/intelesign/config")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((c) => setWhatsappAtivo(!!c?.whatsapp))
+      .catch(() => setWhatsappAtivo(false));
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       // Bloco do CCA
@@ -482,7 +491,11 @@ export default function CreateNatosign() {
               />
             )}
             {step === 3 && (
-              <Step3 formData={formData} setFormData={setFormData} />
+              <Step3
+                formData={formData}
+                setFormData={setFormData}
+                whatsappAtivo={whatsappAtivo}
+              />
             )}
 
             <Flex

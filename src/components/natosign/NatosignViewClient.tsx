@@ -121,6 +121,8 @@ type EnvelopeType = {
   updatedAt: string;
   user_id: number;
   valor: number;
+  /** Notificação por WhatsApp ligada no backend */
+  whatsapp?: boolean;
 };
 
 interface NatosignViewClientProps {
@@ -480,6 +482,7 @@ export default function NatosignViewClient({
                 key={signer.id}
                 signer={signer}
                 reenviando={reenviando === signer.id}
+                whatsappAtivo={!!envelope.whatsapp}
                 onReenviar={
                   envelopePendente && signatarioPendente(signer)
                     ? () => handleReenviar(signer.id)

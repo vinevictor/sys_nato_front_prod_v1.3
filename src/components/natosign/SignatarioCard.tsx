@@ -58,6 +58,8 @@ interface SignatarioCardProps {
     telefone?: string | null;
     filled_at?: string | null;
   };
+  /** Notificação por WhatsApp ligada no backend */
+  whatsappAtivo?: boolean;
   /** Quando informado, mostra o botão de reenvio (signatário pendente) */
   onReenviar?: () => void;
   reenviando?: boolean;
@@ -67,7 +69,9 @@ export const SignatarioCard = ({
   signer,
   onReenviar,
   reenviando,
+  whatsappAtivo,
 }: SignatarioCardProps) => {
+  const comWhatsapp = whatsappAtivo && !!signer.telefone;
   const lastUpdate = new Date(signer.updatedAt).toLocaleString("pt-BR");
 
   return (
@@ -125,7 +129,8 @@ export const SignatarioCard = ({
                   _dark={{ color: "gray.400" }}
                   noOfLines={1}
                 >
-                  WhatsApp: {formatTelefone(signer.telefone)}
+                  {comWhatsapp ? "WhatsApp" : "Celular"}:{" "}
+                  {formatTelefone(signer.telefone)}
                 </Text>
               )}
             </Box>
@@ -197,7 +202,7 @@ export const SignatarioCard = ({
             isLoading={reenviando}
             loadingText="Reenviando..."
           >
-            Reenviar para {signer.telefone ? "email e WhatsApp" : "email"}
+            Reenviar para {comWhatsapp ? "email e WhatsApp" : "email"}
           </Button>
         )}
       </VStack>
