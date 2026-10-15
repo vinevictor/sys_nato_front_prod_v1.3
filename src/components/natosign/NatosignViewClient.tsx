@@ -289,8 +289,11 @@ export default function NatosignViewClient({
   );
   const pdfUrl = envelope.doc_modificado_viw || envelope.doc_original_viw;
 
-  // Reenvio só faz sentido com o envelope aguardando assinatura
+  // Reenvio só faz sentido com o envelope enviado e aguardando assinatura
+  // (rascunho ainda não foi enviado a ninguém)
   const envelopePendente = ![
+    "draft",
+    "new",
     "done",
     "completed",
     "rejected",
