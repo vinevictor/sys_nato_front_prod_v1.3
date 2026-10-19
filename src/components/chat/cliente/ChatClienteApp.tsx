@@ -8,6 +8,8 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  HStack,
+  Icon,
   Input,
   Modal,
   ModalBody,
@@ -20,6 +22,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { IconType } from "react-icons";
+import {
+  FiAlertCircle,
+  FiAlertTriangle,
+  FiLock,
+  FiMessageCircle,
+  FiShield,
+  FiUserX,
+} from "react-icons/fi";
 import Compositor from "../Compositor";
 import ListaMensagens from "../ListaMensagens";
 import {
@@ -142,12 +153,13 @@ export default function ChatClienteApp({ telefone }: { telefone?: string }) {
       _dark={{ bg: "gray.900" }}
     >
       <Cabecalho titulo="Atendimento" />
-      <Center flex={1} px={5} py={8}>
-        <Box w="full" maxW="380px">
+      <Center flex={1} px={4} py={6}>
+        <Box w="full" maxW="420px">
           {fase.tipo === "carregando" && (
-            <Center>
-              <Spinner size="lg" color={AZUL} />
-            </Center>
+            <VStack spacing={4} color="gray.500">
+              <Spinner size="xl" thickness="3px" color={AZUL} />
+              <Text fontSize="md">Carregando atendimento…</Text>
+            </VStack>
           )}
           {(fase.tipo === "cpf" || fase.tipo === "telefone_cpf") && (
             <FormularioAcesso
@@ -165,12 +177,16 @@ export default function ChatClienteApp({ telefone }: { telefone?: string }) {
           )}
           {fase.tipo === "nao_encontrado" && (
             <Aviso
+              icone={FiUserX}
+              cor="orange"
               titulo="Cadastro não encontrado"
               texto="Não encontramos um cadastro com este telefone. Confira o link recebido ou fale com seu corretor."
             />
           )}
           {fase.tipo === "erro" && (
             <Aviso
+              icone={FiAlertTriangle}
+              cor="red"
               titulo="Algo deu errado"
               texto={fase.mensagem}
               acao={{ label: "Tentar novamente", onClick: iniciar }}
@@ -201,21 +217,22 @@ function Cabecalho({
       flexShrink={0}
     >
       <Center
-        w={10}
-        h={10}
+        w={11}
+        h={11}
         borderRadius="full"
         bg="#FB8501"
         fontWeight="bold"
+        fontSize="lg"
         flexShrink={0}
       >
         S
       </Center>
       <Box minW={0}>
-        <Text fontWeight="semibold" lineHeight="short">
+        <Text fontWeight="semibold" fontSize="lg" lineHeight="short">
           {titulo}
         </Text>
         {subtitulo && (
-          <Text fontSize="xs" opacity={0.85} noOfLines={1}>
+          <Text fontSize="sm" opacity={0.85} noOfLines={1}>
             {subtitulo}
           </Text>
         )}
@@ -224,29 +241,78 @@ function Cabecalho({
   );
 }
 
+/** Cartão branco centralizado usado nas telas antes do chat */
+function Cartao({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      bg="white"
+      _dark={{ bg: "gray.800" }}
+      borderRadius="2xl"
+      shadow="lg"
+      px={{ base: 5, sm: 8 }}
+      py={{ base: 7, sm: 8 }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+function IconeDestaque({ icone, cor }: { icone: IconType; cor: string }) {
+  return (
+    <Center
+      w={16}
+      h={16}
+      mx="auto"
+      borderRadius="full"
+      bg={`${cor}.50`}
+      color={`${cor}.500`}
+      _dark={{ bg: "whiteAlpha.100", color: `${cor}.300` }}
+    >
+      <Icon as={icone} boxSize={8} />
+    </Center>
+  );
+}
+
 function Aviso({
+  icone,
+  cor,
   titulo,
   texto,
   acao,
 }: {
+  icone: IconType;
+  cor: string;
   titulo: string;
   texto: string;
   acao?: { label: string; onClick: () => void };
 }) {
   return (
-    <VStack spacing={3} textAlign="center">
-      <Heading size="md" color={AZUL} _dark={{ color: "gray.100" }}>
-        {titulo}
-      </Heading>
-      <Text color="gray.600" _dark={{ color: "gray.300" }}>
-        {texto}
-      </Text>
-      {acao && (
-        <Button onClick={acao.onClick} bg={AZUL} color="white" size="lg">
-          {acao.label}
-        </Button>
-      )}
-    </VStack>
+    <Cartao>
+      <VStack spacing={4} textAlign="center">
+        <IconeDestaque icone={icone} cor={cor} />
+        <Heading size="lg" color={AZUL} _dark={{ color: "gray.100" }}>
+          {titulo}
+        </Heading>
+        <Text fontSize="lg" color="gray.600" _dark={{ color: "gray.300" }}>
+          {texto}
+        </Text>
+        {acao && (
+          <Button
+            onClick={acao.onClick}
+            bg={AZUL}
+            color="white"
+            _hover={{ bg: "#034a6b" }}
+            size="lg"
+            h={14}
+            w="full"
+            fontSize="lg"
+            mt={2}
+          >
+            {acao.label}
+          </Button>
+        )}
+      </VStack>
+    </Cartao>
   );
 }
 
@@ -271,7 +337,7 @@ function FormularioAcesso({
     try {
       const r = await api.acessarComCpf(
         pedirTelefone ? tel : telefoneUrl!,
-        cpf
+        cpf,
       );
       if (r.token) onSucesso(r.token);
     } catch (e) {
@@ -279,77 +345,121 @@ function FormularioAcesso({
       setErro(
         erro.status === 401
           ? "Os dados não conferem. Confira e tente novamente."
-          : erro.message
+          : erro.message,
       );
     } finally {
       setEnviando(false);
     }
   };
 
-  return (
-    <form onSubmit={enviar}>
-      <VStack spacing={5} align="stretch">
-        <Box textAlign="center">
-          <Heading size="md" color={AZUL} _dark={{ color: "gray.100" }}>
-            Confirme seus dados
-          </Heading>
-          <Text mt={2} color="gray.600" _dark={{ color: "gray.300" }}>
-            {pedirTelefone
-              ? "Informe seu telefone e CPF para acessar o atendimento."
-              : "Para sua segurança, confirme o CPF do cadastro."}
-          </Text>
-        </Box>
+  const estiloLabel = {
+    fontSize: "md",
+    fontWeight: "semibold",
+    color: "gray.700",
+    _dark: { color: "gray.200" },
+    mb: 2,
+  };
+  const estiloInput = {
+    size: "lg",
+    h: 14,
+    fontSize: "lg",
+    borderRadius: "xl",
+    bg: "gray.50",
+    _dark: { bg: "gray.700" },
+    focusBorderColor: AZUL,
+  };
 
-        {pedirTelefone && (
+  return (
+    <Cartao>
+      <form onSubmit={enviar}>
+        <VStack spacing={6} align="stretch">
+          <VStack spacing={3} textAlign="center">
+            <IconeDestaque icone={FiMessageCircle} cor="blue" />
+            <Heading size="lg" color={AZUL} _dark={{ color: "gray.100" }}>
+              {pedirTelefone ? "Fale com a gente" : "Confirme seu CPF"}
+            </Heading>
+            <Text fontSize="lg" color="gray.600" _dark={{ color: "gray.300" }}>
+              {pedirTelefone
+                ? "Informe seu telefone e CPF para acessar o atendimento."
+                : "Para sua segurança, confirme o CPF do seu cadastro."}
+            </Text>
+          </VStack>
+
+          {pedirTelefone && (
+            <FormControl isRequired>
+              <FormLabel {...estiloLabel}>Telefone (WhatsApp)</FormLabel>
+              <Input
+                {...estiloInput}
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel-national"
+                placeholder="(16) 99999-9999"
+                value={mascaraTelefone(tel)}
+                onChange={(e) => setTel(e.target.value.replace(/\D/g, ""))}
+              />
+            </FormControl>
+          )}
+
           <FormControl isRequired>
-            <FormLabel>Telefone (WhatsApp)</FormLabel>
+            <FormLabel {...estiloLabel}>CPF</FormLabel>
             <Input
-              size="lg"
-              bg="white"
-              _dark={{ bg: "gray.800" }}
-              type="tel"
+              {...estiloInput}
               inputMode="numeric"
-              autoComplete="tel-national"
-              placeholder="(16) 99999-9999"
-              value={mascaraTelefone(tel)}
-              onChange={(e) => setTel(e.target.value.replace(/\D/g, ""))}
+              placeholder="000.000.000-00"
+              value={mascaraCpf(cpf)}
+              onChange={(e) => setCpf(e.target.value.replace(/\D/g, ""))}
+              autoFocus={!pedirTelefone}
             />
           </FormControl>
-        )}
 
-        <FormControl isRequired>
-          <FormLabel>CPF</FormLabel>
-          <Input
+          {erro && <MensagemErro texto={erro} />}
+
+          <Button
+            type="submit"
             size="lg"
-            bg="white"
-            _dark={{ bg: "gray.800" }}
-            inputMode="numeric"
-            placeholder="000.000.000-00"
-            value={mascaraCpf(cpf)}
-            onChange={(e) => setCpf(e.target.value.replace(/\D/g, ""))}
-            autoFocus={!pedirTelefone}
-          />
-        </FormControl>
+            h={14}
+            fontSize="lg"
+            borderRadius="xl"
+            bg={AZUL}
+            color="white"
+            _hover={{ bg: "#034a6b" }}
+            isLoading={enviando}
+            isDisabled={cpf.length !== 11 || (pedirTelefone && tel.length < 10)}
+          >
+            Entrar no chat
+          </Button>
 
-        {erro && (
-          <Text color="red.500" fontSize="sm" textAlign="center">
-            {erro}
-          </Text>
-        )}
+          <HStack
+            spacing={2}
+            justify="center"
+            color="gray.500"
+            fontSize="sm"
+            textAlign="center"
+          >
+            <Icon as={FiLock} flexShrink={0} />
+            <Text>Seus dados são usados só para identificar seu cadastro.</Text>
+          </HStack>
+        </VStack>
+      </form>
+    </Cartao>
+  );
+}
 
-        <Button
-          type="submit"
-          size="lg"
-          bg={AZUL}
-          color="white"
-          _hover={{ bg: "#034a6b" }}
-          isLoading={enviando}
-          isDisabled={cpf.length !== 11 || (pedirTelefone && tel.length < 10)}
-        >
-          Entrar no chat
-        </Button>
-      </VStack>
-    </form>
+function MensagemErro({ texto }: { texto: string }) {
+  return (
+    <HStack
+      spacing={3}
+      align="flex-start"
+      bg="red.50"
+      color="red.700"
+      _dark={{ bg: "red.900", color: "red.100" }}
+      borderRadius="xl"
+      px={4}
+      py={3}
+    >
+      <Icon as={FiAlertCircle} boxSize={5} mt={0.5} flexShrink={0} />
+      <Text fontSize="md">{texto}</Text>
+    </HStack>
   );
 }
 
@@ -382,7 +492,7 @@ function TelaChat({
         throw e;
       }
     },
-    [onSessaoExpirada]
+    [onSessaoExpirada],
   );
 
   const carregarUltimas = useCallback(async () => {
@@ -438,9 +548,13 @@ function TelaChat({
           s && (!s.conversa || s.conversa.id === e.id)
             ? {
                 ...s,
-                conversa: { id: e.id, status: e.status, verificada: e.verificada },
+                conversa: {
+                  id: e.id,
+                  status: e.status,
+                  verificada: e.verificada,
+                },
               }
-            : s
+            : s,
         );
       },
       "verificacao:solicitada": (e: ChatVerificacaoEvento) => {
@@ -454,19 +568,19 @@ function TelaChat({
                   tentativas: 0,
                 },
               }
-            : s
+            : s,
         );
       },
       "verificacao:atualizada": (e: ChatVerificacaoEvento) => {
         setSessao((s) =>
           s && s.verificacaoPendente?.id === e.id
             ? { ...s, verificacaoPendente: null }
-            : s
+            : s,
         );
       },
       erro: () => onSessaoExpirada(),
     },
-    () => carregarUltimas().catch(() => undefined)
+    () => carregarUltimas().catch(() => undefined),
   );
 
   const { digitou, parar } = useEmissorDigitando(socketRef, conversaId);
@@ -476,7 +590,7 @@ function TelaChat({
     const marcar = () => {
       if (document.visibilityState !== "visible") return;
       const naoLidas = mensagens.filter(
-        (m) => m.autorTipo !== "CLIENTE" && !m.lidaEm
+        (m) => m.autorTipo !== "CLIENTE" && !m.lidaEm,
       );
       const ateId = Math.max(0, ...naoLidas.map((m) => m.id));
       if (!ateId || ateId <= marcandoAte.current) return;
@@ -502,7 +616,7 @@ function TelaChat({
               verificada: s.verificado,
             },
           }
-        : s
+        : s,
     );
   };
 
@@ -541,17 +655,38 @@ function TelaChat({
             }
           />
           {mensagens.length === 0 && (
-            <Text
+            <Center
               position="absolute"
-              top="45%"
-              w="full"
-              textAlign="center"
-              color="gray.500"
-              px={8}
+              top="35%"
+              left={0}
+              right={0}
+              px={6}
               pointerEvents="none"
             >
-              Olá, {sessao.cliente.nome.split(" ")[0]}! Como podemos ajudar?
-            </Text>
+              <VStack
+                spacing={2}
+                maxW="320px"
+                textAlign="center"
+                bg="white"
+                _dark={{ bg: "gray.800" }}
+                borderRadius="2xl"
+                shadow="md"
+                px={6}
+                py={5}
+              >
+                <Icon as={FiMessageCircle} boxSize={8} color={AZUL} />
+                <Text fontSize="lg" fontWeight="semibold">
+                  Olá, {sessao.cliente.nome.split(" ")[0]}!
+                </Text>
+                <Text
+                  fontSize="md"
+                  color="gray.600"
+                  _dark={{ color: "gray.300" }}
+                >
+                  Envie sua mensagem que um atendente vai responder em breve.
+                </Text>
+              </VStack>
+            </Center>
           )}
         </>
       )}
@@ -563,8 +698,8 @@ function TelaChat({
         onEnviarArquivo={async (file, extras) =>
           aposEnviar(
             await comTratamento(() =>
-              api.enviarArquivo(file, extras?.duracaoSeg)
-            )
+              api.enviarArquivo(file, extras?.duracaoSeg),
+            ),
           )
         }
         onDigitar={digitou}
@@ -614,7 +749,7 @@ function ModalVerificacao({
       setErro(
         restantes !== undefined
           ? `CPF não confere. ${restantes} tentativa(s) restante(s).`
-          : erro.message
+          : erro.message,
       );
     } finally {
       setEnviando(false);
@@ -624,16 +759,31 @@ function ModalVerificacao({
   return (
     <Modal isOpen onClose={() => undefined} isCentered size="sm">
       <ModalOverlay />
-      <ModalContent mx={4}>
+      <ModalContent mx={4} borderRadius="2xl">
         <form onSubmit={enviar}>
-          <ModalHeader>Confirme seu CPF</ModalHeader>
+          <ModalHeader pt={6}>
+            <VStack spacing={3}>
+              <IconeDestaque icone={FiShield} cor="blue" />
+              <Text fontSize="xl">Confirme seu CPF</Text>
+            </VStack>
+          </ModalHeader>
           <ModalBody>
-            <Text fontSize="sm" color="gray.600" mb={4} _dark={{ color: "gray.300" }}>
+            <Text
+              fontSize="md"
+              textAlign="center"
+              color="gray.600"
+              mb={5}
+              _dark={{ color: "gray.300" }}
+            >
               O atendente pediu a confirmação do seu CPF para continuar o
               atendimento com segurança.
             </Text>
             <Input
               size="lg"
+              h={14}
+              fontSize="lg"
+              borderRadius="xl"
+              textAlign="center"
               inputMode="numeric"
               placeholder="000.000.000-00"
               value={mascaraCpf(cpf)}
@@ -641,19 +791,22 @@ function ModalVerificacao({
               autoFocus
             />
             {erro && (
-              <Text color="red.500" fontSize="sm" mt={2}>
-                {erro}
-              </Text>
+              <Box mt={3}>
+                <MensagemErro texto={erro} />
+              </Box>
             )}
           </ModalBody>
-          <ModalFooter gap={2}>
-            <Button variant="ghost" size="lg" onClick={onEncerrado}>
+          <ModalFooter gap={2} pb={6}>
+            <Button variant="ghost" size="lg" h={14} onClick={onEncerrado}>
               Agora não
             </Button>
             <Button
               type="submit"
               flex={1}
               size="lg"
+              h={14}
+              fontSize="lg"
+              borderRadius="xl"
               bg={AZUL}
               color="white"
               isLoading={enviando}
