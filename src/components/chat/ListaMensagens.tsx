@@ -6,15 +6,20 @@ import {
   Flex,
   HStack,
   Icon,
+  IconButton,
   Image,
   Link,
+  Modal,
+  ModalContent,
+  ModalOverlay,
   Spinner,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Fragment, useEffect, useLayoutEffect, useRef } from "react";
 import { BsCheck, BsCheckAll } from "react-icons/bs";
-import { FiFileText } from "react-icons/fi";
+import { FiDownload, FiFileText, FiX } from "react-icons/fi";
 import {
   ChatAutorTipo,
   ChatMensagem,
@@ -161,7 +166,7 @@ function MensagemBolha({
     return (
       <Flex justify="center" my={2}>
         <Text
-          fontSize="xs"
+          fontSize={{ base: "sm", md: "xs" }}
           textAlign="center"
           px={3}
           py={1}
@@ -199,7 +204,8 @@ function MensagemBolha({
 
         {m.texto && (
           <Text
-            fontSize="sm"
+            // no celular o texto fica maior, como nos apps de mensagem
+            fontSize={{ base: "md", md: "sm" }}
             whiteSpace="pre-wrap"
             wordBreak="break-word"
             mt={m.midia ? 1 : 0}
@@ -209,7 +215,7 @@ function MensagemBolha({
         )}
 
         <HStack spacing={1} justify="flex-end" mt={0.5}>
-          <Text fontSize="10px" color="gray.500">
+          <Text fontSize="11px" color="gray.500">
             {formatarHora(m.createdAt)}
           </Text>
           {minha && (
@@ -231,23 +237,11 @@ function ConteudoMidia({ mensagem: m }: { mensagem: ChatMensagem }) {
 
   if (midia.tipo === "IMAGEM") {
     return (
-      <Link href={midia.url} isExternal>
-        <Image
-          src={midia.url}
-          alt="Imagem enviada"
-          borderRadius="md"
-          maxH="320px"
-          maxW="100%"
-          objectFit="cover"
-          loading="lazy"
-          // reserva o espaço para a lista não pular ao carregar
-          sx={
-            midia.largura && midia.altura
-              ? { aspectRatio: `${midia.largura} / ${midia.altura}` }
-              : undefined
-          }
-        />
-      </Link>
+      <ImagemMensagem
+        url={midia.url}
+        largura={midia.largura}
+        altura={midia.altura}
+      />
     );
   }
 
@@ -281,5 +275,104 @@ function ConteudoMidia({ mensagem: m }: { mensagem: ChatMensagem }) {
         </Box>
       </HStack>
     </Link>
+  );
+}
+
+/** Miniatura na bolha; ao tocar abre a foto em tela cheia na própria página */
+function ImagemMensagem({
+  url,
+  largura,
+  altura,
+}: {
+  url: string;
+  largura: number | null;
+  altura: number | null;
+}) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <Box
+        as="button"
+        type="button"
+        display="block"
+        onClick={onOpen}
+        aria-label="Ampliar imagem"
+        cursor="zoom-in"
+      >
+        <Image
+          src={url}
+          alt="Imagem enviada"
+          borderRadius="md"
+          maxH="320px"
+          maxW="100%"
+          objectFit="cover"
+          loading="lazy"
+          // reserva o espaço para a lista não pular ao carregar
+          sx={
+            largura && altura
+              ? { aspectRatio: `${largura} / ${altura}` }
+              : undefined
+          }
+        />
+      </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="full" motionPreset="scale">
+        <ModalOverlay bg="blackAlpha.900" />
+        <ModalContent bg="transparent" shadow="none" m={0} onClick={onClose}>
+          <HStack
+            position="fixed"
+            top="calc(0.75rem + env(safe-area-inset-top))"
+            right={3}
+            spacing={2}
+            zIndex={1}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <IconButton
+              as="a"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              aria-label="Baixar imagem"
+              icon={<FiDownload />}
+              size="lg"
+              borderRadius="full"
+              bg="whiteAlpha.300"
+              color="white"
+              _hover={{ bg: "whiteAlpha.400" }}
+            />
+            <IconButton
+              aria-label="Fechar"
+              icon={<FiX />}
+              size="lg"
+              borderRadius="full"
+              bg="whiteAlpha.300"
+              color="white"
+              _hover={{ bg: "whiteAlpha.400" }}
+              onClick={onClose}
+            />
+          </HStack>
+          <Flex
+            h="100dvh"
+            w="100vw"
+            align="center"
+            justify="center"
+            p={{ base: 2, md: 8 }}
+          >
+            <Image
+              src={url}
+              alt="Imagem ampliada"
+              maxH="100%"
+              maxW="100%"
+              objectFit="contain"
+              borderRadius="md"
+              // tocar na foto não fecha; tocar no fundo fecha
+              onClick={(e) => e.stopPropagation()}
+            />
+          </Flex>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
