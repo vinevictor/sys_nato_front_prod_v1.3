@@ -52,6 +52,8 @@ interface EnvelopeNatodoc {
   description: string;
   status: string | null;
   status_view: string;
+  cancelado_em?: string | null;
+  motivo_cancelamento?: string | null;
   type: string;
   original_name: string | null;
   createdAt: string;
@@ -83,7 +85,12 @@ const statusEnvelope: Record<string, { label: string; color: string }> = {
   rejected: { label: "Rejeitado", color: "red" },
   failed: { label: "Falhou", color: "red" },
   suspended: { label: "Suspenso", color: "gray" },
+  canceled: { label: "Cancelado", color: "red" },
 };
+
+/** Cancelado é marcado só no SisNato e vale mais que o status da Intellisign */
+const statusDoEnvelope = (e: EnvelopeNatodoc) =>
+  e.cancelado_em ? "canceled" : e.status;
 
 const statusSignatario: Record<string, { label: string; color: string }> = {
   "in-transit": { label: "Aguardando", color: "yellow" },
@@ -433,7 +440,10 @@ export default function NatodocClient({ imobiliarias }: NatodocClientProps) {
                     gap={3}
                     justify={{ base: "space-between", md: "flex-end" }}
                   >
-                    <StatusBadge value={envelope.status} mapa={statusEnvelope} />
+                    <StatusBadge
+                      value={statusDoEnvelope(envelope)}
+                      mapa={statusEnvelope}
+                    />
                     <Button
                       size="sm"
                       leftIcon={<FiEye />}
@@ -496,7 +506,7 @@ export default function NatodocClient({ imobiliarias }: NatodocClientProps) {
                 <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
                   <Info label="Status">
                     <StatusBadge
-                      value={selecionado.status}
+                      value={statusDoEnvelope(selecionado)}
                       mapa={statusEnvelope}
                     />
                   </Info>
@@ -599,7 +609,13 @@ export default function NatodocClient({ imobiliarias }: NatodocClientProps) {
   );
 }
 
-function Info({ label, children }: { label: string; children: React.ReactNode }) {
+function Info({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <Box>
       <Text fontSize="xs" color="gray.500" mb={1}>
