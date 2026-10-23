@@ -1,14 +1,30 @@
 "use client";
 
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Badge,
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
+  HStack,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   Text,
+  Textarea,
+  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -19,6 +35,7 @@ import {
   FiExternalLink,
   FiRefreshCw,
   FiSend,
+  FiSlash,
 } from "react-icons/fi";
 import { SignatarioCard } from "./SignatarioCard";
 import { PDFViewer } from "./PDFViewer";
@@ -123,6 +140,10 @@ type EnvelopeType = {
   valor: number;
   /** Notificação por WhatsApp ligada no backend */
   whatsapp?: boolean;
+  /** Cancelado só no SisNato; null quando ativo */
+  cancelado_em?: string | null;
+  cancelado_por?: string | null;
+  motivo_cancelamento?: string | null;
 };
 
 interface NatosignViewClientProps {
@@ -138,6 +159,42 @@ export default function NatosignViewClient({
   const [isDownloading, setIsDownloading] = useState(false);
   // "todos" ou o id do signatário que está sendo reenviado
   const [reenviando, setReenviando] = useState<number | "todos" | null>(null);
+  const modalCancelar = useDisclosure();
+  const [motivo, setMotivo] = useState("");
+  const [cancelando, setCancelando] = useState(false);
+  const cancelado = !!envelope.cancelado_em;
+
+  const handleCancelar = async () => {
+    setCancelando(true);
+    try {
+      const response = await fetch(`/api/intelesign/cancelar/${envelope.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ motivo: motivo.trim() || undefined }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.message || "Não foi possível cancelar.");
+      }
+      toast({
+        title: "Envelope cancelado",
+        status: "success",
+        isClosable: true,
+      });
+      modalCancelar.onClose();
+      setMotivo("");
+      router.refresh();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao cancelar",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setCancelando(false);
+    }
+  };
 
   const handleReenviar = async (signatarioId?: number) => {
     setReenviando(signatarioId ?? "todos");
@@ -293,15 +350,17 @@ export default function NatosignViewClient({
 
   // Reenvio só faz sentido com o envelope enviado e aguardando assinatura
   // (rascunho ainda não foi enviado a ninguém)
-  const envelopePendente = ![
-    "draft",
-    "new",
-    "done",
-    "completed",
-    "rejected",
-    "failed",
-    "expired",
-  ].includes(envelope.status);
+  const envelopePendente =
+    !cancelado &&
+    ![
+      "draft",
+      "new",
+      "done",
+      "completed",
+      "rejected",
+      "failed",
+      "expired",
+    ].includes(envelope.status);
   const signatarioPendente = (signer: any) =>
     !["done", "filled", "rejected"].includes(signer.state) && !signer.filled_at;
   const temPendentes = envelopePendente && signatarios.some(signatarioPendente);
@@ -325,9 +384,26 @@ export default function NatosignViewClient({
         borderBottomColor="gray.200"
         _dark={{ borderBottomColor: "gray.700" }}
       >
-        <Heading size="md" color="#023147" _dark={{ color: "gray.100" }}>
-          Detalhes do Envelope
-        </Heading>
+        <HStack spacing={3}>
+          <Heading size="md" color="#023147" _dark={{ color: "gray.100" }}>
+            Detalhes do Envelope
+          </Heading>
+          {cancelado && (
+            <Badge
+              bg="#DC2626"
+              color="white"
+              px={3}
+              py={1}
+              borderRadius="md"
+              fontSize="sm"
+            >
+              <HStack spacing={1}>
+                <FiSlash />
+                <span>Cancelado</span>
+              </HStack>
+            </Badge>
+          )}
+        </HStack>
         <Flex gap={2} wrap="wrap">
           <Button
             leftIcon={<FiRefreshCw />}
@@ -359,8 +435,97 @@ export default function NatosignViewClient({
               Reenviar para pendentes
             </Button>
           )}
+          {!cancelado && (
+            <Button
+              leftIcon={<FiSlash />}
+              onClick={modalCancelar.onOpen}
+              size={{ base: "sm", md: "md" }}
+              variant="outline"
+              colorScheme="red"
+            >
+              Cancelar envelope
+            </Button>
+          )}
         </Flex>
       </Flex>
+
+      {cancelado && (
+        <Alert
+          status="error"
+          variant="left-accent"
+          borderRadius="lg"
+          alignItems="flex-start"
+        >
+          <AlertIcon mt={1} />
+          <Box>
+            <AlertTitle fontSize="lg">Envelope cancelado</AlertTitle>
+            <AlertDescription display="block">
+              Cancelado em{" "}
+              {new Date(envelope.cancelado_em!).toLocaleString("pt-BR")}
+              {envelope.cancelado_por && ` por ${envelope.cancelado_por}`}.
+              {envelope.motivo_cancelamento && (
+                <Text mt={1}>
+                  <b>Motivo:</b> {envelope.motivo_cancelamento}
+                </Text>
+              )}
+            </AlertDescription>
+          </Box>
+        </Alert>
+      )}
+
+      <Modal
+        isOpen={modalCancelar.isOpen}
+        onClose={modalCancelar.onClose}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent mx={4}>
+          <ModalHeader>Cancelar envelope?</ModalHeader>
+          <ModalCloseButton isDisabled={cancelando} />
+          <ModalBody>
+            <VStack align="stretch" spacing={4}>
+              <Text>
+                O envelope <b>{envelope.title}</b> ficará marcado como cancelado
+                e não poderá mais ser reenviado. Esta ação não pode ser
+                desfeita.
+              </Text>
+              <Alert status="warning" borderRadius="md" fontSize="sm">
+                <AlertIcon />O cancelamento vale só no SisNato. A Intellisign
+                não é avisada, então quem já recebeu o link ainda consegue
+                assinar por lá.
+              </Alert>
+              <FormControl>
+                <FormLabel>Motivo (opcional)</FormLabel>
+                <Textarea
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                  placeholder="Ex.: contrato enviado com dados errados"
+                  maxLength={500}
+                  rows={3}
+                />
+              </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter gap={2}>
+            <Button
+              variant="ghost"
+              onClick={modalCancelar.onClose}
+              isDisabled={cancelando}
+            >
+              Voltar
+            </Button>
+            <Button
+              colorScheme="red"
+              leftIcon={<FiSlash />}
+              onClick={handleCancelar}
+              isLoading={cancelando}
+              loadingText="Cancelando..."
+            >
+              Cancelar envelope
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Informações principais */}
       <Box

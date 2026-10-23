@@ -34,6 +34,10 @@ declare namespace natosign {
     status_view: string;
     updatedAt: string;
     ativo: boolean;
+    /** Cancelado só no SisNato; null quando ativo */
+    cancelado_em?: string | null;
+    cancelado_por?: string | null;
+    motivo_cancelamento?: string | null;
 
     construtora_id: number;
     user_id: number;

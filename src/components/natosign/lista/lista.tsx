@@ -2,6 +2,8 @@
 import {
   Badge,
   Flex,
+  HStack,
+  Icon,
   IconButton,
   Link,
   Progress,
@@ -12,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { FiDownload, FiEdit, FiEye } from "react-icons/fi";
+import { FiDownload, FiEdit, FiEye, FiSlash } from "react-icons/fi";
 
 interface TableComponentNatosignProps {
   dados: natosign.NatosignObjectType;
@@ -32,8 +34,38 @@ export const TableComponentNatosign = ({
   ).length;
   const progressValue =
     totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
+  const cancelado = !!dados.cancelado_em;
 
   const getStatusBadge = (status: string) => {
+    if (cancelado) {
+      return (
+        <Tooltip
+          label={
+            dados.motivo_cancelamento
+              ? `Motivo: ${dados.motivo_cancelamento}`
+              : "Cancelado no SisNato"
+          }
+          hasArrow
+        >
+          <Badge
+            bg="#DC2626"
+            color="white"
+            px={3}
+            py={1}
+            borderRadius="md"
+            fontWeight="bold"
+            letterSpacing="wide"
+            _dark={{ bg: "#DC2626", color: "white" }}
+          >
+            <HStack spacing={1}>
+              <Icon as={FiSlash} />
+              <span>Cancelado</span>
+            </HStack>
+          </Badge>
+        </Tooltip>
+      );
+    }
+
     const statusStyles: Record<string, { bg: string; color: string }> = {
       new: { bg: "#3B82F6", color: "#FFFFFF" },
       draft: { bg: "#3B82F6", color: "#FFFFFF" },
@@ -68,6 +100,10 @@ export const TableComponentNatosign = ({
 
   return (
     <Tr
+      // Cancelado fica apagado na lista, com o título riscado
+      opacity={cancelado ? 0.6 : 1}
+      bg={cancelado ? "red.50" : undefined}
+      _dark={cancelado ? { bg: "rgba(220, 38, 38, 0.12)" } : undefined}
       _hover={{
         bg: "white",
         transform: "translateY(-2px)",
@@ -97,7 +133,11 @@ export const TableComponentNatosign = ({
         maxW={{ base: "200px", md: "260px" }}
       >
         <Tooltip label={dados.title || "--"} placement="top-start" hasArrow>
-          <Text fontWeight="medium" isTruncated>
+          <Text
+            fontWeight="medium"
+            isTruncated
+            textDecoration={cancelado ? "line-through" : undefined}
+          >
             {dados.title || "--"}
           </Text>
         </Tooltip>
