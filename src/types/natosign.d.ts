@@ -10,6 +10,7 @@ declare namespace natosign {
     state: string;
     updatedAt: string;
     telefone?: string | null;
+    qualificacao?: string | null;
     filled_at?: string | null;
   }
 

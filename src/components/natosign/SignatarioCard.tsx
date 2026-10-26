@@ -56,6 +56,7 @@ interface SignatarioCardProps {
     state: string;
     updatedAt: string;
     telefone?: string | null;
+    qualificacao?: string | null;
     filled_at?: string | null;
   };
   /** Notificação por WhatsApp ligada no backend */
@@ -114,6 +115,17 @@ export const SignatarioCard = ({
               >
                 {signer.nome}
               </Text>
+              {signer.qualificacao && (
+                <Text
+                  fontSize="sm"
+                  fontWeight="semibold"
+                  color="#00713D"
+                  _dark={{ color: "#00d672" }}
+                  noOfLines={2}
+                >
+                  {signer.qualificacao}
+                </Text>
+              )}
               <Text
                 fontSize="sm"
                 color="gray.600"
