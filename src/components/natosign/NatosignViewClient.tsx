@@ -346,7 +346,13 @@ export default function NatosignViewClient({
   const updatedAtFormatted = new Date(envelope.updatedAt).toLocaleString(
     "pt-BR"
   );
-  const pdfUrl = envelope.doc_modificado_viw || envelope.doc_original_viw;
+  // O manifesto já lista todos como assinantes desde o envio, então o
+  // documento assinado só é liberado depois que todos concluem
+  const concluido =
+    envelope.status === "done" || envelope.status === "completed";
+  const pdfUrl = concluido
+    ? envelope.doc_modificado_viw || envelope.doc_original_viw
+    : envelope.doc_original_viw;
 
   // Reenvio só faz sentido com o envelope enviado e aguardando assinatura
   // (rascunho ainda não foi enviado a ninguém)
@@ -364,12 +370,6 @@ export default function NatosignViewClient({
   const signatarioPendente = (signer: any) =>
     !["done", "filled", "rejected"].includes(signer.state) && !signer.filled_at;
   const temPendentes = envelopePendente && signatarios.some(signatarioPendente);
-
-  const shouldShowUpdateButton = (): boolean => {
-    const statusFinalizado =
-      envelope.status === "done" || envelope.status === "completed";
-    return !statusFinalizado;
-  };
 
   return (
     <VStack spacing={{ base: 5, md: 6 }} align="stretch" w="full">
@@ -565,21 +565,23 @@ export default function NatosignViewClient({
         </Heading>
         <Flex gap={3} wrap="wrap">
           <Button
-            as={Link}
-            onClick={() => window.open(envelope.public_link, "_blank")}
-            isExternal
+            onClick={() =>
+              window.open(
+                envelope.public_link || envelope.doc_modificado_viw,
+                "_blank"
+              )
+            }
             leftIcon={<FiExternalLink />}
             size={{ base: "sm", md: "md" }}
             colorScheme="blue"
             bg="#3B82F6"
             _hover={{ bg: "#2563EB" }}
-            disabled={!envelope.doc_modificado_viw}
+            isDisabled={!concluido || !envelope.doc_modificado_viw}
           >
             Visualizar
           </Button>
           <Button
-            as={Link}
-            href={envelope.doc_modificado_down}
+            onClick={() => window.open(envelope.doc_modificado_down, "_blank")}
             leftIcon={<FiDownload />}
             size={{ base: "sm", md: "md" }}
             colorScheme="green"
@@ -590,7 +592,7 @@ export default function NatosignViewClient({
               color: "gray.900",
               _hover: { bg: "#00c060" },
             }}
-            disabled={shouldShowUpdateButton()}
+            isDisabled={!concluido || !envelope.doc_modificado_down}
             isLoading={isDownloading}
             loadingText="Baixando..."
           >
@@ -608,7 +610,7 @@ export default function NatosignViewClient({
               color: "gray.900",
               _hover: { bg: "#00c060" },
             }}
-            disabled={shouldShowUpdateButton()}
+            isDisabled={!concluido || !envelope.background_sheet}
             isLoading={isDownloading}
             loadingText="Baixando..."
           >
@@ -633,6 +635,17 @@ export default function NatosignViewClient({
             Baixar Original
           </Button>
         </Flex>
+        {!concluido && (
+          <Text
+            mt={3}
+            fontSize="sm"
+            color="gray.600"
+            _dark={{ color: "gray.400" }}
+          >
+            O documento assinado, a visualização e os logs ficam disponíveis
+            quando todos os signatários concluírem a assinatura.
+          </Text>
+        )}
       </Box>
 
       {/* Signatários */}
@@ -678,7 +691,9 @@ export default function NatosignViewClient({
       <Box>
         <Flex justify="space-between" align="center" mb={4} wrap="wrap" gap={3}>
           <Heading size="sm" color="#023147" _dark={{ color: "gray.100" }}>
-            Pré-visualização do Documento
+            {concluido
+              ? "Pré-visualização do Documento"
+              : "Pré-visualização do Documento Original"}
           </Heading>
           {pdfUrl && (
             <Button

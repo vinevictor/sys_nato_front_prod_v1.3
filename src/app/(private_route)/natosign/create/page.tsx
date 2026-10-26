@@ -21,6 +21,8 @@ interface Signer {
   cpf: string;
   email: string;
   phone: string;
+  /** Papel no contrato (ex.: Testemunha); sai no manifesto */
+  qualificacao?: string;
   type: "signer" | "approver" | "carbon-copy";
 }
 
@@ -344,6 +346,10 @@ export default function CreateNatosign() {
         // Opcional: com telefone a Intellisign também avisa por WhatsApp
         ...(s.phone?.replace(/\D/g, "") && {
           telefone: s.phone.replace(/\D/g, ""),
+        }),
+        // Opcional: papel no contrato, impresso no manifesto
+        ...(s.qualificacao?.trim() && {
+          qualificacao: s.qualificacao.trim(),
         }),
       }));
 

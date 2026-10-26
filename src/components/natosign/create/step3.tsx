@@ -17,6 +17,15 @@ import {
 import { useState } from "react";
 import { FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 
+const QUALIFICACOES_SUGERIDAS = [
+  "Comprador(a)",
+  "Vendedor(a)",
+  "Testemunha",
+  "Representante da SPE",
+  "Procurador(a)",
+  "Interveniente",
+];
+
 interface Step3Props {
   formData: any;
   setFormData: (data: any) => void;
@@ -43,7 +52,14 @@ export default function Step3({
       ...prev,
       signers: [
         ...prev.signers,
-        { name: "", cpf: "", email: "", phone: "", type: "signer" },
+        {
+          name: "",
+          cpf: "",
+          email: "",
+          phone: "",
+          qualificacao: "",
+          type: "signer",
+        },
       ],
     }));
   };
@@ -114,6 +130,13 @@ export default function Step3({
       <Heading as="h3" size="md" textAlign="center">
         Adicionar Signatários
       </Heading>
+
+      {/* Sugestões do campo Qualificação (o usuário pode digitar outra) */}
+      <datalist id="natosign-qualificacoes">
+        {QUALIFICACOES_SUGERIDAS.map((q) => (
+          <option key={q} value={q} />
+        ))}
+      </datalist>
 
       {formData.signers.map((signer: any, index: number) => (
         <Box key={index} p={5} borderWidth="1px" borderRadius="lg" shadow="sm">
@@ -192,6 +215,21 @@ export default function Step3({
                   por WhatsApp.
                 </FormHelperText>
               )}
+            </FormControl>
+            <FormControl>
+              <FormLabel>Qualificação no contrato</FormLabel>
+              <Input
+                list="natosign-qualificacoes"
+                placeholder="Ex.: Testemunha, Representante da SPE Residencial X"
+                maxLength={120}
+                value={signer.qualificacao || ""}
+                onChange={(e) =>
+                  handleSignerChange(index, "qualificacao", e.target.value)
+                }
+              />
+              <FormHelperText>
+                Opcional. Aparece no manifesto de assinaturas, abaixo do nome.
+              </FormHelperText>
             </FormControl>
           </VStack>
         </Box>

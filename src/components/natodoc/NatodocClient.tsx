@@ -42,6 +42,7 @@ interface Signatario {
   id: number;
   nome: string;
   email: string;
+  qualificacao?: string | null;
   state: string | null;
   filled_at: string | null;
 }
@@ -553,6 +554,11 @@ export default function NatodocClient({ imobiliarias }: NatodocClientProps) {
                           <Text fontWeight="semibold" noOfLines={1}>
                             {s.nome}
                           </Text>
+                          {s.qualificacao && (
+                            <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                              {s.qualificacao}
+                            </Text>
+                          )}
                           <Text fontSize="sm" color="gray.500" noOfLines={1}>
                             {s.email}
                           </Text>

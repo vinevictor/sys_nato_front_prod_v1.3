@@ -35,6 +35,8 @@ export const TableComponentNatosign = ({
   const progressValue =
     totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
   const cancelado = !!dados.cancelado_em;
+  // O documento assinado só é liberado depois que todos assinam
+  const concluido = dados.status === "done" || dados.status === "completed";
 
   const getStatusBadge = (status: string) => {
     if (cancelado) {
@@ -197,13 +199,21 @@ export const TableComponentNatosign = ({
         _dark={{ borderBottomColor: "gray.700" }}
       >
         <Flex gap={2} justify="center">
-          <Tooltip label="Visualizar Envelope">
+          <Tooltip
+            label={
+              concluido
+                ? "Visualizar Envelope"
+                : "Visualizar original (aguardando assinaturas)"
+            }
+          >
             <IconButton
               onClick={() =>
                 window.open(
-                  dados.public_link ||
-                    dados.doc_modificado_viw ||
-                    dados.doc_original_viw,
+                  concluido
+                    ? dados.public_link ||
+                        dados.doc_modificado_viw ||
+                        dados.doc_original_viw
+                    : dados.doc_original_viw,
                   "_blank"
                 )
               }
@@ -224,27 +234,37 @@ export const TableComponentNatosign = ({
               transition="all 0.2s"
             />
           </Tooltip>
-          <Tooltip label="Baixar Documento">
-            <IconButton
-              as={Link}
-              href={dados.doc_modificado_down || dados.doc_original_down}
-              isExternal
-              bg="orange.600"
-              color="white"
-              variant="solid"
-              _dark={{
-                bg: "orange.600",
-                color: "white",
-              }}
-              size="sm"
-              icon={<FiDownload />}
-              aria-label="Baixar"
-              _hover={{
-                bg: "gray.100",
-                _dark: { bg: "gray.900" },
-              }}
-              transition="all 0.2s"
-            />
+          <Tooltip
+            label={
+              concluido
+                ? "Baixar Documento Assinado"
+                : "Disponível quando todos assinarem"
+            }
+          >
+            {/* span: o tooltip não aparece em botão desabilitado */}
+            <span>
+              <IconButton
+                as={concluido ? Link : undefined}
+                href={concluido ? dados.doc_modificado_down : undefined}
+                isExternal={concluido}
+                isDisabled={!concluido}
+                bg="orange.600"
+                color="white"
+                variant="solid"
+                _dark={{
+                  bg: "orange.600",
+                  color: "white",
+                }}
+                size="sm"
+                icon={<FiDownload />}
+                aria-label="Baixar"
+                _hover={{
+                  bg: "gray.100",
+                  _dark: { bg: "gray.900" },
+                }}
+                transition="all 0.2s"
+              />
+            </span>
           </Tooltip>
           <Tooltip label="Detalhes do Envelope">
             <IconButton
